@@ -1,0 +1,125 @@
+@use '../../Styles/Fonts.scss' as Font;
+@use '../../Styles/Mixins.scss' as Mixin;
+
+.Doc_Editor .Doc_Editor_Content .tiptap .Code_Block{
+  margin: 0 0 12px;
+  border: 1px solid var(--hud-line-strong);
+  border-radius: var(--ctrl-radius);
+  background: var(--card-global-header-background);
+  overflow: hidden;
+
+  .Code_Block_Head{
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 4px 8px 4px 12px;
+    border-bottom: 1px solid var(--hud-line);
+  }
+
+  .Code_Block_Label{
+    @include Mixin.Hud_Label(9.5px);
+    color: var(--text-faint);
+  }
+
+  .Code_Block_Language{
+    width: 130px;
+    height: 22px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    border: 1px solid var(--hud-line);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-soft);
+    font-family: Font.$font_family_mono;
+    font-size: 11px;
+
+    &::placeholder{ color: var(--text-faint); }
+
+    &:focus{
+      outline: none;
+      border-color: var(--accent);
+    }
+  }
+
+  .Code_Block_Toggle{
+    @include Mixin.Ghost_Button;
+    height: 24px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  pre{
+    margin: 0;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-family: Font.$font_family_mono;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--text-main);
+
+    &.hidden{ display: none; }
+
+    code{
+      padding: 0;
+      background: none;
+      color: inherit;
+      font-size: inherit;
+      white-space: pre;
+    }
+  }
+
+  &.mermaid:not(.editable) pre:not(.hidden){ border-top: 1px solid var(--hud-line); }
+
+  .Code_Block_Preview{
+    border-top: 1px dashed var(--hud-line-strong);
+    padding: 8px 12px 12px;
+
+    .Code_Block_Preview_Label{
+      display: block;
+      margin-bottom: 6px;
+      @include Mixin.Hud_Label(9px);
+      color: var(--text-faint);
+    }
+  }
+
+  .Mermaid_Diagram{
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    box-sizing: border-box;
+    background: var(--panel-background);
+    font-size: 12px;
+    color: var(--text-faint);
+
+    &.empty{ font-style: italic; }
+
+    &.failed .Mermaid_Diagram_Svg{ opacity: .35; }
+
+    .Mermaid_Diagram_Svg{
+      width: 100%;
+      overflow-x: auto;
+      display: flex;
+      justify-content: center;
+
+      svg{
+        max-width: 100%;
+        height: auto;
+      }
+    }
+
+    .Mermaid_Diagram_Error{
+      padding: 6px 10px;
+      border: 1px solid var(--danger-color);
+      border-radius: var(--ctrl-radius);
+      background: var(--danger-color-soft);
+      color: var(--danger-color);
+      font-size: 12px;
+    }
+  }
+}

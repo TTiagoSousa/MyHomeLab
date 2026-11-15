@@ -1,0 +1,27 @@
+@use '../../../Styles/Fonts.scss' as Font;
+
+.Server_Modal_Overlay .Project_Modal{
+  .Project_Modal_Agents{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    button{
+      padding: 6px 10px;
+      border: 1px solid var(--hud-line-strong);
+      border-radius: 999px;
+      background: transparent;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+
+      &.active{
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+      }
+    }
+  }
+}

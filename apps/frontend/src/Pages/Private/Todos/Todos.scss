@@ -1,0 +1,811 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+@mixin Small_Button {
+  @include Mixin.Ghost_Button;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
+  flex-shrink: 0;
+
+  &.primary{
+    @include Mixin.Solid_Button;
+    height: 32px;
+    padding: 0 14px;
+    font-size: 12px;
+  }
+
+  &.danger{
+    border-color: var(--danger-color);
+    background: var(--danger-color);
+    color: #fff;
+
+    &:hover:not(:disabled){
+      background: var(--danger-color);
+      border-color: var(--danger-color);
+      color: #fff;
+      opacity: .88;
+    }
+  }
+
+  &.ghost_danger:hover:not(:disabled){
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+    background: var(--danger-color-soft);
+  }
+}
+
+@mixin Plain_Input {
+  @include Mixin.Control_Surface;
+  height: 32px;
+  min-width: 0;
+  padding: 0 10px;
+  box-sizing: border-box;
+  font-size: 13px;
+}
+
+.Todos {
+  @include Mixin.Pages_Configs;
+
+  > header{
+    @include Mixin.Page_Header;
+
+    .Right_Side span{ color: var(--card-global-header-title-color); }
+
+    .Todos_sync_button{
+      @include Mixin.Ghost_Button;
+      height: 38px;
+      padding: 0 14px;
+
+      svg{ width: 15px; height: 15px; }
+    }
+
+    .Left_Side{ display: flex; gap: 8px; }
+  }
+
+  .Todos_layout{
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    align-items: start;
+    gap: 14px;
+  }
+
+  &.with_detail .Todos_layout{ grid-template-columns: 220px minmax(0, 1fr) 380px; }
+
+  .Todos_sidebar{
+    @include Mixin.Panel_Surface;
+    position: sticky;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .Todos_sidebar_group{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .Todos_sidebar_label{
+    @include Mixin.Hud_Label(9px);
+    color: var(--text-faint);
+    padding: 4px 10px 6px;
+  }
+
+  .Todos_sidebar_item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 34px;
+    padding: 0 10px;
+    border: 1px solid transparent;
+    border-radius: var(--ctrl-radius);
+    background: transparent;
+    color: var(--text-soft);
+    font-family: Font.$font_family_sans;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: color .15s ease, background .15s ease, border-color .15s ease;
+
+    > span:first-child{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &:hover{
+      color: var(--text-main);
+      background: var(--accent-soft);
+    }
+
+    &.active{
+      color: var(--accent-bright);
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+  }
+
+  .Todos_sidebar_count{
+    flex-shrink: 0;
+    min-width: 22px;
+    text-align: right;
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .Todos_sidebar_add{
+    @include Mixin.Ghost_Button;
+    justify-content: flex-start;
+    height: 34px;
+    margin-top: 6px;
+    padding: 0 10px;
+    border-style: dashed;
+    font-size: 12.5px;
+
+    svg{
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  .Todos_sidebar_new{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+
+    input{ @include Plain_Input; }
+    button{ @include Small_Button; }
+  }
+
+  .Todos_main{
+    @include Mixin.Panel_Surface;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    box-sizing: border-box;
+  }
+
+  .Todos_main_head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 32px;
+
+    h2{
+      margin: 0;
+      font-family: Font.$font_family_hud;
+      font-size: 16px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--card-global-header-title-color);
+    }
+  }
+
+  .Todos_list_actions{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+
+    input{
+      @include Plain_Input;
+      width: 200px;
+    }
+
+    button{ @include Small_Button; }
+  }
+
+  .Todos_list_warning{
+    font-size: 12px;
+    color: var(--danger-color);
+  }
+
+  .Todos_toolbar{
+    display: flex;
+    gap: 8px;
+  }
+
+  .Todos_search{
+    @include Mixin.Control_Surface;
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    box-sizing: border-box;
+
+    svg{
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      color: var(--text-faint);
+    }
+
+    input{
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--input-global-letter-color);
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+
+      &::placeholder{ color: var(--text-faint); }
+    }
+  }
+
+  .Todos_done_toggle{
+    @include Small_Button;
+    height: 36px;
+
+    &.active{
+      color: var(--accent-bright);
+      border-color: var(--accent);
+    }
+  }
+
+  .Todos_quick_add{
+    @include Mixin.Control_Surface;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 6px 0 12px;
+    box-sizing: border-box;
+    border-style: dashed;
+
+    > svg{
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+      color: var(--accent);
+    }
+
+    input{
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--input-global-letter-color);
+      font-family: Font.$font_family_sans;
+      font-size: 13.5px;
+
+      &::placeholder{ color: var(--text-faint); }
+    }
+
+    button{ @include Small_Button; }
+  }
+
+  .Todos_sections{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .Todos_note{
+    margin: 8px 0;
+    font-size: 13px;
+    color: var(--text-faint);
+
+    &.error{ color: var(--danger-color); }
+  }
+
+  .Todos_section{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    h3{
+      @include Mixin.Hud_Label(9.5px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 4px;
+      color: var(--text-faint);
+
+      span{ color: var(--text-soft); }
+    }
+
+    &.overdue h3{ color: var(--danger-color); }
+    &.today h3{ color: var(--accent-bright); }
+  }
+
+  .Todos_rows{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.Todo_Row{
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--ctrl-radius);
+  transition: background .15s ease, border-color .15s ease;
+
+  &:hover{ background: var(--accent-soft); }
+
+  &.selected{
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  &.done .Todo_Row_Title{
+    color: var(--text-faint);
+    text-decoration: line-through;
+  }
+}
+
+.Todo_Row_Add{
+  @include Small_Button;
+  height: 26px;
+  padding: 0 8px;
+  font-size: 11.5px;
+  opacity: 0;
+  transition: opacity .15s ease, color .15s ease, border-color .15s ease, background .15s ease;
+
+  svg{
+    width: 10px;
+    height: 10px;
+  }
+
+  .Todo_Row:hover &,
+  .Todo_Row.selected &,
+  &:focus-visible{ opacity: 1; }
+
+  @media (hover: none) { opacity: 1; }
+}
+
+.Todo_Sub_Add{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+
+  input{
+    @include Plain_Input;
+    flex: 1;
+  }
+
+  button{ @include Small_Button; }
+}
+
+.Todo_Check{
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  padding: 0;
+  border: 1.5px solid var(--hud-line-strong);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: border-color .15s ease, background .15s ease;
+
+  &.high{ border-color: var(--danger-color); }
+  &.medium{ border-color: var(--stat-attention); }
+  &.low{ border-color: var(--accent); }
+
+  &:hover:not(:disabled){ border-color: var(--accent-bright); }
+
+  &.checked{
+    border-color: var(--accent);
+    background: var(--accent);
+
+    &::after{
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 4px;
+      height: 8px;
+      border: solid var(--on-accent);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  &.small{
+    width: 16px;
+    height: 16px;
+
+    &.checked::after{
+      left: 4px;
+      top: 1px;
+    }
+  }
+
+  &:disabled{
+    opacity: .5;
+    cursor: default;
+  }
+}
+
+.Todo_Row_Body{
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-family: Font.$font_family_sans;
+  cursor: pointer;
+}
+
+.Todo_Row_Title{
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+.Todo_Row_Meta{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+
+  &:empty{ display: none; }
+}
+
+.Todo_Tag{
+  display: inline-flex;
+  align-items: center;
+  height: 19px;
+  padding: 0 7px;
+  border: 1px solid var(--hud-line);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--text-soft);
+  white-space: nowrap;
+
+  &.due.overdue{
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+  }
+
+  &.priority.high{ color: var(--danger-color); }
+  &.priority.medium{ color: var(--stat-attention); }
+  &.progress{ color: var(--accent-bright); border-color: var(--accent); }
+  &.agent{ color: var(--accent-bright); }
+}
+
+.Todo_Row_Notes{
+  flex: 1 1 160px;
+  min-width: 0;
+  font-size: 11.5px;
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Todo_Detail{
+  @include Mixin.Panel_Surface;
+  position: sticky;
+  top: 10px;
+  height: calc(100vh - 75px);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.Todo_Detail_Head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 12px 0 14px;
+}
+
+.Todo_Detail_Kicker{
+  @include Mixin.Hud_Label(9px);
+  color: var(--text-faint);
+}
+
+.Todo_Detail_Parent{
+  @include Mixin.Ghost_Button;
+  height: 28px;
+  min-width: 0;
+  padding: 0 10px;
+  font-size: 12px;
+
+  svg{
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    transform: rotate(90deg);
+  }
+
+  span{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.Todo_Detail_Close{
+  @include Mixin.Ghost_Button;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  flex-shrink: 0;
+
+  svg{
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.Todo_Detail_Body{
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 12px 14px;
+}
+
+.Todo_Detail_Title{
+  @include Mixin.Control_Surface;
+  width: 100%;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  resize: vertical;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.Todo_Detail_Grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  .wide{ grid-column: 1 / -1; }
+}
+
+.Todo_Detail_Field{
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  > span{
+    @include Mixin.Hud_Label(9px);
+    color: var(--text-faint);
+  }
+
+  .Dropdown_Field{ height: 36px; }
+}
+
+.Todo_Detail_Notes{
+  @include Mixin.Control_Surface;
+  width: 100%;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  resize: vertical;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.Todo_Detail_Link{
+  display: flex;
+  gap: 6px;
+
+  > :first-child{
+    flex: 1;
+    min-width: 0;
+  }
+
+  button{
+    @include Small_Button;
+    height: 38px;
+  }
+}
+
+.Todo_Detail_Link_Row{
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.Todo_Detail_Link_Open{
+  @include Mixin.Control_Surface;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 6px 10px;
+  text-align: left;
+  cursor: pointer;
+
+  span{
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--accent-bright);
+  }
+
+  small{
+    max-width: 100%;
+    font-size: 11px;
+    color: var(--text-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover{ border-color: var(--accent); }
+}
+
+.Todo_Detail_Link_Remove{
+  @include Small_Button;
+  width: 32px;
+  height: auto;
+  padding: 0;
+
+  svg{
+    width: 10px;
+    height: 10px;
+  }
+
+  &:hover:not(:disabled){
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+    background: var(--danger-color-soft);
+  }
+}
+
+.Todo_Detail_Label{
+  @include Mixin.Hud_Label(9px);
+  color: var(--text-faint);
+}
+
+.Todo_Detail_Subtasks{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.Todo_Detail_Subtask{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &.done .Todo_Detail_Subtask_Title{
+    color: var(--text-faint);
+    text-decoration: line-through;
+  }
+
+  .Todo_Check{ margin-top: 0; }
+}
+
+.Todo_Detail_Subtask_Title{
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  font-family: Font.$font_family_sans;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover{ color: var(--accent-bright); }
+}
+
+.Todo_Detail_Subtask_New{
+  display: flex;
+  gap: 6px;
+
+  input{
+    @include Plain_Input;
+    flex: 1;
+  }
+
+  button{ @include Small_Button; }
+}
+
+.Todo_Detail_Info{
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+.Todo_Detail_Footer{
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--hud-line);
+
+  button{ @include Small_Button; }
+}
+
+@media (max-width: 1180px) {
+  .Todos.with_detail .Todos_layout{ grid-template-columns: 200px minmax(0, 1fr); }
+
+  .Todos .Todo_Detail{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(420px, 100%);
+    height: auto;
+    z-index: 900;
+    border-radius: 0;
+    background: var(--modal-background);
+    box-shadow: -20px 0 60px rgba(0, 0, 0, .45);
+  }
+}
+
+@media (max-width: 760px) {
+  .Todos .Todos_layout,
+  .Todos.with_detail .Todos_layout{ grid-template-columns: minmax(0, 1fr); }
+
+  .Todos .Todos_sidebar{
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 6px;
+    padding: 8px;
+
+    .Todos_sidebar_group{
+      flex-direction: row;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .Todos_sidebar_label{ display: none; }
+
+    .Todos_sidebar_item{
+      flex-shrink: 0;
+      border-color: var(--hud-line);
+    }
+
+    .Todos_sidebar_add{
+      flex-shrink: 0;
+      margin-top: 0;
+    }
+
+    .Todos_sidebar_new{
+      flex-direction: row;
+      margin-top: 0;
+
+      input{ width: 140px; }
+    }
+  }
+
+  .Todos .Todos_main{ padding: 12px; }
+
+  .Todos .Todos_toolbar{ flex-wrap: wrap; }
+}

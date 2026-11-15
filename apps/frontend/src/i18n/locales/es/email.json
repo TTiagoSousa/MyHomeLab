@@ -1,0 +1,310 @@
+{
+  "page": {
+    "title": "Gmail",
+    "organizerDescription": "Crea reglas para organizar automáticamente tu bandeja de entrada",
+    "allRules": "Ver reglas de todas",
+    "connections": "Conexiones",
+    "connect": "Conectar cuenta de Google"
+  },
+  "account": {
+    "fallbackTitle": "Cuenta de Google",
+    "rules_one": "{{count}} regla",
+    "rules_other": "{{count}} reglas",
+    "meta": "{{rules}} · última ejecución {{lastRun}}",
+    "viewRules": "Ver reglas",
+    "frequency": "Frecuencia",
+    "stats": {
+      "inbox": "En la bandeja de entrada",
+      "read": "Leídos",
+      "all": "Todos los correos",
+      "refresh": "Actualizar contadores"
+    },
+    "viewProposals_one": "Ver propuestas ({{count}})",
+    "viewProposals_other": "Ver propuestas ({{count}})",
+    "proposalFrequency": "Analizar y proponer",
+    "proposalsOff": "Desactivado",
+    "autoImplement": "Implementar solas tras (días)",
+    "autoImplementNever": "Nunca",
+    "autoImplementHint": "Una propuesta que no tocas durante esos días pasa a regla. Vacío = solo a mano.",
+    "sections": {
+      "rules": "Reglas",
+      "proposals": "Reglas propuestas",
+      "account": "Cuenta"
+    },
+    "pending_one": "{{count}} pendiente",
+    "pending_other": "{{count}} pendientes",
+    "proposalsMeta": "{{pending}} · último análisis {{lastAnalysis}}",
+    "pendingProposals_one": "{{count}} propuesta",
+    "pendingProposals_other": "{{count}} propuestas",
+    "cancelRemove": "Cancelar",
+    "confirmRemove": "Desconectar cuenta",
+    "loading": "Cargando…",
+    "notFound": "Esta cuenta de Google ya no está conectada.",
+    "remove": "Desconectar"
+  },
+  "run": {
+    "inbox": "Ejecutar en el Inbox",
+    "all": "Ejecutar en todo el correo"
+  },
+  "rules": {
+    "back": "← Gmail",
+    "title": "Reglas de correo",
+    "new": "Nueva regla",
+    "empty": "Todavía no tienes reglas para esta cuenta.",
+    "active": "Activa",
+    "inactive": "Inactiva",
+    "noPath": "Sin ruta definida",
+    "mailKindTag": {
+      "BULK": "Publicidad",
+      "DIRECT": "Sin publicidad"
+    },
+    "allAccounts": "Todas las cuentas",
+    "accountsLabel": "Cuenta",
+    "pickAccount": "Elige una cuenta para crear la regla"
+  },
+  "form": {
+    "name": "Nombre de la regla (opcional)",
+    "namePlaceholder": "Si está vacío, se usa la ruta o la condición",
+    "sections": {
+      "conditions": "Condiciones",
+      "immediateActions": "Acciones inmediatas (al encontrar el correo)",
+      "removeFromInbox": "Quitar de la bandeja de entrada",
+      "expiration": "Caducidad de destacado / importante",
+      "paths": "Rutas (etiquetas)"
+    },
+    "from": "Remitente (De) contiene — quién envió el correo",
+    "fromPlaceholder": "p. ej.: google.com, facturas@",
+    "subject": "Asunto contiene (separado por comas)",
+    "subjectPlaceholder": "p. ej.: recibo, factura",
+    "keywords": "Palabras clave en el cuerpo (separadas por comas)",
+    "keywordsHint": "Varias palabras deben aparecer todas, en cualquier orden. Para una frase exacta, usa comillas: \"Cuenta de Google\".",
+    "excludeKeywords": "Excluir palabras clave (separadas por comas)",
+    "conditionLogic": "Lógica de las condiciones",
+    "conditionLogicOptions": {
+      "ALL": "Todas tienen que coincidir",
+      "ANY": "Basta con que coincida una"
+    },
+    "matchType": "Tipo de coincidencia",
+    "matchTypeOptions": {
+      "CONTAINS": "Contiene",
+      "EXACT": "Exacto",
+      "REGEX": "Expresión regular"
+    },
+    "mailKind": "Tipo de envío",
+    "mailKindOptions": {
+      "ANY": "Cualquiera",
+      "BULK": "Solo publicidad y boletines",
+      "DIRECT": "Sin publicidad (cuenta, facturas…)"
+    },
+    "mailKindHint": "Publicidad = correos con \"lista de correo\" o \"cancelar suscripción\". Sirve para separar la publicidad de una empresa de los correos de la cuenta cuando llegan del mismo remitente.",
+    "hasAttachment": "Tiene adjunto",
+    "hasAttachmentOptions": {
+      "any": "Indiferente",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "markAsRead": "Marcar como leído",
+    "markAsImportant": "Marcar como importante",
+    "markAsStarred": "Destacar",
+    "stopProcessing": "Dejar de evaluar más reglas",
+    "removeFromInbox": "Quitar de la bandeja de entrada (archivar)",
+    "inboxTiming": "Cuándo quitar",
+    "inboxTimingOptions": {
+      "immediate": "Inmediatamente",
+      "after_days": "X días después de recibirlo"
+    },
+    "inboxDays": "Días tras recibirlo",
+    "inboxDaysPlaceholder": "p. ej.: 2",
+    "removeOnlyIfRead": "Quitar solo si ya está leído",
+    "markAsReadOnRemove": "Marcar como leído al archivar",
+    "starExpires": "El destacado caduca tras (días)",
+    "importantExpires": "Importante caduca tras (días)",
+    "neverPlaceholder": "Nunca",
+    "importantExpiresOnStar": "Importante caduca en cuanto se destaca",
+    "pathsHint": "Cada ruta es un recorrido completo e independiente, separado por \"/\" (p. ej.: Bancos/Revolut/Salida de dinero). Elige, para cada ruta, si el correo se queda en todas las etiquetas del recorrido o solo en la última.",
+    "path": "Ruta {{number}}",
+    "pathPlaceholder": "p. ej.: Bancos/Revolut/Salida de dinero",
+    "pathMode": "Modo de esta ruta",
+    "labelModeOptions": {
+      "ALL_LEVELS": "Se queda en todas las etiquetas de la ruta",
+      "LEAF_ONLY": "Se queda solo en la etiqueta final de la ruta"
+    },
+    "removePath": "Quitar ruta",
+    "addPath": "+ Añadir ruta"
+  },
+  "alerts": {
+    "accountRemoved": "Cuenta eliminada",
+    "ruleCreated": "Regla creada",
+    "ruleUpdated": "Regla actualizada",
+    "ruleDeleted": "Regla eliminada",
+    "runResult": "{{rules}} reglas evaluadas, {{matched}} correos encontrados, {{modified}} modificados{{truncated}}",
+    "runTruncated": " (límite alcanzado, vuelve a ejecutar para continuar)",
+    "proposalSettingsSaved": "Ajustes de las reglas propuestas guardados."
+  },
+  "search": {
+    "placeholder": "Buscar reglas — nombre, etiqueta, remitente, asunto…  ( / )",
+    "label": "Buscar reglas",
+    "clear": "Borrar búsqueda",
+    "clearAll": "Quitar filtros",
+    "inLabel": "Buscar en",
+    "statusLabel": "Estado",
+    "fields": {
+      "all": "Todo",
+      "name": "Nombre",
+      "labels": "Etiquetas",
+      "from": "Remitente",
+      "subject": "Asunto",
+      "keywords": "Palabras clave"
+    },
+    "status": {
+      "all": "Todas",
+      "active": "Activas",
+      "inactive": "Inactivas",
+      "bulk": "Por tipo de envío"
+    },
+    "count_one": "{{shown}} de {{count}} regla",
+    "count_other": "{{shown}} de {{count}} reglas",
+    "total_one": "{{count}} regla",
+    "total_other": "{{count}} reglas",
+    "noResults": "Ninguna regla coincide con la búsqueda."
+  },
+  "proposals": {
+    "title": "Reglas propuestas",
+    "tag": "Propuesta",
+    "edited": "Editada",
+    "unnamed": "Sin nombre",
+    "intro": "Jarvis analiza los emails sin etiquetas y propone reglas. En cada análisis revisa las propuestas que no has tocado — las cambia, las borra o crea nuevas. Las que editas se quedan como las dejaste.",
+    "lastAnalysis": "Último análisis: {{date}}.",
+    "neverAnalyzed": "Aún no ha habido ningún análisis.",
+    "analyzeNow": "Analizar ahora",
+    "analyzing": "Analizando…",
+    "implementAll_one": "Implementar ({{count}})",
+    "implementAll_other": "Implementar todas ({{count}})",
+    "empty": "No hay propuestas. Pulsa Analizar ahora, o elige una frecuencia en la página Email.",
+    "when": "Cuando",
+    "does": "Hace",
+    "conditions": {
+      "from": "de {{values}}",
+      "subject": "asunto con {{values}}",
+      "keywords": "con las palabras {{values}}"
+    },
+    "actions": {
+      "label": "etiqueta {{path}}",
+      "markAsRead": "marca como leído",
+      "markAsImportant": "marca como importante",
+      "markAsStarred": "pone estrella",
+      "archiveNow": "archiva ya",
+      "archiveAfter_one": "archiva al cabo de {{count}} día",
+      "archiveAfter_other": "archiva al cabo de {{count}} días",
+      "onlyIfRead": "solo si está leído",
+      "readOnArchive": "marca como leído al archivar",
+      "starExpires_one": "quita la estrella al cabo de {{count}} día",
+      "starExpires_other": "quita la estrella al cabo de {{count}} días",
+      "importantExpires_one": "quita el importante al cabo de {{count}} día",
+      "importantExpires_other": "quita el importante al cabo de {{count}} días",
+      "stop": "detiene las reglas siguientes"
+    },
+    "evidence": "{{emails}} emails · {{unread}} sin leer · {{bulk}} publicidad",
+    "autoAt": "Se implementa sola el {{date}} si no la tocas.",
+    "implement": "Implementar",
+    "edit": "Editar",
+    "dismiss": "Ignorar",
+    "recent_one": "{{count}} propuesta ya decidida",
+    "recent_other": "{{count}} propuestas ya decididas",
+    "status": {
+      "IMPLEMENTED": "Implementada",
+      "DISMISSED": "Ignorada",
+      "PENDING": "Pendiente"
+    },
+    "alerts": {
+      "analyzed": "Análisis hecho: {{created}} nuevas, {{updated}} revisadas, {{deleted}} borradas, {{rejected}} rechazadas ({{unlabeled}} emails sin etiqueta).",
+      "implementedAll_one": "{{count}} regla creada.",
+      "implementedAll_other": "{{count}} reglas creadas.",
+      "implemented": "Regla creada.",
+      "dismissed": "Propuesta ignorada — no volverá a aparecer.",
+      "updated": "Propuesta guardada.",
+      "restored": "La propuesta volvió a las pendientes."
+    },
+    "restore": "Volver a proponer",
+    "decidedAt": "Decidida el {{date}}"
+  },
+  "connections": {
+    "permissionsTitle": "Permisos de cada cuenta",
+    "permissionsSummary": "Lo que Google dejó hacer a MyHomeLab cuando conectaste la cuenta.",
+    "allowed": "Permiso concedido",
+    "missing": "Falta el permiso",
+    "partial": "Solo en {{count}} de {{total}} cuentas",
+    "noAccounts": "Aún no hay cuentas de Gmail conectadas.",
+    "callsTitle": "Llamadas a la API de Gmail",
+    "callsSummary": "Lo que se puede pedir a la API de Gmail ({{base}}): las llamadas que MyHomeLab ya usa y las que aún no usa.",
+    "filterLabel": "Mostrar llamadas",
+    "filter": {
+      "all": "Todas ({{count}})",
+      "used": "Usadas ({{count}})",
+      "possible": "Posibles ({{count}})"
+    },
+    "table": {
+      "method": "Método",
+      "path": "Ruta",
+      "description": "Qué hace",
+      "usedBy": "Quién la usa",
+      "scope": "Permiso",
+      "status": "Estado",
+      "allows": "Qué permite"
+    },
+    "notUsed": "Aún sin usar",
+    "granted": "Concedido",
+    "notGranted": "No concedido",
+    "includedIn": "incluido en {{scope}}",
+    "scopes": {
+      "readonly": "Leer correos, etiquetas y el perfil",
+      "modify": "Leer, cambiar etiquetas, archivar, papelera, borradores y enviar",
+      "labels": "Ver, crear, cambiar y borrar etiquetas",
+      "compose": "Crear, cambiar y enviar borradores",
+      "send": "Solo enviar correos",
+      "settingsBasic": "Filtros de Gmail y respuesta automática de vacaciones",
+      "fullAccess": "Todo, incluido borrar correos para siempre"
+    },
+    "usedBy": {
+      "rules": "Reglas",
+      "proposals": "Propuestas",
+      "assistant": "Jarvis",
+      "stats": "Contadores"
+    },
+    "calls": {
+      "messagesList": "Buscar correos con una búsqueda de Gmail",
+      "messageGet": "Leer un correo: cabeceras, resumen o el contenido completo",
+      "attachmentGet": "Leer un adjunto",
+      "messageModify": "Poner o quitar etiquetas, archivar y marcar como leído",
+      "messageTrash": "Mandar un correo a la papelera",
+      "messageUntrash": "Sacar un correo de la papelera",
+      "labelsList": "Ver las etiquetas",
+      "labelCreate": "Crear una etiqueta",
+      "labelGet": "Ver los números de una etiqueta (total y sin leer)",
+      "draftCreate": "Crear un borrador de respuesta o reenvío",
+      "draftGet": "Ver un borrador",
+      "draftSend": "Enviar un borrador",
+      "profileGet": "Ver el perfil y el total de correos de la cuenta",
+      "threadsList": "Buscar conversaciones completas",
+      "threadGet": "Leer una conversación completa",
+      "threadModify": "Cambiar las etiquetas de una conversación completa",
+      "threadTrash": "Mandar una conversación completa a la papelera",
+      "historyList": "Ver qué cambió en el buzón desde la última vez",
+      "messagesBatchModify": "Cambiar las etiquetas de muchos correos a la vez",
+      "messageSend": "Enviar un correo sin borrador",
+      "labelPatch": "Cambiar el nombre o el color de una etiqueta",
+      "labelDelete": "Borrar una etiqueta",
+      "draftsList": "Ver todos los borradores",
+      "draftUpdate": "Cambiar un borrador",
+      "draftDelete": "Borrar un borrador",
+      "watch": "Recibir un aviso cuando llega un correo (necesita Pub/Sub de Google)",
+      "filtersList": "Ver los filtros del propio Gmail",
+      "filterCreate": "Crear un filtro en Gmail",
+      "filterDelete": "Borrar un filtro de Gmail",
+      "vacationGet": "Ver la respuesta automática de vacaciones",
+      "vacationUpdate": "Activar o cambiar la respuesta automática de vacaciones",
+      "messageDelete": "Borrar un correo para siempre, sin pasar por la papelera",
+      "messagesBatchDelete": "Borrar muchos correos para siempre"
+    }
+  }
+}

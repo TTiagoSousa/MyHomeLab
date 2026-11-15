@@ -1,0 +1,121 @@
+@use '../../Styles/Fonts.scss' as Font;
+@use '../../Styles/Mixins.scss' as Mixin;
+
+.Linked_Schedules{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .Linked_Schedules_Note{
+    margin: 0;
+    font-size: 12px;
+    color: var(--navbar-vertical-default-link-color);
+  }
+
+  .Linked_Schedules_Table_Wrap{
+    overflow-x: auto;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Linked_Schedules_Table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+
+    th{
+      @include Mixin.Hud_Label(9px);
+      padding: 7px 10px;
+      text-align: left;
+      color: var(--text-soft);
+      border-bottom: 1px solid var(--hud-line);
+      white-space: nowrap;
+    }
+
+    td{
+      padding: 6px 10px;
+      color: var(--text-soft);
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    tbody tr{
+      cursor: pointer;
+
+      & + tr td{ border-top: 1px solid var(--hud-line); }
+
+      &:hover td{ background: var(--accent-soft); }
+    }
+
+    td.name{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 320px;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .Linked_Schedules_Title{
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .Linked_Schedules_Dot{
+      width: 7px;
+      height: 7px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--text-faint);
+
+      &.on{ background: var(--stat-positive); }
+    }
+
+    td.last{
+      &.failed{ color: var(--danger-color); }
+      &.running{ color: var(--stat-attention); }
+      &.never{ color: var(--text-faint); }
+    }
+
+    td.actions{
+      width: 1%;
+      text-align: right;
+
+      button{
+        @include Mixin.Ghost_Button;
+        height: 26px;
+        padding: 0 10px;
+        font-size: 11.5px;
+      }
+    }
+
+    @media (max-width: 700px){
+      .agent{ display: none; }
+    }
+  }
+
+  .Linked_Schedules_Footer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+    }
+
+    .Linked_Schedules_New{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      svg{
+        width: 13px;
+        height: 13px;
+      }
+    }
+  }
+}

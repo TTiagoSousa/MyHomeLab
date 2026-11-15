@@ -1,0 +1,203 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Help {
+  @include Mixin.Pages_Configs;
+
+  header{
+    @include Mixin.Page_Header;
+
+    .Right_Side span{ color: var(--card-global-header-title-color); }
+  }
+
+  .Help_intro{
+    margin: 0;
+    max-width: 80ch;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text-soft);
+  }
+
+  .Help_layout{
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+
+    @media (max-width: 900px){ grid-template-columns: 1fr; }
+  }
+
+  .Help_index{
+    position: sticky;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    @media (max-width: 900px){
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    button{
+      padding: 7px 10px;
+      border: none;
+      border-left: 2px solid transparent;
+      background: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+      color: var(--text-soft);
+
+      &:hover{ color: var(--text-main); }
+
+      &.active{
+        border-left-color: var(--accent);
+        color: var(--accent-bright);
+        background: var(--accent-soft);
+      }
+    }
+  }
+
+  .Help_topics{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .Help_topic{
+    @include Mixin.Panel_Surface;
+    scroll-margin-top: 10px;
+    padding: 14px 16px;
+    box-sizing: border-box;
+  }
+
+  .Help_topic_head{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: Font.$font_family_sans;
+
+    &:focus-visible{
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+  }
+
+  .Help_topic_chevron{
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    padding: 3px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    display: flex;
+    color: var(--text-soft);
+    transition: transform .2s;
+
+    svg{ width: 100%; height: 100%; }
+  }
+
+  .Help_topic_text{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .Help_topic_title{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .Help_topic_summary{
+    font-size: 12.5px;
+    color: var(--text-soft);
+  }
+
+  .Help_tag{
+    @include Mixin.Hud_Label(8px);
+    padding: 1px 6px;
+    border: 1px solid var(--stat-attention);
+    border-radius: var(--ctrl-radius);
+    color: var(--stat-attention);
+  }
+
+  .Help_topic_body{
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .25s ease;
+  }
+
+  .Help_topic_inner{
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-left: 28px;
+  }
+
+  .Help_topic.expanded{
+    .Help_topic_chevron{ transform: rotate(180deg); }
+    .Help_topic_body{ grid-template-rows: 1fr; }
+    .Help_topic_inner{ padding-top: 14px; }
+  }
+
+  .Help_steps{
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text-main);
+
+    li::marker{
+      font-family: Font.$font_family_mono;
+      color: var(--accent-bright);
+    }
+  }
+
+  .Help_notes{
+    margin: 0;
+    padding: 10px 12px 10px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    background: var(--accent-soft);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  .Help_actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    a,
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+      text-decoration: none;
+    }
+  }
+}

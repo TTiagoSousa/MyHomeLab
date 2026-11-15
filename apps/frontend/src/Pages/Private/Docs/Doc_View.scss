@@ -1,0 +1,155 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Doc_View{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+
+  .Doc_View_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px 16px;
+  }
+
+  .Doc_View_Title{
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    h1{
+      margin: 0;
+      font-family: Font.$font_family_hud;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      line-height: 1.2;
+      color: var(--card-global-header-title-color);
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .Doc_View_Chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .Doc_View_Actions{
+    display: flex;
+    gap: 8px;
+  }
+
+  .Doc_View_Ghost{
+    @include Mixin.Ghost_Button;
+    height: 34px;
+    padding: 0 12px;
+    font-size: 12.5px;
+  }
+
+  .Doc_View_Edit{
+    @include Mixin.Solid_Button;
+    height: 34px;
+    padding: 0 14px;
+    font-size: 12.5px;
+
+    svg{
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .Doc_View_Meta{
+    margin-top: -4px;
+    font-family: Font.$font_family_mono;
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .Doc_View_Summary{
+    margin: 0;
+    padding: 8px 12px;
+    border-left: 2px solid var(--accent);
+    background: var(--card-global-header-background);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  .Doc_View_Facts{
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 8px 14px;
+    align-items: center;
+
+    dt{
+      @include Mixin.Hud_Label(9px);
+      color: var(--text-faint);
+    }
+
+    dd{
+      margin: 0;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    @media (max-width: 520px){
+      grid-template-columns: 1fr;
+      gap: 4px;
+
+      dd{ margin-bottom: 6px; }
+    }
+  }
+
+  .Doc_View_Tag{
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-bright);
+  }
+
+  .Doc_View_None{
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-faint);
+  }
+
+  .Doc_View_Body{
+    padding-top: 12px;
+    border-top: 1px solid var(--hud-line);
+  }
+
+  .Doc_View_Conflicts{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border: 1px solid var(--stat-attention);
+    border-radius: var(--ctrl-radius);
+    background: var(--stat-attention-soft);
+    font-size: 12.5px;
+    color: var(--text-main);
+
+    strong{ color: var(--stat-attention); }
+
+    p{ margin: 0; line-height: 1.45; }
+
+    button{
+      margin-right: 6px;
+      padding: 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--accent-bright);
+      text-decoration: underline;
+    }
+  }
+}

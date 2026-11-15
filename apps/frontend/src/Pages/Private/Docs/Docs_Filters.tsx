@@ -1,0 +1,127 @@
+import { useTranslation } from 'react-i18next';
+import Global_Dropdown from '../../../Components/Inputs/Global_Dropdown/Global_Dropdown';
+import { ATTEMPT_KIND, DOC_KINDS, DOC_LINK_TYPES, TYPE_PREFIX, type DocLinkType, type DocTarget, type DocUserType } from '../../../Hooks/Docs/docTypes';
+import * as Icon from '../../../Imports/icons';
+
+export interface DocsFilterValues {
+  search: string;
+  kind: string;
+  linkType: DocLinkType | '';
+  targetId: string;
+  required: boolean;
+  author: '' | 'USER' | 'AGENT';
+  sort: 'recent' | 'title';
+}
+
+interface Docs_Filters_Props {
+  values: DocsFilterValues;
+  types: DocUserType[];
+  targets: DocTarget[];
+  onSearch: (value: string) => void;
+  onChange: (name: string, value: string) => void;
+  onTarget: (target: DocTarget | null) => void;
+  onClear: () => void;
+  onManageTypes: () => void;
+}
+
+const Docs_Filters = ({ values, types, targets, onSearch, onChange, onTarget, onClear, onManageTypes }: Docs_Filters_Props) => {
+  const { t } = useTranslation('docs');
+
+  const kindOptions = [
+    { value: '', label: t('filters.allKinds') },
+    ...DOC_KINDS.map((value) => ({ value, label: t(`kinds.${value}`) })),
+    ...types.map((type) => ({ value: `${TYPE_PREFIX}${type.id}`, label: type.name })),
+    { value: ATTEMPT_KIND, label: t('kinds.ATTEMPT') },
+  ];
+
+  const linkOptions = [
+    { value: '', label: t('filters.allLinks') },
+    ...DOC_LINK_TYPES.map((value) => ({ value, label: t(`linkFilter.${value}`) })),
+  ];
+
+  const ofType = targets.filter((target) => target.type === values.linkType);
+  const targetOptions = [
+    { value: '', label: t('filters.anyTarget') },
+    ...ofType.map((target) => ({ value: target.targetId, label: target.label })),
+  ];
+
+  const authorOptions = [
+    { value: '', label: t('filters.anyAuthor') },
+    { value: 'USER', label: t('filters.mine') },
+    { value: 'AGENT', label: t('filters.agents') },
+  ];
+
+  const sortOptions = [
+    { value: 'recent', label: t('filters.sortRecent') },
+    { value: 'title', label: t('filters.sortTitle') },
+  ];
+
+  const active = Boolean(values.search || values.kind || values.linkType || values.required || values.author || values.sort !== 'recent');
+
+  return (
+    <section className='Docs_filters'>
+      <label className='Docs_search'>
+        <Icon.Search />
+        <input
+          type='search'
+          value={values.search}
+          placeholder={t('filters.search')}
+          aria-label={t('filters.search')}
+          onChange={(e) => onSearch(e.target.value)}
+        />
+      </label>
+
+      <div className='Docs_filter_field'>
+        <span>{t('filters.kindLabel')}</span>
+        <div className='Docs_filter_with_action'>
+          <Global_Dropdown value={values.kind} options={kindOptions} onChange={(value) => onChange('kind', value)} maxVisibleOptions={9} />
+          <button type='button' className='Docs_filter_action' onClick={onManageTypes} title={t('types.manage')}>
+            <Icon.Plus />
+          </button>
+        </div>
+      </div>
+
+      <div className='Docs_filter_field'>
+        <span>{t('filters.linkLabel')}</span>
+        <Global_Dropdown value={values.linkType} options={linkOptions} onChange={(value) => onChange('link', value)} maxVisibleOptions={9} />
+      </div>
+
+      {values.linkType && (
+        <div className='Docs_filter_field'>
+          <span>{t(`linkFilter.${values.linkType}`)}</span>
+          <Global_Dropdown
+            value={values.targetId}
+            options={targetOptions}
+            onChange={(value) => onTarget(ofType.find((target) => target.targetId === value) ?? null)}
+            maxVisibleOptions={9}
+            searchable={ofType.length > 8}
+          />
+        </div>
+      )}
+
+      <div className='Docs_filter_field'>
+        <span>{t('filters.authorLabel')}</span>
+        <Global_Dropdown value={values.author} options={authorOptions} onChange={(value) => onChange('author', value)} searchable={false} />
+      </div>
+
+      <div className='Docs_filter_field'>
+        <span>{t('filters.sortLabel')}</span>
+        <Global_Dropdown value={values.sort} options={sortOptions} onChange={(value) => onChange('sort', value)} searchable={false} />
+      </div>
+
+      <label className='Docs_filter_check'>
+        <input type='checkbox' checked={values.required} onChange={(e) => onChange('required', e.target.checked ? '1' : '')} />
+        <span>{t('filters.requiredOnly')}</span>
+      </label>
+
+      {active && (
+        <button type='button' className='Docs_filter_clear' onClick={onClear}>
+          <Icon.Close />
+          <span>{t('filters.clear')}</span>
+        </button>
+      )}
+    </section>
+  );
+};
+
+export default Docs_Filters;

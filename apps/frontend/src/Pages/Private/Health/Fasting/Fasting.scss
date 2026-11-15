@@ -1,0 +1,143 @@
+@use '../../../../Styles/Fonts.scss' as Font;
+
+.Health_Dashboard{
+  .Fasting_Form{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+
+    &.edit{
+      padding: 12px 14px;
+      background: var(--accent-soft);
+    }
+  }
+
+  .Health_Form.Fasting_Form_Times{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    &.start-only{ grid-template-columns: repeat(2, minmax(0, 200px)); }
+
+    @media (max-width: 800px){
+      grid-template-columns: 1fr 1fr;
+
+      &.start-only{ grid-template-columns: 1fr 1fr; }
+    }
+  }
+
+  .Fasting_Custom{
+    width: 130px;
+
+    .Global_Input{ height: 34px; }
+  }
+
+  .Fasting_Timer{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .Fasting_Timer_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+
+  .Fasting_Elapsed{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    em{
+      font-family: Font.$font_family_hud;
+      font-style: normal;
+      font-size: 30px;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent-bright);
+    }
+
+    small{
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Fasting_Meta{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+    font-size: 12.5px;
+    color: var(--text-soft);
+  }
+
+  .Fasting_Records_Count{
+    font-family: Font.$font_family_hud;
+    font-size: 16px;
+    color: var(--accent-bright);
+    white-space: nowrap;
+  }
+
+  .Fasting_Records{
+    display: flex;
+    flex-direction: column;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    overflow: hidden;
+
+    > * + *{ border-top: var(--card-border); }
+  }
+
+  .Fasting_Record{
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, .8fr) minmax(0, .8fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+
+    @media (max-width: 700px){
+      grid-template-columns: 1fr 1fr;
+
+      .Fasting_Record_Actions{ grid-column: 1 / -1; }
+    }
+  }
+
+  .Fasting_Record_Start{ font-weight: 600; }
+
+  .Fasting_Record_Hours{
+    font-family: Font.$font_family_mono;
+    color: var(--accent-bright);
+  }
+
+  .Fasting_Record_Target,
+  .Fasting_Record_Reached{ color: var(--text-faint); }
+
+  .Fasting_Record_Reached.reached{ color: #10b981; }
+
+  .Fasting_Record_Actions{
+    display: inline-flex;
+    justify-content: flex-end;
+    gap: 6px;
+
+    .Health_see_all{
+      height: 28px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+  }
+
+  .Fasting_Record_Notes{
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-soft);
+    overflow-wrap: anywhere;
+  }
+
+  .fasting-done{ background: var(--accent); }
+  .fasting-goal{ background: #10b981; }
+  .fasting-left{ background: var(--hud-line); }
+}

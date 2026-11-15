@@ -1,0 +1,217 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Email_Rule_Form_Modal_Overlay{
+  @include Mixin.Modal_Overlay;
+
+  .Email_Rule_Form_Modal{
+    @include Mixin.Modal_Panel;
+    width: 860px;
+    max-width: 100%;
+    max-height: 94vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+
+    .Email_Rule_Form_Modal_Columns{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 24px;
+      align-items: start;
+    }
+
+    .Email_Rule_Form_Modal_Column{
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .Email_Rule_Form_Modal_Section{
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: var(--card-border);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--navbar-vertical-default-link-color);
+    }
+
+    .Email_Rule_Form_Modal_Hint{
+      margin: -4px 0 0;
+      font-size: 11px;
+      color: var(--navbar-vertical-default-link-color);
+    }
+
+    .Email_Rule_Form_Modal_Row{
+      display: flex;
+      gap: 10px;
+
+      .Email_Rule_Form_Modal_Field{
+        .Global_Input,
+        .Dropdown_Field{
+          height: 38px;
+        }
+
+        flex: 1;
+        min-width: 0;
+      }
+    }
+
+    .Email_Rule_Form_Modal_Field{
+      .Global_Input,
+      .Dropdown_Field{
+        height: 38px;
+      }
+
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      label{
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+    }
+
+    .Email_Rule_Form_Modal_Checkboxes{
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .Email_Rule_Form_Modal_Checkboxes label,
+    .Email_Rule_Form_Modal_Inline_Checkbox{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 10px;
+      box-sizing: border-box;
+      border-radius: var(--ctrl-radius);
+      background-color: var(--card-global-header-background);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+
+      input{
+        order: 1;
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+        cursor: pointer;
+        accent-color: var(--accent);
+      }
+
+      &:hover{
+        background-color: var(--card-hover-background);
+      }
+    }
+
+    .Email_Rule_Form_Modal_Inline_Checkbox{
+      align-self: stretch;
+    }
+
+    .Email_Rule_Form_Modal_Paths{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .Email_Rule_Form_Modal_Path_Row{
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+
+      .Email_Rule_Form_Modal_Field{
+        .Global_Input,
+        .Dropdown_Field{
+          height: 38px;
+        }
+
+        flex: 1;
+        min-width: 0;
+      }
+    }
+
+    .Email_Rule_Form_Modal_Path_Remove{
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--ctrl-radius);
+      border: var(--card-border);
+      background-color: var(--card-global-header-background);
+      color: var(--card-global-header-title-color);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+
+      &:hover{
+        color: var(--danger-color);
+      }
+    }
+
+    .Email_Rule_Form_Modal_Path_Add{
+      align-self: flex-start;
+      padding: 8px 14px;
+      border-radius: var(--ctrl-radius);
+      border: var(--card-border);
+      background-color: var(--card-global-header-background);
+      color: var(--card-global-header-title-color);
+      font-family: Font.$font_family_sans;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+
+      &:hover{
+        color: var(--accent);
+      }
+    }
+
+    .Email_Rule_Form_Modal_Actions{
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+
+      button{
+        flex: 1;
+        height: 42px;
+        border-radius: var(--ctrl-radius);
+        cursor: pointer;
+        font-family: Font.$font_family_sans;
+        font-size: 13px;
+        font-weight: 700;
+        border: none;
+
+        &:disabled{
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .Cancel_Button{
+        background-color: var(--card-global-header-background);
+        color: var(--card-global-header-title-color);
+        border: var(--card-border);
+      }
+
+      .Save_Button{
+        background-color: var(--simple-button-background-color);
+        color: var(--simple-button-letter-color);
+      }
+    }
+  }
+}
+
+@media (max-width: 720px){
+  .Email_Rule_Form_Modal_Overlay .Email_Rule_Form_Modal{
+    .Email_Rule_Form_Modal_Columns{
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+}

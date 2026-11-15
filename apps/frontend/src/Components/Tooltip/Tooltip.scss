@@ -1,0 +1,33 @@
+@use '../../Styles/Fonts.scss' as Font;
+
+.Tooltip_Anchor{
+  display: inline-flex;
+  align-items: center;
+  outline: none;
+  cursor: default;
+
+  &:focus-visible{
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+}
+
+.Tooltip_Bubble{
+  position: fixed;
+  z-index: 1000;
+  max-width: 260px;
+  padding: 6px 9px;
+  transform: translate(-50%, calc(-100% - 8px));
+  border-radius: var(--ctrl-radius);
+  border: var(--card-border);
+  background-color: var(--modal-background);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+  color: var(--text-main);
+  font-family: Font.$font_family_sans;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: normal;
+  text-transform: none;
+  pointer-events: none;
+}

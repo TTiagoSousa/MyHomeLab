@@ -1,0 +1,2385 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ConnectionProvider {
+  GMAIL
+  OUTLOOK
+  IMAP
+  NEXTCLOUD
+  FORGEJO
+  TREK
+  HOME_ASSISTANT
+  ADGUARD
+  GOOGLE_TASKS
+  OPENGYM
+}
+
+// Onde é que o serviço corre. Serve para separar o que é do lab do que é de terceiros —
+// quando algo falha, é a primeira pergunta a fazer: isto sou eu ou é o fornecedor?
+// SELF_HOSTED é o valor por omissão porque o catálogo nasceu só com serviços do lab.
+enum ServiceHosting {
+  SELF_HOSTED
+  CLOUD
+}
+
+enum MatchType {
+  CONTAINS
+  EXACT
+  REGEX
+}
+
+enum LabelMode {
+  LEAF_ONLY
+  ALL_LEVELS
+}
+
+// Tipo de envio: em massa (newsletters, publicidade — trazem "lista de correio"
+// ou "cancelar a subscrição") ou direto (faturas, avisos de conta).
+enum MailKind {
+  ANY
+  BULK
+  DIRECT
+}
+
+enum ConditionLogic {
+  ALL
+  ANY
+}
+
+enum RunFrequency {
+  EVERY_15_MINUTES
+  EVERY_30_MINUTES
+  HOURLY
+  EVERY_2_HOURS
+  EVERY_4_HOURS
+  EVERY_6_HOURS
+  EVERY_8_HOURS
+  DAILY
+  WEEKLY
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+}
+
+model User {
+  id             String   @id @default(uuid())
+  username       String   @unique
+  hashedPassword String
+  role           Role     @default(USER)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  categories          Category[]
+  services            Service[]
+  connectedAccounts   ConnectedAccount[]
+  chatMessages        ChatMessage[]
+  conversations       Conversation[]
+  agentSettings       AgentSetting[]
+  agents              Agent[]
+  assistantPermission AssistantPermissionSetting?
+  agentAppAccess      AgentAppAccess[]
+  aiCredentials       AiCredential[]
+  serverConnections   ServerConnection[]
+  serverCommands      ServerCommand[]
+  serviceMonitors     ServiceMonitor[]
+  notifications       Notification[]
+  sleepSessions       SleepSession[]
+  heartRateDays       HeartRateDay[]
+  skinTemperatureDays SkinTemperatureDay[]
+  bloodOxygenDays     BloodOxygenDay[]
+  stressDays          StressDay[]
+  activityDays        ActivityDay[]
+  workouts            Workout[]
+  weightEntries       WeightEntry[]
+  waterEntries        WaterEntry[]
+  healthProfile       HealthProfile?
+  labReports          LabReport[]
+  medications         Medication[]
+  healthConditions    HealthCondition[]
+  healthDiaryEntries  HealthDiaryEntry[]
+  meals               Meal[]
+  intakeEntries       IntakeEntry[]
+  bodyMeasurements    BodyMeasurement[]
+  progressPhotos      ProgressPhoto[]
+  vitalReadings       VitalReading[]
+  openGymConnection   OpenGymConnection?
+  backupDestinations  BackupDestination[]
+  backupJobs          BackupJob[]
+  intakeItems         IntakeItem[]
+  agentLogs           AgentLog[]
+  intakeSettings      IntakeSettings?
+  moodEntries         MoodEntry[]
+  habits              Habit[]
+  fasts               Fast[]
+  medicalAppointments MedicalAppointment[]
+  vaccines            Vaccine[]
+  medicalExams        MedicalExam[]
+  illnessEpisodes     IllnessEpisode[]
+  visionPrescriptions VisionPrescription[]
+  contactLensCycles   ContactLensCycle[]
+  healthReminders     HealthReminderSent[]
+  docs                Doc[]
+  docTypes            DocType[]
+  todoLists           TodoList[]
+  todos               Todo[]
+  todoSyncSetting     TodoSyncSetting?
+  todoSyncGroups      TodoSyncGroup[]
+  todoSyncLinks       TodoSyncLink[]
+  docProposals        DocProposal[]
+  appUpdates          AppUpdate[]
+  updateSetting       UpdateWorkflowSetting?
+  agentSchedules      AgentSchedule[]
+  updateAttempts      UpdateAttempt[]
+  projects            Project[]
+  boardTasks          BoardTask[]
+  aiUsage             AiUsage[]
+  docSeeds            DocSeed[]
+
+  @@index([username])
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  order     Int      @default(0)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  services Service[]
+
+  @@unique([userId, name])
+  @@index([userId, order])
+}
+
+model Service {
+  id           String         @id @default(uuid())
+  name         String
+  link         String
+  abbreviation String         @db.VarChar(2)
+  color        String
+  isFavorite   Boolean        @default(false)
+  hosting      ServiceHosting @default(SELF_HOSTED)
+  order        Int            @default(0)
+  categoryId   String
+  category     Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([categoryId, order])
+}
+
+model ConnectedAccount {
+  id           String             @id @default(uuid())
+  userId       String
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider     ConnectionProvider @default(GMAIL)
+  emailAddress String?
+  displayName  String?
+
+  // Google (OAuth)
+  accessToken    String?   @db.Text
+  refreshToken   String?   @db.Text
+  tokenExpiresAt DateTime?
+  scopes         String[]
+
+  // Nextcloud: o endereço (CalDAV/WebDAV), o utilizador e a password de app (backups).
+  caldavUrl      String?
+  caldavUsername String?
+  caldavPassword String? @db.Text
+
+  // Forgejo: o endereço da instância e o utilizador do token (o token vai em accessToken).
+  // TREK: o endereço, o email do administrador e a password dele (cifrada, em appPassword).
+  // AdGuard: o endereço, o utilizador do painel e a password dele (cifrada, em appPassword).
+  baseUrl     String?
+  username    String?
+  appPassword String? @db.Text
+  isAdmin     Boolean @default(false)
+
+  // Um cliente de API próprio da app (TREK: o cliente máquina do MCP, client_credentials):
+  // o id e o segredo (cifrado). Dá a API toda aos agentes, com as permissões escolhidas lá.
+  apiClientId     String?
+  apiClientSecret String? @db.Text
+
+  // Apps com versão (Forgejo): a versão instalada e, se houver, a mais recente
+  // publicada, vistas de 6 em 6 horas. Com versão nova abre-se um aviso.
+  appVersion       String?
+  appLatestVersion String?
+  appLatestUrl     String?
+  appCheckedAt     DateTime?
+
+  // Onde corre (apps do servidor): o servidor e o CT/VM. Daqui saem o grupo em Apps
+  // ligadas e o serviço vigiado (ping) em Serviços.
+  serverConnectionId String?
+  serverConnection   ServerConnection? @relation("AccountServer", fields: [serverConnectionId], references: [id], onDelete: SetNull)
+  guestVmid          Int?
+  serviceMonitor     ServiceMonitor?
+
+  isActive     Boolean      @default(true)
+  runFrequency RunFrequency @default(HOURLY)
+  lastRunAt    DateTime?
+
+  // Regras propostas: de quanto em quanto tempo se analisam os emails sem marcadores
+  // (null = desligado), quando foi a última vez, e ao fim de quantos dias uma proposta
+  // em que não se mexeu passa a regra sozinha (null = nunca).
+  proposalFrequency               RunFrequency?
+  lastProposalRunAt               DateTime?
+  autoImplementProposalsAfterDays Int?
+
+  // Desligar uma conta não a apaga: marca-se a data e limpam-se as credenciais. Assim as
+  // regras de email sobrevivem e voltam a valer se o mesmo email for religado.
+  disconnectedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  emailRules     EmailRule[]
+  appUpdates     AppUpdate[]     @relation("AccountUpdates")
+  updateAttempts UpdateAttempt[]
+
+  emailRuleProposals EmailRuleProposal[]
+  backupJobs         BackupJob[]         @relation("AccountBackups")
+  // A Saúde a ler os treinos por esta app (o openGym ligado), sem emparelhamento próprio.
+  openGymHealth      OpenGymConnection?
+  backupDestinations BackupDestination[] @relation("DestinationAccount")
+  notifications      Notification[]
+  todoSyncLinks      TodoSyncLink[]
+
+  @@index([userId])
+}
+
+model EmailRule {
+  id        String           @id @default(uuid())
+  accountId String
+  account   ConnectedAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  name      String
+  isActive  Boolean          @default(true)
+  order     Int              @default(0)
+
+  // --- Condições ---
+  conditionLogic  ConditionLogic @default(ALL)
+  fromContains    String[]
+  subjectContains String[]
+  keywords        String[]
+  excludeKeywords String[]
+  matchType       MatchType      @default(CONTAINS)
+  hasAttachment   Boolean?
+  mailKind        MailKind       @default(ANY)
+
+  // --- Ações imediatas ---
+  markAsRead      Boolean @default(false)
+  markAsImportant Boolean @default(false)
+  markAsStarred   Boolean @default(false)
+
+  // --- Controlo de execução ---
+  stopProcessing Boolean @default(false)
+
+  // --- Retenção no Inbox ---
+  removeFromInbox          Boolean @default(false)
+  removeFromInboxAfterDays Int?
+  removeOnlyIfRead         Boolean @default(false)
+  markAsReadOnRemove       Boolean @default(false)
+
+  // --- Expiração de Estrela / Importante ---
+  starredExpiresAfterDays   Int?
+  importantExpiresAfterDays Int?
+  importantExpiresOnStar    Boolean @default(false)
+
+  // --- Caminhos hierárquicos (cada um com o seu próprio modo) ---
+  labelPaths EmailRuleLabelPath[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([accountId, order])
+  @@index([accountId, isActive])
+}
+
+model EmailRuleLabelPath {
+  id        String    @id @default(uuid())
+  ruleId    String
+  rule      EmailRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  path      String
+  labelMode LabelMode @default(ALL_LEVELS)
+  order     Int       @default(0)
+
+  @@index([ruleId, order])
+}
+
+// A conversa com o assistente é de cada utilizador.
+// Uma conversa com o assistente (a barra lateral da página do Jarvis). A app continua
+// a mais recente; o resumo da manhã abre uma própria.
+model Conversation {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  /// A tarefa do quadro desta conversa ("Falar com o Jarvis" numa tarefa): uma por tarefa.
+  boardTaskId   String?       @unique
+  boardTask     BoardTask?    @relation(fields: [boardTaskId], references: [id], onDelete: SetNull)
+  messages      ChatMessage[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  lastMessageAt DateTime      @default(now())
+
+  @@index([userId, lastMessageAt])
+}
+
+model ChatMessage {
+  id             String        @id @default(uuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           ChatRole
+  content        String        @db.Text
+  /// [{ id, title }] os documentos que os agentes usaram nesta resposta
+  docsUsed       Json?
+  /// ["Assistente Administrativo: a ler um anexo (3769.pdf)", …] o que a equipa fez nesta resposta
+  actions        Json?
+  createdAt      DateTime      @default(now())
+
+  @@index([userId, createdAt])
+  @@index([conversationId, createdAt])
+}
+
+// Legado: as instruções extra dos agentes antigos ('main', 'email', 'server', 'health',
+// 'tasks'). Só se leem uma vez, para passarem para a equipa (Agent) quando ela é criada.
+model AgentSetting {
+  id           String  @id @default(uuid())
+  userId       String
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agentKey     String
+  customPrompt String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, agentKey])
+}
+
+enum AgentModel {
+  OPUS
+  SONNET
+}
+
+enum AgentEffort {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+// A equipa de agentes de cada utilizador (página Assistente → Workflow). Cada um tem
+// as suas instruções, o modelo, as ferramentas que pode usar (do catálogo do site) e
+// a quem responde. O de topo (reportsToId null) é o que fala com o utilizador.
+model Agent {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Identificador estável (registo e atividade); não muda quando se muda o nome.
+  key         String
+  name        String
+  description String      @db.Text
+  // Os que o site cria ('ceo', 'admin', …); null nos criados pelo utilizador.
+  template    String?
+  // null = as instruções do site (do template).
+  prompt      String?     @db.Text
+  extraPrompt String?     @db.Text
+  model       AgentModel  @default(SONNET)
+  effort      AgentEffort @default(LOW)
+  tools       String[]
+  reportsToId String?
+  reportsTo   Agent?      @relation("AgentTeam", fields: [reportsToId], references: [id], onDelete: SetNull)
+  team        Agent[]     @relation("AgentTeam")
+  color       Int         @default(1)
+  position    Int         @default(0)
+  isActive    Boolean     @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, key])
+}
+
+enum AgentLogKind {
+  REQUEST
+  START
+  ACTION
+  DONE
+  FAILED
+}
+
+// O registo do que os agentes fizeram (página Assistente → Workflow): quem pediu o
+// quê a quem, o que cada um esteve a fazer e como acabou. Guarda 30 dias.
+model AgentLog {
+  id          String       @id @default(uuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agent       String
+  kind        AgentLogKind
+  text        String       @db.Text
+  requestedBy String?
+  durationMs  Int?
+  createdAt   DateTime     @default(now())
+
+  @@index([userId, createdAt])
+}
+
+/// A IA dos agentes: o Claude Code da máquina, com a subscrição do utilizador.
+enum AiProvider {
+  CLAUDE_CODE
+}
+
+// A chave de API de cada utilizador para cada fornecedor de IA. O assistente
+// gasta a conta de quem está a falar com ele — não há chave geral.
+model AiCredential {
+  id             String     @id @default(uuid())
+  userId         String
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider       AiProvider
+  apiKey         String     @db.Text // o token da subscrição (claude setup-token), cifrado com TOKEN_ENCRYPTION_KEY; vazio = o login da máquina
+  keyHint        String // os últimos 4 caracteres, para mostrar qual está guardado
+  // O fornecedor que o assistente usa: só um por utilizador fica ativo.
+  isActive       Boolean    @default(false)
+  // Os modelos escolhidos (null = os da app): o do Jarvis e o dos outros agentes.
+  mainModel      String?
+  agentModel     String?
+  /// Limite de custo por mês, em euros (null = sem limite): aviso aos 80% e aos 100%.
+  monthlyBudget  Float?
+  budgetWarnedAt String? // "2026-11:80" — o último aviso dado
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, provider])
+}
+
+enum ServerKind {
+  PROXMOX
+}
+
+// Os servidores que o agente de servidor pode consultar — cada utilizador tem os seus.
+model ServerConnection {
+  id            String     @id @default(uuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind          ServerKind @default(PROXMOX)
+  name          String
+  host          String // só o host ou IP, sem https:// nem porta
+  port          Int        @default(8006)
+  tokenId       String // utilizador@realm!nome
+  tokenSecret   String     @db.Text // cifrado com TOKEN_ENCRYPTION_KEY
+  verifyTls     Boolean    @default(false) // o Proxmox usa por norma um certificado self-signed
+  // Comandos por SSH (nível 2): o par de chaves é gerado pela app; a pública vai
+  // para o authorized_keys do servidor. Sem chave, os comandos estão desligados.
+  sshUser       String?
+  sshPort       Int        @default(22)
+  sshPrivateKey String?    @db.Text // cifrada com TOKEN_ENCRYPTION_KEY
+  sshPublicKey  String?    @db.Text
+
+  serviceMonitors ServiceMonitor[]
+  diskReadings    DiskReading[]
+  notifications   Notification[]
+  commands        ServerCommand[]
+  projects        Project[]
+  accounts        ConnectedAccount[] @relation("AccountServer")
+  hostUpdates     AppUpdate[]        @relation("HostUpdates")
+  hostAttempts    UpdateAttempt[]    @relation("HostUpdateAttempts")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+}
+
+enum ServerCommandStatus {
+  PENDING // registado, ainda não começou
+  RUNNING
+  DONE
+  FAILED
+  REJECTED // histórico: de quando os comandos esperavam por aprovação
+  BLOCKED // histórico: de quando havia uma lista de proibidos no código
+}
+
+// Os comandos que os agentes correm num servidor por SSH: correm logo e fica tudo
+// registado (e, antes dos que alteram uma máquina, o snapshot que se fez).
+model ServerCommand {
+  id                 String              @id @default(uuid())
+  code               String // curto, para o chat (ex: K4P9QZ)
+  userId             String
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serverConnectionId String
+  serverConnection   ServerConnection    @relation(fields: [serverConnectionId], references: [id], onDelete: Cascade)
+  command            String              @db.Text
+  reason             String?             @db.Text
+  status             ServerCommandStatus
+  autoApproved       Boolean             @default(false)
+  requestedBy        String? // a chave do agente
+  turnId             String? // a volta de conversa em que foi pedido
+  updateId           String? // a atualização de uma app que este pedido aprova (AppUpdate)
+  output             String?             @db.Text
+  exitCode           Int?
+  snapshotName       String? // o snapshot que o MyHomeLab fez à máquina antes de correr
+  createdAt          DateTime            @default(now())
+  decidedAt          DateTime?
+  finishedAt         DateTime?
+
+  @@index([serverConnectionId, createdAt])
+  @@index([userId, code])
+}
+
+enum MonitorKind {
+  HTTP
+  TCP
+}
+
+// O que o serviço é. GENERIC só verifica se responde; os outros (AdGuard, …)
+// vão ganhar ações próprias.
+enum MonitorStatus {
+  UNKNOWN
+  UP
+  DOWN
+}
+
+// Um serviço que se verifica de X em X minutos. Pode estar associado a um
+// servidor e a uma máquina (VM/LXC) desse servidor.
+model ServiceMonitor {
+  id                 String            @id @default(uuid())
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  kind               MonitorKind       @default(HTTP)
+  target             String // URL (HTTP) ou host:porta (TCP)
+  intervalMinutes    Int               @default(5)
+  serverConnectionId String?
+  serverConnection   ServerConnection? @relation(fields: [serverConnectionId], references: [id], onDelete: SetNull)
+  guestVmid          Int?
+  guestName          String?
+  status             MonitorStatus     @default(UNKNOWN)
+  lastCheckedAt      DateTime?
+  lastLatencyMs      Int?
+  lastError          String?
+  guestMissing       Boolean           @default(false)
+  // Vem de uma app ligada (Apps ligadas → servidor/CT): o MyHomeLab cria-o, mantém-no
+  // e apaga-o; à mão só se mudam o nome e o intervalo.
+  accountId          String?           @unique
+  account            ConnectedAccount? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  // A tarefa aberta em Projetos da última falha (para não a repetir e comentar quando volta).
+  downTaskId         String?
+
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+enum NotificationKind {
+  SERVICE_DOWN
+  MACHINE_MISSING
+  APP_UPDATE
+  DISK_PROBLEM // vermelho: SMART a falhar, pool ZFS degradada, setores a aumentar
+  DISK_WARNING // laranja: pouca vida, temperatura alta, armazenamento quase cheio
+  CERT_EXPIRED // vermelho: certificado SSL do Nginx Proxy Manager já expirou
+  CERT_EXPIRING // laranja: certificado SSL expira em menos de 14 dias
+  APP_PROBLEM // vermelho: um problema dentro de uma app (ex: importações do Paperless que falharam)
+  BACKUP_FAILED // laranja: um backup automático falhou (fecha-se no próximo que correr bem)
+  APP_WARNING // laranja: um aviso dentro de uma app (ex: subscrição IPTV do Dispatcharr quase a expirar)
+  AGENT_NOTICE // azul: um agendamento de um agente tem algo a dizer (fecha-se com "Visto")
+}
+
+// Um aviso para o utilizador. Fica ativo até resolvedAt — os de serviços
+// resolvem-se sozinhos quando o serviço volta.
+model Notification {
+  id                 String            @id @default(uuid())
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind               NotificationKind
+  title              String
+  message            String            @db.Text
+  monitorId          String?
+  monitor            ServiceMonitor?   @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  // Alertas dos discos: o servidor e o que está em causa ("disk:pve:S3Z…", "pool:pve:tank").
+  serverConnectionId String?
+  serverConnection   ServerConnection? @relation(fields: [serverConnectionId], references: [id], onDelete: Cascade)
+  subject            String?
+  // Avisos de uma app ligada (versão nova, backup que falhou): abrem a página da conta.
+  connectedAccountId String?
+  connectedAccount   ConnectedAccount? @relation(fields: [connectedAccountId], references: [id], onDelete: Cascade)
+  createdAt          DateTime          @default(now())
+  resolvedAt         DateTime?
+
+  @@index([userId, resolvedAt])
+}
+
+/// Uma leitura por dia de cada disco físico de um nó Proxmox (a última do dia
+/// fica). Serve para ver a evolução e alertar quando os setores aumentam.
+model DiskReading {
+  id                 String           @id @default(uuid())
+  serverConnectionId String
+  serverConnection   ServerConnection @relation(fields: [serverConnectionId], references: [id], onDelete: Cascade)
+  node               String
+  diskKey            String // número de série, ou o devpath quando não há
+  devPath            String
+  model              String?
+  serial             String?
+  diskType           String? // hdd, ssd, nvme, usb…
+  sizeBytes          BigInt?
+  health             String? // PASSED, FAILED, OK, UNKNOWN…
+  wearout            Int? // % de vida que resta (SSD/NVMe)
+  temperature        Int?
+  reallocated        Int?
+  pending            Int?
+  mediaErrors        Int?
+  powerOnHours       Int?
+  day                DateTime         @db.Date
+  takenAt            DateTime         @default(now())
+
+  @@unique([serverConnectionId, node, diskKey, day])
+}
+
+enum ProposalStatus {
+  PENDING // à espera de decisão; a análise seguinte pode alterá-la ou apagá-la
+  DISMISSED // rejeitada: não volta a ser proposta
+  IMPLEMENTED // passou a regra (à mão ou ao fim de N dias)
+}
+
+/// Uma regra que o Jarvis propõe a partir dos emails sem marcadores. Os campos da
+/// regra ficam em JSON (o mesmo formato do CreateEmailRuleDto) — só viram uma
+/// EmailRule de verdade quando se implementa.
+model EmailRuleProposal {
+  id                String           @id @default(uuid())
+  accountId         String
+  account           ConnectedAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  rule              Json
+  reason            String           @db.Text
+  /// Os números que justificam a proposta: { emails, unread, bulk, senders[] }.
+  evidence          Json?
+  status            ProposalStatus   @default(PENDING)
+  /// Editada à mão: a análise seguinte já não lhe mexe.
+  userEdited        Boolean          @default(false)
+  implementedRuleId String?
+  decidedAt         DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([accountId, status])
+}
+
+/// Uma noite (ou sesta) de sono importada — por agora do export do Huawei Health
+/// (registos 700013 da pasta "Sample sequence data"). Uma linha por sessão, já com
+/// os totais calculados; as fases ficam em JSON para o gráfico da noite.
+model SleepSession {
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source         String // HUAWEI
+  externalId     String // recordId do export: importar outra vez atualiza em vez de duplicar
+  isNap          Boolean   @default(false)
+  /// O dia a que a sessão pertence: o dia (hora local) em que acordou.
+  night          DateTime  @db.Date
+  timeZone       String? // "+0100", como vem no export
+  bedAt          DateTime?
+  asleepAt       DateTime
+  wakeAt         DateTime
+  riseAt         DateTime?
+  asleepMin      Int // a dormir (profundo + leve + REM, ou a sesta toda)
+  deepMin        Int       @default(0)
+  lightMin       Int       @default(0)
+  remMin         Int       @default(0)
+  awakeMin       Int       @default(0)
+  efficiency     Int?
+  latencyMin     Int?
+  deepContinuity Int?
+  wakeCount      Int?
+  turnOverCount  Int?
+  snoreFreq      Int?
+  rdi            Float?
+  avgHeartRate   Int?
+  minHeartRate   Int?
+  maxHeartRate   Int?
+  avgHrv         Int?
+  avgBreathRate  Float?
+  avgSpo2        Int?
+  minSpo2        Int?
+  /// O normal do utilizador segundo a Huawei: { heartRate: [min, max], hrv, breathRate, spo2 }.
+  baseline       Json?
+  /// As fases pela ordem da noite: [{ stage: DEEP|LIGHT|REM|AWAKE|NAP, start, minutes }].
+  stages         Json
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, source, externalId])
+  @@index([userId, night])
+}
+
+/// Um dia de batimento cardíaco (Huawei Health): os totais do dia e os pontos para o gráfico.
+model HeartRateDay {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source String // HUAWEI
+
+  day      DateTime @db.Date
+  timeZone String?
+
+  avgBpm     Int
+  minBpm     Int
+  maxBpm     Int
+  minAt      Int? // minuto do dia (hora local)
+  maxAt      Int?
+  restingBpm Int?
+  avgHrv     Int?
+  samples    Int
+
+  zones     Json // leituras por zona: {low, normal, elevated, high}
+  points    Json // [[minuto do dia, bpm]]
+  hrvPoints Json? // [[minuto do dia, rmssd]]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, source, day])
+  @@index([userId, day])
+}
+
+/// Um dia de temperatura da pele (Huawei Health): os totais do dia e os pontos para o gráfico.
+model SkinTemperatureDay {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source String // HUAWEI
+
+  day      DateTime @db.Date
+  timeZone String?
+
+  avgTemp  Float
+  minTemp  Float
+  maxTemp  Float
+  minAt    Int? // minuto do dia (hora local)
+  maxAt    Int?
+  nightAvg Float? // média das 00:00 às 06:00
+  samples  Int
+
+  ranges Json // leituras por faixa: {cold, cool, normal, warm}
+  points Json // [[minuto do dia, °C]] — média de 5 em 5 minutos
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, source, day])
+  @@index([userId, day])
+}
+
+/// Um dia de oxigénio no sangue (SpO₂, Huawei Health): os totais do dia e as leituras.
+model BloodOxygenDay {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source String // HUAWEI
+
+  day      DateTime @db.Date
+  timeZone String?
+
+  avgSpo2  Float
+  minSpo2  Int
+  maxSpo2  Int
+  minAt    Int? // minuto do dia (hora local)
+  maxAt    Int?
+  nightAvg Float? // média das 00:00 às 06:00
+  samples  Int
+
+  ranges Json // leituras por faixa: {low, reduced, normal, high}
+  points Json // [[minuto do dia, %]]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, source, day])
+  @@index([userId, day])
+}
+
+/// Um dia de stress (Huawei Health): os totais do dia e as medições.
+model StressDay {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source String // HUAWEI
+
+  day      DateTime @db.Date
+  timeZone String?
+
+  avgScore Float
+  minScore Int
+  maxScore Int
+  minAt    Int? // minuto do dia (hora local)
+  maxAt    Int?
+  samples  Int
+
+  levels Json // medições por nível: {relaxed, normal, medium, high}
+  points Json // [[minuto do dia, pontuação]]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, source, day])
+  @@index([userId, day])
+}
+
+/// Um dia de passos (Huawei Health): os totais do dia, somados minuto a minuto, e os passos por hora.
+model ActivityDay {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source String // HUAWEI
+
+  day      DateTime @db.Date
+  timeZone String?
+
+  steps         Int
+  distanceM     Int
+  calories      Int // kcal
+  activeMinutes Int
+  hourly        Json? // passos por hora local: [24 números]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, source, day])
+  @@index([userId, day])
+}
+
+/// Os tipos de treino (desportos), predefinidos (semeados pela migração). Classificam
+/// um treino inteiro e ligam-se aos códigos da Huawei. Os exercícios de cada treino
+/// vêm do openGym.
+model ExerciseType {
+  id          String @id // chave legível (walking, strength…); o nome vem da tradução
+  category    String // SPORT
+  huaweiCodes Int[] // códigos sportType da Huawei que caem neste tipo
+  position    Int // ordem nas listas
+
+  workouts Workout[]
+}
+
+/// Um treino: da Huawei (resumo, séries para o gráfico e rota GPS), do openGym (os
+/// exercícios e as séries feitas) ou registado à mão.
+model Workout {
+  id         String @id @default(uuid())
+  userId     String
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source     String // HUAWEI, OPENGYM ou MANUAL
+  externalId String // recordId da Huawei; id do treino no openGym; nos manuais, um uuid
+
+  typeId    String
+  type      ExerciseType @relation(fields: [typeId], references: [id])
+  sportType Int? // código original da Huawei (257 caminhada, 258 corrida…); null nos outros
+  title     String? // openGym: o nome da rotina (ex: "Peito e tríceps")
+  notes     String?
+  day       DateTime     @db.Date
+  timeZone  String?
+  startAt   DateTime
+  endAt     DateTime
+
+  durationSec    Int
+  distanceM      Int?
+  calories       Int? // kcal
+  steps          Int?
+  avgHeartRate   Int?
+  maxHeartRate   Int?
+  minHeartRate   Int?
+  avgPace        Float? // segundos por km
+  bestPace       Float?
+  avgCadence     Int? // passos por minuto
+  ascentM        Float?
+  descentM       Float?
+  trainingEffect Float? // efeito aeróbio, 0–5
+  recoveryMin    Int?
+
+  difficulty        Int? // manuais: quão difícil foi, 0–10
+  caloriesEstimated Boolean   @default(false) // as calorias foram estimadas pelo batimento
+  syncedAt          DateTime? // manuais e openGym: última vez que se cruzaram com o batimento importado
+  volumeKg          Float? // openGym: Σ peso × repetições
+
+  // Sessões: um treino principal (ex: corrida) com outros ligados a ele como
+  // aquecimento, retorno à calma ou parte do mesmo treino. Só há um nível.
+  parentId String?
+  parent   Workout?  @relation("WorkoutParts", fields: [parentId], references: [id], onDelete: SetNull)
+  parts    Workout[] @relation("WorkoutParts")
+  partRole String? // WARMUP, COOLDOWN ou PART (só nos que têm parentId)
+
+  heartZones Json? // segundos por zona: {easy, moderate, hard, peak}
+  heartRate  Json? // [[segundos desde o início, bpm]]
+  cadence    Json? // [[segundos, passos/min]]
+  altitude   Json? // [[segundos, m]]
+  route      Json? // rota GPS: segmentos de [[lat, lon]], reduzida para o mapa
+  splits     Json? // tempo de cada km: [[km, segundos]]
+  exercises  Json? // openGym: os exercícios feitos, com as séries e as pausas (ver openGymWorkoutData)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, source, externalId])
+  @@index([userId, startAt])
+}
+
+/// A ligação ao openGym (a instância do próprio utilizador), de onde vêm os treinos.
+/// O token é o mesmo que a app do telemóvel recebe ao emparelhar; renova-se sozinho.
+model OpenGymConnection {
+  id           String            @id @default(uuid())
+  userId       String            @unique
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  baseUrl      String // https://opengym.exemplo.com
+  // O emparelhamento só da Saúde (cifrado com TOKEN_ENCRYPTION_KEY); nulo quando usa a app ligada.
+  token        String?           @db.Text
+  // A app openGym ligada (Apps ligadas) de onde vem o token; desligar a app desliga isto.
+  accountId    String?           @unique
+  account      ConnectedAccount? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountName  String? // o nome do perfil no openGym
+  isActive     Boolean           @default(true) // falso = sincronização automática desligada
+  runFrequency RunFrequency      @default(EVERY_30_MINUTES)
+
+  lastRev       Int? // a revisão do estado no openGym da última leitura
+  lastRunAt     DateTime?
+  lastSuccessAt DateTime?
+  lastError     String?
+  lastCreated   Int? // treinos novos na última sincronização
+  lastUpdated   Int?
+  lastDeleted   Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Os exercícios do catálogo do openGym que já apareceram em treinos (o nome e o
+/// resto vêm do catalogue/ do repositório deles, guardados para não voltar a pedir).
+model OpenGymExercise {
+  id        String  @id // o id do catálogo ("0001")
+  name      String
+  bodyPart  String?
+  target    String? // músculo principal
+  equipment String?
+  category  String?
+
+  createdAt DateTime @default(now())
+}
+
+/// Uma pesagem, registada à mão na página Saúde → Peso.
+model WeightEntry {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  measuredAt DateTime
+  day        DateTime @db.Date // o dia local da pesagem
+  timeZone   String? // fuso do browser no formato da Huawei ("+0100")
+  weightKg   Float
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, measuredAt])
+}
+
+/// Água bebida, registada à mão na página Saúde → Água: um registo por copo
+/// ou garrafa; o dashboard soma-os por dia.
+model WaterEntry {
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drankAt  DateTime
+  day      DateTime @db.Date // o dia local em que se bebeu
+  timeZone String?
+  ml       Int
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, day])
+}
+
+/// O perfil de saúde: o que não muda todos os dias (dados pessoais, altura para o
+/// IMC, alergias e doenças conhecidas).
+model HealthProfile {
+  userId           String    @id
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  heightCm         Float?
+  fullName         String?
+  birthDate        DateTime? @db.Date
+  sex              String? // MALE, FEMALE ou OTHER
+  bloodType        String? // A+, O-…
+  emergencyContact String?
+  notes            String?
+
+  updatedAt DateTime @updatedAt
+}
+
+/// Um relatório de análises clínicas: lido de um PDF pelo Claude (e revisto
+/// pelo utilizador antes de guardar) ou metido à mão. Os dados pessoais do PDF
+/// (nome, morada, n.º de utente) não se guardam — só os resultados.
+model LabReport {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collectedAt DateTime @db.Date // data da colheita
+  lab         String? // laboratório (Unilabs, Synlab…)
+  source      String // PDF ou MANUAL
+  notes       String?
+  fileName    String?
+  pdf         Bytes? // o PDF original, para voltar a abrir
+
+  results LabResult[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, collectedAt])
+}
+
+/// Um parâmetro de um relatório. A chave normalizada (hemoglobin,
+/// ldl_cholesterol…) junta o mesmo parâmetro de laboratórios diferentes, para o
+/// histórico.
+model LabResult {
+  id        String    @id @default(uuid())
+  reportId  String
+  report    LabReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  userId    String // repetido do relatório, para o histórico por parâmetro
+  key       String
+  name      String // como vem no relatório
+  section   String? // Sangue, Urina…
+  group     String? // Hemograma, Leucograma…
+  value     Float?
+  valueText String? // resultados de texto ("Ausente") ou com sinal ("<15")
+  unit      String?
+  refLow    Float?
+  refHigh   Float?
+  refText   String? // a referência como vem escrita ("<200", "Ausente")
+  flag      String? // LOW, HIGH ou ABNORMAL
+  position  Int
+
+  @@index([userId, key])
+  @@index([reportId])
+}
+
+/// Um medicamento, vitamina ou suplemento que se toma (ou tomou): a marca, o que tem,
+/// a dose, quantas vezes por dia e a que horas.
+model Medication {
+  id          String           @id @default(uuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind        String           @default("MEDICATION") // MEDICATION, VITAMIN ou SUPPLEMENT
+  name        String // o nome do produto (D-Vitum Forte, Ben-u-ron…)
+  brand       String? // a marca
+  substance   String? // o que tem (Vitamina D3, Paracetamol…)
+  doseAmount  Float?
+  doseUnit    String? // mg, g, mcg, ml, tablet, capsule, drops, iu
+  timesPerDay Int?
+  times       String[] // horas das tomas ("08:00")
+  startDate   DateTime?        @db.Date
+  endDate     DateTime?        @db.Date // sem fim = ainda a tomar
+  notes       String?
+  conditionId String? // a alergia ou doença do perfil para que se toma
+  condition   HealthCondition? @relation(fields: [conditionId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+/// Uma alergia conhecida ou uma doença crónica do perfil, com o estado (ativa,
+/// em tratamento, controlada ou tratada), a gravidade, as datas e o tratamento.
+/// Os medicamentos podem ligar-se a uma delas.
+model HealthCondition {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind       String // ALLERGY ou CONDITION
+  name       String
+  status     String // ACTIVE, TREATING, CONTROLLED ou RESOLVED
+  severity   String? // MILD, MODERATE ou SEVERE
+  since      DateTime? @db.Date // desde quando (diagnóstico ou primeira reação)
+  resolvedAt DateTime? @db.Date // quando ficou tratada
+  reaction   String? // alergias: o que provoca
+  treatment  String? // como se trata ou tratou
+  notes      String?
+
+  medications Medication[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, kind])
+}
+
+/// Uma entrada do diário de saúde: uma dor (zona e intensidade 0–10), um
+/// sintoma, uma alergia (zona, intensidade e a causa suspeita), o registo do dia
+/// (o que se comeu e fez, para cruzar com as alergias) ou uma nota.
+model HealthDiaryEntry {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  at        DateTime
+  day       DateTime @db.Date
+  timeZone  String?
+  kind      String // PAIN, SYMPTOM, ALLERGY, DAY ou NOTE
+  bodyArea  String? // head, back_lower… (nas dores); skin, eyes… (nas alergias)
+  intensity Int? // 0–10 (nas dores, sintomas e alergias)
+  trigger   String? // a causa suspeita (nas alergias)
+  text      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, at])
+}
+
+/// Uma refeição. As calorias e os macros vêm da estimativa do Claude (revista
+/// antes de guardar) ou metidos à mão; a foto é opcional.
+model Meal {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  at        DateTime
+  day       DateTime @db.Date
+  timeZone  String?
+  mealType  String // BREAKFAST, LUNCH, DINNER ou SNACK
+  text      String
+  kcal      Int?
+  proteinG  Float?
+  carbsG    Float?
+  fatG      Float?
+  estimated Boolean  @default(false) // os valores vieram do Claude
+  photo     Bytes?
+  photoMime String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, day])
+}
+
+/// Um café, uma bebida com álcool ou um suplemento tomado.
+model IntakeEntry {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  at         DateTime
+  day        DateTime @db.Date
+  timeZone   String?
+  kind       String // CAFFEINE, ALCOHOL ou SUPPLEMENT
+  name       String // Expresso, Cerveja, Creatina…
+  presetId   String? // um dos predefinidos do site (espresso, beer_imperial…)
+  itemId     String? // ou um item próprio do utilizador
+  quantity   Float    @default(1) // quantas doses
+  volumeMl   Int? // total bebido
+  caffeineMg Float? // total de cafeína
+  alcoholG   Float? // total de álcool puro (10 g = 1 bebida padrão)
+  amount     Float? // suplementos: a dose total
+  unit       String? // suplementos: g, mg, mcg, UI, comprimido…
+  notes      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([userId, day])
+}
+
+/// Um item próprio de café, álcool ou suplemento, com os valores de uma dose,
+/// para se registar num clique (além dos predefinidos do site).
+model IntakeItem {
+  id         String  @id @default(uuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind       String // CAFFEINE, ALCOHOL ou SUPPLEMENT
+  name       String
+  volumeMl   Int?
+  caffeineMg Float?
+  alcoholG   Float?
+  amount     Float?
+  unit       String?
+  position   Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+/// As preferências dos consumos: limites e os predefinidos escondidos.
+model IntakeSettings {
+  userId           String   @id
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  caffeineLimitMg  Int? // por dia (400 mg é o limite habitual para adultos)
+  alcoholLimitWeek Float? // bebidas padrão por semana
+  hiddenPresets    String[] @default([])
+
+  updatedAt DateTime @updatedAt
+}
+
+/// As medidas do corpo de um dia (uma linha por dia; os campos vazios não foram medidos).
+model BodyMeasurement {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  day        DateTime @db.Date
+  waistCm    Float?
+  chestCm    Float?
+  armCm      Float?
+  thighCm    Float?
+  hipsCm     Float?
+  neckCm     Float?
+  bodyFatPct Float?
+  muscleKg   Float?
+  notes      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, day])
+}
+
+/// Uma foto de progresso (frente, lado ou costas) de um dia.
+model ProgressPhoto {
+  id     String   @id @default(uuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  day    DateTime @db.Date
+  pose   String // FRONT, SIDE ou BACK
+  image  Bytes
+  mime   String
+  notes  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, day])
+}
+
+/// Uma medição à mão: tensão arterial (sistólica/diastólica e pulso), glicemia
+/// (mg/dL) ou temperatura (°C).
+model VitalReading {
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  at       DateTime
+  day      DateTime @db.Date
+  timeZone String?
+  kind     String // BLOOD_PRESSURE, GLUCOSE ou TEMPERATURE
+  value    Float // sistólica, glicemia ou temperatura
+  value2   Float? // diastólica
+  pulse    Int?
+  context  String? // na glicemia: FASTING, BEFORE_MEAL, AFTER_MEAL ou RANDOM
+  notes    String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, kind, at])
+}
+
+/// Humor, energia e motivação de um dia (1–5), com uma nota.
+model MoodEntry {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  day        DateTime @db.Date
+  mood       Int
+  energy     Int
+  motivation Int
+  note       String?
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, day])
+}
+
+/// Um hábito diário (alongar, ler, meditar…). Arquivado deixa de aparecer no dia.
+model Habit {
+  id       String       @id @default(uuid())
+  userId   String
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name     String
+  position Int          @default(0)
+  archived Boolean      @default(false)
+  checks   HabitCheck[]
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+/// Um hábito cumprido num dia.
+model HabitCheck {
+  id      String   @id @default(uuid())
+  habitId String
+  habit   Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  day     DateTime @db.Date
+
+  @@unique([habitId, day])
+}
+
+/// Um jejum: começa num instante e acaba quando se come (sem fim = a decorrer).
+model Fast {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startAt     DateTime
+  endAt       DateTime?
+  targetHours Int
+  notes       String?
+
+  @@index([userId, startAt])
+}
+
+/// Uma consulta, passada ou marcada. O followUpDate é quando voltar (ex: a
+/// limpeza no dentista daqui a 6 meses) e dá um lembrete.
+model MedicalAppointment {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  at           DateTime
+  timeZone     String?
+  specialty    String // GENERAL, DENTIST, EYES, DERMATOLOGY, CARDIOLOGY, ORTHOPEDICS, PHYSIOTHERAPY, PSYCHOLOGY ou OTHER
+  doctor       String?
+  place        String?
+  reason       String?
+  notes        String? // o que foi dito
+  followUpDate DateTime? @db.Date
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, at])
+}
+
+/// Uma vacina tomada, com a data do próximo reforço.
+model Vaccine {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  date        DateTime  @db.Date
+  dose        String? // 1.ª dose, reforço…
+  nextDueDate DateTime? @db.Date
+  notes       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+/// Um exame (RX, ecografia, TAC…): o relatório em PDF pode ser lido pelo Claude,
+/// que preenche a conclusão e um resumo em palavras simples.
+model MedicalExam {
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date     DateTime @db.Date
+  kind     String // XRAY, ULTRASOUND, CT, MRI, ECG, ENDOSCOPY ou OTHER
+  title    String
+  bodyPart String?
+  findings String? // a conclusão do relatório
+  summary  String? // em palavras simples
+  pdf      Bytes?
+  fileName String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, date])
+}
+
+/// Um episódio de doença (gripe de 3 a 8 de março), com sintomas e medicação.
+model IllnessEpisode {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  startDate  DateTime  @db.Date
+  endDate    DateTime? @db.Date
+  symptoms   String?
+  medication String?
+  notes      String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, startDate])
+}
+
+/// Uma graduação (óculos ou lentes) por olho: esfera, cilindro e eixo.
+model VisionPrescription {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date          DateTime @db.Date
+  kind          String // GLASSES ou CONTACTS
+  rightSphere   Float?
+  rightCylinder Float?
+  rightAxis     Int?
+  leftSphere    Float?
+  leftCylinder  Float?
+  leftAxis      Int?
+  addition      Float?
+  pupillaryMm   Float?
+  notes         String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+/// Um par de lentes de contacto em uso: a troca é startDate + replaceDays.
+model ContactLensCycle {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startDate   DateTime @db.Date
+  replaceDays Int
+  brand       String?
+  notes       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, startDate])
+}
+
+/// Os lembretes de saúde já enviados (nas notificações), para não repetir.
+model HealthReminderSent {
+  id     String   @id @default(uuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key    String // appointment:<id>:eve, vaccine:<id>:<data>…
+  sentAt DateTime @default(now())
+
+  @@unique([userId, key])
+}
+
+enum BackupDestinationKind {
+  NEXTCLOUD
+}
+
+enum BackupRetention {
+  REPLACE // fica só o último
+  KEEP_LAST // ficam os últimos keepCount
+  KEEP_ALL // nunca apaga
+}
+
+enum BackupRunStatus {
+  SUCCESS
+  ERROR
+}
+
+/// Onde se guardam os backups. O Nextcloud usa WebDAV com uma password de app;
+/// mais tarde entram outros tipos (partilha SMB, pen na rede…).
+model BackupDestination {
+  id            String                @id @default(uuid())
+  userId        String
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind          BackupDestinationKind @default(NEXTCLOUD)
+  name          String
+  // Usa a conta Nextcloud de Apps ligadas; sem ela, as credenciais próprias abaixo.
+  accountId     String?
+  account       ConnectedAccount?     @relation("DestinationAccount", fields: [accountId], references: [id], onDelete: SetNull)
+  url           String? // endereço do Nextcloud, ex: https://nextcloud.exemplo.com
+  username      String?
+  password      String?               @db.Text // password de app, cifrada com TOKEN_ENCRYPTION_KEY
+  folder        String                @default("backups") // pasta base no destino
+  lastCheckedAt DateTime?
+  lastError     String?
+
+  jobs BackupJob[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+/// Um backup automático de um serviço (por agora o AdGuard) para um destino.
+model BackupJob {
+  id            String            @id @default(uuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // A app ligada (Apps ligadas) de onde vem o backup.
+  accountId     String
+  account       ConnectedAccount  @relation("AccountBackups", fields: [accountId], references: [id], onDelete: Cascade)
+  destinationId String
+  destination   BackupDestination @relation(fields: [destinationId], references: [id], onDelete: Restrict)
+  folder        String // dentro da pasta do destino, ex: Forgejo
+  runFrequency  RunFrequency      @default(DAILY)
+  retention     BackupRetention   @default(KEEP_LAST)
+  keepCount     Int               @default(3)
+  isActive      Boolean           @default(true)
+  options       Json? // opções só de uma app
+  lastRunAt     DateTime?
+  lastSuccessAt DateTime?
+  lastError     String?
+
+  runs BackupRun[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([accountId])
+}
+
+/// Cada vez que um backup correu (ficam os últimos 30 de cada um).
+model BackupRun {
+  id         String          @id @default(uuid())
+  jobId      String
+  job        BackupJob       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  status     BackupRunStatus
+  manual     Boolean         @default(false)
+  fileName   String?
+  sizeBytes  Float? // em bytes (Float: um backup passa os 2 GB de um Int)
+  deleted    Int             @default(0) // backups antigos apagados pela retenção
+  // O que não entrou num backup feito (ex.: "utilizador/myhomelab (código)").
+  missing    String[]        @default([])
+  error      String?
+  startedAt  DateTime        @default(now())
+  finishedAt DateTime?
+
+  @@index([jobId, startedAt])
+}
+
+enum AppAccessLevel {
+  NONE
+  READ
+  WRITE
+}
+
+/// O que cada agente pode fazer numa app ligada ou num servidor (a página da app →
+/// Agentes). Sem linha: o que as ferramentas dele deixam (ler e mudar).
+model AgentAppAccess {
+  id         String         @id @default(uuid())
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targetType String // "APP" (ConnectedAccount.id) ou "SERVER" (ServerConnection.id)
+  targetId   String
+  agentKey   String
+  level      AppAccessLevel
+  updatedAt  DateTime       @updatedAt
+
+  @@unique([userId, targetType, targetId, agentKey])
+}
+
+// O que os agentes podem fazer, por área: as permissões desligadas ("health.write", …).
+// Sem linha, ou lista vazia, está tudo ligado.
+model AssistantPermissionSetting {
+  id     String   @id @default(uuid())
+  userId String   @unique
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  denied String[] @default([])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ── Documentos ─────────────────────────────────────────────────────────────
+
+enum DocKind {
+  RULES // regras que os agentes seguem
+  CHECKLIST // pontos a verificar (antes/depois de atualizar…)
+  NOTES
+  LEARNINGS // o que os agentes aprenderam, aprovado pelo utilizador
+  GUIDE // o guia de um servidor, escrito pelo agente ao estudá-lo
+  LOG // registo do que os agentes fizeram (atualizações, comandos…), escrito por eles
+  OTHER
+}
+
+enum DocOwner {
+  USER // o agente só lê e propõe mudanças
+  AGENT // o agente pode reescrever
+}
+
+enum DocLinkType {
+  SERVER // ServerConnection.id
+  GUEST // "<ServerConnection.id>:<vmid>" — um CT ou VM, com ou sem integração
+  APP // ConnectedAccount.id
+  MONITOR // ServiceMonitor.id
+  AGENT // Agent.key
+  DOC // Doc.id — documentos relacionados
+  PROJECT // Project.id — um projeto do utilizador (a empresa, uma página…)
+  TASK // Task.id — uma tarefa do quadro
+}
+
+/// Um documento do utilizador (Markdown): regras, checklists, notas, aprendizagens e
+/// os guias dos servidores. Liga-se a qualquer coisa (DocLink); os "obrigatórios"
+/// entram sempre no contexto dos agentes quando o pedido toca no que estão ligados.
+model Doc {
+  id                 String    @id @default(uuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title              String
+  kind               DocKind   @default(NOTES)
+  owner              DocOwner  @default(USER)
+  content            String    @default("") @db.Text
+  summary            String? // uma linha para o índice que os agentes leem
+  tags               String[]  @default([])
+  required           Boolean   @default(false)
+  /// Um tipo criado pelo utilizador (ex.: "Receitas"); o kind fica OTHER.
+  typeId             String?
+  type               DocType?  @relation(fields: [typeId], references: [id], onDelete: SetNull)
+  updatedBy          String? // "user" ou a chave do agente
+  /// [{ docId, title, text }] onde contradiz outros documentos (o verificador)
+  conflicts          Json?
+  conflictsCheckedAt DateTime?
+
+  links     DocLink[]
+  versions  DocVersion[]
+  proposals DocProposal[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+/// Os tipos de documento que o utilizador cria, além dos do site (Regras, Checklist…).
+model DocType {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  docs      Doc[]
+  createdAt DateTime @default(now())
+
+  @@unique([userId, name])
+}
+
+model DocLink {
+  id       String      @id @default(uuid())
+  docId    String
+  doc      Doc         @relation(fields: [docId], references: [id], onDelete: Cascade)
+  type     DocLinkType
+  targetId String
+  label    String // o nome no momento em que se ligou (ex: "CT 105 adguard")
+
+  @@unique([docId, type, targetId])
+  @@index([type, targetId])
+}
+
+/// As versões anteriores de um documento (ficam as últimas 30).
+model DocVersion {
+  id        String   @id @default(uuid())
+  docId     String
+  doc       Doc      @relation(fields: [docId], references: [id], onDelete: Cascade)
+  title     String
+  content   String   @db.Text
+  editedBy  String
+  createdAt DateTime @default(now())
+
+  @@index([docId, createdAt])
+}
+
+enum DocProposalAction {
+  EDIT // trocar o conteúdo
+  APPEND // acrescentar no fim (ex: uma aprendizagem)
+  CREATE // um documento novo
+}
+
+enum DocProposalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+/// Uma mudança que um agente propõe num documento do utilizador (ou um documento
+/// novo); só vale depois de o utilizador aprovar.
+model DocProposal {
+  id         String            @id @default(uuid())
+  userId     String
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  docId      String?
+  doc        Doc?              @relation(fields: [docId], references: [id], onDelete: Cascade)
+  action     DocProposalAction
+  title      String?
+  kind       DocKind?
+  content    String            @db.Text
+  reason     String?           @db.Text
+  links      Json? // CREATE: [{ type, targetId, label }]
+  proposedBy String
+  // A tarefa do quadro de onde veio: a decisão aparece lá.
+  taskId     String?
+  status     DocProposalStatus @default(PENDING)
+  createdAt  DateTime          @default(now())
+  decidedAt  DateTime?
+
+  @@index([userId, status])
+}
+
+// ── Atualizações das apps ──────────────────────────────────────────────────
+
+enum AppUpdateStatus {
+  NEW // acabou de entrar (Todo)
+  STUDY // à espera do estudo (Espera por estudo)
+  STUDYING // um agente está a estudá-la agora (Study)
+  READY // estudada e pronta para quando o utilizador disser (Ready to update)
+  WAITING // precisa de uma resposta do utilizador (Waiting for reply)
+  LATER // o agente volta a ver em `recheckAt` (Recheck later)
+  IN_PROGRESS
+  VERIFYING // instalada; o agente verifica o "depois de atualizar"
+  DONE
+  CANCELLED
+  FAILED // falhou e voltou ao snapshot
+}
+
+/// Uma versão nova de uma app ligada, do estudo até estar instalada. Se houver um
+/// quadro de tarefas (UpdateWorkflowSetting), cada uma tem lá a sua tarefa.
+model AppUpdate {
+  id               String            @id @default(uuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// O alvo: uma app ligada (accountId) ou o próprio servidor, o host Proxmox
+  /// (hostServerId). Há sempre um e só um (restrição na base de dados).
+  accountId        String?
+  account          ConnectedAccount? @relation("AccountUpdates", fields: [accountId], references: [id], onDelete: Cascade)
+  hostServerId     String?
+  hostServer       ServerConnection? @relation("HostUpdates", fields: [hostServerId], references: [id], onDelete: Cascade)
+  /// No host: quantos pacotes do sistema há por atualizar, quando não há versão nova
+  /// do Proxmox VE (a versão de → para é a instalada). Null = uma versão do Proxmox VE.
+  hostPackages     Int?
+  fromVersion      String
+  toVersion        String
+  releaseUrl       String?
+  /// Uma peça dentro da app (no Home Assistant: a entidade update.* de um add-on,
+  /// repositório do HACS, firmware…); null = a própria app.
+  component        String?
+  componentTitle   String?
+  componentGroup   String? // system · addons · hacs · firmware · other
+  repository       String? // "github:dono/repo": onde estão as releases e as issues da peça
+  status           AppUpdateStatus   @default(NEW)
+  study            String?           @db.Text // Markdown
+  risk             String? // low · medium · high
+  recommendation   String?           @db.Text
+  question         String?           @db.Text // o que o agente precisa de saber (WAITING)
+  summary          String?           @db.Text // em linguagem simples, para o utilizador
+  reasonsFor       String[]          @default([]) // porque atualizar
+  reasonsAgainst   String[]          @default([]) // porque esperar
+  sources          Json? // [{ title, url }] onde o agente foi buscar a informação
+  manualSteps      String[]          @default([]) // passos à mão (viram sub-tarefas)
+  updateAfter      DateTime? // a partir de quando o agente aconselha atualizar
+  recheckAt        DateTime? // LATER: quando volta a ver
+  /// Os agendamentos "quando aparece uma atualização nova" já correram para ela
+  /// (uma vez por versão; null = ainda não).
+  announcedAt      DateTime?
+  history          Json? // [{ at, text }] o que foi acontecendo (vai para o registo)
+  logDocId         String? // o documento LOG desta atualização
+  spec             String?           @db.Text // a especificação aprovada (objetivo, comandos, feito quando, volta atrás)
+  specDocs         Json? // [{ id, title, updatedAt }] as regras (e a versão) usadas no preparar
+  stepTasks        Json? // [{ id, key, step }] as sub-tarefas dos passos à mão
+  afterChecks      Json? // [{ point, ok, evidence }] o "depois de atualizar"
+  verifyStartedAt  DateTime?
+  studyStartedAt   DateTime?
+  studiedAt        DateTime?
+  studyError       String?
+  studyRetries     Int               @default(0) // as vezes que o MyHomeLab voltou a pôr no estudo sozinho
+  installStartedAt DateTime? // quando o MyHomeLab pediu ao agente para a instalar (Ready to update, na janela)
+
+  // A tarefa no quadro (Projetos → projeto Atualizações).
+  boardTaskId  String?
+  boardTaskKey String? // ex: ATU-12
+  boardError   String?
+
+  serverConnectionId String?
+  guestVmid          Int?
+  commands           String[]        @default([])
+  commandId          String? // o ServerCommand que o utilizador aprova
+  snapshotName       String?
+  checks             Json? // [{ point, ok, evidence, source }]
+  result             String?         @db.Text
+  startedAt          DateTime?
+  finishedAt         DateTime?
+  // O "rever mais tarde" com data aparece nos Agendamentos.
+  schedule           AgentSchedule?
+  attempts           UpdateAttempt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, status])
+  @@index([accountId])
+  @@index([hostServerId])
+}
+
+/// Como correm as atualizações: se as versões novas passam logo para a espera do estudo
+/// e os módulos onde entram as tarefas (Projetos → Atualizações).
+model UpdateWorkflowSetting {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  autoStudy    Boolean  @default(true)
+  /// O que está em Ready to update instala-se sozinho entre installFrom e installTo (horas de Lisboa).
+  autoInstall  Boolean  @default(true)
+  installFrom  Int      @default(4)
+  installTo    Int      @default(7)
+  /// Os módulos onde entram as tarefas (além de um com o nome da app).
+  boardModules String[] @default(["Servidor"])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum AgentScheduleRepeat {
+  ONCE // uma vez, em runAt
+  DAILY // todos os dias à hora `time`
+  WEEKLY // no dia `weekday` da semana, à hora `time`
+  MONTHLY // no dia `monthDay` do mês, à hora `time`
+  ON_NEW_UPDATE // quando aparece uma atualização nova (apps e servidor), sem hora
+}
+
+enum AgentScheduleRunStatus {
+  RUNNING
+  DONE
+  FAILED
+}
+
+/// Um trabalho agendado de um agente ("todos os dias às 5h, vê se há atualizações
+/// prontas…"). Cria-o o utilizador na página Agendamentos ou um agente com as
+/// ferramentas schedule_*. Quando corre, o utilizador não está a acompanhar: o agente
+/// segue as regras dos documentos ("Quando corro sem ti").
+model AgentSchedule {
+  id          String              @id @default(uuid())
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agentKey    String
+  title       String
+  instruction String              @db.Text
+  repeat      AgentScheduleRepeat @default(ONCE)
+  runAt       DateTime? // ONCE: quando corre
+  time        String? // "HH:mm", hora de Lisboa, nos que se repetem
+  weekday     Int? // WEEKLY: 1 = segunda … 7 = domingo
+  monthDay    Int? // MONTHLY: 1–31 (num mês mais curto, o último dia)
+  enabled     Boolean             @default(true)
+  notify      Boolean             @default(true) // avisa (notificações) quando há algo a dizer
+  /// A resposta de cada vez fica numa conversa nova do Jarvis (ex.: um resumo diário).
+  toChat      Boolean             @default(false)
+  tags        String[]            @default([]) // etiquetas para filtrar (minúsculas)
+  nextRunAt   DateTime?
+  createdBy   String              @default("user") // "user" ou a chave do agente
+  // A que está ligado (para aparecer na página dessa app, servidor…).
+  linkType    DocLinkType?
+  targetId    String?
+  targetLabel String?
+  // "Rever mais tarde" de uma atualização: ao correr, ela volta ao estudo.
+  updateId    String?             @unique
+  update      AppUpdate?          @relation(fields: [updateId], references: [id], onDelete: Cascade)
+  runs        AgentScheduleRun[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([enabled, nextRunAt])
+  @@index([userId])
+  @@index([linkType, targetId])
+}
+
+/// Cada vez que um agendamento correu (ficam as últimas 20).
+model AgentScheduleRun {
+  id         String                 @id @default(uuid())
+  scheduleId String
+  schedule   AgentSchedule          @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  status     AgentScheduleRunStatus @default(RUNNING)
+  summary    String?                @db.Text // a resposta do agente
+  notice     String?                @db.Text // o que ele disse para avisar (null = sem novidades)
+  tokensIn   Int                    @default(0)
+  tokensOut  Int                    @default(0)
+  docsUsed   Json? // [{ id, title }] os documentos que o agente usou
+  startedAt  DateTime               @default(now())
+  finishedAt DateTime?
+
+  @@index([scheduleId, startedAt])
+}
+
+enum UpdateAttemptStatus {
+  CHECKING // a validar as regras
+  RUNNING // a atualizar
+  VERIFYING // instalada, a verificar o "depois"
+  DONE
+  FAILED
+  STOPPED // parou antes de atualizar (cancelada, para mais tarde, voltou ao estudo)
+}
+
+enum UpdateCheckPhase {
+  BEFORE
+  AFTER
+}
+
+enum UpdateCheckState {
+  PENDING // por validar
+  VALIDATED
+  NOT_VALIDATED
+  NOT_APPLICABLE
+  SKIPPED // saltado por um pedido direto do utilizador (ex.: o horário)
+}
+
+/// Uma tentativa de atualizar: os pontos das regras (antes e depois) como estavam
+/// quando começou, e o que o agente foi validando, com a prova. Não trava nada:
+/// é o registo do que se validou; quem decide se avança é o agente, pelas regras.
+enum UpdateAttemptKind {
+  STUDY // o estudo da versão: os pontos das regras que se veem ao estudar
+  UPDATE // preparar, correr e verificar
+}
+
+model UpdateAttempt {
+  id           String               @id @default(uuid())
+  userId       String
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updateId     String
+  update       AppUpdate            @relation(fields: [updateId], references: [id], onDelete: Cascade)
+  /// O mesmo alvo da atualização: a app ou o servidor (host).
+  accountId    String?
+  account      ConnectedAccount?    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  hostServerId String?
+  hostServer   ServerConnection?    @relation("HostUpdateAttempts", fields: [hostServerId], references: [id], onDelete: Cascade)
+  number       Int // a 1.ª, 2.ª… tentativa desta atualização
+  kind         UpdateAttemptKind    @default(UPDATE) // o estudo também verifica as regras
+  title        String // "AdGuard 0.107.60 → 0.107.63"
+  fromVersion  String
+  toVersion    String
+  status       UpdateAttemptStatus  @default(CHECKING)
+  docs         Json? // [{ id, title, updatedAt }] — as regras usadas
+  result       String?              @db.Text
+  startedAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  finishedAt   DateTime?
+  checks       UpdateAttemptCheck[]
+
+  @@index([userId, startedAt])
+  @@index([accountId, startedAt])
+  @@index([hostServerId, startedAt])
+  @@index([updateId])
+}
+
+model UpdateAttemptCheck {
+  id        String           @id @default(uuid())
+  attemptId String
+  attempt   UpdateAttempt    @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  position  Int // o número que o agente usa para o marcar
+  phase     UpdateCheckPhase
+  point     String           @db.Text
+  proof     String? // a prova que serve, como está nas regras
+  source    String? // o documento de onde vem ("MyHomeLab" nas medições)
+  who       String           @default("agent") // agent (🤖), user (👤) ou code (medido pelo MyHomeLab)
+  state     UpdateCheckState @default(PENDING)
+  evidence  String?          @db.Text
+  checkedBy String?
+  checkedAt DateTime?
+
+  @@index([attemptId, position])
+}
+
+/// Um projeto do utilizador (a empresa, uma página, um blog…): junta os documentos
+/// que os agentes seguem para ele. Os obrigatórios ligados a um projeto entram sempre
+/// nos agentes que trabalham nele (agentKeys) e quando um pedido fala do projeto.
+model Project {
+  id                 String            @id @default(uuid())
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  /// O prefixo das tarefas (ex.: "ATU" → ATU-12).
+  identifier         String            @default("")
+  description        String            @default("") @db.Text
+  agentKeys          String[]          @default([])
+  kind               ProjectKind       @default(GENERAL)
+  /// O servidor das atualizações deste projeto (projetos UPDATES).
+  serverConnectionId String?
+  serverConnection   ServerConnection? @relation(fields: [serverConnectionId], references: [id], onDelete: SetNull)
+  color              Int               @default(0)
+  position           Int               @default(0)
+  nextNumber         Int               @default(1)
+  states             BoardState[]
+  modules            BoardModule[]
+  cycles             BoardCycle[]
+  tasks              BoardTask[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([userId])
+}
+
+enum ProjectKind {
+  GENERAL
+  UPDATES // as atualizações das apps (uma tarefa por versão nova)
+}
+
+enum BoardStateGroup {
+  BACKLOG
+  UNSTARTED
+  STARTED
+  WAITING
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskPriority {
+  NONE
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+/// As colunas de um projeto. `key` marca as que o MyHomeLab usa (as das atualizações).
+model BoardState {
+  id        String          @id @default(uuid())
+  projectId String
+  project   Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  group     BoardStateGroup @default(UNSTARTED)
+  color     String          @default("#8a94a6")
+  position  Int             @default(0)
+  key       String?
+  /// A divisão (fase) a que a coluna pertence: as colunas seguidas com a mesma ficam
+  /// juntas no quadro, separadas das outras por uma linha (null = sem divisão).
+  phase     String?
+  tasks     BoardTask[]
+
+  @@unique([projectId, key])
+  @@index([projectId, position])
+}
+
+/// Os módulos de um projeto (ex.: "AdGuard", "Servidor").
+model BoardModule {
+  id          String            @id @default(uuid())
+  projectId   String
+  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name        String
+  description String            @default("") @db.Text
+  position    Int               @default(0)
+  tasks       BoardTaskModule[]
+  createdAt   DateTime          @default(now())
+
+  @@unique([projectId, name])
+}
+
+/// Uma tarefa do quadro (Projetos). Pode ter disparos (agendamentos ligados a ela) e
+/// os comentários do utilizador põem o agente responsável a trabalhar.
+model BoardTask {
+  id            String                @id @default(uuid())
+  userId        String
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId     String
+  project       Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  number        Int
+  title         String
+  description   String                @default("") @db.Text // Markdown
+  stateId       String
+  state         BoardState            @relation(fields: [stateId], references: [id])
+  priority      TaskPriority          @default(NONE)
+  assignee      String? // "user" ou a chave de um agente
+  labels        String[]              @default([])
+  startDate     DateTime?
+  dueDate       DateTime?
+  parentId      String?
+  parent        BoardTask?            @relation("TaskChildren", fields: [parentId], references: [id], onDelete: SetNull)
+  children      BoardTask[]           @relation("TaskChildren")
+  position      Float                 @default(0)
+  createdBy     String                @default("user")
+  updateId      String?               @unique // a atualização de app desta tarefa
+  cycleId       String?
+  cycle         BoardCycle?           @relation(fields: [cycleId], references: [id], onDelete: SetNull)
+  awaitingReply Boolean               @default(false) // o agente fez-lhe uma pergunta (board_ask_user) e espera a resposta
+  completedAt   DateTime?
+  modules       BoardTaskModule[]
+  comments      BoardTaskComment[]
+  links         BoardTaskLink[]
+  activity      BoardTaskActivity[]
+  attachments   BoardTaskAttachment[]
+  conversation  Conversation?
+  relations     BoardTaskRelation[]   @relation("RelationFrom")
+  relatedTo     BoardTaskRelation[]   @relation("RelationTo")
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+
+  @@unique([projectId, number])
+  @@index([userId])
+  @@index([stateId])
+}
+
+/// Um ciclo (sprint) de um projeto: as tarefas para um período.
+model BoardCycle {
+  id        String      @id @default(uuid())
+  projectId String
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  tasks     BoardTask[]
+  createdAt DateTime    @default(now())
+
+  @@index([projectId, startDate])
+}
+
+enum TaskRelationKind {
+  BLOCKS // esta bloqueia a outra
+  RELATES // relacionadas
+  DUPLICATES // esta repete a outra
+}
+
+model BoardTaskRelation {
+  id        String           @id @default(uuid())
+  fromId    String
+  from      BoardTask        @relation("RelationFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  toId      String
+  to        BoardTask        @relation("RelationTo", fields: [toId], references: [id], onDelete: Cascade)
+  kind      TaskRelationKind
+  createdAt DateTime         @default(now())
+
+  @@unique([fromId, toId, kind])
+}
+
+/// Um ficheiro anexado a uma tarefa (guardado na base de dados, até 10 MB).
+model BoardTaskAttachment {
+  id        String    @id @default(uuid())
+  taskId    String
+  task      BoardTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  name      String
+  mimeType  String
+  size      Int
+  data      Bytes
+  createdBy String    @default("user")
+  createdAt DateTime  @default(now())
+
+  @@index([taskId])
+}
+
+/// O que a IA gastou, por dia, agente e origem (conversa, disparo, estudo…).
+model AiUsage {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  day        String // "2026-11-02" (hora de Lisboa)
+  agentKey   String
+  model      String
+  source     String // chat · schedule · study · verify · check
+  tokensIn   Int      @default(0)
+  tokensOut  Int      @default(0)
+  cacheRead  Int      @default(0)
+  cacheWrite Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, day, agentKey, model, source])
+  @@index([userId, day])
+}
+
+model BoardTaskModule {
+  taskId   String
+  task     BoardTask   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  moduleId String
+  module   BoardModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, moduleId])
+}
+
+model BoardTaskComment {
+  id        String    @id @default(uuid())
+  taskId    String
+  task      BoardTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author    String // "user" ou a chave do agente
+  body      String    @db.Text // Markdown
+  createdAt DateTime  @default(now())
+
+  @@index([taskId, createdAt])
+}
+
+model BoardTaskLink {
+  id        String    @id @default(uuid())
+  taskId    String
+  task      BoardTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  title     String
+  url       String
+  createdAt DateTime  @default(now())
+
+  @@index([taskId])
+}
+
+/// O que foi acontecendo a uma tarefa (estado, prioridade, quem…).
+model BoardTaskActivity {
+  id        String    @id @default(uuid())
+  taskId    String
+  task      BoardTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  actor     String // "user", a chave do agente ou "MyHomeLab"
+  text      String
+  createdAt DateTime  @default(now())
+
+  @@index([taskId, createdAt])
+}
+
+/// Os documentos de processo que o MyHomeLab já criou a cada utilizador ("Como a
+/// equipa trabalha", "Quando corro sem ti"…). Ficam aqui para não voltarem a
+/// aparecer se ele os apagar.
+model DocSeed {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key       String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, key])
+}
+
+// ── Tarefas (os afazeres do utilizador) ─────────────────────────────────────
+// Guardadas aqui. Seguem o modelo das tarefas do CalDAV (VTODO) para um dia se
+// poderem sincronizar com o Nextcloud.
+
+enum TodoStatus {
+  OPEN // por fazer (NEEDS-ACTION)
+  IN_PROGRESS // a andar (IN-PROCESS)
+  DONE // feita (COMPLETED)
+  CANCELLED
+}
+
+enum TodoPriority {
+  HIGH // PRIORITY 1
+  MEDIUM // PRIORITY 5
+  LOW // PRIORITY 9
+}
+
+model TodoList {
+  id        String         @id @default(uuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  color     String?
+  position  Int            @default(0)
+  /// Escondida das Tarefas: a ponte de um grupo de sincronização sem o servidor
+  /// (só entre emails). O nome é interno (__sync:<grupo>:<lista>).
+  hidden    Boolean        @default(false)
+  todos     Todo[]
+  syncLinks TodoSyncLink[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@unique([userId, name])
+}
+
+model Todo {
+  id          String         @id @default(uuid())
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listId      String
+  list        TodoList       @relation(fields: [listId], references: [id], onDelete: Cascade)
+  parentId    String?
+  parent      Todo?          @relation("TodoSubtasks", fields: [parentId], references: [id], onDelete: Cascade)
+  subtasks    Todo[]         @relation("TodoSubtasks")
+  title       String
+  notes       String?        @db.Text
+  /// Prazo. Com dueAllDay é o dia (meia-noite UTC desse dia); sem, o instante.
+  dueAt       DateTime?
+  dueAllDay   Boolean        @default(false)
+  priority    TodoPriority?
+  status      TodoStatus     @default(OPEN)
+  completedAt DateTime?
+  /// Onde se trata: páginas do site (ex.: /MyHomeLab/Projects/<id>) ou URLs.
+  links       String[]       @default([])
+  /// O agente que a criou (null = o utilizador).
+  agentName   String?
+  /// As que o código abre e fecha sozinho (ex.: update-waiting:<id>).
+  subject     String?
+  syncItems   TodoSyncItem[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@unique([userId, subject])
+  @@index([userId, status])
+}
+
+// ── Sincronização das Tarefas ─────────────────────────────────────────────
+
+/// Se as Tarefas sincronizam com os outros serviços (o interruptor geral; os pares ficam
+/// guardados mesmo desligado).
+model TodoSyncSetting {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enabled         Boolean   @default(false)
+  /// De quantos em quantos minutos sincroniza (5 min a 1 dia).
+  intervalMinutes Int       @default(15)
+  lastRunAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+/// O que um grupo sincroniza.
+enum TodoSyncScope {
+  ALL // todas as listas dos emails do grupo e das Tarefas (as novas também)
+  LISTS // só as listas com estes nomes
+}
+
+/// Um grupo de sincronização: uns emails (contas do Google Tasks) e o que sincroniza.
+/// Cada lista, pelo nome, fica igual nas Tarefas e em todos os emails do grupo; se
+/// faltar num sítio, cria-se. As ligações (TodoSyncLink) saem daqui sozinhas.
+model TodoSyncGroup {
+  id           String         @id @default(uuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  scope        TodoSyncScope  @default(ALL)
+  /// LISTS: os nomes das listas que sincronizam.
+  listNames    String[]       @default([])
+  /// As contas do Google Tasks (ConnectedAccount) do grupo.
+  accountIds   String[]       @default([])
+  /// Se as Tarefas do servidor entram no grupo; sem elas, sincroniza só entre os emails.
+  includeLocal Boolean        @default(true)
+  /// O que não deu para ligar (ex.: a lista já está noutro grupo com o mesmo email).
+  lastError    String?        @db.Text
+  links        TodoSyncLink[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([userId])
+}
+
+/// Uma lista do Google Tasks ligada nos dois sentidos a uma lista das Tarefas, dentro
+/// de um grupo. Cada lista daqui liga-se no máximo a uma lista de cada email.
+model TodoSyncLink {
+  id             String           @id @default(uuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupId        String
+  group          TodoSyncGroup    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  listId         String
+  list           TodoList         @relation(fields: [listId], references: [id], onDelete: Cascade)
+  accountId      String
+  account        ConnectedAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  remoteListId   String
+  remoteListName String
+  lastSyncAt     DateTime?
+  lastError      String?          @db.Text
+  items          TodoSyncItem[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([listId, accountId])
+  @@unique([accountId, remoteListId])
+  @@index([userId])
+  @@index([groupId])
+}
+
+/// Uma tarefa daqui e a do outro lado, com as datas de alteração da última
+/// sincronização: é o que diz quem mudou desde então. Apagada a tarefa daqui, fica sem
+/// todoId e a seguinte apaga-a do outro lado.
+model TodoSyncItem {
+  id              String       @id @default(uuid())
+  linkId          String
+  link            TodoSyncLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  todoId          String?
+  todo            Todo?        @relation(fields: [todoId], references: [id], onDelete: SetNull)
+  remoteId        String
+  localUpdatedAt  DateTime
+  remoteUpdatedAt DateTime
+
+  @@unique([linkId, remoteId])
+  @@unique([linkId, todoId])
+}

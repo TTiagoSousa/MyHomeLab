@@ -1,0 +1,217 @@
+# Architecture
+
+MyHomeLab is a single NestJS process with a PostgreSQL database, a React single-page app
+served by nginx, and an Android app that talks to the same API. Everything runs inside one
+Proxmox LXC container in production.
+
+```
+   Browser (React SPA)          Android app (React Native)
+            │                              │
+            │  httpOnly session cookie     │  same cookie, same API
+            ▼                              ▼
+   ┌───────────────────────────────────────────────────┐
+   │ nginx :80   /      → static frontend build        │
+   │             /api/* → backend (prefix stripped,    │
+   │                      no buffering, for SSE)       │
+   └───────────────────────────┬───────────────────────┘
+                               │ REST + Server-Sent Events
+                               ▼
+   ┌───────────────────────────────────────────────────┐
+   │ NestJS (one process, 127.0.0.1)                   │
+   │                                                   │
+   │  controllers → services → helpers → repositories  │
+   │                                        │          │
+   │  schedulers (cron)    agent team ──────┤          │
+   │                       (Claude)         ▼          │
+   │                                   PostgreSQL      │
+   └───────────────────────────┬───────────────────────┘
+                               │ outbound only
+     ┌──────────┬──────────┬───┴──────┬───────────┬────────────────────┐
+     ▼          ▼          ▼          ▼           ▼                    ▼
+   Gmail /   Nextcloud   Proxmox   Anthropic   Forgejo, Home       openGym,
+   Google    (WebDAV,    API, SSH  (Claude)    Assistant,          TREK, …
+   Tasks     CalDAV)                           AdGuard Home
+```
+
+All integrations are outbound: the backend calls the external APIs, nothing calls in (the
+Google OAuth callback is the one exception).
+
+## Monorepo layout
+
+npm workspaces, a single `package-lock.json` at the root.
+
+```
+apps/backend     NestJS 11 + Prisma 7 + PostgreSQL     (@myhomelab/backend)
+apps/frontend    React 19 + Vite + SCSS                 (@myhomelab/frontend)
+packages/shared  types and constants used by both sides (@myhomelab/shared)
+apps/mobile      Android app (React Native + Expo, TS)  — not an npm workspace
+deploy/proxmox   LXC installer (creates the CT, installs, updates, backs up)
+releases/        release notes per version, in en / pt-PT / es
+scripts/         release and Android build scripts
+```
+
+- `packages/shared` must be built before the backend or frontend imports it. The root
+  `dev*` and `build` scripts do this for you.
+- `apps/mobile` has its own `package-lock.json` and is installed from inside its folder. It
+  stays out of the workspaces so the server's `npm ci` never downloads React Native.
+
+## Backend: four layers
+
+Every domain module has the same shape and the same four layers:
+
+| Layer | Responsibility | Never does |
+|---|---|---|
+| **Controller** | Routes, guards, reading `req.user.id`, DTO validation | Business logic |
+| **Service** | Thin shell: injects repositories and calls the right helper | Touch Prisma |
+| **Helper** | One business operation — one exported function per file, all inputs as arguments | Be a class or hold state |
+| **Repository** | Prisma access; encrypts/decrypts stored credentials | Business rules |
+
+Helpers being plain functions is what lets the same operation be called by a controller, a
+scheduler or an agent tool. Some newer modules (board, todos, app updates, notifications…)
+talk to `PrismaService` directly from the service and skip the repository layer.
+
+Other cross-cutting decisions:
+
+- **Sessions** are a JWT in an httpOnly, `sameSite: strict` cookie (`secure` behind HTTPS).
+  Admin routes add a roles guard.
+- **Ownership**: every helper checks the `userId` before reading or writing; another user's
+  resource is a 404.
+- **Credentials at rest** (OAuth tokens, app passwords, server secrets) are encrypted with
+  AES-256-GCM using `TOKEN_ENCRYPTION_KEY`, inside the repository boundary.
+- **Live state over SSE**: what each agent is doing is kept in memory and streamed to the
+  browser (`GET /agent/stream`). SSE was chosen over WebSockets because the traffic is
+  one-way and it reuses the session cookie.
+- **Single instance**: in-memory activity, schedulers without a distributed lock and
+  short-lived proposals assume one backend process. Scaling out would need that state moved
+  to the database or Redis.
+
+## The AI agent team
+
+Each user has a **team of agents**, stored in the database (`Agent` table) and edited on
+the **Workflow** page: name, description, who it reports to, model, effort, instructions
+and tools.
+
+```
+              Assistant page · Android app   (POST /assistant/chat)
+                              │
+                              ▼
+                     Jarvis — CEO (root agent)
+                 talks to the user, delegates work
+               ┌──────────────┼───────────────┬──────────────┐
+          ask_admin       ask_infra        ask_doctor      ask_<key>
+               ▼              ▼                ▼              ▼
+        Administrative   Infrastructure     Personal      any agent the
+        assistant        engineer           doctor        user creates
+        (email, rules,   (servers,             │
+         tasks)           backups, updates)    ├── health data scientist
+                              │                └── personal trainer
+                              └── Proxmox operator
+```
+
+- **Jarvis (CEO)** is the root agent (`reportsToId = null`) and the only one that talks to
+  the user. A fresh install creates only Jarvis; the rest of the team is built on the
+  Workflow page (or by asking Jarvis) from the bundled templates.
+- **One generic executor** (`runTeamAgent`) runs any agent from its configuration: it
+  composes the instructions, picks the model and effort, builds the toolbox, and adds one
+  `ask_<key>` tool per active subordinate. A delegation is just a tool call; the
+  subordinate returns a short report to its manager. Maximum depth is 5.
+- **Tools** live in toolsets under `apps/backend/src/assistant/toolsets/` (email, servers,
+  server control/shell, health, docs, updates, schedules, board, todos, Forgejo, Home
+  Assistant, AdGuard, Nextcloud, team management…). The catalogue in
+  `agent/tool-catalog.ts` lists every tool with its group and whether it reads or writes.
+- **Three permission layers** — an agent can only do what all three allow:
+  1. the tools assigned to the agent (Workflow page);
+  2. per-area permissions for the whole assistant (Assistant → Settings → Permissions);
+  3. per-app / per-server access for each agent: none, read or write.
+- **AI provider**: Anthropic's Claude. Agents run through Anthropic's Claude CLI (`claude`) installed on
+  the server, signed in with the user's Claude subscription (or a token pasted in
+  Settings → AI). Each agent only gets the MyHomeLab tools, exposed through a local MCP
+  bridge; nothing from the machine (shell, files, web) is available to it. Token usage is
+  recorded per agent and source, with an optional monthly budget alert.
+
+See [Agents and tools](./development/05-agents-and-tools.md) for the details.
+
+## Docs as rules
+
+Users keep Markdown **documents** in the app (rules, checklists, notes, learnings, server
+guides, logs). Documents can be linked to a server, a machine, an app, a service monitor,
+an agent, a project or a task, and can be marked **required**.
+
+Agents read these documents instead of having rules hard-coded:
+
+- required documents (general ones, and those linked to the agent or its projects) are
+  added to the agent's instructions; documents linked to whatever the request mentions are
+  added to the request;
+- agents search and read documents with `docs_search` / `docs_read`;
+- agents can write their own documents (guides, logs), but for the user's documents they
+  can only **propose** a change, which the user approves or rejects;
+- precedence is **user rules > approved learnings > agent instructions**, and the more
+  specific rule wins.
+
+The code measures, executes and records; the brakes (what needs approval, which commands
+are destructive) are the rules in the documents that the agents follow. A conflict checker
+compares required rules with each other and flags contradictions.
+
+## App updates
+
+MyHomeLab watches the versions of the connected apps, Home Assistant components and the
+Proxmox VE hosts. A new version becomes an **available** update; an agent opens it and it
+moves through the update project on the board:
+
+```
+available → Waiting for study → Study → Waiting for reply ──(user approves)──► Ready to update
+                                   │                                                │
+                                   └── Recheck later                                ▼
+                                                              In progress → Verifying → Done
+                                                                    └──► Failed (rolled back)
+```
+
+1. **Study** — an agent reads the release notes and known issues, checks the rules for that
+   app and records a study with a risk and a recommendation.
+2. **Approval** — the study ends in *Waiting for reply*. Only the user moves it to
+   *Ready to update* (drag on the board, "Yes, install" on the task, or saying so in chat);
+   that move is the approval.
+3. **Install** — the installer picks up ready updates, **one at a time** per user, and asks
+   an agent to prepare (validate the "before" checklist), snapshot and run it, with
+   rollback if it fails.
+4. **Verify** — the agent checks the "after" points and closes it as done.
+
+Every study, preparation and verification is an **attempt** with each rule point marked
+validated / not validated / not applicable, with the evidence. See
+[App updates](./development/06-app-updates.md).
+
+## Board, projects and triggers
+
+- **Projects** is a task board (kanban, list and table views) with projects, columns,
+  modules, cycles, tasks with keys like `ATU-12`, comments, links, relations and
+  attachments. Agents can read and update it through the `board` toolset.
+- The **updates project** is created automatically; each opened update is a task in it.
+- Each task can have its own conversation with Jarvis; what the user says there counts as
+  the answer to the task's open question.
+- **Triggers** (schedules) are agent jobs: run once, daily, weekly, monthly, or "when a new
+  update appears". The reply can go to a notification or to a new Jarvis conversation.
+- **Tasks** (personal to-dos) is a separate, simpler module with lists, due dates and
+  sub-tasks, synced both ways with Google Tasks and Nextcloud (CalDAV).
+
+## Notifications
+
+A single notification centre with a badge in the menu: service down, machine missing,
+app update available, disk problems and warnings, certificate expiry, app problems, failed
+backups, and agent notices. Most notifications close by themselves when the condition
+clears (a service comes back, a backup succeeds); agent notices close with "Seen".
+"Needs you" groups what is waiting for a user decision (update approvals, document
+proposals, questions on tasks). A daily summary at 21:00 lists what the agents did on
+their own in the last 24 hours and what the AI cost that day.
+
+## Internationalisation
+
+- The interface is available in **pt-PT** (source language), **en** and **es**, with
+  i18next. The choice is stored in the browser (Settings → Language).
+- Strings live in `apps/frontend/src/i18n/locales/<language>/<namespace>.json`, one
+  namespace per area; the three files of a namespace always have the same keys.
+- Visible text is never hard-coded in JSX.
+- Release notes are written in all three languages; the app shows the one for the current
+  interface language, falling back to English.
+- Still in Portuguese, coming from the backend: API error messages, agent names/actions and
+  the assistant's replies. Error responses carry a `code` so the frontend can translate the
+  common ones.

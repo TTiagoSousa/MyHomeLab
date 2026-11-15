@@ -1,0 +1,139 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Settings .Settings_cards{
+
+  .Settings_cards_head{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .Settings_cards_empty{
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px dashed var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+
+  .Settings_cards_list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .Settings_card{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 14px;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+  }
+
+  .Settings_card_mark{
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--ctrl-radius);
+    border: 1px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-bright);
+    font-family: Font.$font_family_hud;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .Settings_card_text{
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .Settings_card_name{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+
+  .Settings_card_tag{
+    @include Mixin.Hud_Label(8px);
+    padding: 2px 6px;
+    border-radius: var(--ctrl-radius);
+    border: 1px solid var(--hud-line-strong);
+    color: var(--text-soft);
+    white-space: nowrap;
+
+    &.on{ border-color: var(--stat-positive); color: var(--stat-positive); }
+  }
+
+  .Settings_card_key{
+    font-family: Font.$font_family_mono;
+    font-size: 12px;
+    color: var(--text-soft);
+    letter-spacing: .04em;
+  }
+
+  .Settings_card_detail{
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--text-soft);
+
+    &.ok{ color: var(--stat-positive); }
+    &.error{ color: var(--danger-color); }
+  }
+
+  .Settings_card_models{
+    flex-basis: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--hud-line);
+
+    .Settings_card_models_field{
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      label{ @include Mixin.Hud_Label(9px); color: var(--text-soft); }
+      span{ font-size: 11.5px; line-height: 1.4; color: var(--text-soft); }
+    }
+
+    .Settings_card_detail,
+    .Settings_card_actions{ grid-column: 1 / -1; }
+    .Settings_card_actions{ justify-content: flex-end; }
+  }
+
+  .Settings_card_actions{
+    display: flex;
+    gap: 8px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+
+      &.danger:hover:not(:disabled),
+      &.danger.confirm{
+        color: var(--danger-color);
+        border-color: var(--danger-color);
+        background: var(--danger-color-soft);
+      }
+    }
+  }
+}

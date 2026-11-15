@@ -1,0 +1,48 @@
+@use '../../../Styles/Fonts.scss' as Font;
+
+.Apps{
+  .Apps_hint{
+    display: inline-flex;
+    align-items: center;
+    cursor: help;
+    text-decoration: underline dotted var(--hud-line-strong);
+    text-underline-offset: 3px;
+  }
+
+  .Apps_modal_table{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    background-color: var(--modal-background);
+
+    > h3{
+      margin: 0;
+      padding-right: 36px;
+      font-size: 15px;
+      color: var(--text-main);
+    }
+
+    > p{
+      margin: 0;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .Apps_table tr.closed td{ opacity: .7; }
+
+    .Apps_table td{
+      &.ok{ color: var(--stat-positive); }
+      &.error{ color: var(--danger-color); }
+      &.wrap{ font-family: Font.$font_family_sans; }
+
+      a{ color: var(--accent-bright); }
+    }
+
+    .Apps_footer{ border-top: none; padding-top: 0; }
+  }
+}
+
+.App_Summary_Line{
+  display: block;
+}

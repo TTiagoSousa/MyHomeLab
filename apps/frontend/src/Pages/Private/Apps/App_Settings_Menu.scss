@@ -1,0 +1,81 @@
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.App_Settings_Menu{
+  position: relative;
+
+  .App_Settings_Menu_button{
+    @include Mixin.Ghost_Button;
+    height: 32px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+
+    svg{ width: 13px; height: 13px; }
+  }
+
+  .App_Settings_Menu_panel{
+    @include Mixin.Modal_Panel;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 30;
+    width: 300px;
+    max-width: calc(100vw - 32px);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+    box-sizing: border-box;
+
+    button{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 10px;
+      border-radius: var(--ctrl-radius);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-main);
+      cursor: pointer;
+      text-align: left;
+
+      svg{
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        color: var(--accent);
+      }
+
+      &:hover,
+      &:focus-visible{
+        outline: none;
+        border-color: var(--accent);
+        background: var(--accent-soft);
+      }
+    }
+  }
+
+  .App_Settings_Menu_title{
+    @include Mixin.Hud_Label(10px);
+    padding: 6px 10px 8px;
+    color: var(--text-soft);
+  }
+
+  .App_Settings_Menu_text{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .App_Settings_Menu_name{
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .App_Settings_Menu_hint{
+    font-size: 11.5px;
+    color: var(--text-soft);
+  }
+}

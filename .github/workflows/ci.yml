@@ -1,0 +1,114 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches: [develop, staging, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# The job names are required checks in the "Protect main and staging" ruleset:
+# rename a job here and rename it there too.
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build:shared
+      - name: Generate the Prisma client
+        run: npx prisma generate
+        working-directory: apps/backend
+      - name: Type check
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: apps/backend
+      - name: Unit tests
+        run: npx jest --ci
+        working-directory: apps/backend
+      - name: Build
+        run: npm run build -w @myhomelab/backend
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build:shared
+      - name: Type check and build
+        run: npm run build -w @myhomelab/frontend
+
+  mobile:
+    name: Mobile
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/mobile/package-lock.json
+      - run: npm ci
+      - name: Type check
+        run: npm run typecheck
+
+  migrations:
+    name: Database migrations
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: myhomelab
+          POSTGRES_PASSWORD: myhomelab
+          POSTGRES_DB: myhomelab
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U myhomelab"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://myhomelab:myhomelab@localhost:5432/myhomelab
+    defaults:
+      run:
+        working-directory: apps/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+        working-directory: .
+      - name: Apply every migration to an empty database
+        run: npx prisma migrate deploy
+      - name: The migrations match the schema
+        run: npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+
+  shell:
+    name: Shell scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck
+        run: shellcheck --severity=warning deploy/proxmox/*.sh

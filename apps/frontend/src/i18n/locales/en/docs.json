@@ -1,0 +1,372 @@
+{
+  "title": "Documents",
+  "you": "You",
+  "actions": {
+    "new": "New document",
+    "starter": "Create suggested documents",
+    "starterBusy": "Creating…",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirmDelete": "Delete this document?",
+    "confirmDeleteYes": "Yes, delete",
+    "confirmDeleteNo": "No",
+    "back": "Documents",
+    "newLinked": "New linked to {{label}}"
+  },
+  "filters": {
+    "search": "Search documents…",
+    "allKinds": "All kinds",
+    "allLinks": "Linked to anything",
+    "target": "Linked to {{label}}",
+    "clearTarget": "Remove this filter",
+    "anyTarget": "Any",
+    "kindLabel": "Type",
+    "linkLabel": "Linked to",
+    "authorLabel": "Written by",
+    "anyAuthor": "Everyone",
+    "mine": "Me",
+    "agents": "Agents",
+    "sortLabel": "Sort",
+    "sortRecent": "Most recent",
+    "sortTitle": "Title (A–Z)",
+    "requiredOnly": "Required only",
+    "clear": "Clear filters"
+  },
+  "kinds": {
+    "RULES": "Rules",
+    "CHECKLIST": "Checklist",
+    "NOTES": "Notes",
+    "LEARNINGS": "Learnings",
+    "GUIDE": "Guide",
+    "LOG": "Log",
+    "OTHER": "Other",
+    "ATTEMPT": "Update attempt"
+  },
+  "linkTypes": {
+    "SERVER": "Server",
+    "GUEST": "Machine",
+    "APP": "App",
+    "MONITOR": "Watched service",
+    "AGENT": "Agent",
+    "DOC": "Document",
+    "PROJECT": "Project",
+    "TASK": "Task"
+  },
+  "linkGroups": {
+    "SERVER": "Servers",
+    "GUEST": "Machines",
+    "APP": "Connected apps",
+    "MONITOR": "Watched services",
+    "AGENT": "Agents",
+    "DOC": "Documents",
+    "PROJECT": "Projects",
+    "TASK": "Tasks"
+  },
+  "linkFilter": {
+    "SERVER": "Linked to servers",
+    "GUEST": "Linked to machines",
+    "APP": "Linked to apps",
+    "MONITOR": "Linked to watched services",
+    "AGENT": "Linked to agents",
+    "DOC": "Linked to documents",
+    "PROJECT": "Linked to projects",
+    "TASK": "Linked to tasks"
+  },
+  "chips": {
+    "required": "Required",
+    "agentOwner": "By the agents"
+  },
+  "list": {
+    "loading": "Loading documents…",
+    "noResults": "No document matches your search.",
+    "updated": "{{time}} · {{by}}",
+    "count_one": "{{count}} document",
+    "count_other": "{{count}} documents"
+  },
+  "empty": {
+    "title": "No documents yet",
+    "text": "Documents hold your rules, checklists and what the agents learn along the way. Start with the suggested ones — you can edit them freely.",
+    "or": "or create one from scratch"
+  },
+  "detail": {
+    "placeholder": "Pick a document from the list or create a new one.",
+    "notFound": "This document no longer exists.",
+    "loading": "Loading document…",
+    "updated": "Updated {{time}} by {{by}}",
+    "noContent": "This document is still empty.",
+    "noLinks": "No links — applies to everything.",
+    "links": "Linked to",
+    "tags": "Tags",
+    "agentDoc": "Maintained by the agents — you can edit it too."
+  },
+  "form": {
+    "newTitle": "New document",
+    "editTitle": "Edit document",
+    "title": "Title",
+    "titlePlaceholder": "e.g. Main server rules",
+    "titleRequired": "Give the document a title.",
+    "kind": "Kind",
+    "summary": "Summary",
+    "summaryHint": "One line, for the agents' index.",
+    "summaryPlaceholder": "What this document is about, in one sentence",
+    "tags": "Tags",
+    "tagsPlaceholder": "Type and press Enter",
+    "removeTag": "Remove the tag {{tag}}",
+    "required": "Required",
+    "requiredHint": "The agents always read it when a request touches what it is linked to. Without links, it applies to everything.",
+    "links": "Links",
+    "linksHint": "Link the document to servers, machines, apps, services, agents or other documents.",
+    "content": "Content",
+    "contentPlaceholder": "Write here… use the toolbar for headings, lists, checklists, tables and diagrams."
+  },
+  "links": {
+    "add": "Link to…",
+    "none": "No links yet.",
+    "remove": "Remove the link to {{label}}",
+    "pickerTitle": "Link to…",
+    "pickerSearch": "Search servers, machines, apps…",
+    "pickerEmpty": "Nothing found.",
+    "pickerLoading": "Loading…",
+    "done": "Done",
+    "selected_one": "{{count}} link",
+    "selected_other": "{{count}} links"
+  },
+  "versions": {
+    "title": "Versions",
+    "show": "Versions ({{count}})",
+    "hide": "Hide versions",
+    "empty": "No previous versions yet.",
+    "by": "by {{by}}",
+    "view": "View",
+    "modalTitle": "Version from {{date}}",
+    "restore": "Restore this version",
+    "restoring": "Restoring…",
+    "close": "Close",
+    "loading": "Loading version…"
+  },
+  "proposals": {
+    "title": "Agent proposals",
+    "description": "Changes the agents want to make to the documents. Nothing changes without your approval.",
+    "count_one": "{{count}} pending",
+    "count_other": "{{count}} pending",
+    "show": "Show",
+    "hide": "Hide",
+    "by": "{{agent}} proposes",
+    "action": {
+      "EDIT": "Edit",
+      "APPEND": "Append",
+      "CREATE": "Create"
+    },
+    "target": "In “{{title}}”",
+    "newDoc": "New: “{{title}}”",
+    "missingDoc": "Document no longer exists",
+    "untitled": "Untitled",
+    "reason": "Reason",
+    "current": "Current",
+    "proposed": "Proposed",
+    "appended": "Will be added at the end",
+    "newContent": "Content of the new document",
+    "approve": "Approve",
+    "approveEdited": "Approve with changes",
+    "editBefore": "Edit first",
+    "discardEdits": "Discard changes",
+    "reject": "Reject"
+  },
+  "editor": {
+    "glyph": {
+      "heading": "H{{level}}",
+      "bold": "B",
+      "italic": "I",
+      "strike": "S"
+    },
+    "toolbar": {
+      "heading": "Heading {{level}}",
+      "bold": "Bold",
+      "italic": "Italic",
+      "strike": "Strikethrough",
+      "code": "Inline code",
+      "link": "Link",
+      "bulletList": "Bulleted list",
+      "orderedList": "Numbered list",
+      "taskList": "Checklist",
+      "blockquote": "Quote",
+      "codeBlock": "Code block",
+      "rule": "Divider",
+      "diagram": "Insert diagram",
+      "diagramShort": "Diagram",
+      "undo": "Undo",
+      "redo": "Redo"
+    },
+    "link": {
+      "label": "Link address",
+      "placeholder": "https://…",
+      "apply": "Apply",
+      "remove": "Remove"
+    },
+    "table": {
+      "insert": "Insert 3×3 table",
+      "insertShort": "Table",
+      "addRow": "+ Row",
+      "removeRow": "− Row",
+      "addColumn": "+ Column",
+      "removeColumn": "− Column",
+      "toggleHeader": "Header",
+      "deleteTable": "Delete table"
+    },
+    "code": {
+      "language": "language"
+    },
+    "diagram": {
+      "label": "Diagram",
+      "preview": "Preview",
+      "showCode": "Show code",
+      "hideCode": "Hide code",
+      "loading": "Drawing the diagram…",
+      "empty": "Empty diagram.",
+      "error": "Could not draw the diagram. Check the Mermaid code.",
+      "example": "flowchart TD\n  A[Request] --> B{Needs approval?}\n  B -->|Yes| C[Ask the user]\n  B -->|No| D[Run]\n  C --> D"
+    }
+  },
+  "alerts": {
+    "created": "Document created.",
+    "saved": "Document saved.",
+    "deleted": "Document deleted.",
+    "restored": "Version restored.",
+    "starterCreated_one": "{{count}} suggested document created.",
+    "starterCreated_other": "{{count}} suggested documents created.",
+    "starterNone": "You already have all the suggested documents.",
+    "proposalApproved": "Proposal approved.",
+    "proposalRejected": "Proposal rejected."
+  },
+  "linked": {
+    "title": "Documents",
+    "description": "Rules and notes linked to {{label}}. The agents read them.",
+    "empty": "No linked documents yet.",
+    "new": "New document",
+    "loading": "Loading…",
+    "previous": "Previous page",
+    "next": "Next page",
+    "page": "{{page}} of {{pages}}",
+    "all": "See all ({{count}})"
+  },
+  "attempts": {
+    "heading": "{{kind}} · {{title}}",
+    "number": "install #{{number}}",
+    "started": "Started {{date}}",
+    "finished": "finished {{date}}",
+    "note": "The rule points as they were when the attempt started. The agent validates them one by one, with proof; what to do with a point that is not validated is in your rules.",
+    "states": {
+      "PENDING": "To validate",
+      "VALIDATED": "Validated",
+      "NOT_VALIDATED": "Not validated",
+      "NOT_APPLICABLE": "Does not apply",
+      "SKIPPED": "Skipped (direct request)"
+    },
+    "status": {
+      "CHECKING": "Validating",
+      "RUNNING": "Updating",
+      "VERIFYING": "Verifying",
+      "DONE": "Installed",
+      "FAILED": "Failed",
+      "STOPPED": "Stopped"
+    },
+    "phases": {
+      "BEFORE": "Before updating",
+      "AFTER": "After updating"
+    },
+    "who": {
+      "agent": "The agent validates",
+      "user": "You confirm",
+      "code": "Measured by MyHomeLab"
+    },
+    "proof": "proof: {{proof}}",
+    "checked": "{{date}} · {{by}}",
+    "noPoints": "No points written in the rules for this phase.",
+    "result": "Result",
+    "rules": "Rules used",
+    "openLog": "Open the log",
+    "openApp": "Open the app",
+    "openServer": "Open the server",
+    "counts": "{{validated}}/{{total}} validated",
+    "countsFailed_one": "{{count}} not validated",
+    "countsFailed_other": "{{count}} not validated",
+    "sectionTitle": "Studies and installs",
+    "sectionDescription": "Every study and install of this app: the rules and what was validated. Click to see the list.",
+    "empty": "No studies or installs for this app yet.",
+    "columns": {
+      "date": "Date",
+      "version": "Version",
+      "rules": "Rules",
+      "status": "Status",
+      "kind": "Type"
+    },
+    "countsHint": "{{validated}} validated · {{notApplicable}} not applicable · {{skipped}} skipped · {{notValidated}} not validated · {{pending}} pending",
+    "finishedHint": "Finished {{date}}",
+    "openInDocs": "Open in Docs",
+    "statusHint": {
+      "CHECKING": "The agent is validating the before rules.",
+      "RUNNING": "The update is running.",
+      "VERIFYING": "Updated; validating the after rules.",
+      "DONE": "Installed, with everything validated.",
+      "FAILED": "Something failed; open it to see which point.",
+      "STOPPED": "Stopped before finishing."
+    },
+    "showMore": "Show all",
+    "showLess": "Show less",
+    "headingNumbered": "{{kind}} (#{{number}}) · {{title}}",
+    "kind": {
+      "STUDY": "Study",
+      "UPDATE": "Install"
+    },
+    "studyStatus": {
+      "CHECKING": "Studying",
+      "RUNNING": "Studying",
+      "VERIFYING": "Studying",
+      "DONE": "Study done",
+      "FAILED": "Did not finish",
+      "STOPPED": "Interrupted"
+    },
+    "studyStatusHint": {
+      "CHECKING": "The agent is reading the notes and validating the study rules.",
+      "RUNNING": "The agent is reading the notes and validating the study rules.",
+      "VERIFYING": "The agent is reading the notes and validating the study rules.",
+      "DONE": "The study finished; the conclusion is in the result.",
+      "FAILED": "The study did not finish; open it to see why.",
+      "STOPPED": "It stopped halfway (for example, MyHomeLab restarted) and another study began."
+    },
+    "legend": "Study: the agent checks whether the new version is safe, without touching the app. Install: the update itself, with a snapshot first.",
+    "latest": "Latest: {{kind}} {{from}} → {{to}} · {{status}}",
+    "count_one": "{{count}} entry",
+    "count_other": "{{count}} entries",
+    "view": "View"
+  },
+  "conflicts": {
+    "title": "Possible conflicts with other rules",
+    "check": "Check conflicts",
+    "checking": "Checking…",
+    "checkHint": "Compares this document with the related documents",
+    "found_one": "Found {{count}} possible conflict",
+    "found_other": "Found {{count}} possible conflicts",
+    "none": "No conflicts with the other rules"
+  },
+  "types": {
+    "manage": "Your types",
+    "title": "Document types",
+    "kind": "Created by you",
+    "text": "Besides the site types (Rules, Checklist, Notes…), create your own to organise documents. You pick the type when creating or editing a document.",
+    "placeholder": "Type name (e.g. Recipes)",
+    "add": "Create",
+    "none": "You have not created any type yet.",
+    "count_one": "{{count}} document",
+    "count_other": "{{count}} documents",
+    "delete": "Delete",
+    "deleteHint": "Documents of this type become \"Other\".",
+    "confirmDelete": "Really delete",
+    "keep": "Keep",
+    "done": "Done",
+    "created": "Type \"{{name}}\" created."
+  }
+}

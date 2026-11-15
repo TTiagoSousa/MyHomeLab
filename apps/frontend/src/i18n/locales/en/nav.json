@@ -1,0 +1,51 @@
+{
+  "menu": {
+    "services": "Services",
+    "assistant": "Assistant",
+    "workflow": "Workflow",
+    "docs": "Documents",
+    "health": "Health",
+    "servers": "Servers",
+    "notifications": "Notifications",
+    "addons": "Connected apps",
+    "settings": "Settings",
+    "help": "Help",
+    "admin": "Admin",
+    "tasks": "Tasks",
+    "today": "Today",
+    "projects": "Projects"
+  },
+  "sidebar": {
+    "theme": "Theme",
+    "profile": "Profile",
+    "logout": "Log out"
+  },
+  "groups": {
+    "daily": "Day to day",
+    "lab": "Home and lab",
+    "jarvis": "Jarvis",
+    "personal": "Personal",
+    "system": "System"
+  },
+  "hints": {
+    "today": "What needs you today",
+    "tasks": "Your personal tasks",
+    "notifications": "Notices from agents, backups and updates",
+    "services": "Shortcuts to your self-hosted services",
+    "servers": "Your Proxmox servers and machines",
+    "addons": "Accounts Jarvis uses: Gmail, Forgejo, Nextcloud…",
+    "assistant": "Talk to Jarvis",
+    "projects": "The board where the agents work",
+    "docs": "Guides and logs the agents write and read",
+    "health": "Sleep, activity, meals and health",
+    "settings": "Language, theme and preferences",
+    "admin": "Users and MyHomeLab versions",
+    "help": "How to connect and use each part"
+  },
+  "openHelp": "Open help",
+  "intros": {
+    "services": "Shortcuts to your self-hosted services. To be warned when one goes down, use the watched services in Servers.",
+    "todos": "Your personal tasks. The agents' work lives in Projects.",
+    "projects": "The board where the agents work. Your personal tasks live in Tasks."
+  }
+}

@@ -1,0 +1,58 @@
+name: Bug report
+description: Something in MyHomeLab doesn't work as it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. **Security issues go to a [private advisory](https://github.com/TTiagoSousa/MyHomeLab/security/advisories/new), not here.**
+        Please remove tokens, passwords, emails and IP addresses from logs and screenshots.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Admin → Version in the app (e.g. v1.2.0).
+      placeholder: v1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where does it happen?
+      options:
+        - Web app
+        - Android app
+        - Agents / assistant
+        - App updates
+        - Proxmox installer or updater (deploy/proxmox)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to …
+        2. Click …
+        3. See …
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: "Backend logs (`journalctl -u myhomelab -n 200` in the container) or the browser console."
+      render: shell
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Proxmox version, browser or Android version, anything else relevant.

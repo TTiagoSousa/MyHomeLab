@@ -1,0 +1,109 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Servers{
+
+  .Disks_summary{
+    @include Mixin.Hud_Label(8px);
+    padding: 2px 7px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    color: var(--text-soft);
+
+    &.ok{ border-color: var(--stat-positive); color: var(--stat-positive); }
+    &.warning{ border-color: var(--stat-attention); color: var(--stat-attention); }
+    &.problem{ border-color: var(--danger-color); color: var(--danger-color); }
+  }
+
+  .Disks_dot{
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 7px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    vertical-align: middle;
+    background: var(--text-faint);
+
+    &.ok{ background: var(--stat-positive); box-shadow: 0 0 6px var(--stat-positive); }
+    &.warning{ background: var(--stat-attention); box-shadow: 0 0 6px var(--stat-attention); }
+    &.problem{ background: var(--danger-color); box-shadow: 0 0 6px var(--danger-color); }
+  }
+
+  .Disks_sub{
+    display: block;
+    font-size: 11px;
+    color: var(--text-soft);
+  }
+
+  .Disks_issue{
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+
+    &.warning{ color: var(--stat-attention); }
+    &.problem{ color: var(--danger-color); }
+  }
+
+  .Disks_growth{
+    font-weight: 700;
+    color: var(--danger-color);
+  }
+
+  .Disks_sparkline{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    polyline{ stroke: var(--accent-bright); }
+  }
+
+  .Disks_error{
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--danger-color);
+  }
+
+  .Disks_hint{
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--text-soft);
+  }
+
+  .Disks_pools{
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .Disks_pool{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    font-size: 12.5px;
+    color: var(--text-main);
+
+    &.warning{ border-color: var(--stat-attention); }
+    &.problem{ border-color: var(--danger-color); }
+
+    .Disks_dot{ margin-right: 0; }
+
+    .mono{
+      font-family: Font.$font_family_mono;
+      font-size: 11.5px;
+      color: var(--text-soft);
+    }
+  }
+
+  .Disks_pool_name{ font-weight: 700; }
+
+  .Disks_pool_health{
+    @include Mixin.Hud_Label(8px);
+    color: var(--text-soft);
+  }
+}

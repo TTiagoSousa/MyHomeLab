@@ -1,0 +1,74 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "back": "Voltar",
+    "close": "Fechar"
+  },
+  "error": {
+    "network": "Não foi possível ligar ao servidor. Confirma o endereço e a ligação.",
+    "generic": "Algo correu mal. Tenta outra vez."
+  },
+  "login": {
+    "title": "Entrar no MyHomeLab",
+    "subtitle": "Usa a mesma conta do site.",
+    "server": "Servidor",
+    "serverHint": "https://myhomelab.example.com",
+    "username": "Utilizador",
+    "password": "Palavra-passe",
+    "showPassword": "Mostrar a palavra-passe",
+    "hidePassword": "Esconder a palavra-passe",
+    "submit": "Entrar",
+    "errorCredentials": "Utilizador ou palavra-passe errados.",
+    "errorMissing": "Preenche o utilizador e a palavra-passe."
+  },
+  "nav": {
+    "openMenu": "Abrir o menu",
+    "assistant": "Assistente",
+    "quickLog": "Registos rápidos",
+    "logout": "Terminar sessão",
+    "signedInAs": "Sessão de {{name}}",
+    "version": "Versão {{version}}"
+  },
+  "update": {
+    "available": "Há uma versão nova da app ({{version}}).",
+    "download": "Descarregar",
+    "dismiss": "Agora não"
+  },
+  "assistant": {
+    "title": "Jarvis",
+    "new": "Nova conversa",
+    "newConfirmTitle": "Começar uma conversa nova?",
+    "newConfirmText": "O histórico desta conversa é apagado, também no site e no Telegram.",
+    "newConfirm": "Apagar e começar",
+    "placeholder": "Fala com o Jarvis…",
+    "send": "Enviar",
+    "thinking": "Jarvis a pensar…",
+    "emptyTitle": "Às ordens.",
+    "emptyHint": "Pergunta sobre os emails, o servidor, a saúde ou as tarefas.",
+    "you": "Tu",
+    "keyMissing": "Falta a chave de IA. Configura-a no site, em Definições → IA.",
+    "suggestionEmails": "Que emails recebi hoje?",
+    "suggestionServers": "Que máquinas estão a correr?",
+    "suggestionSleep": "Como dormi esta noite?",
+    "suggestionTasks": "Que tarefas tenho para hoje?"
+  },
+  "quick": {
+    "title": "Registos rápidos",
+    "add": "Adicionar",
+    "removed": "Registo apagado.",
+    "water": {
+      "title": "Água",
+      "total": "{{ml}} ml",
+      "totalGoal": "{{ml}} / {{goal}} ml",
+      "todayLabel": "Hoje",
+      "yesterdayLabel": "Ontem",
+      "previousDay": "Dia anterior",
+      "nextDay": "Dia seguinte",
+      "backToToday": "Toca para voltar a hoje",
+      "custom": "Outra quantidade (ml)",
+      "undo": "Desfazer o último copo",
+      "added": "+{{ml}} ml de água.",
+      "addedOn": "+{{ml}} ml de água em {{day}}."
+    }
+  }
+}

@@ -1,0 +1,41 @@
+@use '../../Styles/Fonts.scss' as Font;
+
+.Page_Help_Wrap{
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+.Page_Help{
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 1px solid var(--hud-line-strong);
+  color: var(--text-soft);
+  font-family: Font.$font_family_sans;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-decoration: none;
+  transition: color .16s ease, border-color .16s ease, background .16s ease;
+
+  &:hover,
+  &:focus-visible{
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    outline: none;
+  }
+}
+
+.Page_Intro{
+  margin: -6px 0 0;
+  max-width: 80ch;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-soft);
+}

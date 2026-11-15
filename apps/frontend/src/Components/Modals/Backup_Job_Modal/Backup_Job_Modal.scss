@@ -1,0 +1,45 @@
+@use '../../../Styles/Fonts.scss' as Font;
+
+.Server_Modal_Overlay .Backup_Job_Modal{
+
+  .Backup_Job_Modal_Retentions{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+
+    @media (max-width: 600px){ grid-template-columns: 1fr; }
+
+    button{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+      padding: 9px 10px;
+      border: 1px solid var(--hud-line-strong);
+      border-radius: var(--ctrl-radius);
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      font-family: Font.$font_family_sans;
+      color: var(--text-main);
+
+      span{
+        font-size: 12.5px;
+        font-weight: 700;
+      }
+
+      small{
+        font-size: 11px;
+        line-height: 1.35;
+        color: var(--text-soft);
+      }
+
+      &.active{
+        border-color: var(--accent);
+        background: var(--accent-soft);
+
+        span{ color: var(--accent-bright); }
+      }
+    }
+  }
+}

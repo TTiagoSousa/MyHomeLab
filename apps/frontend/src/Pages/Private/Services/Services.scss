@@ -1,0 +1,504 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Services {
+  @include Mixin.Pages_Configs;
+
+  header{
+    @include Mixin.Page_Header;
+
+    .Right_Side{
+      span{
+        color: var(--card-global-header-title-color);
+      }
+    }
+
+    .Left_Side{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .Input_field{
+        .Global_Input,
+        .Dropdown_Field{
+          height: 42px;
+        }
+
+        width: 220px;
+        height: 42px;
+      }
+
+      button{
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 42px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        border-radius: var(--ctrl-radius);
+        border: var(--card-border);
+        cursor: pointer;
+        font-family: Font.$font_family_sans;
+        font-size: 13px;
+        font-weight: 700;
+        background-color: var(--cards-background);
+        color: var(--card-global-header-title-color);
+
+        &.active{
+          background-color: var(--simple-button-background-color);
+          border-color: var(--simple-button-background-color);
+          color: var(--simple-button-letter-color);
+        }
+
+        svg{
+          width: 15px;
+          height: 15px;
+        }
+
+        &:disabled{
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .Services_create{
+        position: relative;
+
+        button{
+          width: 42px;
+          padding: 0;
+          justify-content: center;
+        }
+
+        .Services_create_overlay{
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 998;
+        }
+
+        .Services_create_menu{
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          width: 160px;
+          display: flex;
+          flex-direction: column;
+          box-sizing: border-box;
+          border-radius: var(--ctrl-radius);
+          overflow: hidden;
+          z-index: 999;
+          background-color: var(--modal-background);
+          border: var(--card-border);
+          box-shadow: var(--card-box-shadow);
+
+          div{
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--card-global-header-title-color);
+
+            &:hover{
+              background-color: var(--primary-soft-background);
+            }
+
+            &.disabled{
+              opacity: 0.4;
+              cursor: not-allowed;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .Services_hosting{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .Services_hosting_label{
+      @include Mixin.Hud_Label;
+      color: var(--text-faint);
+    }
+
+    .Services_hosting_options{
+      display: flex;
+      gap: 6px;
+
+      button{
+        height: 28px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        border-radius: 999px;
+        cursor: pointer;
+        background-color: var(--panel-background);
+        border: var(--card-border);
+        color: var(--navbar-vertical-default-link-color);
+        font-family: Font.$font_family_sans;
+        font-size: 12px;
+        font-weight: 700;
+        transition: background-color .15s, border-color .15s, color .15s;
+
+        &:hover:not(.active){
+          color: var(--accent-bright);
+          border-color: var(--accent);
+        }
+
+        &.active{
+          background-color: var(--simple-button-background-color);
+          border-color: transparent;
+          color: var(--simple-button-letter-color);
+        }
+      }
+    }
+  }
+
+  .Services_categories{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .Services_category {
+      height: 32px;
+      padding: 0 14px;
+      box-sizing: border-box;
+      border-radius: 999px;
+      display: flex;
+      gap: 7px;
+      cursor: pointer;
+      align-items: center;
+      background-color: var(--panel-background);
+      border: var(--card-border);
+      color: var(--card-global-header-title-color);
+      transition: background-color .15s, border-color .15s;
+
+      span{
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .Services_category_name{
+        color: var(--card-global-header-title-color);
+      }
+
+      .Services_category_count{
+        padding: 1px 6px;
+        border-radius: 999px;
+        font-size: 11px;
+        opacity: .55;
+        background-color: var(--primary-soft-background);
+        color: var(--navbar-vertical-card-link-active-color);
+      }
+
+      .Services_category_delete{
+        width: 16px;
+        height: 16px;
+        padding: 3px;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--navbar-vertical-default-link-color);
+
+        &:hover{
+          background-color: var(--danger-color-soft);
+          color: var(--danger-color);
+        }
+      }
+
+      &.Services_category_add{
+        border-style: dashed;
+        color: var(--navbar-vertical-default-link-color);
+
+        svg{
+          width: 14px;
+          height: 14px;
+        }
+      }
+
+      &.active{
+        background-color: var(--simple-button-background-color);
+        border-color: transparent;
+
+        .Services_category_name{
+          color: var(--simple-button-letter-color);
+        }
+
+        .Services_category_count{
+          background-color: var(--accent-soft);
+          color: var(--simple-button-letter-color);
+          opacity: .85;
+        }
+      }
+    }
+  }
+
+  .Services_list{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .Services_list_group{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .Services_list_title{
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--navbar-vertical-default-link-color);
+
+        &.Services_list_title_favorites{
+          color: var(--accent);
+        }
+      }
+
+      .Services_list_count{
+        font-size: 11px;
+        font-weight: 600;
+        opacity: .7;
+        color: var(--navbar-vertical-default-link-color);
+      }
+
+      .Services_list_header{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .Services_list_separator{
+        flex: 1;
+        height: 1px;
+        opacity: 0.4;
+        background-color: var(--navbar-vertical-default-link-color);
+      }
+
+      .Services_list_services{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        &:empty{
+          min-height: 70px;
+          width: 100%;
+          border-radius: var(--border-radius);
+          border-style: dashed;
+          border-width: 1px;
+          box-sizing: border-box;
+          border-color: var(--navbar-vertical-default-link-color);
+        }
+
+        .Services_service{
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 13px;
+          padding: 15px;
+          min-height: 92px;
+          box-sizing: border-box;
+          border-radius: var(--border-radius);
+          cursor: pointer;
+          box-shadow: var(--card-box-shadow);
+          background-color: var(--cards-background);
+          border: var(--card-border);
+          transition: background-color .15s, border-color .15s;
+
+          &:hover{
+            background-color: var(--card-hover-background);
+          }
+
+          .Services_service_edit{
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            padding: 5px;
+            box-sizing: border-box;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--card-global-header-background);
+            color: var(--card-global-header-title-color);
+          }
+
+          .Services_service_favorite{
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 22px;
+            height: 22px;
+            padding: 4px;
+            box-sizing: border-box;
+            border-radius: 50%;
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--navbar-vertical-default-link-color);
+
+            &.active{
+              color: var(--favorite-active-color);
+            }
+          }
+
+          .Services_service_abbreviation{
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            border-radius: var(--icon-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #fff;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+          }
+
+          .Services_service_info{
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+
+            .Services_service_name{
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--card-global-header-title-color);
+            }
+
+            .Services_service_url{
+              font-size: 11px;
+              color: var(--navbar-vertical-default-link-color);
+            }
+          }
+        }
+      }
+
+      .Services_service_add{
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: var(--ctrl-radius);
+        border-style: dashed;
+        border-width: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        border-color: var(--navbar-vertical-default-link-color);
+        color: var(--navbar-vertical-default-link-color);
+
+        span{
+          font-size: 13px;
+          font-weight: 700;
+        }
+
+        svg{
+          width: 14px;
+          height: 14px;
+        }
+      }
+    }
+  }
+}
+
+.Services_category_overlay,
+.Services_service_overlay{
+  font-family: Font.$font_family_sans;
+  border-radius: var(--border-radius);
+  box-sizing: border-box;
+  box-shadow: var(--card-box-shadow);
+  cursor: grabbing;
+  background-color: var(--cards-background);
+  border: var(--card-border);
+}
+
+.Services_category_overlay{
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  display: flex;
+  gap: 7px;
+  align-items: center;
+
+  span{
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .Services_category_name{
+    color: var(--card-global-header-title-color);
+  }
+
+  .Services_category_count{
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-size: 11px;
+    opacity: .55;
+    background-color: var(--primary-soft-background);
+    color: var(--navbar-vertical-card-link-active-color);
+  }
+}
+
+.Services_service_overlay{
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+
+  .Services_service_favorite,
+  .Services_service_edit{
+    display: none;
+  }
+
+  .Services_service_abbreviation{
+    width: 44px;
+    height: 44px;
+    border-radius: var(--icon-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+  }
+
+  .Services_service_info{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .Services_service_name{
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--card-global-header-title-color);
+    }
+
+    .Services_service_url{
+      font-size: 11px;
+      color: var(--navbar-vertical-default-link-color);
+    }
+  }
+}

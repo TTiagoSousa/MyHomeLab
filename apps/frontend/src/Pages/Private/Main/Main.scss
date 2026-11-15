@@ -1,0 +1,20 @@
+.MyHomeLab {
+  display: flex;
+  width: 100%;
+  height: auto;
+  justify-content: right;
+
+  .Container_Sidebar_Home {
+    width: calc(100% - 250px);
+    height: auto;
+    min-height: 100vh;
+    transition: 0.3s all;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    transition: all 0.3s;
+    display: flex;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+}

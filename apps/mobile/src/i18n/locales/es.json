@@ -1,0 +1,74 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "back": "Volver",
+    "close": "Cerrar"
+  },
+  "error": {
+    "network": "No se pudo conectar con el servidor. Comprueba la dirección y la conexión.",
+    "generic": "Algo salió mal. Inténtalo otra vez."
+  },
+  "login": {
+    "title": "Entrar en MyHomeLab",
+    "subtitle": "Usa la misma cuenta que en la web.",
+    "server": "Servidor",
+    "serverHint": "https://myhomelab.example.com",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "showPassword": "Mostrar la contraseña",
+    "hidePassword": "Ocultar la contraseña",
+    "submit": "Entrar",
+    "errorCredentials": "Usuario o contraseña incorrectos.",
+    "errorMissing": "Rellena el usuario y la contraseña."
+  },
+  "nav": {
+    "openMenu": "Abrir el menú",
+    "assistant": "Asistente",
+    "quickLog": "Registros rápidos",
+    "logout": "Cerrar sesión",
+    "signedInAs": "Sesión de {{name}}",
+    "version": "Versión {{version}}"
+  },
+  "update": {
+    "available": "Hay una versión nueva de la app ({{version}}).",
+    "download": "Descargar",
+    "dismiss": "Ahora no"
+  },
+  "assistant": {
+    "title": "Jarvis",
+    "new": "Nueva conversación",
+    "newConfirmTitle": "¿Empezar una conversación nueva?",
+    "newConfirmText": "El historial de esta conversación se borra, también en la web y en Telegram.",
+    "newConfirm": "Borrar y empezar",
+    "placeholder": "Habla con Jarvis…",
+    "send": "Enviar",
+    "thinking": "Jarvis está pensando…",
+    "emptyTitle": "A tus órdenes.",
+    "emptyHint": "Pregunta por los emails, el servidor, la salud o las tareas.",
+    "you": "Tú",
+    "keyMissing": "Falta la clave de IA. Configúrala en la web, en Ajustes → IA.",
+    "suggestionEmails": "¿Qué emails he recibido hoy?",
+    "suggestionServers": "¿Qué máquinas están encendidas?",
+    "suggestionSleep": "¿Cómo he dormido esta noche?",
+    "suggestionTasks": "¿Qué tareas tengo para hoy?"
+  },
+  "quick": {
+    "title": "Registros rápidos",
+    "add": "Añadir",
+    "removed": "Registro borrado.",
+    "water": {
+      "title": "Agua",
+      "total": "{{ml}} ml",
+      "totalGoal": "{{ml}} / {{goal}} ml",
+      "todayLabel": "Hoy",
+      "yesterdayLabel": "Ayer",
+      "previousDay": "Día anterior",
+      "nextDay": "Día siguiente",
+      "backToToday": "Toca para volver a hoy",
+      "custom": "Otra cantidad (ml)",
+      "undo": "Deshacer el último vaso",
+      "added": "+{{ml}} ml de agua.",
+      "addedOn": "+{{ml}} ml de agua el {{day}}."
+    }
+  }
+}

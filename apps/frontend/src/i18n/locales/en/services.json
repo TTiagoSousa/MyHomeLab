@@ -1,0 +1,45 @@
+{
+  "page": {
+    "title": "Services",
+    "searchPlaceholder": "Search services",
+    "newCategory": "New category",
+    "newService": "New service",
+    "hosting": "Hosting",
+    "all": "All",
+    "favorites": "Favourites"
+  },
+  "hosting": {
+    "selfHosted": "Self-host",
+    "cloud": "Cloud"
+  },
+  "form": {
+    "name": "Name",
+    "abbreviation": "Abbreviation",
+    "abbreviationPlaceholder": "E.g. NF",
+    "url": "Url",
+    "category": "Category",
+    "hosting": "Hosting",
+    "color": "Colour",
+    "serviceNamePlaceholder": "Service name",
+    "categoryNamePlaceholder": "Category name"
+  },
+  "categoryModal": {
+    "title": "New category"
+  },
+  "alerts": {
+    "serviceCreated": "Service created",
+    "serviceUpdated": "Service updated",
+    "serviceDeleted": "Service deleted",
+    "categoryCreated": "Category created",
+    "categoryDeleted": "Category deleted"
+  },
+  "appMonitor": {
+    "fromApp": "from the {{name}} app",
+    "managedHint": "The address, server and machine come from the {{name}} app (Connected apps). To stop monitoring it, remove its server there."
+  },
+  "empty": {
+    "title": "No services yet",
+    "text": "Create a category and then add shortcuts to your services.",
+    "action": "Create category"
+  }
+}

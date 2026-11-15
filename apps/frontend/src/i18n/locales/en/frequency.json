@@ -1,0 +1,24 @@
+{
+  "long": {
+    "EVERY_15_MINUTES": "Every 15 minutes",
+    "EVERY_30_MINUTES": "Every 30 minutes",
+    "HOURLY": "Every hour",
+    "EVERY_2_HOURS": "Every 2 hours",
+    "EVERY_4_HOURS": "Every 4 hours",
+    "EVERY_6_HOURS": "Every 6 hours",
+    "EVERY_8_HOURS": "Every 8 hours",
+    "DAILY": "Every 24 hours",
+    "WEEKLY": "Every 7 days"
+  },
+  "short": {
+    "EVERY_15_MINUTES": "every 15 min",
+    "EVERY_30_MINUTES": "every 30 min",
+    "HOURLY": "hourly",
+    "EVERY_2_HOURS": "every 2 h",
+    "EVERY_4_HOURS": "every 4 h",
+    "EVERY_6_HOURS": "every 6 h",
+    "EVERY_8_HOURS": "every 8 h",
+    "DAILY": "once a day",
+    "WEEKLY": "once a week"
+  }
+}

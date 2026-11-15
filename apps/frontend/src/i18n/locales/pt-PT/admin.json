@@ -1,0 +1,48 @@
+{
+  "title": "Admin",
+  "users": {
+    "title": "Utilizadores",
+    "new": "Novo utilizador",
+    "username": "Username",
+    "role": "Role",
+    "createdAt": "Criado em",
+    "roles": {
+      "ADMIN": "Administrador",
+      "USER": "Utilizador"
+    }
+  },
+  "createUser": {
+    "title": "Novo utilizador",
+    "username": "Username",
+    "usernamePlaceholder": "Mínimo 3 caracteres",
+    "password": "Password",
+    "passwordPlaceholder": "Mínimo 8 caracteres",
+    "role": "Role",
+    "created": "Utilizador criado"
+  },
+  "status": {
+    "title": "Estado",
+    "refresh": "Atualizar",
+    "database": "Base de dados",
+    "dbOk": "Ligada ({{ms}} ms)",
+    "dbBad": "Sem ligação",
+    "backend": "Backend",
+    "uptime": "Ligado há {{time}}",
+    "triggers": "Disparos (24h)",
+    "failedRuns_one": "{{count}} falhou",
+    "failedRuns_other": "{{count}} falharam",
+    "runningRuns_one": "{{count}} a correr",
+    "runningRuns_other": "{{count}} a correr",
+    "updates": "Atualizações",
+    "studyErrors_one": "{{count}} estudo com erro",
+    "studyErrors_other": "{{count}} estudos com erro",
+    "openNotifications_one": "{{count}} notificação por ler",
+    "openNotifications_other": "{{count}} notificações por ler",
+    "jobs": "Tarefas automáticas",
+    "job": "Nome",
+    "lastRun": "Última vez",
+    "nextRun": "Próxima vez",
+    "problems": "Avisos e erros recentes",
+    "noProblems": "Sem avisos nem erros desde o arranque."
+  }
+}

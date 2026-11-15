@@ -1,0 +1,381 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Server_Modal_Overlay .Server_Modal.Todo_Sync{
+  width: min(760px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+
+  .Server_Modal_Mark svg{ width: 16px; height: 16px; }
+
+  .Todo_Sync_Settings{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    padding: 10px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Todo_Sync_Switch{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-family: Font.$font_family_sans;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .Todo_Sync_Interval{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    > div{ min-width: 130px; }
+  }
+
+  .Todo_Sync_Last{
+    flex: 1;
+    min-width: 120px;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  .Todo_Sync_Run{
+    @include Mixin.Ghost_Button;
+    height: 32px;
+    padding: 0 12px;
+
+    svg{ width: 14px; height: 14px; }
+  }
+
+  .Todo_Sync_Section{
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .Todo_Sync_Note{
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    &.warn{ color: var(--warning-color, #f97316); }
+  }
+
+  .Todo_Sync_Empty{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 12px;
+    border: 1px dashed var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+
+    p{
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    .Todo_Sync_Empty_Actions{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  }
+
+
+  .Todo_Sync_Group{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+
+    > header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 8px 8px 12px;
+      border-bottom: 1px solid var(--hud-line);
+    }
+  }
+
+  .Todo_Sync_Group_Name{
+    min-width: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    overflow-wrap: anywhere;
+  }
+
+  .Todo_Sync_Group_Actions{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    > button:not(.Todo_Sync_Remove){
+      @include Mixin.Ghost_Button;
+      height: 28px;
+      padding: 0 10px;
+      font-size: 12px;
+
+      svg{ width: 13px; height: 13px; }
+    }
+  }
+
+  .Todo_Sync_Group_Body{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+
+  .Todo_Sync_Line{
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 10px;
+
+    @media (max-width: 640px){ grid-template-columns: 1fr; gap: 2px; }
+  }
+
+  .Todo_Sync_Label{
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .Todo_Sync_Tags{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .Todo_Sync_Account_Tag.local, .Todo_Sync_Check.local{ border-style: dashed; }
+
+  .Todo_Sync_Account_Tag{
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 8px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: 999px;
+    font-size: 11.5px;
+    color: var(--text-soft);
+
+    svg{ width: 12px; height: 12px; }
+  }
+
+  .Todo_Sync_Summary{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+
+    small{
+      font-size: 11.5px;
+      font-weight: 400;
+      color: var(--text-soft);
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .Todo_Sync_State{
+    min-width: 0;
+    font-size: 12px;
+    color: var(--text-soft);
+    overflow-wrap: anywhere;
+
+    &.ok{ color: var(--success-color, var(--text-soft)); }
+    &.error{ color: var(--danger-color); }
+  }
+
+  .Todo_Sync_Remove{
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-faint);
+    cursor: pointer;
+
+    &:hover:not(:disabled){ background: var(--accent-soft); color: var(--danger-color); }
+    &:disabled{ opacity: .35; cursor: default; }
+
+    svg{ width: 100%; height: 100%; }
+  }
+
+  .Todo_Sync_Add_Button, .Todo_Sync_Add_Member{
+    @include Mixin.Ghost_Button;
+    align-self: flex-start;
+    flex-shrink: 0;
+    height: 34px;
+    padding: 0 12px;
+    border-style: dashed;
+
+    svg{ width: 14px; height: 14px; }
+  }
+
+
+  .Todo_Sync_Group_Form{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 12px;
+    border: 1px solid var(--accent-deep);
+    border-radius: var(--ctrl-radius);
+    background: var(--accent-soft);
+  }
+
+  .Todo_Sync_Form_Title{
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .Todo_Sync_Step{
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    > span{ padding-top: 9px; }
+
+    @media (max-width: 640px){
+      grid-template-columns: 1fr;
+      gap: 4px;
+
+      > span{ padding-top: 0; }
+    }
+  }
+
+  .Todo_Sync_Checks{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .Todo_Sync_Check{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: 999px;
+    background: var(--input-global-background-color);
+    cursor: pointer;
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    input{ margin: 0; }
+    svg{ width: 13px; height: 13px; }
+
+    &.on{
+      border-color: var(--accent);
+      color: var(--accent-bright);
+    }
+  }
+
+  .Todo_Sync_Scope{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Todo_Sync_Option{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    background: var(--input-global-background-color);
+    cursor: pointer;
+
+    input{ margin-top: 3px; }
+
+    > span{
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    strong{
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    small{
+      font-size: 11.5px;
+      color: var(--text-soft);
+    }
+
+    &.on{ border-color: var(--accent); }
+  }
+
+  .Todo_Sync_Names{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 4px;
+  }
+
+  .Todo_Sync_Extra{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    > :first-child{ flex: 1; min-width: 0; }
+  }
+
+  .Todo_Sync_Form_Actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .Todo_Sync_Form_Actions, .Todo_Sync_Empty{
+    .Cancel_Button, .Save_Button{
+      height: 36px;
+      min-width: 110px;
+      padding: 0 16px;
+      border: none;
+      border-radius: var(--ctrl-radius);
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+      font-weight: 700;
+
+      &:disabled{
+        opacity: .5;
+        cursor: not-allowed;
+      }
+    }
+
+    .Cancel_Button{
+      background-color: var(--card-global-header-background);
+      color: var(--card-global-header-title-color);
+      border: var(--card-border);
+    }
+
+    .Save_Button{
+      background-color: var(--simple-button-background-color);
+      color: var(--simple-button-letter-color);
+    }
+  }
+}

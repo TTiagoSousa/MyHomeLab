@@ -1,0 +1,112 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Service_Monitor_Modal_Overlay{
+  @include Mixin.Modal_Overlay;
+
+  .Service_Monitor_Modal{
+    @include Mixin.Modal_Panel;
+    width: 440px;
+    max-width: 100%;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .Service_Monitor_Modal_Title{
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .Service_Monitor_Modal_Field{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    .Global_Input,
+    .Dropdown_Field{
+      height: 38px;
+    }
+
+    label{
+      font-size: 12px;
+      font-weight: 700;
+    }
+  }
+
+  .Service_Monitor_Modal_Kinds{
+    display: flex;
+    gap: 6px;
+
+    button{
+      flex: 1;
+      height: 34px;
+      border: 1px solid var(--hud-line-strong);
+      border-radius: var(--ctrl-radius);
+      background: transparent;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-soft);
+
+      &.active{
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+      }
+    }
+  }
+
+  .Service_Monitor_Modal_Hint{
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--text-soft);
+  }
+
+  .Service_Monitor_Modal_Error{
+    margin: 0;
+    padding: 9px 11px;
+    border-radius: var(--ctrl-radius);
+    border: 1px solid var(--danger-color);
+    background: var(--danger-color-soft);
+    color: var(--danger-color);
+    font-size: 12.5px;
+  }
+
+  .Service_Monitor_Modal_Actions{
+    display: flex;
+    gap: 10px;
+
+    button{
+      flex: 1;
+      height: 42px;
+      border-radius: var(--ctrl-radius);
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+
+      &:disabled{
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .Cancel_Button{
+      background-color: var(--card-global-header-background);
+      color: var(--card-global-header-title-color);
+      border: var(--card-border);
+    }
+
+    .Save_Button{
+      background-color: var(--simple-button-background-color);
+      color: var(--simple-button-letter-color);
+    }
+  }
+}

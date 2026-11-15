@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "TaskSyncPair" ALTER COLUMN "direction" SET DEFAULT 'BIDIRECTIONAL';

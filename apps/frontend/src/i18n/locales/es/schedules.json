@@ -1,0 +1,143 @@
+{
+  "title": "Disparos",
+  "intro": "Trabajos que un agente hace solo en una fecha o de forma repetida: revisar una actualización, ver si hay algo listo a las 5h, confirmar una copia. Cuando se ejecuta no estás mirando, así que sigue tus reglas (el documento \"Cuando corro sin ti\") y solo te avisa cuando hay algo que decir.",
+  "loading": "Cargando…",
+  "empty": {
+    "title": "Aún no hay disparos",
+    "text": "Crea uno aquí, o pídeselo a Jarvis (\"todos los días a las 5h mira si hay actualizaciones listas\"). Los estudios y los \"revisar más tarde\" de las actualizaciones y los comentarios en las tareas también aparecen aquí."
+  },
+  "repeat": {
+    "ONCE": "Una vez",
+    "DAILY": "Todos los días",
+    "WEEKLY": "Todas las semanas",
+    "MONTHLY": "Todos los meses",
+    "ON_NEW_UPDATE": "Cuando aparece una actualización"
+  },
+  "when": {
+    "once": "Una vez, el {{date}}",
+    "daily": "Todos los días a las {{time}}",
+    "weekly": "{{day}} a las {{time}}",
+    "monthly": "Día {{day}} de cada mes a las {{time}}",
+    "onNewUpdate": "Cuando aparece una actualización nueva (apps y servidor)"
+  },
+  "weekdays": {
+    "1": "Lunes",
+    "2": "Martes",
+    "3": "Miércoles",
+    "4": "Jueves",
+    "5": "Viernes",
+    "6": "Sábado",
+    "7": "Domingo"
+  },
+  "state": {
+    "on": "Activa",
+    "off": "Desactivada",
+    "done": "Hecha"
+  },
+  "next": "Próxima: {{date}}",
+  "createdByYou": "Creada por ti",
+  "createdBy": "Creada por {{name}}",
+  "linkedTo": "{{label}}",
+  "forUpdate": "Revisar actualización",
+  "silent": "Sin avisos",
+  "never": "Aún no se ha ejecutado.",
+  "run": {
+    "status": {
+      "RUNNING": "En curso",
+      "DONE": "Ejecutada",
+      "FAILED": "Falló"
+    },
+    "tokens": "{{tokens}} tokens",
+    "docsUsed": "Documentos usados:"
+  },
+  "actions": {
+    "new": "Nuevo disparo",
+    "run": "Ejecutar ahora",
+    "running": "En curso…",
+    "edit": "Editar",
+    "enable": "Activar",
+    "disable": "Desactivar",
+    "delete": "Borrar",
+    "confirmDelete": "Sí, borrar",
+    "more": "Ver más",
+    "editText": "Editar texto"
+  },
+  "alerts": {
+    "created": "Programación creada.",
+    "saved": "Programación guardada.",
+    "running": "En curso. El resultado aparece aquí cuando el agente termine.",
+    "deleted": "Programación borrada."
+  },
+  "modal": {
+    "title": "Nuevo disparo",
+    "editTitle": "Editar disparo",
+    "kind": "Trabajo de un agente",
+    "linkedTo": "Vinculada a {{label}}",
+    "updateText": "\"{{title}}\": cuando llegue la hora, la actualización vuelve al estudio. Aquí solo cambias la fecha y los avisos.",
+    "name": "Nombre",
+    "namePlaceholder": "Ej.: Actualizaciones listas a las 5h",
+    "agent": "Agente",
+    "agentOff": "{{name}} (desactivado)",
+    "instruction": "Qué hacer",
+    "instructionPlaceholder": "Ej.: Mira si hay actualizaciones en Ready to update y haz las que las reglas permiten sin mí.",
+    "instructionHint": "Escríbelo como si se lo pidieras ahora: el agente no puede preguntarte nada mientras se ejecuta.",
+    "when": "Cuándo",
+    "runAt": "Fecha y hora",
+    "time": "Hora",
+    "weekday": "Día de la semana",
+    "monthDay": "Día del mes",
+    "timeZone": "Hora de Lisboa. En un mes sin ese día, se ejecuta el último.",
+    "notify": "Avisarme",
+    "notifyHint": "En las notificaciones (sitio y app), solo cuando haya algo que decir.",
+    "enabled": "Activa",
+    "enabledHint": "Desactivada, queda guardada pero no se ejecuta.",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "tags": "Etiquetas",
+    "tagsHint": "Enter o coma para añadir (p. ej.: actualizaciones, copias).",
+    "toChat": "Poner la respuesta en una conversación de Jarvis",
+    "toChatHint": "Cada vez que se ejecuta, la respuesta queda en una conversación nueva del Asistente y recibes un aviso (p. ej., un resumen diario).",
+    "onNewUpdateHint": "Sin hora: se ejecuta cada vez que MyHomeLab ve una versión nueva de una app o del servidor, una vez por versión, con las actualizaciones en la petición."
+  },
+  "linked": {
+    "title": "Disparos",
+    "description": "Trabajos programados para {{label}}.",
+    "empty": "Aún no hay disparos vinculados.",
+    "all": "Ver todas"
+  },
+  "card": {
+    "notice": "con aviso"
+  },
+  "filters": {
+    "search": "Buscar en el nombre o el texto",
+    "allStates": "Todos los estados",
+    "allAgents": "Todos los agentes",
+    "allTags": "Todas las etiquetas"
+  },
+  "list": {
+    "count_one": "{{count}} disparo",
+    "count_other": "{{count}} disparos",
+    "noResults": "Ningún disparo con estos filtros.",
+    "page": "{{page}} de {{pages}}",
+    "previous": "Página anterior",
+    "next": "Página siguiente"
+  },
+  "table": {
+    "name": "Disparo",
+    "when": "Cuándo",
+    "agent": "Agente",
+    "next": "Próxima vez",
+    "last": "Última vez",
+    "state": "Estado"
+  },
+  "detail": {
+    "notFound": "Este disparo ya no existe.",
+    "info": "Cuándo y quién",
+    "instruction": "Qué hace",
+    "tags": "Etiquetas",
+    "tagsHint": "Para filtrar la lista. Los agentes también ponen etiquetas cuando crean disparos.",
+    "history": "Historial",
+    "historyHint": "Las últimas veces que se ejecutó, con lo que respondió el agente."
+  },
+  "notifies": "Te avisa"
+}

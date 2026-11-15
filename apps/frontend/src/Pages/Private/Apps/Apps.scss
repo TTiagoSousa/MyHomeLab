@@ -1,0 +1,1301 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Apps {
+  @include Mixin.Pages_Configs;
+
+  header{
+    @include Mixin.Page_Header;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .Right_Side{
+      span{
+        color: var(--card-global-header-title-color);
+      }
+    }
+
+    .Left_Side{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .Apps_add{
+      @include Mixin.Solid_Button;
+      height: 42px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      svg{ width: 15px; height: 15px; }
+    }
+
+    .Apps_header_button{
+      @include Mixin.Ghost_Button;
+      height: 42px;
+      padding: 0 14px;
+    }
+
+    .Apps_header_button.compact{
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+    }
+  }
+
+  .Apps_account_card{
+    @include Mixin.Frame_Corners;
+    padding: 14px 16px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-box-shadow);
+    background-color: var(--cards-background);
+    border: var(--card-border);
+
+    &.Apps_empty_card{ padding: 16px; }
+
+    .Apps_section_connect{
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      border-radius: var(--ctrl-radius);
+      border: 1px dashed var(--navbar-vertical-default-link-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      background: none;
+      color: var(--navbar-vertical-default-link-color);
+
+      span{
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      svg{
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+
+  .Apps_list{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .Apps_section{
+    @include Mixin.Frame_Corners;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-box-shadow);
+    background-color: var(--cards-background);
+    border: var(--card-border);
+
+    header{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+
+      .Apps_section_title{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        svg{
+          width: 18px;
+          height: 18px;
+          flex-shrink: 0;
+          color: var(--card-global-header-title-color);
+        }
+
+        span{
+          font-size: 14px;
+          font-weight: 800;
+          color: var(--card-global-header-title-color);
+        }
+
+        p{
+          margin: 2px 0 0;
+          font-size: 12px;
+          color: var(--navbar-vertical-default-link-color);
+        }
+      }
+
+      .Apps_section_add{
+        width: 26px;
+        height: 26px;
+        padding: 5px;
+        flex-shrink: 0;
+        box-sizing: border-box;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary-soft-background);
+        color: var(--navbar-vertical-card-link-active-color);
+
+        svg{
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+    .Apps_section_connect{
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      border-radius: var(--ctrl-radius);
+      border-style: dashed;
+      border-width: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      background: none;
+      border-color: var(--navbar-vertical-default-link-color);
+      color: var(--navbar-vertical-default-link-color);
+
+      span{
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      svg{
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+
+  .Apps_frequency{
+    .Global_Input,
+    .Dropdown_Field{
+      height: 38px;
+    }
+
+    width: 100%;
+
+    .Dropdown_Field_Trigger{
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+  }
+
+  .Apps_pairs{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Apps_pair{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border-radius: var(--ctrl-radius);
+    background-color: var(--cards-background);
+    border: var(--card-border);
+
+    .Apps_pair_dot{
+      width: 7px;
+      height: 7px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background-color: var(--navbar-vertical-default-link-color);
+
+      &.active{
+        background-color: var(--alert-success-background, #22c55e);
+      }
+    }
+
+    .Apps_pair_info{
+      flex: 1;
+      min-width: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+
+      .Apps_pair_title{
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--card-global-header-title-color);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .Apps_pair_meta{
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--navbar-vertical-default-link-color);
+        overflow-wrap: anywhere;
+
+        &.error{
+          color: var(--danger-color);
+        }
+      }
+    }
+
+    button{
+      height: 28px;
+      padding: 0 10px;
+      box-sizing: border-box;
+      border-radius: var(--ctrl-radius);
+      border: var(--card-border);
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 11px;
+      font-weight: 700;
+      background-color: var(--simple-input-background-color);
+      color: var(--card-global-header-title-color);
+
+      &.active{
+        background-color: var(--simple-button-background-color);
+        border-color: var(--simple-button-background-color);
+        color: var(--simple-button-letter-color);
+      }
+
+      &:disabled{
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &.danger{
+        border-color: var(--danger-color);
+        background-color: var(--danger-color-soft);
+        color: var(--danger-color);
+      }
+    }
+
+    .Apps_pair_delete{
+      width: 26px;
+      height: 26px;
+      padding: 5px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      border: none;
+      background: none;
+      color: var(--navbar-vertical-default-link-color);
+
+      &:hover{
+        background-color: var(--danger-color-soft);
+        color: var(--danger-color);
+      }
+
+      svg{
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .Apps_section_note{
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-faint);
+
+    &.error{ color: var(--danger-color); }
+    &.update{ color: var(--stat-attention); }
+  }
+
+  .Apps_intro{
+    margin: -6px 0 0;
+    max-width: 760px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  .Apps_grid{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    align-items: stretch;
+
+    @media (max-width: 1100px){
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .Apps_back_title{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  header .Apps_back{
+    @include Mixin.Ghost_Button;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12.5px;
+
+    span{
+      font-family: Font.$font_family_sans;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    svg{
+      width: 14px;
+      height: 14px;
+      transform: rotate(90deg);
+    }
+  }
+
+  .Apps_accounts{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Apps_account{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+
+    @media (max-width: 560px){
+      flex-wrap: wrap;
+    }
+  }
+
+  .Apps_account_avatar{
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--accent-deep);
+    background: var(--accent-soft);
+    font-family: Font.$font_family_mono;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--accent-bright);
+  }
+
+  .Apps_account_info{
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .Apps_account_title{
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .Apps_account_meta{
+    font-size: 11.5px;
+    color: var(--text-soft);
+    overflow-wrap: anywhere;
+  }
+
+  .Apps_account_chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .Apps_chip{
+    padding: 1px 8px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-faint);
+
+    &.on{
+      border-color: var(--stat-positive);
+      background: var(--stat-positive-soft);
+      color: var(--stat-positive);
+    }
+
+    &.update{
+      border-color: var(--stat-attention);
+      color: var(--stat-attention);
+    }
+  }
+
+  .Apps_account_actions,
+  .Apps_footer{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+
+      &.active,
+      &.primary{
+        @include Mixin.Solid_Button;
+        height: 32px;
+        padding: 0 14px;
+        font-size: 12.5px;
+      }
+
+      &.danger{
+        border-color: var(--danger-color);
+        background: var(--danger-color-soft);
+        color: var(--danger-color);
+      }
+    }
+  }
+
+  .Apps_footer{
+    justify-content: flex-end;
+    padding-top: 12px;
+    border-top: 1px solid var(--hud-line);
+  }
+
+  .Apps_account_actions .Apps_account_remove{
+    width: 32px;
+    padding: 7px;
+
+    svg{
+      width: 100%;
+      height: 100%;
+    }
+
+    &:hover{
+      border-color: var(--danger-color);
+      color: var(--danger-color);
+    }
+  }
+
+  .Apps_note{
+    margin: 0;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-faint);
+  }
+
+  .Apps_status{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-soft);
+
+    .Apps_status_dot{
+      width: 8px;
+      height: 8px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--text-faint);
+    }
+
+    &.on{
+      color: var(--stat-positive);
+
+      .Apps_status_dot{
+        background: var(--stat-positive);
+        box-shadow: 0 0 8px var(--stat-positive);
+      }
+    }
+  }
+
+  .Apps_fields{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+
+    @media (max-width: 560px){
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .Apps_field{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+
+    label{
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+  }
+
+  .Apps_empty{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    button{
+      @include Mixin.Solid_Button;
+      height: 32px;
+      padding: 0 14px;
+      font-size: 12.5px;
+    }
+  }
+
+  .Apps_links{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    li{
+      padding: 3px 9px;
+      border: var(--card-border);
+      border-radius: var(--ctrl-radius);
+      font-family: Font.$font_family_mono;
+      font-size: 11px;
+      color: var(--text-faint);
+
+      &.on{ color: var(--text-soft); }
+    }
+  }
+
+  .Apps_details{
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 16px;
+    font-size: 12.5px;
+
+    dt{ color: var(--text-faint); }
+
+    .Apps_details_row{ display: contents; }
+
+    dd{
+      margin: 0;
+      color: var(--text-main);
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .Apps_section_note.ok{ color: var(--stat-positive); }
+
+  .Apps_inline_fields{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .Apps_inline_field{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 200px;
+
+    &.small{ flex: 0 1 110px; }
+
+    label{ @include Mixin.Hud_Label(9px); color: var(--text-soft); }
+  }
+
+  .Apps_checkbox{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+
+    input{
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+  }
+
+  .Apps_setup{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Apps_code{
+    display: block;
+    padding: 10px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+    font-family: Font.$font_family_mono;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-main);
+    overflow-wrap: anywhere;
+    user-select: all;
+  }
+
+  .Apps_commands{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Apps_commands_title{ @include Mixin.Hud_Label(9px); color: var(--text-soft); }
+
+  .Apps_command{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+
+    &.pending{ border-color: var(--stat-attention); }
+
+    summary{
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    code{
+      font-family: Font.$font_family_mono;
+      font-size: 12px;
+      color: var(--text-main);
+      overflow-wrap: anywhere;
+    }
+
+    &.failed .Apps_chip,
+    &.blocked .Apps_chip:first-child{ border-color: var(--danger-color); color: var(--danger-color); }
+    &.rejected{ opacity: .7; }
+
+    .Apps_footer{ border-top: none; padding-top: 0; }
+  }
+
+  .Apps_command_reason{ font-size: 12px; color: var(--text-soft); }
+
+  .Apps_update_row{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-main);
+
+    a{
+      font-size: 12px;
+      color: var(--accent-bright);
+    }
+  }
+
+  .Apps_command .Apps_command_reason{
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .Apps_command_meta{ font-size: 11px; color: var(--text-faint); }
+
+  .Apps_command_output{
+    margin: 0;
+    max-height: 360px;
+    overflow: auto;
+    padding: 10px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+    font-family: Font.$font_family_mono;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-soft);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .Apps_setup .Apps_footer{ border-top: none; padding-top: 0; justify-content: flex-start; }
+
+  .Apps_table_scroll{
+    overflow-x: auto;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Apps_table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+
+    th{
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--hud-line-strong);
+      text-align: left;
+      white-space: nowrap;
+      font-family: Font.$font_family_sans;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-faint);
+    }
+
+    td{
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--hud-line);
+      font-family: Font.$font_family_mono;
+      font-size: 11.5px;
+      color: var(--text-soft);
+      overflow-wrap: anywhere;
+
+      &.name{ color: var(--text-main); }
+      &.new{ color: var(--stat-attention); }
+    }
+
+    tbody tr{
+      &:hover td{ background: var(--accent-soft); }
+      &:last-child td{ border-bottom: none; }
+    }
+  }
+
+  .Apps_pager{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 11.5px;
+    color: var(--navbar-vertical-default-link-color);
+
+    > button{
+      width: 26px;
+      height: 26px;
+      padding: 5px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: var(--card-border);
+      border-radius: var(--ctrl-radius);
+      background-color: var(--cards-background);
+      color: var(--card-global-header-title-color);
+      cursor: pointer;
+
+      svg{ transform: rotate(-90deg); }
+
+      &.prev svg{ transform: rotate(90deg); }
+
+      &:disabled{
+        opacity: .4;
+        cursor: default;
+      }
+
+      &:not(:disabled):hover{ border-color: var(--accent); }
+    }
+  }
+
+  .Apps_apps{
+    gap: 0;
+    padding: 6px 16px;
+  }
+
+  .Apps_app{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 72px;
+    padding: 12px 0;
+    cursor: pointer;
+
+    & + .Apps_app{ border-top: 1px solid var(--hud-line); }
+
+    &:hover .Apps_app_name{ color: var(--accent-bright); }
+
+    @media (max-width: 640px){
+      flex-wrap: wrap;
+    }
+  }
+
+  .Apps_app_icon{
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--ctrl-radius);
+    border: 1px solid var(--accent-deep);
+    background: var(--accent-soft);
+    color: var(--accent-bright);
+
+    svg{
+      width: 19px;
+      height: 19px;
+    }
+  }
+
+  .Apps_app_info{
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .Apps_app_name{
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    transition: color .15s ease;
+  }
+
+  .Apps_app_description{
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-soft);
+  }
+
+  .Apps_app_open{
+    @include Mixin.Ghost_Button;
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 14px;
+    font-size: 12.5px;
+  }
+
+  .Apps_filters{
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+    gap: 8px;
+
+    @media (max-width: 900px){
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      .Apps_search{ grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 560px){ grid-template-columns: minmax(0, 1fr); }
+
+    .Dropdown_Field{ height: 38px; }
+  }
+
+  .Apps_search{
+    @include Mixin.Control_Surface;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    min-width: 0;
+
+    svg{
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      color: var(--text-faint);
+    }
+
+    input{
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--input-global-letter-color);
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+    }
+  }
+
+  .Apps_no_results{
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+    }
+  }
+
+  .Apps_group{ gap: 10px; }
+
+  .Apps_entries{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .Apps_entry{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+
+    & + .Apps_entry{ border-top: 1px solid var(--hud-line); }
+
+    &.clickable{
+      cursor: pointer;
+
+      &:hover .Apps_entry_name{ color: var(--accent-bright); }
+    }
+
+    @media (max-width: 640px){ flex-wrap: wrap; }
+  }
+
+  .Apps_entry_icon{
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--ctrl-radius);
+    border: 1px solid var(--accent-deep);
+    background: var(--accent-soft);
+    color: var(--accent-bright);
+
+    svg{
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+  .Apps_entry_info{
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .Apps_entry_name{
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color .15s ease;
+  }
+
+  .Apps_entry_meta{
+    font-size: 11.5px;
+    color: var(--text-soft);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .Apps_entry_chips{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .Apps_entry_open{
+    @include Mixin.Ghost_Button;
+    flex-shrink: 0;
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .Apps_chip.off{
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+  }
+
+  .Apps_apps .Apps_catalog_head{ padding: 10px 0 6px; }
+
+  .Apps_details_version{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+
+    a{
+      font-size: 12px;
+      color: var(--accent-bright);
+    }
+  }
+
+  .Apps_state{
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--text-soft);
+
+    .Apps_state_dot{
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-faint);
+    }
+
+    &.ok{
+      color: var(--stat-positive);
+
+      .Apps_state_dot{ background: var(--stat-positive); }
+    }
+
+    &.error,
+    &.off{
+      color: var(--danger-color);
+
+      .Apps_state_dot{ background: var(--danger-color); }
+    }
+
+    &.checking .Apps_state_dot{ background: var(--stat-attention); }
+  }
+
+  .Apps_location{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--hud-line);
+
+    .Dropdown_Field{ height: 38px; }
+  }
+
+  .Apps_location_actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+
+      &.active{
+        @include Mixin.Solid_Button;
+        height: 32px;
+        padding: 0 14px;
+        font-size: 12.5px;
+      }
+    }
+  }
+
+  .Apps_updates{
+    gap: 0;
+    padding: 0;
+
+    .Apps_updates_head{
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px;
+      box-sizing: border-box;
+      border: none;
+      background: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: Font.$font_family_sans;
+
+      &.static{ cursor: default; }
+
+      .Apps_updates_actions{
+        flex-shrink: 0;
+        display: flex;
+        gap: 8px;
+
+        button,
+        .Apps_updates_badge{
+          height: 28px;
+          padding: 0 12px;
+          box-sizing: border-box;
+          display: inline-flex;
+          align-items: center;
+          border: 1px solid var(--hud-line-strong);
+          border-radius: var(--ctrl-radius);
+          background: transparent;
+          cursor: pointer;
+          font-family: Font.$font_family_sans;
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--text-soft);
+
+          &:is(button):hover{ border-color: var(--accent); color: var(--text-main); }
+
+          &.Apps_updates_badge{ cursor: default; }
+
+          &.has{
+            border-color: var(--stat-attention);
+            color: var(--stat-attention);
+          }
+
+          &.primary{
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            color: var(--accent-bright);
+          }
+
+          &:focus-visible{
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent);
+          }
+        }
+      }
+
+      > svg{
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        color: var(--card-global-header-title-color);
+      }
+    }
+
+    .Apps_updates_text{
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .Apps_updates_title{
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--card-global-header-title-color);
+    }
+
+    .Apps_updates_summary{
+      font-size: 12px;
+      color: var(--navbar-vertical-default-link-color);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .Apps_updates_count{
+      flex-shrink: 0;
+      padding: 2px 10px;
+      border: 1px solid var(--hud-line-strong);
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-faint);
+
+      &.has{
+        border-color: var(--stat-attention);
+        color: var(--stat-attention);
+      }
+    }
+
+    .Apps_updates_chevron{
+      display: flex;
+      flex-shrink: 0;
+      color: var(--text-soft);
+
+      svg{
+        width: 14px;
+        height: 14px;
+        transition: transform .2s ease;
+      }
+    }
+
+    &.open .Apps_updates_chevron svg{ transform: rotate(180deg); }
+
+    .Apps_updates_body{
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 0 16px 16px;
+    }
+  }
+
+  .Apps_command.closed{ opacity: .75; }
+
+  .Apps_chip.status.ready,
+  .Apps_chip.status.done{
+    border-color: var(--stat-positive);
+    color: var(--stat-positive);
+  }
+
+  .Apps_chip.status.waiting,
+  .Apps_chip.risk.medium{
+    border-color: var(--stat-attention);
+    color: var(--stat-attention);
+  }
+
+  .Apps_chip.status.failed,
+  .Apps_chip.risk.high{
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+  }
+
+  .Apps_modal_overlay{
+    @include Mixin.Modal_Overlay;
+
+    .Apps_modal{
+      position: relative;
+      width: 760px;
+      max-width: 100%;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      border-radius: var(--border-radius);
+      animation: hlPop .28s ease both;
+
+      .Apps_section{ background-color: var(--modal-background); }
+    }
+
+    .Apps_modal_close{
+      @include Mixin.Ghost_Button;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 1;
+      width: 30px;
+      height: 30px;
+      padding: 7px;
+
+      svg{
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}

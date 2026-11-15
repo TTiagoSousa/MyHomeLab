@@ -1,0 +1,293 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Health_Import_Modal_Overlay{
+  @include Mixin.Modal_Overlay;
+
+  .Health_Import_Modal{
+    @include Mixin.Modal_Panel;
+    width: 600px;
+    max-width: 100%;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .Health_Import_Modal_Head{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .Health_Import_Modal_Title{
+    @include Mixin.Hud_Title(15px);
+    color: var(--text-main);
+  }
+
+  .Health_Import_Modal_Text{
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  .Health_Import_Modal_Sources{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+
+    @media (max-width: 520px){
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .Health_Import_Modal_Source{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    min-height: 74px;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    background: transparent;
+    font: inherit;
+    color: var(--text-main);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .16s ease, background .16s ease;
+
+    &:hover:not(:disabled){
+      border-color: var(--accent);
+    }
+
+    &:disabled{ cursor: default; }
+
+    &.active{
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+
+      .Health_Import_Modal_Source_name{ color: var(--accent-bright); }
+    }
+
+    &:focus-visible{
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+  }
+
+  .Health_Import_Modal_Source_top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .Health_Import_Modal_Source_name{
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  .Health_Import_Modal_Source_hint{
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--text-soft);
+  }
+
+  .Health_Import_Modal_Soon{
+    margin-top: -6px;
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .Health_Import_Modal_Body{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 236px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hud-line);
+  }
+
+  .Health_OpenGym_Status{
+    @include Mixin.Hud_Label(8.5px);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-style: normal;
+    color: var(--text-faint);
+
+    i{
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    &.online{
+      color: var(--stat-positive);
+
+      i{ box-shadow: 0 0 6px currentColor; }
+    }
+
+    &.offline{ color: var(--danger-color); }
+
+    &.checking i{ animation: Health_OpenGym_Pulse 1s ease-in-out infinite alternate; }
+  }
+
+  @keyframes Health_OpenGym_Pulse{
+    from{ opacity: .3; }
+    to{ opacity: 1; }
+  }
+
+  .Health_Import_OpenGym_Connection{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Health_Import_OpenGym_Connection_main{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .Health_Import_OpenGym_Connection_url{
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .Health_Import_OpenGym_Connection_meta{
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+
+  .Health_Import_OpenGym_Check{
+    @include Mixin.Ghost_Button;
+    height: 28px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .Health_Import_OpenGym_Choices{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .Health_Import_OpenGym_Choice{
+    @include Mixin.Ghost_Button;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    width: 100%;
+    min-height: 52px;
+    padding: 8px 12px;
+    text-align: left;
+
+    strong{ font-size: 13px; }
+
+    span{
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+  }
+
+  .Health_Import_OpenGym_Fields,
+  .Health_Import_OpenGym_Settings{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .Health_Import_OpenGym_Toggle{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 200px;
+    min-height: 38px;
+    font-size: 13px;
+    color: var(--text-main);
+    cursor: pointer;
+  }
+
+  .Health_Import_OpenGym_Field{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 200px;
+    min-width: 0;
+
+    label{
+      @include Mixin.Hud_Label(9px);
+      color: var(--text-faint);
+    }
+  }
+
+  .Health_Import_Modal_Pick{
+    @include Mixin.Ghost_Button;
+    height: 38px;
+    padding: 0 16px;
+
+    input{ display: none; }
+
+    &.disabled{
+      opacity: .4;
+      pointer-events: none;
+    }
+  }
+
+  .Health_Import_Modal_Info{
+    font-size: 12.5px;
+    color: var(--text-main);
+
+    &.error{ color: var(--danger-color); }
+    &.success{ color: var(--stat-positive); }
+  }
+
+  .Health_Import_Modal_Footer{
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .Health_Import_Modal_Footer_left{ margin-right: auto; }
+  }
+
+  .Health_Import_Modal_Close{
+    @include Mixin.Ghost_Button;
+    height: 36px;
+    padding: 0 16px;
+
+    &.danger{
+      border-color: var(--danger-color);
+      color: var(--danger-color);
+    }
+  }
+
+  .Health_Import_Modal_Submit{
+    @include Mixin.Solid_Button;
+    height: 36px;
+    padding: 0 16px;
+  }
+}

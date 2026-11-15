@@ -1,0 +1,95 @@
+@use '../../Styles/Fonts.scss' as Font;
+@use '../../Styles/Mixins.scss' as Mixin;
+
+.Agent_Access{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .Agent_Access_Note{
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--navbar-vertical-default-link-color);
+  }
+
+  .Agent_Access_Row{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 12px;
+    padding: 9px 12px;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    background-color: var(--cards-background);
+
+    &.off{ opacity: .6; }
+  }
+
+  .Agent_Access_Name{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    span{
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    small{
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Agent_Access_Levels{
+    display: inline-flex;
+    padding: 3px;
+    gap: 2px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+
+    button{
+      height: 28px;
+      padding: 0 11px;
+      border: none;
+      border-radius: calc(var(--ctrl-radius) - 2px);
+      background: transparent;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+
+      &.active{
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+      }
+
+      &:disabled{
+        opacity: .35;
+        cursor: default;
+      }
+    }
+  }
+
+  .Agent_Access_Footer{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-top: 4px;
+
+    .Agent_Access_Note{ flex: 1 1 260px; }
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 30px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+  }
+}

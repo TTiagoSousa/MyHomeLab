@@ -1,0 +1,192 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Notifications {
+  @include Mixin.Pages_Configs;
+
+  header{
+    @include Mixin.Page_Header;
+
+    .Right_Side span{ color: var(--card-global-header-title-color); }
+  }
+
+  .Notifications_empty{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px 20px;
+    border: 1px dashed var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-soft);
+
+    .Notifications_empty_title{
+      font-family: Font.$font_family_hud;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--stat-positive);
+    }
+  }
+
+  .Notifications_list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .Notifications_label{
+    @include Mixin.Hud_Label(9px);
+    color: var(--text-soft);
+  }
+
+  .Notifications_card{
+    @include Mixin.Panel_Surface;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 14px;
+    padding: 14px 16px;
+    box-sizing: border-box;
+
+    &.active{ border-color: var(--danger-color); }
+    &.active.update{ border-color: var(--stat-attention); }
+    &.active.notice{ border-color: var(--accent); }
+    &.resolved{ opacity: .7; }
+  }
+
+  .Notifications_dot{
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    border-radius: 50%;
+
+    &.active{ background: var(--danger-color); box-shadow: 0 0 8px var(--danger-color); }
+    &.active.update{ background: var(--stat-attention); box-shadow: 0 0 8px var(--stat-attention); }
+    &.active.notice{ background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+    &.resolved{ background: var(--stat-positive); }
+  }
+
+  .Notifications_text{
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .Notifications_title{
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .Notifications_related{
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .Notifications_message{
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--text-soft);
+    overflow-wrap: anywhere;
+  }
+
+  .Agent_Summary{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .Notifications_message{ white-space: pre-line; }
+  }
+
+  .Notifications_ask{
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+
+    &:hover{ background: var(--accent-soft); }
+
+    .Notifications_message.clamp{
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+
+  .Notifications_open{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--accent-bright);
+
+    svg{ width: 13px; height: 13px; transform: rotate(-90deg); }
+  }
+
+  .Agent_Summary_dates{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    label{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      span{
+        @include Mixin.Hud_Label(9px);
+        color: var(--text-soft);
+      }
+    }
+  }
+
+  .Notifications_time{
+    font-family: Font.$font_family_mono;
+    font-size: 11px;
+    color: var(--text-soft);
+  }
+
+  .Notifications_actions{
+    display: flex;
+    gap: 8px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+    }
+  }
+
+  .Notifications_resolved_head{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .Notifications_toggle,
+  .Notifications_clear{
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: Font.$font_family_sans;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-soft);
+
+    &:hover{ color: var(--text-main); }
+  }
+
+  .Notifications_clear:hover{ color: var(--danger-color); }
+}

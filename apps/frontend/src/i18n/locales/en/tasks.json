@@ -1,0 +1,280 @@
+{
+  "title": "Projects",
+  "loading": "Loading…",
+  "views": {
+    "columns": "Columns",
+    "list": "List",
+    "table": "Table"
+  },
+  "sections": {
+    "board": "Board",
+    "triggers": "Triggers"
+  },
+  "actions": {
+    "new": "New task",
+    "newIn": "New task in {{state}}",
+    "newProject": "Project",
+    "newTrigger": "New trigger",
+    "projectSettings": "Project settings"
+  },
+  "priority": {
+    "URGENT": "Urgent",
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low",
+    "NONE": "No priority"
+  },
+  "groups": {
+    "BACKLOG": "Backlog",
+    "UNSTARTED": "Not started",
+    "STARTED": "In progress",
+    "WAITING": "Waiting",
+    "COMPLETED": "Done",
+    "CANCELLED": "Cancelled"
+  },
+  "assignee": {
+    "user": "You",
+    "none": "Nobody"
+  },
+  "card": {
+    "children_one": "{{count}} sub-task",
+    "children_other": "{{count}} sub-tasks"
+  },
+  "columns": {
+    "empty": "No tasks.",
+    "collapse": "Collapse column",
+    "expand": "Expand {{name}}",
+    "hideEmpty": "Hide empty",
+    "previous": "Previous column",
+    "next": "Next column",
+    "jump": "Go to {{name}}"
+  },
+  "filters": {
+    "search": "Search (title, text or ATU-12)",
+    "allStates": "All columns",
+    "allPriorities": "All priorities",
+    "allAssignees": "All assignees",
+    "allModules": "All modules",
+    "allLabels": "All labels",
+    "clear": "Clear filters",
+    "allCycles": "All cycles"
+  },
+  "table": {
+    "key": "Key",
+    "title": "Title",
+    "state": "Column",
+    "priority": "Priority",
+    "assignee": "Assignee",
+    "dueDate": "Due",
+    "updatedAt": "Updated"
+  },
+  "list": {
+    "noResults": "No tasks match these filters.",
+    "page": "{{page}} of {{pages}}",
+    "previous": "Previous page",
+    "next": "Next page"
+  },
+  "properties": {
+    "state": "Column",
+    "priority": "Priority",
+    "assignee": "Assignee",
+    "startDate": "Start",
+    "dueDate": "Due",
+    "modules": "Modules",
+    "noModules": "This project has no modules yet (Project settings).",
+    "labels": "Labels",
+    "created": "Created on {{date}} by {{by}}",
+    "updated": "Updated on {{date}}",
+    "cycle": "Cycle"
+  },
+  "detail": {
+    "notFound": "This task no longer exists.",
+    "titleLabel": "Task title",
+    "parent": "Sub-task of {{key}}",
+    "update": "Update {{from}} → {{to}}",
+    "openLog": "Open the log",
+    "description": "Description",
+    "descriptionPlaceholder": "What it is, the goal, what is done…",
+    "noDescription": "No description.",
+    "edit": "Edit",
+    "save": "Save",
+    "children_one": "{{count}} sub-task",
+    "children_other": "{{count}} sub-tasks",
+    "tabs": {
+      "comments_one": "Comments ({{count}})",
+      "comments_other": "Comments ({{count}})",
+      "links_one": "Links and documents ({{count}})",
+      "links_other": "Links and documents ({{count}})",
+      "triggers_one": "Triggers ({{count}})",
+      "triggers_other": "Triggers ({{count}})",
+      "activity_one": "History ({{count}})",
+      "activity_other": "History ({{count}})",
+      "relations_one": "Relations and attachments ({{count}})",
+      "relations_other": "Relations and attachments ({{count}})"
+    },
+    "noComments": "No comments yet.",
+    "commentPlaceholder": "Write a comment or an instruction for the agent…",
+    "commentHint": "When you send it, the task's agent reads the comment and works on it (it shows in Triggers).",
+    "commentNoAgent": "The task has no agent assigned: the comment just stays here.",
+    "send": "Send",
+    "docs": "Documents",
+    "noDocs": "No documents linked.",
+    "linkDoc": "Link a document",
+    "searchDocs": "Search documents",
+    "noDocsFound": "No documents found.",
+    "required": "required",
+    "links": "Links",
+    "noLinks": "No links.",
+    "linkTitle": "Name (optional)",
+    "addLink": "Add link",
+    "unlink": "Remove",
+    "triggersHint": "This task's triggers: an agent works on it on a date or on repeat. Comments also show here as triggers.",
+    "delete": "Delete task",
+    "confirmDelete": "Yes, delete",
+    "startChat": "Talk to Jarvis",
+    "openChat": "Chat with Jarvis · {{date}}"
+  },
+  "taskModal": {
+    "title": "New task",
+    "name": "Title",
+    "namePlaceholder": "E.g. Publish the November post",
+    "description": "Description",
+    "descriptionPlaceholder": "What it is and what has to be done (Markdown).",
+    "assigneeHint": "If the assignee is an agent, your comments put it to work on the task.",
+    "save": "Create",
+    "saving": "Creating…"
+  },
+  "projectModal": {
+    "title": "New project",
+    "editTitle": "Edit project",
+    "kind": "Board and documents project",
+    "name": "Name",
+    "namePlaceholder": "E.g. Company Instagram",
+    "identifier": "Prefix",
+    "identifierPlaceholder": "E.g. INSTA",
+    "identifierHint": "Goes before the task number (INSTA-12). Empty: the name's initials.",
+    "description": "What it is",
+    "descriptionPlaceholder": "E.g. The company's Instagram account: weekly posts, friendly tone.",
+    "descriptionHint": "Agents read this and the documents linked to the project.",
+    "agents": "Agents working on it",
+    "agentsHint": "The project's required documents always go to these agents; the first one answers comments.",
+    "save": "Save",
+    "saving": "Saving…"
+  },
+  "settings": {
+    "kind": "Prefix {{identifier}}",
+    "states": "Columns",
+    "stateName": "Column name",
+    "color": "Colour",
+    "up": "Move up",
+    "down": "Move down",
+    "remove": "Remove",
+    "newState": "New column",
+    "add": "Add",
+    "updatesStatesHint": "The update columns are used by MyHomeLab: you can rename and recolour them, but not delete them.",
+    "modules": "Modules",
+    "moduleName": "Module name",
+    "noModules": "No modules yet.",
+    "newModule": "New module",
+    "deleteProject": "Delete project",
+    "confirmDelete": "Yes, delete it with its tasks",
+    "editProject": "Edit project",
+    "done": "Done",
+    "cycles": "Cycles",
+    "noCycles": "No cycles yet.",
+    "newCycle": "New cycle",
+    "updateModules": "Modules for update tasks",
+    "updateModulesHint": "New update tasks go into these modules.",
+    "server": "Server",
+    "serverHint": "The server where this project's apps run. The agent uses it when installing.",
+    "noServer": "No server",
+    "phase": "Section",
+    "phaseHint": "Section: consecutive columns with the same section stay together on the board, separated from the others by a line. Leave empty for no section."
+  },
+  "alerts": {
+    "projectCreated": "Project created.",
+    "projectSaved": "Project saved.",
+    "projectDeleted": "Project deleted.",
+    "taskCreated": "Task {{key}} created.",
+    "taskDeleted": "Task deleted.",
+    "bulkDone_one": "{{count}} task updated",
+    "bulkDone_other": "{{count}} tasks updated"
+  },
+  "bulk": {
+    "select": "Select {{key}}",
+    "selectPage": "Select all",
+    "keep": "Keep",
+    "state": "State…",
+    "priority": "Priority…",
+    "assignee": "Assignee…",
+    "cycle": "Cycle…",
+    "noCycle": "No cycle",
+    "count_one": "{{count}} selected",
+    "count_other": "{{count}} selected",
+    "apply": "Apply",
+    "applying": "Applying…",
+    "clear": "Clear selection"
+  },
+  "relations": {
+    "title": "Relations",
+    "none": "No relations with other tasks.",
+    "placeholder": "Task key (e.g. UPD-12)",
+    "add": "Relate",
+    "from": {
+      "BLOCKS": "Blocks",
+      "RELATES": "Related to",
+      "DUPLICATES": "Duplicates"
+    },
+    "to": {
+      "BLOCKS": "Blocked by",
+      "RELATES": "Related to",
+      "DUPLICATES": "Duplicated by"
+    }
+  },
+  "attachments": {
+    "title": "Attachments",
+    "none": "No attachments.",
+    "add": "Attach file",
+    "hint": "Up to 10 MB per file."
+  },
+  "today": {
+    "title": "Today",
+    "empty": "Nothing here for now. What needs you is in Notifications."
+  },
+  "process": {
+    "intake": {
+      "title": "Intake",
+      "hint": "A new version enters Todo and moves to Waiting for study."
+    },
+    "study": {
+      "title": "Study",
+      "hint": "The agent studies one at a time."
+    },
+    "decision": {
+      "title": "Decision",
+      "hint": "The study ends in Waiting for reply with a recommendation. Drag it to Ready to update and it installs right away; if a check fails, you get a notification."
+    },
+    "install": {
+      "title": "Update",
+      "hint": "Installs with a snapshot and checks the \"after updating\" list."
+    },
+    "end": {
+      "title": "Done",
+      "hint": "Done, failed or cancelled."
+    },
+    "other": {
+      "title": "Other columns",
+      "hint": "The columns you added."
+    }
+  },
+  "decision": {
+    "asks": "The agent asks",
+    "proposal": "The agent proposes a change to a document",
+    "noQuestion": "The agent needs an answer from you.",
+    "install": "Yes, install",
+    "later": "Later",
+    "cancel": "Cancel",
+    "approveAndInstall": "Approve and install",
+    "hint": "A plain «yes» («sim») in the comments installs it too. For any other answer, write in the comments: the agent reads them."
+  }
+}

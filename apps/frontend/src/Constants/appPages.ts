@@ -1,0 +1,10 @@
+export const APP_PAGES: Record<string, string> = {
+  FORGEJO: '/MyHomeLab/Apps/Forgejo',
+  TREK: '/MyHomeLab/Apps/Trek',
+  HOME_ASSISTANT: '/MyHomeLab/Apps/HomeAssistant',
+  ADGUARD: '/MyHomeLab/Apps/AdGuard',
+  NEXTCLOUD: '/MyHomeLab/Apps/Nextcloud',
+  GMAIL: '/MyHomeLab/Apps/Gmail',
+  GOOGLE_TASKS: '/MyHomeLab/Apps/GoogleTasks',
+  OPENGYM: '/MyHomeLab/Apps/OpenGym',
+};

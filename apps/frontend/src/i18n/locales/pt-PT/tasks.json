@@ -1,0 +1,280 @@
+{
+  "title": "Projetos",
+  "loading": "A carregar…",
+  "views": {
+    "columns": "Colunas",
+    "list": "Lista",
+    "table": "Tabela"
+  },
+  "sections": {
+    "board": "Quadro",
+    "triggers": "Disparos"
+  },
+  "actions": {
+    "new": "Nova tarefa",
+    "newIn": "Nova tarefa em {{state}}",
+    "newProject": "Projeto",
+    "newTrigger": "Novo disparo",
+    "projectSettings": "Definições do projeto"
+  },
+  "priority": {
+    "URGENT": "Urgente",
+    "HIGH": "Alta",
+    "MEDIUM": "Média",
+    "LOW": "Baixa",
+    "NONE": "Sem prioridade"
+  },
+  "groups": {
+    "BACKLOG": "Backlog",
+    "UNSTARTED": "Por começar",
+    "STARTED": "Em curso",
+    "WAITING": "À espera",
+    "COMPLETED": "Feito",
+    "CANCELLED": "Cancelado"
+  },
+  "assignee": {
+    "user": "Tu",
+    "none": "Ninguém"
+  },
+  "card": {
+    "children_one": "{{count}} sub-tarefa",
+    "children_other": "{{count}} sub-tarefas"
+  },
+  "columns": {
+    "empty": "Sem tarefas.",
+    "collapse": "Recolher coluna",
+    "expand": "Expandir {{name}}",
+    "hideEmpty": "Esconder vazias",
+    "previous": "Coluna anterior",
+    "next": "Coluna seguinte",
+    "jump": "Ir para {{name}}"
+  },
+  "filters": {
+    "search": "Procurar (título, texto ou ATU-12)",
+    "allStates": "Todas as colunas",
+    "allPriorities": "Todas as prioridades",
+    "allAssignees": "Todos os responsáveis",
+    "allModules": "Todos os módulos",
+    "allLabels": "Todas as etiquetas",
+    "clear": "Limpar filtros",
+    "allCycles": "Todos os ciclos"
+  },
+  "table": {
+    "key": "Chave",
+    "title": "Título",
+    "state": "Coluna",
+    "priority": "Prioridade",
+    "assignee": "Responsável",
+    "dueDate": "Prazo",
+    "updatedAt": "Mudada"
+  },
+  "list": {
+    "noResults": "Nenhuma tarefa com estes filtros.",
+    "page": "{{page}} de {{pages}}",
+    "previous": "Página anterior",
+    "next": "Página seguinte"
+  },
+  "properties": {
+    "state": "Coluna",
+    "priority": "Prioridade",
+    "assignee": "Responsável",
+    "startDate": "Início",
+    "dueDate": "Prazo",
+    "modules": "Módulos",
+    "noModules": "Este projeto ainda não tem módulos (Definições do projeto).",
+    "labels": "Etiquetas",
+    "created": "Criada a {{date}} por {{by}}",
+    "updated": "Mudada a {{date}}",
+    "cycle": "Ciclo"
+  },
+  "detail": {
+    "notFound": "Esta tarefa já não existe.",
+    "titleLabel": "Título da tarefa",
+    "parent": "Sub-tarefa de {{key}}",
+    "update": "Atualização {{from}} → {{to}}",
+    "openLog": "Abrir o registo",
+    "description": "Descrição",
+    "descriptionPlaceholder": "O que é, o objetivo, o que está feito…",
+    "noDescription": "Sem descrição.",
+    "edit": "Editar",
+    "save": "Guardar",
+    "children_one": "{{count}} sub-tarefa",
+    "children_other": "{{count}} sub-tarefas",
+    "tabs": {
+      "comments_one": "Comentários ({{count}})",
+      "comments_other": "Comentários ({{count}})",
+      "links_one": "Links e documentos ({{count}})",
+      "links_other": "Links e documentos ({{count}})",
+      "triggers_one": "Disparos ({{count}})",
+      "triggers_other": "Disparos ({{count}})",
+      "activity_one": "Histórico ({{count}})",
+      "activity_other": "Histórico ({{count}})",
+      "relations_one": "Relações e anexos ({{count}})",
+      "relations_other": "Relações e anexos ({{count}})"
+    },
+    "noComments": "Ainda não há comentários.",
+    "commentPlaceholder": "Escreve um comentário ou uma instrução para o agente…",
+    "commentHint": "Ao enviar, o agente da tarefa lê o comentário e trabalha nele (aparece nos Disparos).",
+    "commentNoAgent": "A tarefa não tem um agente responsável: o comentário fica só aqui.",
+    "send": "Enviar",
+    "docs": "Documentos",
+    "noDocs": "Nenhum documento ligado.",
+    "linkDoc": "Ligar um documento",
+    "searchDocs": "Procurar documentos",
+    "noDocsFound": "Nenhum documento encontrado.",
+    "required": "obrigatório",
+    "links": "Links",
+    "noLinks": "Sem links.",
+    "linkTitle": "Nome (opcional)",
+    "addLink": "Juntar link",
+    "unlink": "Tirar",
+    "triggersHint": "Os disparos desta tarefa: um agente trabalha nela numa data ou repetido. Os comentários também ficam aqui como disparos.",
+    "delete": "Apagar tarefa",
+    "confirmDelete": "Sim, apagar",
+    "startChat": "Falar com o Jarvis",
+    "openChat": "Conversa com o Jarvis · {{date}}"
+  },
+  "taskModal": {
+    "title": "Nova tarefa",
+    "name": "Título",
+    "namePlaceholder": "Ex.: Publicar o post de novembro",
+    "description": "Descrição",
+    "descriptionPlaceholder": "O que é e o que tem de ficar feito (Markdown).",
+    "assigneeHint": "Se o responsável for um agente, os teus comentários põem-no a trabalhar na tarefa.",
+    "save": "Criar",
+    "saving": "A criar…"
+  },
+  "projectModal": {
+    "title": "Novo projeto",
+    "editTitle": "Editar projeto",
+    "kind": "Projeto do quadro e dos documentos",
+    "name": "Nome",
+    "namePlaceholder": "Ex.: Instagram da empresa",
+    "identifier": "Prefixo",
+    "identifierPlaceholder": "Ex.: INSTA",
+    "identifierHint": "Vai à frente do número das tarefas (INSTA-12). Vazio: as iniciais do nome.",
+    "description": "O que é",
+    "descriptionPlaceholder": "Ex.: A conta de Instagram da empresa: posts semanais, tom próximo.",
+    "descriptionHint": "Os agentes leem isto e os documentos ligados ao projeto.",
+    "agents": "Agentes que trabalham nele",
+    "agentsHint": "Os documentos obrigatórios do projeto entram sempre nestes agentes; o primeiro responde aos comentários.",
+    "save": "Guardar",
+    "saving": "A guardar…"
+  },
+  "settings": {
+    "kind": "Prefixo {{identifier}}",
+    "states": "Colunas",
+    "stateName": "Nome da coluna",
+    "color": "Cor",
+    "up": "Subir",
+    "down": "Descer",
+    "remove": "Tirar",
+    "newState": "Nova coluna",
+    "add": "Juntar",
+    "updatesStatesHint": "As colunas das atualizações são usadas pelo MyHomeLab: podes mudar o nome e a cor, mas não apagá-las.",
+    "modules": "Módulos",
+    "moduleName": "Nome do módulo",
+    "noModules": "Ainda não há módulos.",
+    "newModule": "Novo módulo",
+    "deleteProject": "Apagar projeto",
+    "confirmDelete": "Sim, apagar com as tarefas",
+    "editProject": "Editar projeto",
+    "done": "Feito",
+    "cycles": "Ciclos",
+    "noCycles": "Ainda sem ciclos.",
+    "newCycle": "Novo ciclo",
+    "updateModules": "Módulos das tarefas de atualização",
+    "updateModulesHint": "As tarefas novas de atualização entram nestes módulos.",
+    "server": "Servidor",
+    "serverHint": "O servidor onde correm as apps deste projeto. O agente usa-o ao instalar.",
+    "noServer": "Sem servidor",
+    "phase": "Divisão",
+    "phaseHint": "Divisão: as colunas seguidas com a mesma divisão ficam juntas no quadro, separadas das outras por uma linha. Deixa vazio para não dividir."
+  },
+  "alerts": {
+    "projectCreated": "Projeto criado.",
+    "projectSaved": "Projeto guardado.",
+    "projectDeleted": "Projeto apagado.",
+    "taskCreated": "Tarefa {{key}} criada.",
+    "taskDeleted": "Tarefa apagada.",
+    "bulkDone_one": "{{count}} tarefa atualizada",
+    "bulkDone_other": "{{count}} tarefas atualizadas"
+  },
+  "bulk": {
+    "select": "Selecionar {{key}}",
+    "selectPage": "Selecionar todas",
+    "keep": "Manter",
+    "state": "Estado…",
+    "priority": "Prioridade…",
+    "assignee": "Responsável…",
+    "cycle": "Ciclo…",
+    "noCycle": "Sem ciclo",
+    "count_one": "{{count}} selecionada",
+    "count_other": "{{count}} selecionadas",
+    "apply": "Aplicar",
+    "applying": "A aplicar…",
+    "clear": "Limpar seleção"
+  },
+  "relations": {
+    "title": "Relações",
+    "none": "Sem relações com outras tarefas.",
+    "placeholder": "Chave da tarefa (ex.: UPD-12)",
+    "add": "Relacionar",
+    "from": {
+      "BLOCKS": "Bloqueia",
+      "RELATES": "Relacionada com",
+      "DUPLICATES": "Duplica"
+    },
+    "to": {
+      "BLOCKS": "Bloqueada por",
+      "RELATES": "Relacionada com",
+      "DUPLICATES": "Duplicada por"
+    }
+  },
+  "attachments": {
+    "title": "Anexos",
+    "none": "Sem anexos.",
+    "add": "Anexar ficheiro",
+    "hint": "Até 10 MB por ficheiro."
+  },
+  "today": {
+    "title": "Hoje",
+    "empty": "Por agora não há nada aqui. O que precisa de ti está nas Notificações."
+  },
+  "process": {
+    "intake": {
+      "title": "Entrada",
+      "hint": "Uma versão nova entra em Todo e passa para Espera por estudo."
+    },
+    "study": {
+      "title": "Estudo",
+      "hint": "O agente estuda uma de cada vez."
+    },
+    "decision": {
+      "title": "Decisão",
+      "hint": "O estudo acaba em Waiting for reply com a recomendação. Arrastas para Ready to update e instala-se logo; se algum ponto falhar, recebes uma notificação."
+    },
+    "install": {
+      "title": "Atualização",
+      "hint": "Instala com snapshot e verifica o \"depois de atualizar\"."
+    },
+    "end": {
+      "title": "Fim",
+      "hint": "Feitas, falhadas ou canceladas."
+    },
+    "other": {
+      "title": "Outras colunas",
+      "hint": "As colunas que juntaste."
+    }
+  },
+  "decision": {
+    "asks": "O agente pergunta",
+    "proposal": "O agente propõe uma mudança num documento",
+    "noQuestion": "O agente precisa de uma resposta tua.",
+    "install": "Sim, instalar",
+    "later": "Mais tarde",
+    "cancel": "Cancelar",
+    "approveAndInstall": "Aprovar e instalar",
+    "hint": "Um «sim» sozinho nos comentários também instala. Para outra resposta, escreve nos comentários: o agente lê-os."
+  }
+}

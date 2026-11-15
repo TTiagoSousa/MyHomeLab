@@ -1,0 +1,180 @@
+@use 'Fonts.scss' as Font;
+
+@mixin Pages_Configs {
+  width: 100%;
+  min-height: calc(100vh - 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+  font-family: Font.$font_family_sans;
+}
+
+@mixin Page_Header {
+  width: 100%;
+  min-height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .Right_Side{
+    span{
+      font-family: Font.$font_family_hud;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+  }
+}
+
+@mixin Frame_Corners($inset: 0) {
+  position: relative;
+
+  &::before,
+  &::after{
+    content: '';
+    position: absolute;
+    width: var(--bracket-size);
+    height: var(--bracket-size);
+    border: 1px solid var(--accent-deep);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  &::before{
+    top: $inset;
+    left: $inset;
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  &::after{
+    bottom: $inset;
+    right: $inset;
+    border-left: 0;
+    border-top: 0;
+  }
+}
+
+@mixin Hud_Label($size: 9.5px) {
+  font-family: Font.$font_family_mono;
+  font-size: $size;
+  font-weight: 500;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+@mixin Hud_Title($size: 15px) {
+  font-family: Font.$font_family_hud;
+  font-size: $size;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+@mixin Panel_Surface {
+  background:
+    linear-gradient(180deg, var(--card-global-header-background), transparent 34%),
+    var(--cards-background);
+  border: var(--card-border);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-box-shadow);
+}
+
+@mixin Control_Surface {
+  background: var(--input-global-background-color);
+  border: 1px solid var(--hud-line-strong);
+  border-radius: var(--ctrl-radius);
+  color: var(--input-global-letter-color);
+  font-family: Font.$font_family_sans;
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+
+  &::placeholder{ color: var(--text-faint); }
+
+  &:focus,
+  &:focus-within{
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent-soft), 0 0 22px var(--accent-soft);
+  }
+
+  &:disabled{
+    opacity: .45;
+    cursor: not-allowed;
+  }
+}
+
+@mixin Ghost_Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid var(--hud-line-strong);
+  border-radius: var(--ctrl-radius);
+  background: transparent;
+  color: var(--text-soft);
+  font-family: Font.$font_family_sans;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+
+  &:hover:not(:disabled){
+    color: var(--accent-bright);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  &:focus-visible{
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+
+  &:disabled{
+    opacity: .4;
+    cursor: default;
+  }
+}
+
+@mixin Solid_Button {
+  @include Ghost_Button;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+
+  &:hover:not(:disabled){
+    background: var(--accent-bright);
+    border-color: var(--accent-bright);
+    color: var(--on-accent);
+  }
+}
+
+@mixin Modal_Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--overlay-scrim);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+@mixin Modal_Panel {
+  @include Frame_Corners;
+  box-sizing: border-box;
+  border-radius: var(--border-radius);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .5);
+  background-color: var(--modal-background);
+  border: var(--card-border);
+  color: var(--card-global-header-title-color);
+  font-family: Font.$font_family_sans;
+  animation: hlPop .28s ease both;
+}

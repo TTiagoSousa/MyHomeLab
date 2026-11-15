@@ -1,0 +1,353 @@
+@use '../../../../Styles/Fonts.scss' as Font;
+@use '../../../../Styles/Mixins.scss' as Mixin;
+
+.EmailRules {
+  @include Mixin.Pages_Configs;
+
+  header{
+    @include Mixin.Page_Header;
+
+    .Right_Side{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      span{
+        color: var(--card-global-header-title-color);
+      }
+
+      .EmailRules_back{
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-family: Font.$font_family_sans;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--navbar-vertical-default-link-color);
+      }
+    }
+
+    .Left_Side{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .EmailRules_run{
+        height: 42px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        border-radius: var(--ctrl-radius);
+        border: var(--card-border);
+        cursor: pointer;
+        font-family: Font.$font_family_sans;
+        font-size: 13px;
+        font-weight: 700;
+        background-color: var(--cards-background);
+        color: var(--card-global-header-title-color);
+
+        &:disabled{
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .EmailRules_add{
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 42px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        border-radius: var(--ctrl-radius);
+        border: none;
+        cursor: pointer;
+        font-family: Font.$font_family_sans;
+        font-size: 13px;
+        font-weight: 700;
+        background-color: var(--simple-button-background-color);
+        color: var(--simple-button-letter-color);
+
+        &:disabled{
+          opacity: .5;
+          cursor: not-allowed;
+        }
+
+        svg{
+          width: 14px;
+          height: 14px;
+        }
+      }
+    }
+  }
+
+  .EmailRules_empty{
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: var(--border-radius);
+    border-style: dashed;
+    border-width: 1px;
+    font-size: 13px;
+    border-color: var(--navbar-vertical-default-link-color);
+    color: var(--navbar-vertical-default-link-color);
+  }
+
+  .EmailRules_search{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+
+    .EmailRules_search_box{
+      @include Mixin.Control_Surface;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      height: 42px;
+      padding: 0 10px 0 13px;
+      box-sizing: border-box;
+
+      &:focus-within{
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-soft);
+      }
+
+      > svg{
+        width: 17px;
+        height: 17px;
+        flex-shrink: 0;
+        color: var(--text-faint);
+      }
+
+      input{
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: Font.$font_family_sans;
+        font-size: 13.5px;
+        color: var(--text-main);
+
+        &::placeholder{ color: var(--text-faint); }
+        &::-webkit-search-cancel-button{ display: none; }
+      }
+
+      button{
+        width: 24px;
+        height: 24px;
+        padding: 5px;
+        flex-shrink: 0;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        background: none;
+        color: var(--text-faint);
+
+        &:hover{ color: var(--text-main); background: var(--accent-soft); }
+        svg{ width: 100%; height: 100%; }
+      }
+    }
+
+    .EmailRules_search_filters{
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+    }
+
+    .EmailRules_search_count{
+      margin-left: auto;
+      font-family: Font.$font_family_mono;
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+  }
+
+  .EmailRules_chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    button{
+      height: 28px;
+      padding: 0 11px;
+      border-radius: 14px;
+      border: 1px solid var(--hud-line-strong);
+      background: transparent;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-soft);
+      transition: color .15s ease, border-color .15s ease, background .15s ease;
+
+      &:hover{ border-color: var(--accent); color: var(--text-main); }
+
+      &.active{
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+      }
+
+      &:focus-visible{
+        outline: none;
+        box-shadow: 0 0 0 2px var(--accent);
+      }
+    }
+  }
+
+  .EmailRules_accounts{
+    padding-bottom: 2px;
+  }
+
+  .EmailRules_row_account{
+    margin-left: 8px;
+    padding: 1px 7px;
+    border-radius: var(--ctrl-radius);
+    border: 1px solid var(--hud-line);
+    vertical-align: middle;
+    font-family: Font.$font_family_mono;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--text-faint);
+  }
+
+  .EmailRules_empty_clear{
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    color: var(--accent-bright);
+
+    &:hover{ text-decoration: underline; }
+  }
+
+  .EmailRules_list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    mark{
+      background: var(--accent-soft);
+      color: var(--accent-bright);
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+
+    .EmailRules_row_kind{
+      @include Mixin.Hud_Label(8px);
+      margin-left: 8px;
+      padding: 1px 6px;
+      border-radius: var(--ctrl-radius);
+      border: 1px solid var(--hud-line-strong);
+      vertical-align: middle;
+      color: var(--text-soft);
+
+      &.bulk{ border-color: var(--accent); color: var(--accent-bright); }
+    }
+
+    .EmailRules_row_hit{
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-soft);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      .EmailRules_row_hit_field{
+        @include Mixin.Hud_Label(8.5px);
+        flex-shrink: 0;
+        color: var(--text-faint);
+      }
+    }
+
+    .EmailRules_row{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      box-sizing: border-box;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-box-shadow);
+      background-color: var(--cards-background);
+      border: var(--card-border);
+
+      .EmailRules_row_status{
+        flex-shrink: 0;
+        padding: 4px 10px;
+        box-sizing: border-box;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-family: Font.$font_family_sans;
+        font-size: 11px;
+        font-weight: 700;
+        background-color: var(--danger-color-soft);
+        color: var(--danger-color);
+
+        &.active{
+          background-color: var(--primary-soft-background);
+          color: var(--navbar-vertical-card-link-active-color);
+        }
+      }
+
+      .EmailRules_row_info{
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        cursor: pointer;
+
+        .EmailRules_row_name{
+          font-size: 13px;
+          font-weight: 700;
+          color: var(--card-global-header-title-color);
+        }
+
+        .EmailRules_row_summary{
+          font-size: 11px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: var(--navbar-vertical-default-link-color);
+        }
+      }
+
+      .EmailRules_row_edit,
+      .EmailRules_row_delete{
+        width: 26px;
+        height: 26px;
+        padding: 5px;
+        box-sizing: border-box;
+        flex-shrink: 0;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--card-global-header-background);
+        color: var(--card-global-header-title-color);
+
+        svg{
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .EmailRules_row_delete:hover{
+        background-color: var(--danger-color-soft);
+        color: var(--danger-color);
+      }
+    }
+  }
+}

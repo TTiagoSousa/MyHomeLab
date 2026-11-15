@@ -1,0 +1,97 @@
+@use '../../../Styles/Fonts.scss' as Font;
+
+.Index{
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 50px);
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 24px;
+  font-family: Font.$font_family_sans;
+
+  .Content{
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: hlPop .4s ease both;
+
+    .Info{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 26px;
+
+      .Icon{
+        width: 52px;
+        height: 52px;
+        background-color: var(--accent);
+        border-radius: var(--border-radius);
+        box-shadow: 0 10px 30px var(--accent-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+      }
+
+      .Title{
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--card-global-header-title-color);
+      }
+
+      .Description{
+        margin-top: 5px;
+        font-size: 13px;
+        color: var(--cards-base-letter-color);
+      }
+    }
+
+    form{
+      width: 100%;
+      padding: 22px;
+      border-radius: calc(var(--border-radius) + 2px);
+      gap: 14px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      background-color: var(--panel-background);
+      border: var(--card-border);
+      box-shadow: var(--card-box-shadow);
+
+      .Input_field{
+        .Global_Input,
+        .Dropdown_Field{
+          height: 38px;
+        }
+
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        label{
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: var(--cards-base-letter-color);
+        }
+
+      }
+
+      .Button_field{
+        width: 100%;
+        height: 44px;
+        display: flex;
+        margin-top: 2px;
+      }
+    }
+  }
+}

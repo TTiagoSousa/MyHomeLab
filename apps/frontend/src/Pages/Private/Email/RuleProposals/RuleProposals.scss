@@ -1,0 +1,84 @@
+@use '../../../../Styles/Fonts.scss' as Font;
+@use '../../../../Styles/Mixins.scss' as Mixin;
+
+.RuleProposals {
+
+  .RuleProposals_intro{
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  .RuleProposals_row{
+    align-items: flex-start;
+  }
+
+  .RuleProposals_tag{
+    @include Mixin.Hud_Label(8px);
+    flex-shrink: 0;
+    margin-top: 2px;
+    padding: 3px 8px;
+    border: 1px dashed var(--accent);
+    border-radius: var(--ctrl-radius);
+    color: var(--accent-bright);
+  }
+
+  .RuleProposals_reason{
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--text-main);
+  }
+
+  .RuleProposals_evidence{
+    font-family: Font.$font_family_mono;
+    font-size: 11px;
+    color: var(--text-soft);
+  }
+
+  .RuleProposals_auto{
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--stat-attention);
+  }
+
+  .RuleProposals_implement{
+    @include Mixin.Solid_Button;
+    flex-shrink: 0;
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .RuleProposals_recent{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .RuleProposals_recent_toggle{
+    align-self: flex-start;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: Font.$font_family_sans;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-soft);
+
+    &:hover{ color: var(--text-main); }
+  }
+
+
+  .RuleProposals_status{
+    @include Mixin.Hud_Label(7.5px);
+    padding: 1px 6px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    color: var(--text-soft);
+
+    &.implemented{ border-color: var(--stat-positive); color: var(--stat-positive); }
+  }
+
+}

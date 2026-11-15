@@ -1,0 +1,123 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Apps{
+  .App_Summary{
+    gap: 14px;
+
+    .App_Summary_Head{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .App_Summary_Icon{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      border: 1px solid var(--hud-line-strong);
+      border-radius: var(--ctrl-radius);
+      color: var(--accent-bright);
+
+      svg{ width: 18px; height: 18px; }
+    }
+
+    .App_Summary_Text{
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .App_Summary_Host{
+      font-family: Font.$font_family_mono;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      overflow-wrap: anywhere;
+    }
+
+    .App_Summary_Checked{
+      font-size: 11.5px;
+      color: var(--text-faint);
+    }
+
+    .App_Summary_Actions{
+      display: flex;
+      flex-shrink: 0;
+      gap: 8px;
+
+      button{
+        @include Mixin.Ghost_Button;
+        height: 32px;
+        padding: 0 12px;
+        font-size: 12.5px;
+      }
+    }
+
+    .App_Summary_Facts{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      border: 1px solid var(--hud-line);
+      border-radius: var(--ctrl-radius);
+      overflow: hidden;
+    }
+
+    .App_Summary_Fact{
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+      padding: 10px 14px;
+      border-left: 1px solid var(--hud-line);
+
+      &:first-child{ border-left: none; }
+    }
+
+    .App_Summary_Label{
+      @include Mixin.Hud_Label(9.5px);
+      color: var(--text-faint);
+    }
+
+    .App_Summary_Value{
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      overflow-wrap: anywhere;
+
+      .Apps_state{ font-size: 13px; }
+    }
+
+    .App_Summary_Version{
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-family: Font.$font_family_mono;
+
+      .old{ color: var(--text-soft); }
+      .Apps_chip{ font-size: 11px; padding: 1px 8px; }
+    }
+
+    .App_Summary_Link{
+      font-size: 11.5px;
+      color: var(--accent-bright);
+    }
+
+    @media (max-width: 560px){
+      .App_Summary_Head{ flex-wrap: wrap; }
+      .App_Summary_Actions{ width: 100%; }
+
+      .App_Summary_Fact{
+        border-left: none;
+        border-top: 1px solid var(--hud-line);
+
+        &:first-child{ border-top: none; }
+      }
+    }
+  }
+}

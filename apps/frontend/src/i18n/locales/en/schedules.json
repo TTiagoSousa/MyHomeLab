@@ -1,0 +1,143 @@
+{
+  "title": "Triggers",
+  "intro": "Jobs an agent does on its own on a date or on repeat: recheck an update, see if something is ready at 5am, confirm a backup. You are not watching when it runs, so it follows your rules (the \"When I run without you\" document) and only tells you when there is something to say.",
+  "loading": "Loading…",
+  "empty": {
+    "title": "No triggers yet",
+    "text": "Create one here, or ask Jarvis (\"every day at 5am check if updates are ready\"). Update studies, \"recheck later\" and task comments also show up here."
+  },
+  "repeat": {
+    "ONCE": "Once",
+    "DAILY": "Every day",
+    "WEEKLY": "Every week",
+    "MONTHLY": "Every month",
+    "ON_NEW_UPDATE": "When an update appears"
+  },
+  "when": {
+    "once": "Once, on {{date}}",
+    "daily": "Every day at {{time}}",
+    "weekly": "{{day}} at {{time}}",
+    "monthly": "Day {{day}} of each month at {{time}}",
+    "onNewUpdate": "When a new update appears (apps and server)"
+  },
+  "weekdays": {
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday",
+    "7": "Sunday"
+  },
+  "state": {
+    "on": "On",
+    "off": "Off",
+    "done": "Done"
+  },
+  "next": "Next: {{date}}",
+  "createdByYou": "Created by you",
+  "createdBy": "Created by {{name}}",
+  "linkedTo": "{{label}}",
+  "forUpdate": "Recheck update",
+  "silent": "No alerts",
+  "never": "Has not run yet.",
+  "run": {
+    "status": {
+      "RUNNING": "Running",
+      "DONE": "Ran",
+      "FAILED": "Failed"
+    },
+    "tokens": "{{tokens}} tokens",
+    "docsUsed": "Documents used:"
+  },
+  "actions": {
+    "new": "New trigger",
+    "run": "Run now",
+    "running": "Running…",
+    "edit": "Edit",
+    "enable": "Turn on",
+    "disable": "Turn off",
+    "delete": "Delete",
+    "confirmDelete": "Yes, delete",
+    "more": "See more",
+    "editText": "Edit text"
+  },
+  "alerts": {
+    "created": "Schedule created.",
+    "saved": "Schedule saved.",
+    "running": "Running. The result shows up here when the agent finishes.",
+    "deleted": "Schedule deleted."
+  },
+  "modal": {
+    "title": "New trigger",
+    "editTitle": "Edit trigger",
+    "kind": "An agent's job",
+    "linkedTo": "Linked to {{label}}",
+    "updateText": "\"{{title}}\": when the time comes, the update goes back to study. Here you only change the date and the alerts.",
+    "name": "Name",
+    "namePlaceholder": "E.g. Ready updates at 5am",
+    "agent": "Agent",
+    "agentOff": "{{name}} (off)",
+    "instruction": "What to do",
+    "instructionPlaceholder": "E.g. Check for updates in Ready to update and do the ones the rules allow without me.",
+    "instructionHint": "Write it as if you were asking now: the agent cannot ask you anything while it runs.",
+    "when": "When",
+    "runAt": "Date and time",
+    "time": "Time",
+    "weekday": "Day of the week",
+    "monthDay": "Day of the month",
+    "timeZone": "Lisbon time. In a month without that day, it runs on the last one.",
+    "notify": "Alert me",
+    "notifyHint": "In notifications (site and app), only when there is something to say.",
+    "enabled": "On",
+    "enabledHint": "When off, it stays saved but does not run.",
+    "save": "Save",
+    "saving": "Saving…",
+    "tags": "Tags",
+    "tagsHint": "Enter or comma to add (e.g. updates, backups).",
+    "toChat": "Put the answer in a Jarvis conversation",
+    "toChatHint": "Each time it runs, the answer goes to a new Assistant conversation and you get a notice (e.g. a daily summary).",
+    "onNewUpdateHint": "No time: it runs whenever MyHomeLab sees a new version of an app or the server, once per version, with the updates in the request."
+  },
+  "linked": {
+    "title": "Triggers",
+    "description": "Jobs scheduled for {{label}}.",
+    "empty": "No linked triggers yet.",
+    "all": "See all"
+  },
+  "card": {
+    "notice": "with alert"
+  },
+  "filters": {
+    "search": "Search the name or the text",
+    "allStates": "All states",
+    "allAgents": "All agents",
+    "allTags": "All tags"
+  },
+  "list": {
+    "count_one": "{{count}} trigger",
+    "count_other": "{{count}} triggers",
+    "noResults": "No triggers match these filters.",
+    "page": "{{page}} of {{pages}}",
+    "previous": "Previous page",
+    "next": "Next page"
+  },
+  "table": {
+    "name": "Trigger",
+    "when": "When",
+    "agent": "Agent",
+    "next": "Next run",
+    "last": "Last run",
+    "state": "State"
+  },
+  "detail": {
+    "notFound": "This trigger no longer exists.",
+    "info": "When and who",
+    "instruction": "What it does",
+    "tags": "Tags",
+    "tagsHint": "To filter the list. Agents also add tags when they create triggers.",
+    "history": "History",
+    "historyHint": "The last times it ran, with what the agent answered."
+  },
+  "notifies": "Alerts you"
+}

@@ -1,0 +1,149 @@
+@use '../../../Styles/Fonts.scss' as Font;
+
+.Apps{
+  .Gmail_Filters{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+
+    button{
+      height: 28px;
+      padding: 0 11px;
+      border-radius: 14px;
+      border: 1px solid var(--hud-line-strong);
+      background: transparent;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-soft);
+      transition: color .15s ease, border-color .15s ease, background .15s ease;
+
+      &:hover{ border-color: var(--accent); color: var(--text-main); }
+
+      &.active{
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+      }
+
+      &:focus-visible{
+        outline: none;
+        box-shadow: 0 0 0 2px var(--accent);
+      }
+    }
+  }
+
+  .Gmail_Table_Scroll{
+    overflow-x: auto;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Gmail_Table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+
+    th{
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--hud-line-strong);
+      text-align: left;
+      white-space: nowrap;
+      font-family: Font.$font_family_sans;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-faint);
+    }
+
+    td{
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--hud-line);
+      color: var(--text-soft);
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    th.center,
+    td.center{ text-align: center; }
+
+    code{
+      font-family: Font.$font_family_mono;
+      font-size: 11.5px;
+      color: var(--text-main);
+    }
+
+    tbody tr{
+      &:hover td{ background: var(--accent-soft); }
+      &:last-child td{ border-bottom: none; }
+
+      &.possible code{ color: var(--text-soft); }
+    }
+  }
+
+  .Gmail_Table_Description{
+    min-width: 220px;
+    white-space: normal !important;
+    color: var(--text-main) !important;
+  }
+
+  .Gmail_Table_Method{
+    display: inline-block;
+    min-width: 58px;
+    padding: 2px 6px;
+    box-sizing: border-box;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: 4px;
+    font-family: Font.$font_family_mono;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-soft);
+
+    &.get,
+    &.propfind,
+    &.report{ border-color: var(--stat-positive); color: var(--stat-positive); }
+    &.post,
+    &.mkcol,
+    &.ssh{ border-color: var(--accent); color: var(--accent); }
+    &.put,
+    &.patch{ border-color: var(--stat-attention); color: var(--stat-attention); }
+    &.delete{ border-color: var(--danger-color); color: var(--danger-color); }
+  }
+
+  .Gmail_Table_Tags{
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+
+    span{
+      padding: 1px 7px;
+      border: 1px solid var(--hud-line-strong);
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+  }
+
+  .Gmail_Table_Faint{ color: var(--text-faint); }
+
+  .Gmail_Table_Status{
+    font-size: 11.5px;
+    font-weight: 600;
+
+    &.on{ color: var(--stat-positive); }
+    &.partial{ color: var(--stat-attention); }
+    &.off{ color: var(--danger-color); }
+  }
+
+  .Gmail_Table_Check{
+    font-weight: 700;
+
+    &.on{ color: var(--stat-positive); }
+    &.off{ color: var(--text-faint); }
+  }
+}

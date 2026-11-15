@@ -1,0 +1,1263 @@
+@use '../../../../Styles/Fonts.scss' as Font;
+@use '../../../../Styles/Mixins.scss' as Mixin;
+
+@mixin Card_Head {
+  .Health_card_head{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .Health_card_title{
+    @include Mixin.Hud_Title(15px);
+    color: var(--card-global-header-title-color);
+  }
+
+  .Health_card_description{
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+
+  .Health_card_actions{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .Health_see_all{
+    @include Mixin.Ghost_Button;
+    height: 32px;
+    padding: 0 14px;
+    font-size: 12.5px;
+    flex-shrink: 0;
+
+    &.danger{
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    &.confirm{
+      background: var(--danger-color-soft);
+    }
+  }
+}
+
+@mixin Table {
+  .Health_Table{
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    overflow: hidden;
+
+    &.sleep .Health_Table_Row{
+      grid-template-columns: 1.3fr repeat(7, minmax(0, .8fr)) 1.5fr;
+
+      @media (max-width: 1000px){ grid-template-columns: 1.3fr repeat(3, minmax(0, .8fr)) 1.2fr; }
+    }
+
+    &.labs-reports .Health_Table_Row{
+      grid-template-columns: 1.3fr 1.2fr .8fr .6fr 1fr;
+
+      @media (max-width: 1000px){ grid-template-columns: 1.3fr 1fr .6fr 1fr; }
+    }
+
+    &.labs-history .Health_Table_Row{
+      grid-template-columns: 1.2fr 1fr 1fr 1fr 110px;
+
+      @media (max-width: 1000px){ grid-template-columns: 1.2fr 1fr 1fr 110px; }
+    }
+
+    &.medication .Health_Table_Row{
+      grid-template-columns: 1.4fr .8fr 1.6fr 1.2fr auto;
+
+      @media (max-width: 1000px){ grid-template-columns: 1.4fr .8fr 1.4fr auto; }
+    }
+
+    &.weight .Health_Table_Row{
+      grid-template-columns: 1.6fr 1fr 1fr 120px;
+    }
+
+    &.water .Health_Table_Row{
+      grid-template-columns: 1.3fr .9fr .7fr .9fr 1.5fr;
+
+      @media (max-width: 1000px){ grid-template-columns: 1.3fr .9fr .7fr 1.2fr; }
+    }
+
+    &.heart .Health_Table_Row,
+    &.skin .Health_Table_Row,
+    &.oxygen .Health_Table_Row,
+    &.stress .Health_Table_Row,
+    &.exercise .Health_Table_Row,
+    &.steps .Health_Table_Row{
+      grid-template-columns: 1.3fr repeat(6, minmax(0, .8fr)) 1.5fr;
+
+      @media (max-width: 1000px){ grid-template-columns: 1.3fr repeat(3, minmax(0, .8fr)) 1.2fr; }
+    }
+  }
+
+  .Health_Table_Body{
+    max-height: 440px;
+    overflow-y: auto;
+  }
+
+  .Health_Table_Row{
+    display: grid;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 11px 16px;
+    box-sizing: border-box;
+    border: none;
+    border-left: 2px solid transparent;
+    background: transparent;
+    color: var(--card-global-header-title-color);
+    font-family: Font.$font_family_sans;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+
+    span{
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:not(.Health_Table_Head){
+      border-bottom: var(--card-border);
+
+      &:hover{ background: var(--card-hover-background); }
+
+      &.selected{
+        border-left-color: var(--accent);
+        background: var(--accent-soft);
+      }
+    }
+
+    @media (max-width: 1000px){
+      .Health_Table_Optional{ display: none; }
+    }
+  }
+
+  .Health_Table_Head{
+    background-color: var(--card-global-header-background);
+    cursor: default;
+
+    span{
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--navbar-vertical-default-link-color);
+    }
+  }
+
+  .Health_Table_Day{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    text-transform: capitalize;
+
+    em{
+      @include Mixin.Hud_Label(8px);
+      font-style: normal;
+      color: #34d399;
+    }
+  }
+
+  .Health_Table_Strong{ font-weight: 700; }
+
+  .Health_Table_Bar .Health_Split_Bar_Track{ height: 7px; }
+
+  .Health_Table_Month{
+    @include Mixin.Hud_Label;
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 8px 16px;
+    background: var(--modal-background);
+    border-bottom: var(--card-border);
+    color: var(--accent-bright);
+  }
+}
+
+.Health_Dashboard {
+  @include Mixin.Pages_Configs;
+  @include Card_Head;
+  @include Table;
+
+  .Health_Table_Row.static{
+    cursor: default;
+  }
+
+  a.Health_see_all{
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .Health_Table_Row.flagged .Health_Table_Strong{ color: var(--danger-color); }
+
+  .Lab_Categories{
+    columns: 560px 2;
+    column-gap: 16px;
+
+    .Lab_Category{
+      break-inside: avoid;
+      margin-bottom: 16px;
+    }
+  }
+
+  .Lab_Rows{
+    display: flex;
+    flex-direction: column;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    overflow: hidden;
+  }
+
+  .Lab_Row{
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(80px, 1fr) 150px 96px 76px;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    border-left: 2px solid transparent;
+    background: transparent;
+    color: var(--card-global-header-title-color);
+    font-family: Font.$font_family_sans;
+    text-align: left;
+    cursor: pointer;
+
+    & + .Lab_Row{ border-top: var(--card-border); }
+
+    &:hover{ background: var(--card-hover-background); }
+
+    &.flagged{
+      border-left-color: #f43f5e;
+      background: rgba(244, 63, 94, .05);
+
+      .Lab_Row_Value em{ color: #f43f5e; }
+    }
+
+    > .Lab_Flag{ justify-self: end; }
+
+    @media (max-width: 700px){
+      grid-template-columns: minmax(0, 1fr) auto;
+
+      .Lab_Range, .Lab_Row_Trend{ display: none; }
+      > .Lab_Flag{ grid-column: 2; }
+    }
+  }
+
+  .Lab_Row_Name{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    strong{
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    small{
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Lab_Row_Value{
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    justify-content: flex-end;
+    white-space: nowrap;
+
+    em{
+      font-family: Font.$font_family_hud;
+      font-style: normal;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent-bright);
+    }
+
+    small{
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Lab_Row_Percent{
+    padding-left: 4px;
+    border-left: var(--card-border);
+  }
+
+  .Lab_Row_Trend{
+    font-size: 11px;
+    color: var(--text-soft);
+    white-space: nowrap;
+  }
+
+  .Lab_Range{
+    position: relative;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--hud-line);
+
+    &.empty{ background: transparent; }
+  }
+
+  .Lab_Range_Zone{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, .45);
+  }
+
+  .Lab_Range_Marker{
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--panel-background);
+    background: #10b981;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, .6);
+
+    &.out{
+      background: #f43f5e;
+      box-shadow: 0 0 0 1px rgba(244, 63, 94, .6);
+    }
+  }
+
+  .Lab_Attention{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+
+    > span{
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+  }
+
+  .Lab_Chip{
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid rgba(244, 63, 94, .5);
+    border-radius: 999px;
+    background: rgba(244, 63, 94, .08);
+    color: var(--card-global-header-title-color);
+    font-family: Font.$font_family_sans;
+    font-size: 12px;
+    cursor: pointer;
+
+    strong{ font-weight: 700; }
+
+    small{
+      font-size: 11px;
+      font-weight: 700;
+      color: #f43f5e;
+    }
+
+    &:hover{ background: rgba(244, 63, 94, .16); }
+  }
+
+  .Lab_All_Good{
+    margin: 0;
+    font-size: 12.5px;
+    color: #10b981;
+  }
+
+  .Lab_Flag{
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+
+    &.ok{ color: #10b981; background: rgba(16, 185, 129, .1); }
+    &.high, &.low{ color: #f43f5e; background: rgba(244, 63, 94, .12); }
+    &.abnormal{ color: #f59e0b; background: rgba(245, 158, 11, .12); }
+  }
+
+  .Lab_Out{
+    color: #f43f5e;
+    font-weight: 700;
+  }
+
+  .Lab_Reading{
+    border-color: var(--accent);
+
+    .Health_card_title{ animation: Lab_Pulse 1.4s ease-in-out infinite; }
+  }
+
+  @keyframes Lab_Pulse{
+    50%{ opacity: .45; }
+  }
+
+  .Medication_Schedule{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .Medication_Dose{
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    font-size: 13px;
+
+    em{
+      font-family: Font.$font_family_hud;
+      font-style: normal;
+      color: var(--accent-bright);
+    }
+
+    span{ font-weight: 700; }
+
+    small{
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+  }
+
+  .Health_Table.medication .Health_Table_Row{
+    row-gap: 4px;
+
+    .Health_Table_Actions{ gap: 6px; }
+  }
+
+  .Medication_Notes{
+    grid-column: 1 / -1;
+    font-size: 12px;
+    color: var(--text-faint);
+    white-space: normal;
+  }
+
+  .Weight_Profile{
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    align-items: end;
+
+    @media (max-width: 700px){ grid-template-columns: 1fr; }
+  }
+
+  .Weight_Profile_Input{
+    display: flex;
+    gap: 8px;
+
+    .Global_Input{ height: 38px; }
+  }
+
+  .Diary_Kinds{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 34px;
+      padding: 0 16px;
+      font-size: 12.5px;
+
+      &.active{
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--accent-bright);
+      }
+    }
+  }
+
+  .Health_Form.profile{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    .wide{ grid-column: span 2; }
+
+    @media (max-width: 800px){
+      grid-template-columns: 1fr 1fr;
+
+      .wide{ grid-column: 1 / -1; }
+    }
+  }
+
+  .Health_Form.diary{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    @media (max-width: 800px){ grid-template-columns: 1fr 1fr; }
+  }
+
+  .Diary_Range{
+    width: 100%;
+    height: 38px;
+    accent-color: var(--accent);
+  }
+
+  .Diary_Text{
+    @include Mixin.Control_Surface;
+    width: 100%;
+    padding: 9px 12px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: Font.$font_family_sans;
+    font-size: 13px;
+  }
+
+  .Diary_Actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .Diary_Days{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .Diary_Day{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .Diary_Day_Label{
+    @include Mixin.Hud_Label(9.5px);
+    color: var(--accent-bright);
+  }
+
+  .Diary_Entry{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border: var(--card-border);
+    border-left: 3px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+
+    &.pain{ border-left-color: #f43f5e; }
+    &.symptom{ border-left-color: #f59e0b; }
+    &.note{ border-left-color: #60a5fa; }
+    &.allergy{ border-left-color: #a855f7; }
+    &.day{ border-left-color: #10b981; }
+
+    p{
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-soft);
+      white-space: pre-wrap;
+    }
+  }
+
+  .Diary_Entry_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+
+    em{
+      font-family: Font.$font_family_hud;
+      font-style: normal;
+      color: var(--text-faint);
+    }
+  }
+
+  .Diary_Kind{ font-weight: 800; }
+
+  .Diary_Intensity{
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+
+    &.low{ color: #10b981; background: rgba(16, 185, 129, .1); }
+    &.medium{ color: #f59e0b; background: rgba(245, 158, 11, .12); }
+    &.high{ color: #f43f5e; background: rgba(244, 63, 94, .12); }
+  }
+
+  .Diary_Trigger{
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #a855f7;
+  }
+
+  .Diary_Context{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+    border-radius: var(--ctrl-radius);
+    background: var(--accent-soft);
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    em{
+      font-style: normal;
+      font-weight: 700;
+      margin-right: 6px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Diary_Context_Title{
+    @include Mixin.Hud_Label(9.5px);
+    color: var(--accent-bright);
+  }
+
+  .Diary_Context_Item{
+    white-space: pre-wrap;
+    line-height: 1.45;
+  }
+
+  .Diary_Context_Empty{ color: var(--text-faint); }
+
+  .Diary_Filters{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .Diary_Filters_Row{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .Diary_Filters_Label{
+    width: 70px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-faint);
+  }
+
+  .Diary_Filters_Dates{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-faint);
+
+    .Global_Input{
+      width: 150px;
+      height: 34px;
+    }
+  }
+
+  .Diary_Filters_Search{
+    flex: 1;
+    min-width: 200px;
+    max-width: 420px;
+
+    .Global_Input{ height: 34px; }
+  }
+
+  .Diary_Entry_Actions{
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+
+    .Health_see_all{ height: 28px; padding: 0 10px; font-size: 12px; }
+  }
+
+  .Health_Table_Actions{
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .Health_Change{
+    &.up{ color: #f59e0b; }
+    &.down{ color: #10b981; }
+  }
+
+  .Health_Form{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: end;
+
+    @media (max-width: 700px){ grid-template-columns: 1fr 1fr; }
+  }
+
+  .Health_Form_Field{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+
+    .Global_Input{ height: 38px; }
+
+    label{
+      font-size: 12px;
+      font-weight: 700;
+    }
+  }
+
+  .Health_Form_Save{
+    @include Mixin.Solid_Button;
+    height: 38px;
+    padding: 0 22px;
+
+    &:disabled{
+      opacity: .5;
+      cursor: not-allowed;
+    }
+  }
+
+  .Health_Form_Error{
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--danger-color);
+  }
+
+  .Water_Day_Picker{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+
+    label{
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-faint);
+    }
+
+    .Global_Input{
+      width: 160px;
+      height: 36px;
+    }
+  }
+
+  .Water_Today_Total{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+
+    em{
+      font-family: Font.$font_family_hud;
+      font-style: normal;
+      font-size: 18px;
+      color: var(--accent-bright);
+    }
+
+    small{
+      font-size: 11.5px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Water_Quick{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    > button{
+      @include Mixin.Ghost_Button;
+      height: 36px;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+  }
+
+  .Water_Custom{
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+
+    .Global_Input{
+      width: 170px;
+      height: 36px;
+    }
+
+    button{
+      @include Mixin.Solid_Button;
+      height: 36px;
+      padding: 0 16px;
+
+      &:disabled{
+        opacity: .5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .Water_Entries{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .Water_Entry{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 4px 4px 10px;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    font-size: 12px;
+    color: var(--text-soft);
+
+    button{
+      border: none;
+      background: transparent;
+      color: var(--text-faint);
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+
+      &:hover{ color: var(--danger-color); }
+    }
+  }
+
+  .Health_Notes{
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-soft);
+    white-space: pre-wrap;
+  }
+
+  .Health_Exercise_List{
+    display: flex;
+    flex-direction: column;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    overflow: hidden;
+  }
+
+  .Health_Exercise_Group{
+    display: flex;
+    flex-direction: column;
+
+    & + .Health_Exercise_Group{ border-top: var(--card-border); }
+  }
+
+  .Health_Exercise_Group_Label{
+    @include Mixin.Hud_Label(9px);
+    padding: 9px 14px 4px;
+    color: var(--accent-bright);
+  }
+
+  .Health_Exercise_Item{
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 130px;
+    align-items: center;
+    gap: 14px;
+    padding: 9px 14px;
+    font-size: 13px;
+  }
+
+  .Health_Exercise_List.moves .Health_Exercise_Item{
+    grid-template-columns: minmax(0, 1fr) 80px 70px 110px 90px;
+
+    > span:not(:first-child){ text-align: right; }
+  }
+
+  .Health_Exercise_Head{
+    border-bottom: var(--card-border);
+
+    span{
+      @include Mixin.Hud_Label(9px);
+      color: var(--text-faint);
+    }
+  }
+
+  .Health_Exercise_Name{
+    font-weight: 700;
+    color: var(--card-global-header-title-color);
+  }
+
+  .Health_Exercise_Sets{
+    font-family: Font.$font_family_hud;
+    color: var(--accent-bright);
+  }
+
+  .Health_Exercise_Total{
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  header{
+    @include Mixin.Page_Header;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .Right_Side{
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      span{ color: var(--card-global-header-title-color); }
+    }
+
+    .Left_Side{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+
+  .Health_back{
+    align-self: flex-start;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 12px;
+    color: var(--text-soft);
+    cursor: pointer;
+
+    &:hover{ color: var(--accent-bright); }
+  }
+
+  .Health_periods{
+    display: flex;
+    gap: 6px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 34px;
+      padding: 0 12px;
+      font-size: 12.5px;
+
+      &.active{
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+      }
+    }
+  }
+
+  .Health_empty{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px 20px;
+    border: 1px dashed var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-soft);
+
+    .Health_empty_title{
+      @include Mixin.Hud_Title(16px);
+      color: var(--text-main);
+    }
+  }
+
+  .Health_anchor{ scroll-margin-top: 16px; }
+
+  .Health_card{
+    @include Mixin.Panel_Surface;
+    @include Mixin.Frame_Corners;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+
+    &.empty{
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    &.loading{ opacity: .6; }
+  }
+
+  .Health_toggle{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+    cursor: pointer;
+
+    input{ accent-color: var(--accent); }
+  }
+
+  .Health_chart_empty{
+    font-size: 12.5px;
+    color: var(--text-soft);
+  }
+}
+
+.Health_Month_Modal_Overlay{
+  @include Mixin.Modal_Overlay;
+  @include Card_Head;
+  @include Table;
+
+  .Health_Month_Modal{
+    @include Mixin.Modal_Panel;
+    width: 1000px;
+    max-width: 100%;
+    max-height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .Health_Table{ flex: 1; }
+
+  .Health_Table_Body{
+    max-height: none;
+    flex: 1;
+  }
+}
+
+.Health_Box{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: var(--card-border);
+  border-radius: var(--ctrl-radius);
+  background: var(--panel-background);
+  min-width: 0;
+}
+
+.Health_Chart_Legend{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-size: 12px;
+  color: var(--text-soft);
+
+  span{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .line{
+    width: 16px;
+    height: 0;
+    border-top: 2px solid;
+
+    &.heart{ border-color: #f43f5e; }
+    &.resting{ border-color: #60a5fa; border-top-style: dashed; }
+    &.skin{ border-color: #fb923c; }
+    &.oxygen{ border-color: #22d3ee; }
+    &.altitude{ border-color: #a78bfa; border-top-style: dashed; }
+    &.route{ border-color: #38bdf8; border-top-width: 3px; }
+    &.night{ border-color: #818cf8; border-top-style: dashed; }
+  }
+
+  .dot{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+
+    &.hrv{ background: #c084fc; }
+    &.start{ background: #34d399; }
+    &.end{ background: #f43f5e; }
+  }
+}
+
+.Health_Section_Label{
+  @include Mixin.Hud_Label;
+  color: var(--text-soft);
+}
+
+.Health_Block{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.Health_Stats{
+  display: grid;
+  gap: 10px;
+
+  &.columns-3{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  &.columns-4{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  &.columns-5{ grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  &.columns-7{ grid-template-columns: repeat(7, minmax(0, 1fr)); }
+
+  @media (max-width: 1200px){
+    &.columns-3,
+    &.columns-4,
+    &.columns-5,
+    &.columns-7{ grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  }
+}
+
+.Health_Stat{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: var(--card-border);
+  border-radius: var(--ctrl-radius);
+  background: var(--panel-background);
+  min-width: 0;
+
+  span{
+    @include Mixin.Hud_Label;
+    color: var(--text-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  em{
+    font-style: normal;
+    font-family: Font.$font_family_mono;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  small{
+    font-family: Font.$font_family_mono;
+    font-size: 10.5px;
+    color: var(--text-faint);
+  }
+
+  &.highlight{
+    border-color: var(--accent-deep);
+    background: var(--accent-soft);
+
+    em{ color: var(--accent-bright); }
+  }
+}
+
+.Health_Split_Bar{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .Health_Split_Bar_Track{
+    display: flex;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 5px;
+    background: var(--hud-line);
+
+    span{ height: 100%; }
+  }
+
+  .Health_Split_Bar_Legend{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 12px;
+    color: var(--text-soft);
+
+    span{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    i{
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+    }
+
+    b{
+      font-family: Font.$font_family_mono;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+  }
+}
+
+.stage-DEEP{ background: #4f46e5; }
+.stage-LIGHT{ background: #60a5fa; }
+.stage-REM{ background: #c084fc; }
+.stage-AWAKE{ background: #f59e0b; }
+.stage-NAP{ background: #34d399; }
+
+.zone-low{ background: #60a5fa; }
+.zone-normal{ background: #34d399; }
+.zone-elevated{ background: #f59e0b; }
+.zone-high{ background: #f43f5e; }
+
+.range-cold{ background: #818cf8; }
+.range-cool{ background: #38bdf8; }
+.range-normal{ background: #34d399; }
+.range-warm{ background: #fb923c; }
+
+.spo2-low{ background: #f43f5e; }
+.spo2-reduced{ background: #f59e0b; }
+.spo2-normal{ background: #34d399; }
+.spo2-high{ background: #22d3ee; }
+
+.stress-relaxed{ background: #34d399; }
+.stress-normal{ background: #60a5fa; }
+.stress-medium{ background: #f59e0b; }
+.stress-high{ background: #f43f5e; }
+
+.effort-easy{ background: #60a5fa; }
+.effort-moderate{ background: #34d399; }
+.effort-hard{ background: #f59e0b; }
+.effort-peak{ background: #f43f5e; }
+
+.sport-0{ background: #34d399; }
+.sport-1{ background: #f43f5e; }
+.sport-2{ background: #60a5fa; }
+.sport-3{ background: #f59e0b; }
+.sport-4{ background: #a78bfa; }
+.sport-5{ background: #22d3ee; }
+
+.steps-low{ background: #f43f5e; }
+.steps-some{ background: #f59e0b; }
+.steps-active{ background: #60a5fa; }
+.steps-goal{ background: #10b981; }
+.steps-left{ background: var(--hud-line); }
+.water-done{ background: #38bdf8; }
+.water-goal{ background: #0ea5e9; }
+.water-left{ background: var(--hud-line); }
+
+.Exercise_Route_Map{
+  width: 100%;
+  height: 420px;
+  border: var(--card-border);
+  border-radius: var(--ctrl-radius);
+  overflow: hidden;
+  background: var(--panel-background);
+
+  @media (max-width: 700px){ height: 300px; }
+
+  &.dark .leaflet-tile-pane{ filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.6); }
+}
+
+.Health_Table_Day em.gps{ color: #38bdf8; }

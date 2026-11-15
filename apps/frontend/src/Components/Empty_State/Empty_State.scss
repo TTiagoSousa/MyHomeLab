@@ -1,0 +1,31 @@
+@use '../../Styles/Fonts.scss' as Font;
+@use '../../Styles/Mixins.scss' as Mixin;
+
+.Empty_State{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 20px;
+  border: 1px dashed var(--hud-line-strong);
+  border-radius: var(--ctrl-radius);
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-soft);
+
+  .Empty_State_title{
+    font-family: Font.$font_family_hud;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+  }
+
+  button{
+    @include Mixin.Solid_Button;
+    margin-top: 4px;
+    height: 34px;
+    padding: 0 16px;
+  }
+}

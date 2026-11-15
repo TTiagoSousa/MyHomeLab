@@ -1,0 +1,60 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Difficulty_Picker{
+  --difficulty-easy: #34d399;
+  --difficulty-moderate: #60a5fa;
+  --difficulty-hard: #f59e0b;
+  --difficulty-max: #f43f5e;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+
+  .Difficulty_Picker_Label{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+
+    small{
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-faint);
+    }
+  }
+
+  .Difficulty_Picker_Options{
+    display: grid;
+    grid-template-columns: repeat(11, minmax(0, 1fr));
+    gap: 4px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0;
+      font-family: Font.$font_family_mono;
+      font-size: 12px;
+
+      &.filled{ border-color: var(--hud-line-strong); background: var(--accent-soft); }
+
+      &.active{ color: #fff; }
+      &.active.easy{ background: var(--difficulty-easy); border-color: var(--difficulty-easy); }
+      &.active.moderate{ background: var(--difficulty-moderate); border-color: var(--difficulty-moderate); }
+      &.active.hard{ background: var(--difficulty-hard); border-color: var(--difficulty-hard); }
+      &.active.max{ background: var(--difficulty-max); border-color: var(--difficulty-max); }
+    }
+  }
+
+  &.compact .Difficulty_Picker_Options{
+    gap: 3px;
+
+    button{
+      height: 26px;
+      font-size: 11px;
+      border-radius: 6px;
+    }
+  }
+}

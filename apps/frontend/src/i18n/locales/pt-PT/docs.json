@@ -1,0 +1,372 @@
+{
+  "title": "Documentos",
+  "you": "Tu",
+  "actions": {
+    "new": "Novo documento",
+    "starter": "Criar documentos sugeridos",
+    "starterBusy": "A criar…",
+    "edit": "Editar",
+    "save": "Guardar",
+    "saving": "A guardar…",
+    "cancel": "Cancelar",
+    "delete": "Apagar",
+    "confirmDelete": "Apagar este documento?",
+    "confirmDeleteYes": "Sim, apagar",
+    "confirmDeleteNo": "Não",
+    "back": "Documentos",
+    "newLinked": "Novo ligado a {{label}}"
+  },
+  "filters": {
+    "search": "Procurar nos documentos…",
+    "allKinds": "Todos os tipos",
+    "allLinks": "Ligados a qualquer coisa",
+    "target": "Ligados a {{label}}",
+    "clearTarget": "Tirar este filtro",
+    "anyTarget": "Qualquer um",
+    "kindLabel": "Tipo",
+    "linkLabel": "Ligado a",
+    "authorLabel": "Quem escreveu",
+    "anyAuthor": "Todos",
+    "mine": "Eu",
+    "agents": "Agentes",
+    "sortLabel": "Ordenar",
+    "sortRecent": "Mais recentes",
+    "sortTitle": "Título (A–Z)",
+    "requiredOnly": "Só obrigatórios",
+    "clear": "Limpar filtros"
+  },
+  "kinds": {
+    "RULES": "Regras",
+    "CHECKLIST": "Checklist",
+    "NOTES": "Notas",
+    "LEARNINGS": "Aprendizagens",
+    "GUIDE": "Guia",
+    "LOG": "Registo",
+    "OTHER": "Outro",
+    "ATTEMPT": "Tentativa de atualização"
+  },
+  "linkTypes": {
+    "SERVER": "Servidor",
+    "GUEST": "Máquina",
+    "APP": "App",
+    "MONITOR": "Serviço vigiado",
+    "AGENT": "Agente",
+    "DOC": "Documento",
+    "PROJECT": "Projeto",
+    "TASK": "Tarefa"
+  },
+  "linkGroups": {
+    "SERVER": "Servidores",
+    "GUEST": "Máquinas",
+    "APP": "Apps ligadas",
+    "MONITOR": "Serviços vigiados",
+    "AGENT": "Agentes",
+    "DOC": "Documentos",
+    "PROJECT": "Projetos",
+    "TASK": "Tarefas"
+  },
+  "linkFilter": {
+    "SERVER": "Ligados a servidores",
+    "GUEST": "Ligados a máquinas",
+    "APP": "Ligados a apps",
+    "MONITOR": "Ligados a serviços vigiados",
+    "AGENT": "Ligados a agentes",
+    "DOC": "Ligados a documentos",
+    "PROJECT": "Ligados a projetos",
+    "TASK": "Ligados a tarefas"
+  },
+  "chips": {
+    "required": "Obrigatório",
+    "agentOwner": "Dos agentes"
+  },
+  "list": {
+    "loading": "A carregar documentos…",
+    "noResults": "Nenhum documento corresponde à pesquisa.",
+    "updated": "{{time}} · {{by}}",
+    "count_one": "{{count}} documento",
+    "count_other": "{{count}} documentos"
+  },
+  "empty": {
+    "title": "Ainda não há documentos",
+    "text": "Os documentos guardam as tuas regras, checklists e o que os agentes vão aprendendo. Começa pelos sugeridos — podes editá-los à vontade.",
+    "or": "ou cria um do zero"
+  },
+  "detail": {
+    "placeholder": "Escolhe um documento da lista ou cria um novo.",
+    "notFound": "Este documento já não existe.",
+    "loading": "A carregar documento…",
+    "updated": "Atualizado {{time}} por {{by}}",
+    "noContent": "Este documento ainda está vazio.",
+    "noLinks": "Sem ligações — aplica-se a tudo.",
+    "links": "Ligado a",
+    "tags": "Etiquetas",
+    "agentDoc": "Mantido pelos agentes — também o podes editar."
+  },
+  "form": {
+    "newTitle": "Novo documento",
+    "editTitle": "Editar documento",
+    "title": "Título",
+    "titlePlaceholder": "ex.: Regras do servidor principal",
+    "titleRequired": "Dá um título ao documento.",
+    "kind": "Tipo",
+    "summary": "Resumo",
+    "summaryHint": "Uma linha, para o índice dos agentes.",
+    "summaryPlaceholder": "O que está neste documento, numa frase",
+    "tags": "Etiquetas",
+    "tagsPlaceholder": "Escreve e carrega Enter",
+    "removeTag": "Remover a etiqueta {{tag}}",
+    "required": "Obrigatório",
+    "requiredHint": "Os agentes leem-no sempre que o pedido toca no que está ligado a ele. Sem ligações, aplica-se a tudo.",
+    "links": "Ligações",
+    "linksHint": "Associa o documento a servidores, máquinas, apps, serviços, agentes ou outros documentos.",
+    "content": "Conteúdo",
+    "contentPlaceholder": "Escreve aqui… usa a barra para títulos, listas, checklists, tabelas e diagramas."
+  },
+  "links": {
+    "add": "Ligar a…",
+    "none": "Ainda sem ligações.",
+    "remove": "Remover a ligação a {{label}}",
+    "pickerTitle": "Ligar a…",
+    "pickerSearch": "Procurar servidores, máquinas, apps…",
+    "pickerEmpty": "Nada encontrado.",
+    "pickerLoading": "A carregar…",
+    "done": "Concluído",
+    "selected_one": "{{count}} ligação",
+    "selected_other": "{{count}} ligações"
+  },
+  "versions": {
+    "title": "Versões",
+    "show": "Versões ({{count}})",
+    "hide": "Esconder versões",
+    "empty": "Ainda não há versões anteriores.",
+    "by": "por {{by}}",
+    "view": "Ver",
+    "modalTitle": "Versão de {{date}}",
+    "restore": "Repor esta versão",
+    "restoring": "A repor…",
+    "close": "Fechar",
+    "loading": "A carregar versão…"
+  },
+  "proposals": {
+    "title": "Propostas dos agentes",
+    "description": "Alterações que os agentes querem fazer aos documentos. Nada muda sem a tua aprovação.",
+    "count_one": "{{count}} pendente",
+    "count_other": "{{count}} pendentes",
+    "show": "Mostrar",
+    "hide": "Esconder",
+    "by": "{{agent}} propõe",
+    "action": {
+      "EDIT": "Editar",
+      "APPEND": "Acrescentar",
+      "CREATE": "Criar"
+    },
+    "target": "Em «{{title}}»",
+    "newDoc": "Novo: «{{title}}»",
+    "missingDoc": "Documento já não existe",
+    "untitled": "Sem título",
+    "reason": "Motivo",
+    "current": "Atual",
+    "proposed": "Proposto",
+    "appended": "Vai ser acrescentado no fim",
+    "newContent": "Conteúdo do novo documento",
+    "approve": "Aprovar",
+    "approveEdited": "Aprovar com alterações",
+    "editBefore": "Editar antes",
+    "discardEdits": "Descartar alterações",
+    "reject": "Recusar"
+  },
+  "editor": {
+    "glyph": {
+      "heading": "T{{level}}",
+      "bold": "N",
+      "italic": "I",
+      "strike": "R"
+    },
+    "toolbar": {
+      "heading": "Título {{level}}",
+      "bold": "Negrito",
+      "italic": "Itálico",
+      "strike": "Riscado",
+      "code": "Código em linha",
+      "link": "Ligação",
+      "bulletList": "Lista com marcas",
+      "orderedList": "Lista numerada",
+      "taskList": "Checklist",
+      "blockquote": "Citação",
+      "codeBlock": "Bloco de código",
+      "rule": "Linha separadora",
+      "diagram": "Inserir diagrama",
+      "diagramShort": "Diagrama",
+      "undo": "Anular",
+      "redo": "Refazer"
+    },
+    "link": {
+      "label": "Endereço da ligação",
+      "placeholder": "https://…",
+      "apply": "Aplicar",
+      "remove": "Remover"
+    },
+    "table": {
+      "insert": "Inserir tabela 3×3",
+      "insertShort": "Tabela",
+      "addRow": "+ Linha",
+      "removeRow": "− Linha",
+      "addColumn": "+ Coluna",
+      "removeColumn": "− Coluna",
+      "toggleHeader": "Cabeçalho",
+      "deleteTable": "Apagar tabela"
+    },
+    "code": {
+      "language": "linguagem"
+    },
+    "diagram": {
+      "label": "Diagrama",
+      "preview": "Pré-visualização",
+      "showCode": "Ver código",
+      "hideCode": "Esconder código",
+      "loading": "A desenhar o diagrama…",
+      "empty": "Diagrama vazio.",
+      "error": "Não foi possível desenhar o diagrama. Revê o código Mermaid.",
+      "example": "flowchart TD\n  A[Pedido] --> B{Precisa de aprovação?}\n  B -->|Sim| C[Pedir ao utilizador]\n  B -->|Não| D[Executar]\n  C --> D"
+    }
+  },
+  "alerts": {
+    "created": "Documento criado.",
+    "saved": "Documento guardado.",
+    "deleted": "Documento apagado.",
+    "restored": "Versão reposta.",
+    "starterCreated_one": "{{count}} documento sugerido criado.",
+    "starterCreated_other": "{{count}} documentos sugeridos criados.",
+    "starterNone": "Já tens todos os documentos sugeridos.",
+    "proposalApproved": "Proposta aprovada.",
+    "proposalRejected": "Proposta recusada."
+  },
+  "linked": {
+    "title": "Documentos",
+    "description": "Regras e notas ligadas a {{label}}. Os agentes leem-nas.",
+    "empty": "Ainda não há documentos ligados.",
+    "new": "Novo documento",
+    "loading": "A carregar…",
+    "previous": "Página anterior",
+    "next": "Página seguinte",
+    "page": "{{page}} de {{pages}}",
+    "all": "Ver todos ({{count}})"
+  },
+  "attempts": {
+    "heading": "{{kind}} · {{title}}",
+    "number": "{{number}}.ª instalação",
+    "started": "Começou {{date}}",
+    "finished": "acabou {{date}}",
+    "note": "Os pontos das regras como estavam quando a tentativa começou. O agente valida-os um a um, com a prova; o que fazer com um ponto não validado está nas tuas regras.",
+    "states": {
+      "PENDING": "Por validar",
+      "VALIDATED": "Validada",
+      "NOT_VALIDATED": "Não validada",
+      "NOT_APPLICABLE": "Não se aplica",
+      "SKIPPED": "Saltada (pedido direto)"
+    },
+    "status": {
+      "CHECKING": "A validar",
+      "RUNNING": "A atualizar",
+      "VERIFYING": "A verificar",
+      "DONE": "Instalada",
+      "FAILED": "Falhou",
+      "STOPPED": "Parada"
+    },
+    "phases": {
+      "BEFORE": "Antes de atualizar",
+      "AFTER": "Depois de atualizar"
+    },
+    "who": {
+      "agent": "Valida o agente",
+      "user": "Confirmas tu",
+      "code": "Medido pelo MyHomeLab"
+    },
+    "proof": "prova: {{proof}}",
+    "checked": "{{date}} · {{by}}",
+    "noPoints": "Não há pontos escritos nas regras para esta fase.",
+    "result": "Resultado",
+    "rules": "Regras usadas",
+    "openLog": "Abrir o registo",
+    "openApp": "Abrir a app",
+    "openServer": "Abrir o servidor",
+    "counts": "{{validated}}/{{total}} validadas",
+    "countsFailed_one": "{{count}} não validada",
+    "countsFailed_other": "{{count}} não validadas",
+    "sectionTitle": "Estudos e instalações",
+    "sectionDescription": "Cada estudo e cada instalação desta app: as regras e o que ficou validado. Clica para ver a lista.",
+    "empty": "Ainda não houve estudos nem instalações desta app.",
+    "columns": {
+      "date": "Data",
+      "version": "Versão",
+      "rules": "Regras",
+      "status": "Estado",
+      "kind": "Tipo"
+    },
+    "countsHint": "{{validated}} validadas · {{notApplicable}} não se aplicam · {{skipped}} saltadas · {{notValidated}} não validadas · {{pending}} por validar",
+    "finishedHint": "Acabou {{date}}",
+    "openInDocs": "Abrir em Docs",
+    "statusHint": {
+      "CHECKING": "O agente está a validar as regras de antes.",
+      "RUNNING": "A atualização está a correr.",
+      "VERIFYING": "Atualizada; a validar as regras de depois.",
+      "DONE": "Instalada, com tudo validado.",
+      "FAILED": "Algo falhou; abre para ver qual ponto.",
+      "STOPPED": "Parada antes de acabar."
+    },
+    "showMore": "Ver tudo",
+    "showLess": "Ver menos",
+    "headingNumbered": "{{kind}} ({{number}}.ª) · {{title}}",
+    "kind": {
+      "STUDY": "Estudo",
+      "UPDATE": "Instalação"
+    },
+    "studyStatus": {
+      "CHECKING": "A estudar",
+      "RUNNING": "A estudar",
+      "VERIFYING": "A estudar",
+      "DONE": "Estudo feito",
+      "FAILED": "Não acabou",
+      "STOPPED": "Interrompido"
+    },
+    "studyStatusHint": {
+      "CHECKING": "O agente está a ler as notas e a validar as regras do estudo.",
+      "RUNNING": "O agente está a ler as notas e a validar as regras do estudo.",
+      "VERIFYING": "O agente está a ler as notas e a validar as regras do estudo.",
+      "DONE": "O estudo acabou; a conclusão está no resultado.",
+      "FAILED": "O estudo não acabou; abre para ver porquê.",
+      "STOPPED": "Parou a meio (por exemplo, o MyHomeLab reiniciou) e começou outro estudo."
+    },
+    "legend": "Estudo: o agente vê se a versão nova é segura, sem mexer na app. Instalação: a atualização em si, com snapshot antes.",
+    "latest": "Último: {{kind}} {{from}} → {{to}} · {{status}}",
+    "count_one": "{{count}} registo",
+    "count_other": "{{count}} registos",
+    "view": "Ver"
+  },
+  "conflicts": {
+    "title": "Possíveis conflitos com outras regras",
+    "check": "Verificar conflitos",
+    "checking": "A verificar…",
+    "checkHint": "Compara este documento com os documentos relacionados",
+    "found_one": "Encontrei {{count}} possível conflito",
+    "found_other": "Encontrei {{count}} possíveis conflitos",
+    "none": "Sem conflitos com as outras regras"
+  },
+  "types": {
+    "manage": "Os teus tipos",
+    "title": "Tipos de documento",
+    "kind": "Criados por ti",
+    "text": "Além dos tipos do site (Regras, Checklist, Notas…), cria os teus para arrumar os documentos. Escolhes o tipo ao criar ou editar um documento.",
+    "placeholder": "Nome do tipo (ex.: Receitas)",
+    "add": "Criar",
+    "none": "Ainda não criaste nenhum tipo.",
+    "count_one": "{{count}} documento",
+    "count_other": "{{count}} documentos",
+    "delete": "Apagar",
+    "deleteHint": "Os documentos deste tipo ficam como \"Outro\".",
+    "confirmDelete": "Apagar mesmo",
+    "keep": "Manter",
+    "done": "Feito",
+    "created": "Tipo \"{{name}}\" criado."
+  }
+}

@@ -1,0 +1,424 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Docs {
+  @include Mixin.Pages_Configs;
+
+  > header{
+    @include Mixin.Page_Header;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .Right_Side span{ color: var(--card-global-header-title-color); }
+
+    .Left_Side{
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .Docs_starter{
+    @include Mixin.Ghost_Button;
+    height: 36px;
+    padding: 0 14px;
+  }
+
+  .Docs_new{
+    @include Mixin.Solid_Button;
+    height: 36px;
+    padding: 0 14px;
+
+    svg{
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .Docs_list_pane{
+    @include Mixin.Panel_Surface;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  .Docs_filters{
+    @include Mixin.Panel_Surface;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    align-items: end;
+    gap: 10px;
+    padding: 12px;
+    box-sizing: border-box;
+
+    .Docs_search{
+      @include Mixin.Control_Surface;
+      grid-column: 1 / -1;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      box-sizing: border-box;
+
+      svg{
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        color: var(--text-faint);
+      }
+
+      input{
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--input-global-letter-color);
+        font-family: Font.$font_family_sans;
+        font-size: 13px;
+
+        &::placeholder{ color: var(--text-faint); }
+      }
+    }
+
+    .Docs_filter_field{
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      > span{
+        @include Mixin.Hud_Label(9px);
+        color: var(--text-faint);
+      }
+
+      .Dropdown_Field{ height: 34px; }
+
+      .Dropdown_Field_Trigger{
+        padding: 0 10px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+    }
+
+    .Docs_filter_with_action{
+      display: flex;
+      gap: 6px;
+
+      > :first-child{
+        flex: 1;
+        min-width: 0;
+      }
+    }
+
+    .Docs_filter_action{
+      @include Mixin.Ghost_Button;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      flex-shrink: 0;
+      justify-content: center;
+
+      svg{
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    .Docs_filter_check{
+      height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-soft);
+
+      input{ accent-color: var(--accent); }
+    }
+
+    .Docs_filter_clear{
+      height: 34px;
+      justify-self: start;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: none;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--accent-bright);
+
+      svg{
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+
+  .Docs_count{
+    @include Mixin.Hud_Label(9px);
+    color: var(--text-faint);
+  }
+
+  .Docs_list{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .Docs_list_note{
+    margin: 0;
+    padding: 20px 8px;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--text-faint);
+
+    &.error{ color: var(--danger-color); }
+  }
+
+  .Doc_List_Item{
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 6px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-family: Font.$font_family_sans;
+    transition: border-color .15s ease, background .15s ease;
+
+    &:hover{
+      border-color: var(--accent);
+      background: var(--card-hover-background);
+    }
+
+    &:focus-visible{
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+  }
+
+  .Doc_List_Item_Title{
+    grid-column: 1;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    overflow-wrap: anywhere;
+  }
+
+  .Doc_List_Item_Chips{
+    grid-column: 1;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .Doc_List_Item_Snippet{
+    grid-column: 1;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-soft);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .Doc_List_Item_Meta{
+    grid-column: 2;
+    grid-row: 1;
+    white-space: nowrap;
+    font-family: Font.$font_family_mono;
+    font-size: 10.5px;
+    color: var(--text-faint);
+  }
+
+  .Docs_page{
+    @include Mixin.Panel_Surface;
+    @include Mixin.Frame_Corners;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  .Docs_back{
+    @include Mixin.Ghost_Button;
+    display: inline-flex;
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12.5px;
+
+    svg{
+      width: 14px;
+      height: 14px;
+      transform: rotate(90deg);
+    }
+  }
+
+  .Docs_detail_note{
+    margin: 0;
+    padding: 40px 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-faint);
+  }
+
+  .Docs_empty{
+    @include Mixin.Panel_Surface;
+    @include Mixin.Frame_Corners;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px 20px;
+    text-align: center;
+
+    .Docs_empty_icon{
+      width: 52px;
+      height: 52px;
+      padding: 12px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent-bright);
+    }
+
+    .Docs_empty_title{
+      @include Mixin.Hud_Title(19px);
+      color: var(--accent-bright);
+    }
+
+    p{
+      max-width: 520px;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-soft);
+    }
+
+    .Docs_empty_primary{
+      @include Mixin.Solid_Button;
+      margin-top: 6px;
+      height: 42px;
+      padding: 0 22px;
+      font-size: 14px;
+    }
+
+    .Docs_empty_secondary{
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-soft);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      &:hover{ color: var(--accent-bright); }
+    }
+  }
+
+  @media (max-width: 600px){
+    .Doc_List_Item{ grid-template-columns: minmax(0, 1fr); }
+
+    .Doc_List_Item_Meta{
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+}
+
+.Doc_Types_Modal{
+  .Doc_Types_Modal_New{
+    display: flex;
+    gap: 8px;
+
+    > :first-child{
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  .Doc_Types_Modal_Add{
+    @include Mixin.Solid_Button;
+    height: 38px;
+    padding: 0 14px;
+    flex-shrink: 0;
+
+    svg{
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .Doc_Types_Modal_List{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 280px;
+    overflow-y: auto;
+
+    li{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid var(--hud-line);
+      border-radius: var(--ctrl-radius);
+    }
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 28px;
+      padding: 0 10px;
+      font-size: 11.5px;
+
+      &.danger{
+        border-color: var(--danger-color);
+        color: var(--danger-color);
+      }
+    }
+  }
+
+  .Doc_Types_Modal_Name{
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  .Doc_Types_Modal_Count{
+    font-family: Font.$font_family_mono;
+    font-size: 10.5px;
+    color: var(--text-faint);
+  }
+}

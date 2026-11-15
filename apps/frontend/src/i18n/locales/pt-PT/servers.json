@@ -1,0 +1,205 @@
+{
+  "title": "Servidores",
+  "refresh": "Atualizar agora",
+  "manage": "Gerir no Proxmox",
+  "loading": "A ler o servidor…",
+  "updated": "atualizado às {{time}}",
+  "noNodes": "O servidor não devolveu nenhum nó.",
+  "nodes": "Nós",
+  "error": {
+    "title": "Não foi possível ler este servidor"
+  },
+  "empty": {
+    "title": "Sem servidores",
+    "text": "Adiciona o teu Proxmox em Apps ligadas → Proxmox.",
+    "action": "Abrir o Proxmox"
+  },
+  "kpi": {
+    "node": "Nó {{name}}",
+    "details": "Detalhes",
+    "cpu": "CPU",
+    "memory": "Memória",
+    "rootDisk": "Disco do sistema",
+    "cores_one": "{{count}} núcleo",
+    "cores_other": "{{count}} núcleos",
+    "machines": "Máquinas",
+    "machinesValue": "{{running}} a correr de {{total}}",
+    "uptime": "Ligado há",
+    "load": "Carga (1/5/15 min)",
+    "swap": "Swap",
+    "version": "Versão",
+    "cpuModel": "Processador"
+  },
+  "storage": {
+    "title": "Armazenamento",
+    "empty": "Sem armazenamento para mostrar."
+  },
+  "guests": {
+    "title_one": "{{count}} máquina",
+    "title_other": "{{count}} máquinas",
+    "filter": {
+      "all": "Todas",
+      "running": "A correr",
+      "stopped": "Paradas"
+    },
+    "col": {
+      "vmid": "ID",
+      "name": "Nome",
+      "status": "Estado",
+      "cpu": "CPU",
+      "memory": "Memória",
+      "disk": "Disco",
+      "uptime": "Ligada há"
+    },
+    "status": {
+      "running": "A correr",
+      "stopped": "Parada"
+    },
+    "none": "Nenhuma máquina neste filtro."
+  },
+  "monitors": {
+    "title_one": "{{count}} serviço",
+    "title_other": "{{count}} serviços",
+    "downCount_one": "{{count}} em baixo",
+    "downCount_other": "{{count}} em baixo",
+    "add": "Adicionar serviço",
+    "empty": "Ainda não vigias nenhum serviço. Adiciona um para seres avisado quando deixar de responder.",
+    "noServer": "Sem servidor",
+    "every_one": "a cada {{count}} min",
+    "every_other": "a cada {{count}} min",
+    "machineMissing": "A máquina associada já não existe no Proxmox.",
+    "status": {
+      "UNKNOWN": "A verificar",
+      "UP": "Online",
+      "DOWN": "Em baixo"
+    },
+    "kind": {
+      "HTTP": "HTTP(S) — página web",
+      "TCP": "TCP — host:porta"
+    },
+    "checkNow": "Testar",
+    "checking": "A testar…",
+    "edit": "Editar",
+    "remove": "Remover",
+    "confirmRemove": "Confirmar?",
+    "saved": "Serviço guardado.",
+    "modal": {
+      "title": "Adicionar serviço",
+      "editTitle": "Editar {{name}}",
+      "name": "Nome",
+      "namePlaceholder": "ex: Site pessoal",
+      "kind": "Como verificar",
+      "targetHTTP": "Endereço (URL)",
+      "targetTCP": "Endereço (host:porta)",
+      "hintHTTP": "Conta como online qualquer resposta abaixo de 500 — um ecrã de login também conta.",
+      "hintTCP": "Só tenta abrir a ligação. Serve para DNS, SSH, bases de dados…",
+      "interval": "Verificar",
+      "server": "Servidor (opcional)",
+      "machine": "Máquina (opcional)",
+      "noServer": "Nenhum",
+      "noMachine": "Nenhuma",
+      "loadingMachines": "A carregar máquinas…",
+      "testing": "A guardar e testar…",
+      "save": "Guardar e testar"
+    }
+  },
+  "disks": {
+    "title_one": "Discos ({{count}})",
+    "title_other": "Discos ({{count}})",
+    "loading": "A ler…",
+    "unreadable": "Sem leitura",
+    "healthy": "Saudáveis",
+    "attention_one": "{{count}} a precisar de atenção",
+    "attention_other": "{{count}} a precisar de atenção",
+    "reading": "A ler o SMART…",
+    "readNow": "Ler agora",
+    "none": "O Proxmox não mostrou discos físicos neste nó.",
+    "noSmart": "Sem SMART",
+    "pools": "Pools ZFS",
+    "fewDays_one": "só {{count}} dia",
+    "fewDays_other": "só {{count}} dias",
+    "sparklineTitle": "Temperatura nos últimos {{count}} dias: {{min}}–{{max}} °C",
+    "hint": "Lido do SMART pelo Proxmox de hora a hora; fica guardada uma leitura por dia. Alerta vermelho quando o SMART falha, uma pool ZFS degrada ou os setores aumentam; laranja com menos de 10% de vida, temperatura alta, setores pendentes ou armazenamento acima de 90%.",
+    "col": {
+      "disk": "Disco",
+      "health": "SMART",
+      "life": "Vida",
+      "temperature": "Temp.",
+      "reallocated": "Realocados",
+      "pending": "Pendentes",
+      "hours": "Horas ligado",
+      "history": "30 dias"
+    }
+  },
+  "backups": {
+    "title": "Backups",
+    "add": "Criar backup automático",
+    "noDestination": "Para fazer backups, primeiro diz onde os guardar.",
+    "createDestination": "Criar destino em Apps ligadas",
+    "paused": "automático desligado",
+    "never": "Ainda não correu.",
+    "lastOk": "Último: {{date}} · {{file}} · {{size}}",
+    "lastFailed": "Falhou {{date}}: {{error}}",
+    "runNow": "Fazer backup agora",
+    "running": "A fazer backup…",
+    "done": "Backup guardado: {{file}}",
+    "saved": "Backup guardado.",
+    "history_one": "Histórico ({{count}})",
+    "history_other": "Histórico ({{count}})",
+    "deleted_one": "{{count}} antigo apagado",
+    "deleted_other": "{{count}} antigos apagados",
+    "manual": "manual",
+    "retention": {
+      "REPLACE": {
+        "name": "Substituir",
+        "hint": "Fica só o último backup.",
+        "short": "substitui o anterior"
+      },
+      "KEEP_LAST": {
+        "name": "Guardar os últimos",
+        "hint": "Ficam os N mais recentes; os mais antigos são apagados.",
+        "short_one": "guarda o último",
+        "short_other": "guarda os últimos {{count}}"
+      },
+      "KEEP_ALL": {
+        "name": "Nunca apagar",
+        "hint": "Ficam todos. Vai acumulando ficheiros.",
+        "short": "nunca apaga"
+      }
+    },
+    "whatTitle": "O que fica no backup",
+    "modal": {
+      "title": "Novo backup automático",
+      "editTitle": "Editar backup",
+      "destination": "Destino",
+      "destinationHint": "Os destinos criam-se em Apps ligadas → Backups.",
+      "folder": "Pasta",
+      "folderHint": "Os ficheiros ficam em {{path}}, com o nome {{file}}.",
+      "frequency": "Frequência",
+      "retention": "Backups antigos",
+      "keepCount": "Quantos guardar",
+      "onlyOurs": "Só são apagados ficheiros criados pelo MyHomeLab nesta pasta; o resto fica intacto.",
+      "active": "Fazer backup automaticamente",
+      "activeHint": "Desligado, só faz backup quando carregares em \"Fazer backup agora\".",
+      "save": "Guardar",
+      "saving": "A guardar…"
+    },
+    "lastOkShort": "✓ {{date}}",
+    "lastFailedShort": "✗ Falhou {{date}}",
+    "lastOkHint": "{{file}} · {{size}}",
+    "historyTitle": "Histórico do backup",
+    "columns": {
+      "date": "Data",
+      "result": "Resultado",
+      "file": "Ficheiro",
+      "size": "Tamanho",
+      "cleaned": "Limpeza"
+    },
+    "result": {
+      "SUCCESS": "Feito",
+      "ERROR": "Falhou",
+      "PARTIAL": "Feito com falhas"
+    },
+    "missing": "Ficou de fora: {{list}}"
+  }
+}

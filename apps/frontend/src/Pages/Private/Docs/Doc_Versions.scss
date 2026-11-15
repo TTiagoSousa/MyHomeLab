@@ -1,0 +1,144 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Doc_Versions{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--hud-line-strong);
+  border-radius: var(--ctrl-radius);
+  background: var(--card-global-header-background);
+
+  .Doc_Versions_Title{
+    @include Mixin.Hud_Label(9.5px);
+    color: var(--accent-bright);
+  }
+
+  .Doc_Versions_Empty{
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-faint);
+  }
+
+  ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  li{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 28px;
+      padding: 0 12px;
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+  }
+
+  .Doc_Versions_Info{
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .Doc_Versions_Date{
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .Doc_Versions_Meta{
+    font-size: 11px;
+    color: var(--text-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.Doc_Version_Modal_Overlay{
+  @include Mixin.Modal_Overlay;
+
+  .Doc_Version_Modal{
+    @include Mixin.Modal_Panel;
+    width: 760px;
+    max-width: 100%;
+    height: min(720px, calc(100vh - 40px));
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .Doc_Version_Modal_Head{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .Doc_Version_Modal_Title{
+    @include Mixin.Hud_Title(16px);
+  }
+
+  .Doc_Version_Modal_Meta{
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  .Doc_Version_Modal_Body{
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 12px 14px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Doc_Version_Modal_Actions{
+    display: flex;
+    gap: 10px;
+
+    button{
+      flex: 1;
+      height: 42px;
+      border-radius: var(--ctrl-radius);
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+
+      &:disabled{
+        opacity: .5;
+        cursor: not-allowed;
+      }
+    }
+
+    .Cancel_Button{
+      background-color: var(--card-global-header-background);
+      color: var(--card-global-header-title-color);
+      border: var(--card-border);
+    }
+
+    .Save_Button{
+      background-color: var(--simple-button-background-color);
+      color: var(--simple-button-letter-color);
+    }
+  }
+}

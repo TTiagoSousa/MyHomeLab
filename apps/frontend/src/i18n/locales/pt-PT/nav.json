@@ -1,0 +1,51 @@
+{
+  "menu": {
+    "services": "Serviços",
+    "assistant": "Assistente",
+    "workflow": "Workflow",
+    "docs": "Documentos",
+    "health": "Saúde",
+    "servers": "Servidores",
+    "notifications": "Notificações",
+    "addons": "Apps ligadas",
+    "settings": "Definições",
+    "help": "Ajuda",
+    "admin": "Admin",
+    "tasks": "Tarefas",
+    "today": "Hoje",
+    "projects": "Projetos"
+  },
+  "sidebar": {
+    "theme": "Tema",
+    "profile": "Perfil",
+    "logout": "Terminar sessão"
+  },
+  "groups": {
+    "daily": "Dia a dia",
+    "lab": "Casa e lab",
+    "jarvis": "Jarvis",
+    "personal": "Pessoal",
+    "system": "Sistema"
+  },
+  "hints": {
+    "today": "O que precisa de ti hoje",
+    "tasks": "As tuas tarefas pessoais",
+    "notifications": "Avisos dos agentes, backups e atualizações",
+    "services": "Atalhos para os teus serviços self-hosted",
+    "servers": "Os teus servidores Proxmox e as máquinas",
+    "addons": "Contas que o Jarvis usa: Gmail, Forgejo, Nextcloud…",
+    "assistant": "Falar com o Jarvis",
+    "projects": "O quadro onde os agentes trabalham",
+    "docs": "Guias e registos que os agentes escrevem e leem",
+    "health": "Sono, atividade, refeições e saúde",
+    "settings": "Língua, tema e preferências",
+    "admin": "Utilizadores e versões do MyHomeLab",
+    "help": "Como ligar e usar cada parte"
+  },
+  "openHelp": "Abrir a ajuda",
+  "intros": {
+    "services": "Atalhos para os teus serviços self-hosted. Para ser avisado quando um cai, usa os serviços vigiados em Servidores.",
+    "todos": "As tuas tarefas pessoais. O trabalho dos agentes fica em Projetos.",
+    "projects": "O quadro onde os agentes trabalham. As tuas tarefas pessoais ficam em Tarefas."
+  }
+}

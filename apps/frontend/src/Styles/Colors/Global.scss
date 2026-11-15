@@ -1,0 +1,38 @@
+$night-void:    #04070D;
+$night-panel:   #0A121D;
+$night-panel-2: #0D1826;
+$night-line:    rgba(109, 205, 232, .16);
+$night-line-2:  rgba(109, 205, 232, .30);
+$night-text:    #D6E7F0;
+$night-soft:    #7C94A6;
+$night-faint:   #4C6273;
+
+$night-cyan:        #5FD8F5;
+$night-cyan-bright: #A8EEFF;
+$night-cyan-deep:   #1E7E9B;
+$night-cyan-wash:   rgba(95, 216, 245, .10);
+$night-cyan-glow:   rgba(95, 216, 245, .55);
+
+$day-void:    #E8EFF4;
+$day-panel:   #FFFFFF;
+$day-panel-2: #F1F6F9;
+$day-line:    rgba(14, 88, 112, .16);
+$day-line-2:  rgba(14, 88, 112, .30);
+$day-text:    #0B2530;
+$day-soft:    #4C6C7A;
+$day-faint:   #7B98A6;
+
+$day-cyan:        #0E7C99;
+$day-cyan-bright: #0A5F76;
+$day-cyan-deep:   #8FC9DA;
+$day-cyan-wash:   rgba(14, 124, 153, .09);
+$day-cyan-glow:   rgba(14, 124, 153, .35);
+
+$status-success-night: #3FBF7F;
+$status-success-day:   #17845A;
+$status-warning-night: #E2A03F;
+$status-warning-day:   #B4740F;
+$status-danger-night:  #FF6B6B;
+$status-danger-day:    #C63030;
+$status-info-night:    $night-cyan;
+$status-info-day:      $day-cyan;

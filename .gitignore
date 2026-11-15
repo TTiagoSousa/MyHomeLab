@@ -1,0 +1,40 @@
+# Dependências e builds
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+
+# Segredos e configuração local — nunca no git
+.env
+.forgejo-token
+.claude-terminal-token
+.env.*
+!.env.example
+*.local
+
+# Exports da Huawei Health: dados pessoais de saúde
+HUAWEI_HEALTH_*/
+
+# Ferramentas e sistema
+.DS_Store
+Thumbs.db
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Ficheiros soltos para análise (exports, documentos) — ficam só nesta máquina
+study/
+
+# Clones antigos dos repos de antes do monorepo, à espera de serem apagados
+myHomeLab-backend/
+myHomeLab-frontend/
+
+# Ligação local (symlink absoluto) para .agents/skills/webapp-testing
+.claude/skills/webapp-testing
+
+# Ficheiros locais do assistente de código — não vão para o repositório público
+CLAUDE.md
+.claude/
+.agents/
+skills-lock.json

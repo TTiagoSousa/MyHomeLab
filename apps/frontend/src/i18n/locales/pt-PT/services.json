@@ -1,0 +1,45 @@
+{
+  "page": {
+    "title": "Serviços",
+    "searchPlaceholder": "Pesquisar serviços",
+    "newCategory": "Nova categoria",
+    "newService": "Novo serviço",
+    "hosting": "Alojamento",
+    "all": "Todos",
+    "favorites": "Favoritos"
+  },
+  "hosting": {
+    "selfHosted": "Self-host",
+    "cloud": "Cloud"
+  },
+  "form": {
+    "name": "Nome",
+    "abbreviation": "Abreviação",
+    "abbreviationPlaceholder": "Ex: NF",
+    "url": "Url",
+    "category": "Categoria",
+    "hosting": "Alojamento",
+    "color": "Cor",
+    "serviceNamePlaceholder": "Nome do serviço",
+    "categoryNamePlaceholder": "Nome da categoria"
+  },
+  "categoryModal": {
+    "title": "Nova categoria"
+  },
+  "alerts": {
+    "serviceCreated": "Serviço criado",
+    "serviceUpdated": "Serviço atualizado",
+    "serviceDeleted": "Serviço apagado",
+    "categoryCreated": "Categoria criada",
+    "categoryDeleted": "Categoria apagada"
+  },
+  "appMonitor": {
+    "fromApp": "da app {{name}}",
+    "managedHint": "O endereço, o servidor e a máquina vêm da app {{name}} (Apps ligadas). Para deixar de o vigiar, tira-lhe o servidor lá."
+  },
+  "empty": {
+    "title": "Ainda não tens serviços",
+    "text": "Cria uma categoria e depois junta os atalhos dos teus serviços.",
+    "action": "Criar categoria"
+  }
+}

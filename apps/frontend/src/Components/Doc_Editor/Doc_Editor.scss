@@ -1,0 +1,189 @@
+@use '../../Styles/Fonts.scss' as Font;
+@use '../../Styles/Mixins.scss' as Mixin;
+
+.Doc_Editor{
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  font-family: Font.$font_family_sans;
+  color: var(--text-main);
+
+  &.editable{
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    background: var(--input-global-background-color);
+    transition: border-color .16s ease, box-shadow .16s ease;
+
+    &:focus-within{
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+    }
+
+    .Doc_Editor_Content .tiptap{
+      min-height: 320px;
+      padding: 14px 16px 18px;
+    }
+  }
+
+  &.editable.compact .Doc_Editor_Content .tiptap{ min-height: 160px; }
+
+  .Doc_Editor_Content{
+    min-width: 0;
+
+    .tiptap{
+      outline: none;
+      font-size: 14px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+
+      > *:first-child{ margin-top: 0; }
+      > *:last-child{ margin-bottom: 0; }
+
+      p{ margin: 0 0 10px; }
+
+      h1, h2, h3{
+        font-family: Font.$font_family_hud;
+        letter-spacing: .04em;
+        line-height: 1.25;
+        color: var(--card-global-header-title-color);
+        margin: 20px 0 10px;
+      }
+
+      h1{ font-size: 24px; }
+      h2{ font-size: 19px; }
+      h3{ font-size: 16px; }
+
+      a{
+        color: var(--accent-bright);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      strong{ font-weight: 700; }
+
+      code{
+        padding: 1px 5px;
+        border-radius: 4px;
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+        font-family: Font.$font_family_mono;
+        font-size: .88em;
+      }
+
+      ul, ol{
+        margin: 0 0 10px;
+        padding-left: 22px;
+
+        li > p{ margin: 0 0 4px; }
+      }
+
+      ul[data-type='taskList']{
+        list-style: none;
+        padding-left: 2px;
+
+        li{
+          display: flex;
+          align-items: flex-start;
+          gap: 9px;
+
+          > label{
+            flex-shrink: 0;
+            margin-top: 4px;
+            user-select: none;
+
+            input{
+              width: 15px;
+              height: 15px;
+              margin: 0;
+              accent-color: var(--accent);
+              cursor: pointer;
+            }
+          }
+
+          > div{
+            flex: 1;
+            min-width: 0;
+          }
+
+          &[data-checked='true'] > div{
+            color: var(--text-faint);
+            text-decoration: line-through;
+          }
+        }
+
+        ul[data-type='taskList']{ margin: 4px 0 0; }
+      }
+
+      blockquote{
+        margin: 0 0 10px;
+        padding: 6px 14px;
+        border-left: 3px solid var(--accent);
+        background: var(--card-global-header-background);
+        color: var(--text-soft);
+
+        p:last-child{ margin-bottom: 0; }
+      }
+
+      hr{
+        margin: 18px 0;
+        border: none;
+        border-top: 1px solid var(--hud-line-strong);
+      }
+
+      .tableWrapper{
+        margin: 0 0 12px;
+        overflow-x: auto;
+      }
+
+      table{
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 13px;
+
+        th, td{
+          position: relative;
+          min-width: 70px;
+          padding: 7px 10px;
+          border: 1px solid var(--hud-line-strong);
+          vertical-align: top;
+          text-align: left;
+
+          p{ margin: 0; }
+        }
+
+        th{
+          background: var(--card-global-header-background);
+          font-weight: 700;
+          color: var(--card-global-header-title-color);
+        }
+
+        .selectedCell::after{
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: var(--accent-soft);
+          pointer-events: none;
+        }
+      }
+
+      p.is-editor-empty:first-child::before{
+        content: attr(data-placeholder);
+        float: left;
+        height: 0;
+        color: var(--text-faint);
+        pointer-events: none;
+      }
+
+      &.ProseMirror-focused .ProseMirror-selectednode{
+        outline: 1px solid var(--accent);
+      }
+    }
+  }
+
+  &.readonly .Doc_Editor_Content .tiptap ul[data-type='taskList'] li > label input{
+    cursor: default;
+  }
+}

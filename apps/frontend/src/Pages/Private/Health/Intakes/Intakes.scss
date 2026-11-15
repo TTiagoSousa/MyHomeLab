@@ -1,0 +1,346 @@
+@use '../../../../Styles/Mixins.scss' as Mixin;
+@use '../../../../Styles/Fonts.scss' as Font;
+
+.Health_Dashboard{
+  .Health_Form.intakes-form{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    .wide{ grid-column: span 2; }
+
+    @media (max-width: 800px){
+      grid-template-columns: 1fr 1fr;
+
+      .wide{ grid-column: 1 / -1; }
+    }
+  }
+
+  .Health_Form.intakes-limits{
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+
+    @media (max-width: 700px){
+      grid-template-columns: 1fr 1fr;
+
+      .Health_Form_Save{ grid-column: 1 / -1; }
+    }
+  }
+
+  .Intakes_Limit{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .Intakes_Limit_Label{
+    font-family: Font.$font_family_mono;
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+
+  .Intakes_Limit_Track{
+    height: 10px;
+    overflow: hidden;
+    border-radius: 5px;
+    background: var(--hud-line);
+
+    span{
+      display: block;
+      height: 100%;
+      border-radius: 5px;
+      transition: width .3s ease;
+    }
+  }
+
+  .Intakes_Warning{
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px solid var(--danger-color);
+    border-radius: var(--ctrl-radius);
+    background: var(--danger-color-soft);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--danger-color);
+  }
+
+  .Intakes_Quick{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .Intakes_Chip{
+    display: inline-flex;
+    align-items: stretch;
+    border: var(--card-border);
+    border-left: 3px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    overflow: hidden;
+
+    &.caffeine{ border-left-color: #b45309; }
+    &.alcohol{ border-left-color: #a855f7; }
+    &.supplement{ border-left-color: #10b981; }
+    &.own{ border-style: dashed; border-left-style: solid; }
+
+    button{
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      cursor: pointer;
+
+      &:hover{ background: var(--accent-soft); }
+
+      &:disabled{
+        opacity: .5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .Intakes_Chip_Main{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 6px 12px;
+    text-align: left;
+
+    b{ font-size: 12.5px; }
+
+    small{
+      font-family: Font.$font_family_mono;
+      font-size: 10.5px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Intakes_Chip_More{
+    padding: 0 10px;
+    border-left: var(--card-border) !important;
+    font-size: 15px;
+    color: var(--text-faint) !important;
+  }
+
+  .Intakes_Custom_Button{
+    @include Mixin.Ghost_Button;
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+
+  .Intakes_Entry_Form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    border: var(--card-border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+  }
+
+  .Intakes_Entry_Form_Title{
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .Intakes_Preview{
+    font-family: Font.$font_family_mono;
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+
+  .Intakes_History_Days{
+    display: flex;
+    flex-direction: column;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    overflow: hidden;
+  }
+
+  .Intakes_History_Day + .Intakes_History_Day{ border-top: var(--card-border); }
+
+  .Intakes_Day_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 12px;
+    width: 100%;
+    padding: 9px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-soft);
+    font-family: Font.$font_family_mono;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover{ background: var(--accent-soft); }
+  }
+
+  .Intakes_Day_Chevron{
+    display: inline-block;
+    width: 10px;
+    font-size: 15px;
+    line-height: 1;
+    transition: transform .15s ease;
+  }
+
+  .Intakes_History_Day.open .Intakes_Day_Chevron{ transform: rotate(90deg); }
+
+  .Intakes_Day_Date{
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .Intakes_Day_Count{ color: var(--text-faint); }
+
+  .Intakes_Day_Totals{ margin-left: auto; }
+
+  .Intakes_Day_Entries{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 2px 8px 8px;
+  }
+
+  .Intakes_Entry{
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1.2fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 2px 10px;
+    padding: 5px 8px 5px 10px;
+    border-left: 3px solid var(--hud-line-strong);
+    border-radius: 4px;
+    background: var(--accent-soft);
+    font-size: 12.5px;
+
+    &.caffeine{ border-left-color: #b45309; }
+    &.alcohol{ border-left-color: #a855f7; }
+    &.supplement{ border-left-color: #10b981; }
+
+    @media (max-width: 640px){
+      grid-template-columns: 46px minmax(0, 1fr) auto;
+
+      .Intakes_Entry_Values{ grid-column: 2 / -1; grid-row: 2; }
+    }
+  }
+
+  .Intakes_Entry_Time{
+    font-family: Font.$font_family_mono;
+    font-style: normal;
+    color: var(--text-faint);
+  }
+
+  .Intakes_Entry_Name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 700;
+
+    b{ margin-right: 5px; color: var(--accent-bright); }
+  }
+
+  .Intakes_Entry_Actions{
+    display: flex;
+    gap: 4px;
+
+    .Health_see_all{
+      height: 26px;
+      padding: 0 9px;
+      font-size: 11.5px;
+    }
+  }
+
+  .Intakes_Entry_Notes{
+    grid-column: 2 / -1;
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  .Intakes_History_More{ align-self: center; }
+
+  .Intakes_Entry_Kind{
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .Intakes_Entry_Values{
+    font-family: Font.$font_family_mono;
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+
+  .Intakes_Settings_Section{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: var(--card-border);
+
+    &:first-of-type{
+      padding-top: 0;
+      border-top: none;
+    }
+  }
+
+  .Intakes_Note{
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-faint);
+  }
+
+  .Intakes_Presets{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .Intakes_Presets_Group{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .Intakes_Presets_Kind{
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .Intakes_Presets_List{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .Intakes_Preset_Toggle{
+    @include Mixin.Ghost_Button;
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12px;
+    opacity: .55;
+    text-decoration: line-through;
+
+    &.active{
+      opacity: 1;
+      text-decoration: none;
+    }
+
+    &.active.caffeine{ border-color: #b45309; }
+    &.active.alcohol{ border-color: #a855f7; }
+    &.active.supplement{ border-color: #10b981; }
+
+    &:disabled{ cursor: wait; }
+  }
+
+  .Intakes_Items{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+.intakes-caffeine{ background: #b45309; }
+.intakes-alcohol{ background: #a855f7; }
+.intakes-over{ background: var(--danger-color); }

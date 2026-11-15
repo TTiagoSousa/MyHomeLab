@@ -1,0 +1,34 @@
+{
+  "name": "myhomelab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Self-hosted control panel for a Proxmox home lab, with a team of AI agents (Claude) that study, install and verify updates, organise Gmail and more.",
+  "workspaces": [
+    "packages/*",
+    "apps/backend",
+    "apps/frontend"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:shared": "npm run build -w @myhomelab/shared",
+    "dev": "npm run build:shared && concurrently -n shared,backend,frontend -c gray,blue,green \"npm run dev -w @myhomelab/shared\" \"npm run start:dev -w @myhomelab/backend\" \"npm run dev -w @myhomelab/frontend\"",
+    "dev:backend": "npm run build:shared && npm run start:dev -w @myhomelab/backend",
+    "dev:frontend": "npm run build:shared && npm run dev -w @myhomelab/frontend",
+    "build": "npm run build:shared && npm run build -w @myhomelab/backend && npm run build -w @myhomelab/frontend",
+    "lint": "npm run lint -w @myhomelab/backend && npm run lint -w @myhomelab/frontend",
+    "test": "npm run build:shared && npm test -w @myhomelab/backend",
+    "release": "node scripts/release.mjs",
+    "release:android": "node scripts/android-release.mjs",
+    "claude": "node scripts/claude-terminal.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TTiagoSousa/MyHomeLab.git"
+  }
+}

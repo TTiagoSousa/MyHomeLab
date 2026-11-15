@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # The checkout leaves a lightweight copy of the tag: fetch the annotated one, whose
+      # message is the release notes.
+      - name: Fetch the annotated tag
+        run: git fetch --force origin "refs/tags/$TAG:refs/tags/$TAG"
+
+      - name: The tag matches every package.json
+        run: |
+          version="${TAG#v}"
+          for file in package.json apps/backend/package.json apps/frontend/package.json packages/shared/package.json apps/mobile/package.json; do
+            found="$(node -p "require('./$file').version")"
+            if [ "$found" != "$version" ]; then
+              echo "::error file=$file::$file is at $found, the tag is $TAG"
+              exit 1
+            fi
+          done
+
+      - name: The tag is on main
+        run: |
+          git fetch --quiet origin main
+          if ! git merge-base --is-ancestor "$TAG" origin/main; then
+            echo "::error::$TAG is not on main"
+            exit 1
+          fi
+
+      - name: Create the GitHub Release
+        run: |
+          message="$(git for-each-ref "refs/tags/$TAG" --format='%(contents)')"
+          title="$(printf '%s\n' "$message" | head -n 1)"
+          {
+            printf '%s\n' "$message" | tail -n +2 | sed '/^-----BEGIN PGP SIGNATURE-----/,$d'
+            if [ -f "releases/$TAG/pt-PT.md" ]; then
+              printf '\n<details><summary>Português</summary>\n\n'
+              tail -n +2 "releases/$TAG/pt-PT.md"
+              printf '\n</details>\n'
+            fi
+            if [ -f "releases/$TAG/es.md" ]; then
+              printf '\n<details><summary>Español</summary>\n\n'
+              tail -n +2 "releases/$TAG/es.md"
+              printf '\n</details>\n'
+            fi
+          } > notes.md
+          gh release create "$TAG" --verify-tag --title "$title" --notes-file notes.md

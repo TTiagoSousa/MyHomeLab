@@ -1,0 +1,243 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Attempt_Detail{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+
+  .Attempt_Detail_Head{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+
+    h1{
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--card-global-header-title-color);
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .Attempt_Detail_Meta{
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .Attempt_Detail_Note{
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  .Attempt_Progress{
+    display: flex;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--panel-background);
+
+    span{ height: 100%; }
+  }
+
+  .Attempt_Legend{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+
+  .validated{ --attempt-color: var(--stat-positive); --attempt-soft: var(--stat-positive-soft); }
+  .not_validated{ --attempt-color: var(--danger-color); --attempt-soft: var(--danger-color-soft); }
+  .not_applicable{ --attempt-color: var(--text-faint); --attempt-soft: var(--panel-background); }
+  .pending{ --attempt-color: var(--stat-attention); --attempt-soft: var(--stat-attention-soft); }
+  .skipped{ --attempt-color: var(--accent); --attempt-soft: var(--accent-soft); }
+
+  .Attempt_Progress span{ background: var(--attempt-color); }
+  .Attempt_Legend span{ color: var(--attempt-color); }
+
+  .Attempt_Phase{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    h2{
+      @include Mixin.Hud_Label(9.5px);
+      margin: 0;
+      color: var(--text-soft);
+    }
+
+    ul{
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+  }
+
+  .Attempt_Check{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 10px;
+    border: 1px solid var(--hud-line);
+    border-left: 3px solid var(--attempt-color);
+    border-radius: var(--ctrl-radius);
+    background-color: var(--cards-background);
+
+    .Attempt_Check_State{
+      flex-shrink: 0;
+      min-width: 92px;
+      padding: 2px 8px;
+      box-sizing: border-box;
+      border-radius: 999px;
+      background: var(--attempt-soft);
+      text-align: center;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--attempt-color);
+    }
+
+    .Attempt_Check_Body{
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .Attempt_Check_Point{
+      font-size: 12.5px;
+      font-weight: 700;
+      line-height: 1.45;
+      color: var(--text-main);
+      overflow-wrap: anywhere;
+
+      small{
+        margin-right: 6px;
+        font-family: Font.$font_family_mono;
+        font-size: 10.5px;
+        color: var(--text-faint);
+      }
+    }
+
+    .Attempt_Check_Meta{
+      font-size: 11px;
+      color: var(--text-faint);
+      overflow-wrap: anywhere;
+    }
+
+    .Attempt_Check_Evidence{
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text-soft);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+
+      &.clamped{
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    .Attempt_Check_More{
+      align-self: flex-start;
+      padding: 0;
+      border: none;
+      background: none;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--accent-bright);
+      cursor: pointer;
+    }
+
+    code{
+      padding: 0 4px;
+      border-radius: 4px;
+      background: var(--panel-background);
+      font-size: .95em;
+    }
+
+    @media (max-width: 560px){
+      flex-direction: column;
+    }
+  }
+
+  .Attempt_Status{
+    flex-shrink: 0;
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--hud-line-strong);
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-soft);
+
+    &.done{ border-color: var(--stat-positive); color: var(--stat-positive); background: var(--stat-positive-soft); }
+    &.failed{ border-color: var(--danger-color); color: var(--danger-color); background: var(--danger-color-soft); }
+    &.checking,
+    &.running,
+    &.verifying{ border-color: var(--stat-attention); color: var(--stat-attention); background: var(--stat-attention-soft); }
+  }
+
+  .Attempt_Result{
+    margin: 0;
+    max-height: 320px;
+    overflow: auto;
+    padding: 10px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+    font-family: Font.$font_family_mono;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-soft);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .Attempt_Docs{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 28px;
+      padding: 0 10px;
+      font-size: 11.5px;
+    }
+  }
+
+  .Attempt_Actions{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--hud-line);
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+
+      &.active{
+        @include Mixin.Solid_Button;
+        height: 32px;
+        padding: 0 14px;
+        font-size: 12.5px;
+      }
+    }
+  }
+}

@@ -1,0 +1,170 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Service_Edit_Modal_Overlay{
+  @include Mixin.Modal_Overlay;
+
+  .Service_Edit_Modal{
+    @include Mixin.Modal_Panel;
+    width: 360px;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+
+    .Service_Edit_Modal_Preview{
+      .Preview_Card{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: var(--ctrl-radius);
+        background-color: var(--card-global-header-background);
+
+        .Preview_Abbreviation{
+          width: 44px;
+          height: 44px;
+          flex-shrink: 0;
+          border-radius: var(--icon-radius);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 15px;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          color: #fff;
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+        }
+
+        .Preview_Info{
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          min-width: 0;
+
+          .Preview_Name{
+            font-size: 13px;
+            font-weight: 700;
+          }
+
+          .Preview_Url{
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+    }
+
+    .Service_Edit_Modal_Field{
+      .Global_Input,
+      .Dropdown_Field{
+        height: 38px;
+      }
+
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      label{
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+    }
+
+    .Service_Edit_Modal_Hosting{
+      display: flex;
+      gap: 8px;
+
+      button{
+        flex: 1;
+        height: 38px;
+        border-radius: var(--ctrl-radius);
+        cursor: pointer;
+        background-color: var(--simple-input-background-color);
+        border: 1px solid var(--hud-line-strong);
+        color: var(--text-soft);
+        font-family: Font.$font_family_sans;
+        font-size: 13px;
+        font-weight: 700;
+        transition: background-color .15s, border-color .15s, color .15s;
+
+        &:hover:not(.active){
+          color: var(--accent-bright);
+          border-color: var(--accent);
+        }
+
+        &.active{
+          background-color: var(--simple-button-background-color);
+          border-color: transparent;
+          color: var(--simple-button-letter-color);
+        }
+      }
+    }
+
+    .Service_Edit_Modal_Colors{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      .Color_Swatch{
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-sizing: border-box;
+        border: 2px solid transparent;
+
+        &.active{
+          border-color: var(--card-global-header-title-color);
+        }
+      }
+    }
+
+    .Service_Edit_Modal_Delete{
+      width: 100%;
+      height: 42px;
+      border: var(--card-border);
+      border-radius: var(--ctrl-radius);
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+      font-weight: 700;
+      background-color: var(--danger-color-soft);
+      color: var(--danger-color);
+    }
+
+    .Service_Edit_Modal_Actions{
+      display: flex;
+      gap: 10px;
+
+      button{
+        flex: 1;
+        height: 42px;
+        border-radius: var(--ctrl-radius);
+        cursor: pointer;
+        font-family: Font.$font_family_sans;
+        font-size: 13px;
+        font-weight: 700;
+        border: none;
+      }
+
+      .Cancel_Button{
+        background-color: var(--card-global-header-background);
+        color: var(--card-global-header-title-color);
+        border: var(--card-border);
+      }
+
+      .Save_Button{
+        background-color: var(--simple-button-background-color);
+        color: var(--simple-button-letter-color);
+      }
+    }
+  }
+}

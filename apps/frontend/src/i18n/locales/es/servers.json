@@ -1,0 +1,205 @@
+{
+  "title": "Servidores",
+  "refresh": "Actualizar ahora",
+  "manage": "Gestionar en Proxmox",
+  "loading": "Leyendo el servidor…",
+  "updated": "actualizado a las {{time}}",
+  "noNodes": "El servidor no devolvió ningún nodo.",
+  "nodes": "Nodos",
+  "error": {
+    "title": "No se pudo leer este servidor"
+  },
+  "empty": {
+    "title": "Sin servidores",
+    "text": "Añade tu Proxmox en Apps conectadas → Proxmox.",
+    "action": "Abrir Proxmox"
+  },
+  "kpi": {
+    "node": "Nodo {{name}}",
+    "details": "Detalles",
+    "cpu": "CPU",
+    "memory": "Memoria",
+    "rootDisk": "Disco del sistema",
+    "cores_one": "{{count}} núcleo",
+    "cores_other": "{{count}} núcleos",
+    "machines": "Máquinas",
+    "machinesValue": "{{running}} en marcha de {{total}}",
+    "uptime": "Encendido hace",
+    "load": "Carga (1/5/15 min)",
+    "swap": "Swap",
+    "version": "Versión",
+    "cpuModel": "Procesador"
+  },
+  "storage": {
+    "title": "Almacenamiento",
+    "empty": "Sin almacenamiento que mostrar."
+  },
+  "guests": {
+    "title_one": "{{count}} máquina",
+    "title_other": "{{count}} máquinas",
+    "filter": {
+      "all": "Todas",
+      "running": "En marcha",
+      "stopped": "Paradas"
+    },
+    "col": {
+      "vmid": "ID",
+      "name": "Nombre",
+      "status": "Estado",
+      "cpu": "CPU",
+      "memory": "Memoria",
+      "disk": "Disco",
+      "uptime": "Encendida hace"
+    },
+    "status": {
+      "running": "En marcha",
+      "stopped": "Parada"
+    },
+    "none": "Ninguna máquina en este filtro."
+  },
+  "monitors": {
+    "title_one": "{{count}} servicio",
+    "title_other": "{{count}} servicios",
+    "downCount_one": "{{count}} caído",
+    "downCount_other": "{{count}} caídos",
+    "add": "Añadir servicio",
+    "empty": "Todavía no vigilas ningún servicio. Añade uno para recibir un aviso cuando deje de responder.",
+    "noServer": "Sin servidor",
+    "every_one": "cada {{count}} min",
+    "every_other": "cada {{count}} min",
+    "machineMissing": "La máquina asociada ya no existe en Proxmox.",
+    "status": {
+      "UNKNOWN": "Comprobando",
+      "UP": "En línea",
+      "DOWN": "Caído"
+    },
+    "kind": {
+      "HTTP": "HTTP(S) — página web",
+      "TCP": "TCP — host:puerto"
+    },
+    "checkNow": "Comprobar",
+    "checking": "Comprobando…",
+    "edit": "Editar",
+    "remove": "Quitar",
+    "confirmRemove": "¿Confirmar?",
+    "saved": "Servicio guardado.",
+    "modal": {
+      "title": "Añadir servicio",
+      "editTitle": "Editar {{name}}",
+      "name": "Nombre",
+      "namePlaceholder": "ej.: Web personal",
+      "kind": "Cómo comprobar",
+      "targetHTTP": "Dirección (URL)",
+      "targetTCP": "Dirección (host:puerto)",
+      "hintHTTP": "Cualquier respuesta por debajo de 500 cuenta como en línea — una pantalla de login también cuenta.",
+      "hintTCP": "Solo intenta abrir la conexión. Sirve para DNS, SSH, bases de datos…",
+      "interval": "Comprobar",
+      "server": "Servidor (opcional)",
+      "machine": "Máquina (opcional)",
+      "noServer": "Ninguno",
+      "noMachine": "Ninguna",
+      "loadingMachines": "Cargando máquinas…",
+      "testing": "Guardando y comprobando…",
+      "save": "Guardar y comprobar"
+    }
+  },
+  "disks": {
+    "title_one": "Discos ({{count}})",
+    "title_other": "Discos ({{count}})",
+    "loading": "Leyendo…",
+    "unreadable": "Sin lectura",
+    "healthy": "Saludables",
+    "attention_one": "{{count}} necesita atención",
+    "attention_other": "{{count}} necesitan atención",
+    "reading": "Leyendo SMART…",
+    "readNow": "Leer ahora",
+    "none": "Proxmox no mostró discos físicos en este nodo.",
+    "noSmart": "Sin SMART",
+    "pools": "Pools ZFS",
+    "fewDays_one": "solo {{count}} día",
+    "fewDays_other": "solo {{count}} días",
+    "sparklineTitle": "Temperatura en los últimos {{count}} días: {{min}}–{{max}} °C",
+    "hint": "Leído del SMART a través de Proxmox cada hora; se guarda una lectura por día. Alerta roja cuando el SMART falla, un pool ZFS se degrada o los sectores aumentan; naranja con menos del 10% de vida, temperatura alta, sectores pendientes o almacenamiento por encima del 90%.",
+    "col": {
+      "disk": "Disco",
+      "health": "SMART",
+      "life": "Vida",
+      "temperature": "Temp.",
+      "reallocated": "Reasignados",
+      "pending": "Pendientes",
+      "hours": "Horas encendido",
+      "history": "30 días"
+    }
+  },
+  "backups": {
+    "title": "Copias de seguridad",
+    "add": "Crear copia automática",
+    "noDestination": "Para hacer copias, primero di dónde guardarlas.",
+    "createDestination": "Crear destino en Complementos",
+    "paused": "automático desactivado",
+    "never": "Aún no se ha ejecutado.",
+    "lastOk": "Última: {{date}} · {{file}} · {{size}}",
+    "lastFailed": "Falló {{date}}: {{error}}",
+    "runNow": "Hacer copia ahora",
+    "running": "Haciendo copia…",
+    "done": "Copia guardada: {{file}}",
+    "saved": "Copia guardada.",
+    "history_one": "Historial ({{count}})",
+    "history_other": "Historial ({{count}})",
+    "deleted_one": "{{count}} antigua borrada",
+    "deleted_other": "{{count}} antiguas borradas",
+    "manual": "manual",
+    "retention": {
+      "REPLACE": {
+        "name": "Sustituir",
+        "hint": "Solo queda la última copia.",
+        "short": "sustituye la anterior"
+      },
+      "KEEP_LAST": {
+        "name": "Guardar las últimas",
+        "hint": "Quedan las N más recientes; las más antiguas se borran.",
+        "short_one": "guarda la última",
+        "short_other": "guarda las últimas {{count}}"
+      },
+      "KEEP_ALL": {
+        "name": "Nunca borrar",
+        "hint": "Quedan todas. Se van acumulando archivos.",
+        "short": "nunca borra"
+      }
+    },
+    "whatTitle": "Qué incluye la copia",
+    "modal": {
+      "title": "Nueva copia automática",
+      "editTitle": "Editar copia",
+      "destination": "Destino",
+      "destinationHint": "Los destinos se crean en Complementos → Copias de seguridad.",
+      "folder": "Carpeta",
+      "folderHint": "Los archivos quedan en {{path}}, con el nombre {{file}}.",
+      "frequency": "Frecuencia",
+      "retention": "Copias antiguas",
+      "keepCount": "Cuántas guardar",
+      "onlyOurs": "Solo se borran archivos creados por MyHomeLab en esta carpeta; el resto queda intacto.",
+      "active": "Hacer copia automáticamente",
+      "activeHint": "Desactivado, solo hace copia cuando pulses \"Hacer copia ahora\".",
+      "save": "Guardar",
+      "saving": "Guardando…"
+    },
+    "lastOkShort": "✓ {{date}}",
+    "lastFailedShort": "✗ Falló {{date}}",
+    "lastOkHint": "{{file}} · {{size}}",
+    "historyTitle": "Historial de la copia",
+    "columns": {
+      "date": "Fecha",
+      "result": "Resultado",
+      "file": "Archivo",
+      "size": "Tamaño",
+      "cleaned": "Limpieza"
+    },
+    "result": {
+      "SUCCESS": "Hecha",
+      "ERROR": "Falló",
+      "PARTIAL": "Hecha con fallos"
+    },
+    "missing": "Quedó fuera: {{list}}"
+  }
+}

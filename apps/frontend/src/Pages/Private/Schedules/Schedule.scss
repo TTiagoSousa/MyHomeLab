@@ -1,0 +1,115 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Schedule_Page{
+  .Schedule_Page_Chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    span{
+      padding: 2px 9px;
+      border: 1px solid var(--hud-line-strong);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-faint);
+
+      &.state.on{
+        border-color: var(--stat-positive);
+        background: var(--stat-positive-soft);
+        color: var(--stat-positive);
+      }
+    }
+  }
+
+  .Schedule_Page_Instruction{
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-main);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .Schedule_Page_Text{
+    @include Mixin.Control_Surface;
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: Font.$font_family_sans;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--input-global-letter-color);
+  }
+
+  .Schedule_Page_Runs{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Schedule_Run{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+
+    .Schedule_Run_Head{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+
+    .Schedule_Run_Dot{
+      width: 8px;
+      height: 8px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--text-faint);
+    }
+
+    &.done .Schedule_Run_Dot{ background: var(--stat-positive); }
+    &.failed .Schedule_Run_Dot{ background: var(--danger-color); }
+    &.running .Schedule_Run_Dot{ background: var(--stat-attention); }
+
+    .Schedule_Run_Notice{
+      padding: 6px 8px;
+      border-radius: var(--ctrl-radius);
+      background: var(--stat-attention-soft);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--stat-attention);
+      white-space: pre-wrap;
+    }
+
+    .Schedule_Run_Docs{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--text-faint);
+
+      a{ color: var(--accent-bright); }
+    }
+
+    .Schedule_Run_Summary{
+      margin: 0;
+      max-height: 260px;
+      overflow: auto;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: var(--text-soft);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  }
+}

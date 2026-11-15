@@ -1,0 +1,96 @@
+@use '../../../Styles/Fonts.scss' as Font;
+
+.Simple_Alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--border-radius);
+  min-width: 280px;
+  max-width: 400px;
+  overflow: hidden;
+  box-shadow: var(--card-box-shadow);
+  font-family: Font.$font_family_poppins;
+  animation: sa-slide-in 0.3s ease forwards;
+
+  &--exit {
+    animation: sa-slide-out 0.3s ease forwards;
+  }
+
+  &--success { background-color: var(--alert-success-background); }
+  &--error   { background-color: var(--alert-error-background); }
+  &--warning { background-color: var(--alert-warning-background); }
+  &--info    { background-color: var(--alert-info-background); }
+
+  &__icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    opacity: 0.9;
+  }
+
+  &__message {
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    word-break: break-word;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    opacity: 0.7;
+    padding: 0;
+    flex-shrink: 0;
+    line-height: 1;
+
+    &:hover { opacity: 1; }
+  }
+
+  &__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.4);
+    animation: sa-progress 3s linear forwards;
+    transform-origin: left;
+  }
+}
+
+@keyframes sa-slide-in {
+  from { transform: translateX(calc(100% + 24px)); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes sa-slide-out {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(calc(100% + 24px)); opacity: 0; }
+}
+
+@keyframes sa-progress {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}

@@ -1,0 +1,151 @@
+@use '../../../../Styles/Fonts.scss' as Font;
+@use '../../../../Styles/Mixins.scss' as Mixin;
+
+.Health_Dashboard{
+  .Wellbeing_Grid{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    width: 100%;
+
+    @media (max-width: 1000px){ grid-template-columns: 1fr; }
+  }
+
+  .Wellbeing_Card{
+    gap: 12px;
+  }
+
+  .Wellbeing_Card_Body{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+    margin: -8px;
+    padding: 8px;
+    border: none;
+    border-radius: var(--ctrl-radius);
+    background: transparent;
+    color: inherit;
+    font-family: Font.$font_family_sans;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s ease;
+
+    &:hover{ background: var(--card-hover-background); }
+
+    .Health_card_description{ margin: 0; }
+  }
+
+  .Wellbeing_Card_Head{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .Wellbeing_Card_Open{
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-bright);
+    white-space: nowrap;
+  }
+
+  .Wellbeing_Metrics{
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+
+    @media (max-width: 1300px) and (min-width: 1001px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 560px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  .Wellbeing_Metric{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 12px;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+    min-width: 0;
+
+    span{
+      @include Mixin.Hud_Label;
+      color: var(--text-soft);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    em{
+      font-style: normal;
+      font-family: Font.$font_family_mono;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    small{
+      font-family: Font.$font_family_mono;
+      font-size: 10.5px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Wellbeing_Change{
+    &.up{ color: #10b981; }
+    &.down{ color: #f43f5e; }
+  }
+
+  .Wellbeing_Sparkline{
+    pointer-events: none;
+  }
+
+  .Wellbeing_Fast_Live{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--accent-deep);
+    border-radius: var(--ctrl-radius);
+    background: var(--accent-soft);
+  }
+
+  .Wellbeing_Fast_Live_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+
+    em{
+      font-family: Font.$font_family_hud;
+      font-style: normal;
+      font-size: 24px;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent-bright);
+    }
+
+    small{
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+  }
+
+  .Wellbeing_Card_Actions{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: var(--card-border);
+  }
+
+  .Wellbeing_Today{
+    font-size: 13px;
+    color: var(--text-soft);
+    white-space: pre-wrap;
+  }
+}

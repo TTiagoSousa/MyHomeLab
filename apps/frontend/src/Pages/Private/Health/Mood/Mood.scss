@@ -1,0 +1,170 @@
+@use '../../../../Styles/Fonts.scss' as Font;
+@use '../../../../Styles/Mixins.scss' as Mixin;
+
+.Health_Dashboard{
+  .Mood_Form_Anchor{
+    width: 100%;
+    scroll-margin-top: 16px;
+  }
+
+  .Mood_Scales{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+
+    @media (max-width: 800px){ grid-template-columns: 1fr; }
+  }
+
+  .Mood_Scale{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .Mood_Scale_Label{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+
+    small{
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-faint);
+    }
+  }
+
+  .Mood_Scale_Options{
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      flex-direction: column;
+      gap: 2px;
+      height: 56px;
+      padding: 0;
+
+      span{
+        font-size: 20px;
+        line-height: 1;
+        filter: grayscale(.7);
+        opacity: .75;
+      }
+
+      small{
+        font-family: Font.$font_family_mono;
+        font-size: 10.5px;
+      }
+
+      &.active{
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--accent-bright);
+
+        span{
+          filter: none;
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .Mood_Legend{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 12px;
+    color: var(--text-soft);
+
+    span{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    i{
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+  }
+
+  .Mood_Records_Count{
+    font-family: Font.$font_family_hud;
+    font-size: 16px;
+    color: var(--accent-bright);
+    white-space: nowrap;
+  }
+
+  .Mood_Records{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Mood_Record{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border: var(--card-border);
+    border-left: 3px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+
+    &.level-1{ border-left-color: #f43f5e; }
+    &.level-2{ border-left-color: #fb923c; }
+    &.level-3{ border-left-color: #f59e0b; }
+    &.level-4{ border-left-color: #84cc16; }
+    &.level-5{ border-left-color: #10b981; }
+
+    &.selected{ background: var(--accent-soft); }
+
+    p{
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-soft);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .Mood_Record_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    em{
+      min-width: 110px;
+      font-style: normal;
+      font-weight: 700;
+      color: var(--card-global-header-title-color);
+    }
+  }
+
+  .Mood_Record_Value{
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+
+    b{
+      font-family: Font.$font_family_mono;
+      color: var(--card-global-header-title-color);
+    }
+
+    small{
+      font-size: 11px;
+      color: var(--text-faint);
+
+      @media (max-width: 600px){ display: none; }
+    }
+  }
+}

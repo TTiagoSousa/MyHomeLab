@@ -1,0 +1,144 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Workout_Parts_Modal_Overlay{
+  @include Mixin.Modal_Overlay;
+
+  .Workout_Parts_Modal{
+    @include Mixin.Modal_Panel;
+    width: 560px;
+    max-width: 100%;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .Workout_Parts_Modal_Head{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .Workout_Parts_Modal_Title{
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .Workout_Parts_Modal_Subtitle,
+  .Workout_Parts_Modal_Muted{
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  .Workout_Parts_Modal_List{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Workout_Parts_Modal_Item{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+
+    &.selected{
+      border-color: var(--accent-deep);
+      background: var(--accent-soft);
+    }
+  }
+
+  .Workout_Parts_Modal_Check{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    cursor: pointer;
+
+    input{
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+    }
+  }
+
+  .Workout_Parts_Modal_Name{
+    font-size: 13.5px;
+    font-weight: 800;
+  }
+
+  .Workout_Parts_Modal_Meta{
+    font-family: Font.$font_family_mono;
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+
+  .Workout_Parts_Modal_Roles{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-left: 26px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 30px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 700;
+
+      &.active{
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+      }
+    }
+  }
+
+  .Workout_Parts_Modal_Error{
+    margin: 0;
+    padding: 9px 11px;
+    border-radius: var(--ctrl-radius);
+    border: 1px solid var(--danger-color);
+    background: var(--danger-color-soft);
+    color: var(--danger-color);
+    font-size: 12.5px;
+  }
+
+  .Workout_Parts_Modal_Actions{
+    display: flex;
+    gap: 10px;
+
+    button{
+      flex: 1;
+      height: 42px;
+      border-radius: var(--ctrl-radius);
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+
+      &:disabled{
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .Cancel_Button{
+      background-color: var(--card-global-header-background);
+      color: var(--card-global-header-title-color);
+      border: var(--card-border);
+    }
+
+    .Save_Button{
+      background-color: var(--simple-button-background-color);
+      color: var(--simple-button-letter-color);
+    }
+  }
+}

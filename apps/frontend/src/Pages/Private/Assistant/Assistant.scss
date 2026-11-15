@@ -1,0 +1,589 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Assistant{
+  height: calc(100dvh - 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  font-family: Font.$font_family_sans;
+
+  .Assistant_Top{
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px 22px;
+    flex-wrap: wrap;
+    padding-bottom: 11px;
+    border-bottom: 1px solid var(--hud-line);
+  }
+
+  .Assistant_Brand{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .Assistant_Brand_mark{
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+
+      svg{ width: 100%; height: 100%; display: block; }
+    }
+
+    .Assistant_Brand_text{ display: flex; flex-direction: column; line-height: 1; }
+
+    .Assistant_Brand_name{
+      font-family: Font.$font_family_hud;
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: .26em;
+      color: var(--accent-bright);
+      text-shadow: 0 0 18px var(--accent-glow);
+    }
+
+    .Assistant_Brand_sub{
+      @include Mixin.Hud_Label(9px);
+      color: var(--text-faint);
+      margin-top: 4px;
+    }
+  }
+
+  .Assistant_Readout{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+
+    .Assistant_Stat{ display: flex; flex-direction: column; gap: 1px; }
+
+    .Assistant_Stat_key{
+      @include Mixin.Hud_Label(8.5px);
+      letter-spacing: .2em;
+      color: var(--text-faint);
+    }
+
+    .Assistant_Stat_val{
+      font-family: Font.$font_family_hud;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+
+      &.live{ color: var(--accent); }
+    }
+
+    .Assistant_New{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+
+      svg{ width: 13px; height: 13px; }
+    }
+  }
+
+  .Assistant_Grid{
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 14px;
+    position: relative;
+  }
+
+  .Assistant_Side_toggle{ display: none; }
+
+  .Assistant_Side{
+    @include Mixin.Frame_Corners;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+    padding: 12px;
+    border: var(--card-border);
+    border-radius: var(--border-radius);
+    background: var(--cards-background);
+    overflow: hidden;
+  }
+
+  .Assistant_Side_new{
+    @include Mixin.Ghost_Button;
+    flex-shrink: 0;
+    height: 34px;
+    gap: 8px;
+    font-size: 12.5px;
+
+    svg{ width: 13px; height: 13px; }
+  }
+
+  .Assistant_Side_list{
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .Assistant_Side_empty{
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  .Assistant_Side_group{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .Assistant_Side_group_title{
+    @include Mixin.Hud_Label(8px);
+    padding: 0 6px 4px;
+    color: var(--text-faint);
+  }
+
+  .Assistant_Side_item{
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: var(--ctrl-radius);
+
+    &:hover,
+    &.active{ background: var(--accent-soft); }
+
+    &.active .Assistant_Side_title{ color: var(--accent-bright); }
+
+    &:hover .Assistant_Side_actions,
+    &.active .Assistant_Side_actions{ opacity: 1; }
+  }
+
+  .Assistant_Side_open{
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 7px 8px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .Assistant_Side_title{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: Font.$font_family_sans;
+    font-size: 12.5px;
+    color: var(--text-main);
+  }
+
+  .Assistant_Side_date{
+    font-family: Font.$font_family_mono;
+    font-size: 10.5px;
+    color: var(--text-faint);
+  }
+
+  .Assistant_Side_actions{
+    display: flex;
+    gap: 2px;
+    padding-right: 4px;
+    opacity: 0;
+    transition: opacity .15s;
+
+    button{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 4px;
+      border: none;
+      border-radius: var(--ctrl-radius);
+      background: none;
+      color: var(--text-soft);
+      cursor: pointer;
+      font-size: 11px;
+
+      svg{ width: 12px; height: 12px; }
+
+      &:hover{ color: var(--text-main); background: var(--hud-line); }
+      &.danger{ color: var(--danger-color); }
+    }
+  }
+
+  .Assistant_Side_rename{
+    flex: 1;
+    min-width: 0;
+    margin: 3px;
+    padding: 5px 7px;
+    border: 1px solid var(--accent);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+    color: var(--text-main);
+    font-size: 12.5px;
+  }
+
+  @media (max-width: 900px){
+    .Assistant_Grid{ grid-template-columns: minmax(0, 1fr); }
+    .Assistant_Side_toggle{ display: inline-flex; }
+
+    .Assistant_Side{
+      display: none;
+      position: absolute;
+      inset: 0 auto 0 0;
+      z-index: 5;
+      width: min(300px, 85%);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+
+      &.open{ display: flex; }
+    }
+
+    .Assistant_Side_actions{ opacity: 1; }
+  }
+
+  .Assistant_Frame{
+    @include Mixin.Frame_Corners;
+    background:
+      linear-gradient(180deg, var(--card-global-header-background), transparent 34%),
+      var(--cards-background);
+    border: var(--card-border);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .Assistant_Frame_head{
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--hud-line);
+  }
+
+  .Assistant_Frame_title{
+    @include Mixin.Hud_Label(9.5px);
+    color: var(--text-soft);
+  }
+
+  .Assistant_Frame_task{
+    border: 1px solid var(--hud-line-strong);
+    border-radius: 6px;
+    padding: 3px 8px;
+    background: transparent;
+    font-family: Font.$font_family_mono;
+    font-size: 10px;
+    color: var(--accent-bright);
+    cursor: pointer;
+
+    &:hover{ background: var(--accent-soft); }
+  }
+
+  .Assistant_Side_task{
+    margin-right: 6px;
+    color: var(--accent-bright);
+    font-weight: 700;
+  }
+
+  .Assistant_Side_answering{
+    margin-right: 6px;
+    color: var(--stat-attention);
+    font-weight: 700;
+  }
+
+  .Assistant_Frame_meta{
+    font-family: Font.$font_family_mono;
+    font-size: 9.5px;
+    letter-spacing: .1em;
+    color: var(--text-faint);
+  }
+
+  .Assistant_Convo{
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 18px 20px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .Assistant_NoKey{
+    margin: auto;
+    max-width: 44ch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 22px 24px;
+    text-align: center;
+    border: 1px dashed var(--accent);
+    border-radius: var(--ctrl-radius);
+    background: var(--accent-soft);
+
+    .Assistant_NoKey_title{
+      font-family: Font.$font_family_hud;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent-bright);
+    }
+
+    .Assistant_NoKey_text{
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-soft);
+    }
+
+    button{
+      @include Mixin.Solid_Button;
+      margin-top: 6px;
+      height: 34px;
+      padding: 0 16px;
+    }
+  }
+
+  .Assistant_Empty{
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+
+    .Assistant_Empty_title{
+      font-family: Font.$font_family_hud;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .Assistant_Empty_hint{
+      font-size: 13.5px;
+      color: var(--text-soft);
+      max-width: 40ch;
+    }
+  }
+
+  .Assistant_Msg{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-width: 72ch;
+
+    .Assistant_Msg_who{
+      @include Mixin.Hud_Label(9px);
+      letter-spacing: .18em;
+    }
+
+    .Assistant_Msg_docs{
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--text-faint);
+
+      button{
+        padding: 2px 8px;
+        border: 1px solid var(--hud-line-strong);
+        border-radius: 999px;
+        background: transparent;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-soft);
+
+        &:hover{ border-color: var(--accent); color: var(--accent-bright); }
+      }
+    }
+
+    .Assistant_Msg_text{
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-main);
+      white-space: pre-wrap;
+
+      &.rich{
+        white-space: normal;
+        min-width: 0;
+
+        .Doc_Editor_Content .tiptap{
+          font-size: 15px;
+          line-height: 1.6;
+        }
+      }
+    }
+
+    &.ai{
+      width: 100%;
+      max-width: 92ch;
+    }
+
+    &.me{
+      align-self: flex-end;
+      align-items: flex-end;
+      text-align: right;
+
+      .Assistant_Msg_who{ color: var(--text-faint); }
+
+      .Assistant_Msg_text{
+        background: var(--input-global-background-color);
+        border: 1px solid var(--hud-line);
+        border-radius: var(--ctrl-radius) var(--ctrl-radius) var(--ctrl-radius) 12px;
+        padding: 9px 13px;
+        font-size: 14.5px;
+        color: var(--text-soft);
+      }
+    }
+
+    &.ai{
+      position: relative;
+      padding-left: 16px;
+
+      &::before{
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 3px;
+        bottom: 3px;
+        width: 2px;
+        background: linear-gradient(180deg, var(--accent), transparent);
+        box-shadow: 0 0 12px var(--accent-glow);
+      }
+
+      .Assistant_Msg_who{ color: var(--accent); }
+    }
+  }
+
+  .Assistant_Thinking{
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 16px;
+    color: var(--accent);
+    font-family: Font.$font_family_mono;
+    font-size: 11px;
+    letter-spacing: .08em;
+
+    &::before{
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 2px;
+      bottom: 2px;
+      width: 2px;
+      background: currentColor;
+      opacity: .5;
+    }
+  }
+
+  .Assistant_Dots{
+    display: inline-flex;
+    gap: 4px;
+
+    i{
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: hlBlink 1.1s ease-in-out infinite;
+    }
+
+    i:nth-child(2){ animation-delay: .16s; }
+    i:nth-child(3){ animation-delay: .32s; }
+  }
+
+  .Assistant_Compose{
+    flex-shrink: 0;
+    padding: 11px 14px 13px;
+    border-top: 1px solid var(--hud-line);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .Assistant_Chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+  .Assistant_Bar{
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 8px 9px 8px 13px;
+    background: var(--input-global-background-color);
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    transition: border-color .18s ease, box-shadow .18s ease;
+
+    &:focus-within{
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft), 0 0 26px var(--accent-soft);
+    }
+
+    textarea{
+      flex: 1;
+      min-width: 0;
+      height: 25px;
+      max-height: 108px;
+      padding: 1px 0;
+      border: 0;
+      outline: 0;
+      resize: none;
+      background: transparent;
+      color: var(--text-main);
+      font-family: Font.$font_family_sans;
+      font-size: 14.5px;
+      line-height: 1.5;
+
+      &::placeholder{ color: var(--text-faint); }
+    }
+  }
+
+  .Assistant_Send{
+    @include Mixin.Ghost_Button;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    padding: 0;
+    border-color: var(--accent-deep);
+    background: var(--accent-soft);
+    color: var(--accent);
+
+    &:hover:not(:disabled){
+      background: var(--accent);
+      color: var(--on-accent);
+      border-color: var(--accent);
+    }
+
+    svg{ width: 16px; height: 16px; }
+  }
+
+  @media (max-width: 700px){
+    .Assistant_Readout .Assistant_Stat:nth-child(3){ display: none; }
+  }
+}

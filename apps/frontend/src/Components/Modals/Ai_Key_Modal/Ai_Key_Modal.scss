@@ -1,0 +1,130 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Ai_Key_Modal_Overlay{
+  @include Mixin.Modal_Overlay;
+
+  .Ai_Key_Modal{
+    @include Mixin.Modal_Panel;
+    width: 400px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    box-sizing: border-box;
+
+    .Ai_Key_Modal_Head{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      > div{
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+    }
+
+    .Ai_Key_Modal_Mark{
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--ctrl-radius);
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent-bright);
+      font-family: Font.$font_family_hud;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .Ai_Key_Modal_Title{
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .Ai_Key_Modal_Vendor{
+      @include Mixin.Hud_Label(9px);
+      color: var(--text-faint);
+    }
+
+    .Ai_Key_Modal_Text{
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-soft);
+
+      a{
+        color: var(--accent-bright);
+        text-decoration: none;
+
+        &:hover{ text-decoration: underline; }
+      }
+    }
+
+    .Ai_Key_Modal_Field{
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      .Global_Input{ height: 38px; }
+
+      label{
+        font-size: 12px;
+        font-weight: 700;
+      }
+    }
+
+    .Ai_Key_Modal_Hint{
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+
+    .Ai_Key_Modal_Error{
+      margin: 0;
+      padding: 9px 11px;
+      border-radius: var(--ctrl-radius);
+      border: 1px solid var(--danger-color);
+      background: var(--danger-color-soft);
+      color: var(--danger-color);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    .Ai_Key_Modal_Actions{
+      display: flex;
+      gap: 10px;
+
+      button{
+        flex: 1;
+        height: 42px;
+        border-radius: var(--ctrl-radius);
+        cursor: pointer;
+        font-family: Font.$font_family_sans;
+        font-size: 13px;
+        font-weight: 700;
+        border: none;
+
+        &:disabled{
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .Cancel_Button{
+        background-color: var(--card-global-header-background);
+        color: var(--card-global-header-title-color);
+        border: var(--card-border);
+      }
+
+      .Save_Button{
+        background-color: var(--simple-button-background-color);
+        color: var(--simple-button-letter-color);
+      }
+    }
+  }
+}

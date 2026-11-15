@@ -1,0 +1,117 @@
+@use 'Global';
+
+$theme: (
+  'app-background':   (Global.$night-void,    Global.$day-void),
+  'panel-background': (Global.$night-panel,   Global.$day-panel),
+  'cards-background': (Global.$night-panel,   Global.$day-panel),
+  'card-hover-background': (#0E1A29, #F7FBFD),
+  'modal-background': (#08111C, Global.$day-panel),
+
+  'accent':       (Global.$night-cyan,        Global.$day-cyan),
+  'accent-soft':  (Global.$night-cyan-wash,   Global.$day-cyan-wash),
+  'accent-deep':  (Global.$night-cyan-deep,   Global.$day-cyan-deep),
+  'accent-bright':(Global.$night-cyan-bright, Global.$day-cyan-bright),
+  'accent-glow':  (Global.$night-cyan-glow,   Global.$day-cyan-glow),
+  'on-accent':    (#04070D, #FFFFFF),
+
+  'hud-line':        (Global.$night-line,   Global.$day-line),
+  'hud-line-strong': (Global.$night-line-2, Global.$day-line-2),
+  'hud-grid':        (rgba(95, 216, 245, .045), rgba(14, 124, 153, .05)),
+
+  'text-main':  (Global.$night-text,  Global.$day-text),
+  'text-soft':  (Global.$night-soft,  Global.$day-soft),
+  'text-faint': (Global.$night-faint, Global.$day-faint),
+
+  'card-global-header-title-color': (Global.$night-text,  Global.$day-text),
+  'card-global-header-background':  (rgba(95, 216, 245, .05), rgba(14, 124, 153, .045)),
+  'cards-base-letter-color':        (Global.$night-soft,  Global.$day-soft),
+
+  'navbar-vertical-card-bg-color':          (Global.$night-panel, Global.$day-panel),
+  'navbar-vertical-default-link-color':     (Global.$night-soft,  Global.$day-soft),
+  'navbar-vertical-card-link-active-color': (var(--accent),       var(--accent)),
+  'navbar-vertical-card-link-hover-color':  (Global.$night-text,  Global.$day-text),
+
+  'header-home-background-color': (Global.$night-panel, Global.$day-panel),
+  'header-home-icon-color':       (Global.$night-soft,  Global.$day-soft),
+  'header-home-icon-hover-color': (var(--accent),       var(--accent)),
+
+  'input-global-background-color': (Global.$night-panel-2, Global.$day-panel-2),
+  'input-global-letter-color':     (Global.$night-text,    Global.$day-text),
+
+  'simple-input-label-color':        (Global.$night-faint,   Global.$day-faint),
+  'simple-input-background-color':   (Global.$night-panel-2, Global.$day-panel-2),
+  'simple-input-letter-color':       (Global.$night-text,    Global.$day-text),
+  'simple-input-focus-border-color': (var(--accent),         var(--accent)),
+
+  'global-dropdown-option-hover-background': (var(--accent-soft), var(--accent-soft)),
+  'global-dropdown-option-selected-color':   (var(--accent),      var(--accent)),
+  'global-dropdown-scrollbar-thumb':         (Global.$night-cyan-deep, Global.$day-cyan-deep),
+  'global-dropdown-scrollbar-thumb-hover':   (Global.$night-cyan,      Global.$day-cyan),
+
+  'simple-button-background-color': (var(--accent),    var(--accent)),
+  'simple-button-letter-color':     (var(--on-accent), var(--on-accent)),
+
+  'primary-soft-background': (var(--accent-soft), var(--accent-soft)),
+
+  'agent-status-idle':        (Global.$status-warning-night, Global.$status-warning-day),
+  'agent-status-idle-soft':   (rgba(226, 160, 63, .16), rgba(180, 116, 15, .13)),
+  'agent-status-active':      (Global.$status-success-night, Global.$status-success-day),
+  'agent-status-active-soft': (rgba(63, 191, 127, .16), rgba(23, 132, 90, .13)),
+
+  'stat-attention':      (Global.$status-warning-night, Global.$status-warning-day),
+  'stat-attention-soft': (rgba(226, 160, 63, .13), rgba(180, 116, 15, .10)),
+  'stat-positive':       (Global.$status-success-night, Global.$status-success-day),
+  'stat-positive-soft':  (rgba(63, 191, 127, .13), rgba(23, 132, 90, .10)),
+  'stat-neutral':        (Global.$night-soft, Global.$day-soft),
+  'stat-neutral-soft':   (rgba(124, 148, 166, .11), rgba(76, 108, 122, .08)),
+
+  'agent-hue-1': (#FFB067, #C2670C),
+  'agent-hue-2': (#5FE3C0, #0E8A6B),
+  'agent-hue-3': (#B79BFF, #6B4FD8),
+  'agent-hue-4': (#FF8B8B, #C0392B),
+  'agent-hue-5': (#C7E86A, #5E8A0C),
+  'agent-hue-6': (#FF9FD6, #C2418A),
+  'agent-hue-7': (#F2D06B, #A67C00),
+  'agent-hue-8': (#8FD5FF, #1E6FA8),
+
+  'danger-color':      (Global.$status-danger-night, Global.$status-danger-day),
+  'danger-color-soft': (rgba(255, 107, 107, .13), rgba(198, 48, 48, .10)),
+  'favorite-active-color': (#F2D06B, #B4740F),
+
+  'alert-success-background': (Global.$status-success-night, Global.$status-success-day),
+  'alert-warning-background': (Global.$status-warning-night, Global.$status-warning-day),
+  'alert-error-background':   (Global.$status-danger-night,  Global.$status-danger-day),
+  'alert-info-background':    (Global.$status-info-night,    Global.$status-info-day),
+
+  'auth-page-background':      (Global.$night-void,  Global.$day-void),
+  'auth-page-form-background': (Global.$night-panel, Global.$day-panel),
+  'auth-page-icon-background':  (var(--accent-soft), var(--accent-soft)),
+
+  'auth-page-input-label-color':                  (Global.$night-faint, Global.$day-faint),
+  'auth-page-input-background-color':             (Global.$night-panel-2, Global.$day-panel-2),
+  'auth-page-form-title-letter-color':            (Global.$night-text, Global.$day-text),
+  'auth-page-form-span-normal-color':             (Global.$night-soft, Global.$day-soft),
+  'auth-page-form-span-swicht-to-registor-color': (var(--accent), var(--accent)),
+
+  'auth-page-info-background':           (Global.$night-panel, Global.$day-panel),
+  'auth-page-info-background-secondary': (Global.$night-panel-2, Global.$day-panel-2),
+  'auth-page-info-title-color':          (Global.$night-text, Global.$day-text),
+  'auth-page-info-text-color':           (Global.$night-soft, Global.$day-soft),
+  'auth-page-info-switch-color':         (var(--accent), var(--accent)),
+
+  'index-apresatation-section-background': (Global.$night-void, Global.$day-void),
+
+  'header-index-background-color':                    (Global.$night-panel, Global.$day-panel),
+  'header-index-title-color-intri':                   (var(--accent), var(--accent)),
+  'header-index-title-color-stock':                   (Global.$night-text, Global.$day-text),
+  'header-index-register-button-background':          (var(--accent-soft), var(--accent-soft)),
+  'header-index-register-button-lettor-color':        (var(--accent), var(--accent)),
+  'header-index-login-button-background':             (var(--accent), var(--accent)),
+  'header-index-login-button-lettor-color':           (var(--on-accent), var(--on-accent)),
+  'header-index-backtodashboard-button-background':   (var(--accent), var(--accent)),
+  'header-index-backtodashboard-button-lettor-color': (var(--on-accent), var(--on-accent)),
+);
+
+$fixed: (
+  'overlay-scrim': rgba(2, 5, 10, .62),
+);

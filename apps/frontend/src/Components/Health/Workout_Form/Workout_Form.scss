@@ -1,0 +1,277 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Workout_Form_Field{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+
+  .Global_Input{ height: 38px; }
+
+  label{
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  textarea{
+    @include Mixin.Control_Surface;
+    width: 100%;
+    padding: 9px 12px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: Font.$font_family_sans;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+}
+
+.Workout_Form_Grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  &.three{
+    grid-template-columns: 1.3fr 1fr 1fr;
+
+    @media (max-width: 480px){
+      grid-template-columns: 1fr 1fr;
+
+      > :first-child{ grid-column: 1 / -1; }
+    }
+  }
+}
+
+.Workout_Session_Fields{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.Workout_Exercise_List{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--hud-line-strong);
+  border-radius: var(--ctrl-radius);
+  background: var(--accent-soft);
+}
+
+.Workout_Exercise_List_Head{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  span{
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+
+  small{
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--text-faint);
+  }
+}
+
+.Workout_Exercise_List_Empty{
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.Workout_Exercise_List_Add{
+  @include Mixin.Ghost_Button;
+  align-self: flex-start;
+  height: 34px;
+  padding: 0 14px;
+  font-size: 12.5px;
+  background: var(--modal-background);
+}
+
+.Workout_Exercise_Row{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: var(--card-border);
+  border-radius: var(--ctrl-radius);
+  background: var(--modal-background);
+
+  &.invalid{ border-color: var(--danger-color); }
+
+  .Difficulty_Picker_Label{ font-size: 11.5px; }
+}
+
+.Workout_Exercise_Row_Head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.Workout_Exercise_Row_Name{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--card-global-header-title-color);
+  font-family: Font.$font_family_sans;
+  text-align: left;
+  cursor: pointer;
+
+  .Exercise_Library_Thumb{
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: contain;
+    background: #fff;
+    flex-shrink: 0;
+
+    &.empty{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      color: var(--accent-bright);
+      font-weight: 700;
+    }
+  }
+
+  > span{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  strong, small{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  strong{ font-size: 13px; }
+
+  small{
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  &:hover strong{ color: var(--accent-bright); }
+}
+
+.Workout_Exercise_Row_Tools{
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+
+  button{
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: var(--ctrl-radius);
+    background: transparent;
+    color: var(--text-faint);
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover:not(:disabled){
+      color: var(--accent-bright);
+      background: var(--accent-soft);
+    }
+
+    &:disabled{
+      opacity: .3;
+      cursor: default;
+    }
+
+    &.remove{
+      font-size: 18px;
+
+      &:hover{
+        color: var(--danger-color);
+        background: var(--danger-color-soft);
+      }
+    }
+  }
+}
+
+.Workout_Exercise_Row_Fields{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 8px;
+
+  .Global_Input{ height: 36px; }
+
+  label{
+    font-size: 11px;
+    color: var(--text-soft);
+  }
+}
+
+.Workout_Sync_Result{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  ul{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    font-size: 13px;
+    line-height: 1.45;
+
+    b{
+      flex-shrink: 0;
+      width: 18px;
+      text-align: center;
+    }
+
+    &.ok{
+      border-color: rgba(16, 185, 129, .5);
+      background: rgba(16, 185, 129, .08);
+
+      b{ color: #10b981; }
+    }
+
+    &.pending{
+      border-color: rgba(245, 158, 11, .5);
+      background: rgba(245, 158, 11, .08);
+
+      b{ color: #f59e0b; }
+    }
+
+    &.neutral b{ color: var(--text-faint); }
+  }
+}
+
+.Workout_Sync_Result_Title{
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.Workout_Sync_Result_Close{
+  @include Mixin.Solid_Button;
+  height: 42px;
+  font-weight: 700;
+}

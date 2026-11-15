@@ -1,0 +1,74 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "back": "Back",
+    "close": "Close"
+  },
+  "error": {
+    "network": "Could not reach the server. Check the address and your connection.",
+    "generic": "Something went wrong. Try again."
+  },
+  "login": {
+    "title": "Sign in to MyHomeLab",
+    "subtitle": "Use the same account as the website.",
+    "server": "Server",
+    "serverHint": "https://myhomelab.example.com",
+    "username": "Username",
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submit": "Sign in",
+    "errorCredentials": "Wrong username or password.",
+    "errorMissing": "Fill in the username and password."
+  },
+  "nav": {
+    "openMenu": "Open menu",
+    "assistant": "Assistant",
+    "quickLog": "Quick logs",
+    "logout": "Sign out",
+    "signedInAs": "Signed in as {{name}}",
+    "version": "Version {{version}}"
+  },
+  "update": {
+    "available": "A new version of the app is available ({{version}}).",
+    "download": "Download",
+    "dismiss": "Not now"
+  },
+  "assistant": {
+    "title": "Jarvis",
+    "new": "New conversation",
+    "newConfirmTitle": "Start a new conversation?",
+    "newConfirmText": "This conversation's history is deleted, also on the website and Telegram.",
+    "newConfirm": "Delete and start",
+    "placeholder": "Talk to Jarvis…",
+    "send": "Send",
+    "thinking": "Jarvis is thinking…",
+    "emptyTitle": "At your service.",
+    "emptyHint": "Ask about your emails, the server, your health or your tasks.",
+    "you": "You",
+    "keyMissing": "The AI key is missing. Set it on the website, under Settings → AI.",
+    "suggestionEmails": "What emails did I get today?",
+    "suggestionServers": "Which machines are running?",
+    "suggestionSleep": "How did I sleep last night?",
+    "suggestionTasks": "What tasks do I have today?"
+  },
+  "quick": {
+    "title": "Quick logs",
+    "add": "Add",
+    "removed": "Entry deleted.",
+    "water": {
+      "title": "Water",
+      "total": "{{ml}} ml",
+      "totalGoal": "{{ml}} / {{goal}} ml",
+      "todayLabel": "Today",
+      "yesterdayLabel": "Yesterday",
+      "previousDay": "Previous day",
+      "nextDay": "Next day",
+      "backToToday": "Tap to go back to today",
+      "custom": "Other amount (ml)",
+      "undo": "Undo the last glass",
+      "added": "+{{ml}} ml of water.",
+      "addedOn": "+{{ml}} ml of water on {{day}}."
+    }
+  }
+}

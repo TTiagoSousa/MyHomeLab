@@ -1,0 +1,120 @@
+{
+  "title": "Ajustes",
+  "language": {
+    "title": "Idioma",
+    "description": "El idioma de la interfaz. Se guarda en este navegador."
+  },
+  "ai": {
+    "title": "IA",
+    "description": "Tu asistente funciona con el Claude Code de esta máquina, con tu suscripción de Claude. Sin claves de API: los agentes gastan del límite de la suscripción.",
+    "state": {
+      "on": "Conectado",
+      "off": "Sin sesión",
+      "missing": "No instalado",
+      "unknown": "Comprobando"
+    },
+    "version": "Versión {{version}}",
+    "subscription": "plan {{plan}}",
+    "expires": "sesión hasta {{date}}",
+    "machineLogin": "Sesión de esta máquina (claude auth login)",
+    "missingHint": "Instala Claude Code en esta máquina (en el servidor, el instalador de MyHomeLab ya lo hace).",
+    "loginHint": "Sin sesión: en la terminal de esta máquina ejecuta claude auth login, o usa un token de la suscripción.",
+    "check": "Comprobar",
+    "checking": "Comprobando…",
+    "useToken": "Usar un token",
+    "replace": "Cambiar el token",
+    "remove": "Quitar el token",
+    "confirmRemove": "¿Confirmar?",
+    "saved": "Token guardado.",
+    "removed": "Token quitado: vuelve a la sesión de esta máquina.",
+    "modal": {
+      "title": "Usar un token de {{name}}",
+      "replaceTitle": "Cambiar el token de {{name}}",
+      "where": "En un ordenador con navegador, ejecuta esto en la terminal y aprueba el acceso; luego pega aquí el token que aparece:",
+      "label": "Token de la suscripción",
+      "privacy": "Se guarda cifrado en el servidor y solo lo usa tu asistente.",
+      "verifying": "Probando…",
+      "save": "Guardar"
+    },
+    "errors": {
+      "AI_KEY_INVALID": "Claude Code no tiene sesión (o el token fue rechazado). Ejecuta claude auth login o genera otro token con claude setup-token.",
+      "AI_KEY_UNVERIFIED": "No se pudo probar el token ahora. Inténtalo de nuevo en un momento.",
+      "AI_KEY_MISSING": "Claude Code no está configurado. Ve a Ajustes → IA.",
+      "AI_PROVIDER_UNKNOWN": "Proveedor desconocido.",
+      "AI_NO_CREDIT": "Tu suscripción de Claude no permite continuar ahora.",
+      "AI_RATE_LIMITED": "Tu suscripción de Claude llegó al límite. Vuelve a funcionar cuando se renueve el límite (mira en claude.ai → Ajustes → Uso).",
+      "AI_UNAVAILABLE": "Claude Code no responde (o no está instalado). Inténtalo en un momento.",
+      "AI_REQUEST_REFUSED": "Claude rechazó la petición. Comprueba en Ajustes → IA → Modelos que el modelo elegido existe."
+    },
+    "models": "Modelos",
+    "modelsSummary": "Jarvis: {{main}} · agentes: {{agent}}",
+    "mainModel": "Modelo principal",
+    "mainModelHint": "El de Jarvis y de los agentes marcados como Opus: decide y escribe.",
+    "agentModel": "Modelo de los agentes",
+    "agentModelHint": "El de los agentes marcados como Sonnet y de las tareas simples (resúmenes, lectura de PDF).",
+    "defaultModel": "{{model}} (de la app)",
+    "saveModels": "Guardar modelos",
+    "modelsSaved": "Modelos guardados."
+  },
+  "servers": {
+    "saved": "Servidor guardado.",
+    "removed": "Servidor quitado.",
+    "modal": {
+      "title": "Conectar {{kind}}",
+      "editTitle": "Editar {{name}}",
+      "name": "Nombre",
+      "namePlaceholder": "p. ej.: Proxmox casa",
+      "host": "Dirección (IP o nombre)",
+      "port": "Puerto",
+      "tokenId": "Token ID",
+      "tokenIdHint": "Tal como lo muestra Proxmox: usuario@realm!nombre.",
+      "tokenSecret": "Secreto del token",
+      "keepSecret": "Déjalo en blanco para mantener el actual",
+      "verifyTls": "Verificar el certificado HTTPS",
+      "verifyTlsHint": "Desactivado por defecto — Proxmox suele tener un certificado autofirmado.",
+      "testing": "Probando la conexión…",
+      "save": "Probar y guardar",
+      "guide": {
+        "title": "Cómo crear el token en Proxmox",
+        "step1": "Abre el panel de Proxmox en el navegador (https://IP-de-Proxmox:8006).",
+        "step2": "Ve a Datacenter → Permissions → API Tokens y pulsa Add.",
+        "step3": "User: root@pam · Token ID: myhomelab · desactiva \"Privilege Separation\".",
+        "step4": "Pulsa Add y copia el Secret que aparece — Proxmox solo lo muestra una vez.",
+        "step5": "Aquí abajo, el Token ID es root@pam!myhomelab y el secreto es ese Secret.",
+        "readOnly": "¿Prefieres un token de solo lectura? Deja \"Privilege Separation\" activado y, en Datacenter → Permissions → Add → API Token Permission, dale el rol PVEAuditor en la ruta / con \"Propagate\"."
+      },
+      "hostPlaceholder": "p. ej.: 192.168.1.10",
+      "hostHint": "La IP con la que abres el panel de Proxmox — no la del contenedor de MyHomeLab.",
+      "openProxmox": "Abrir Proxmox",
+      "tokenIdPlaceholder": "p. ej.: root@pam!myhomelab",
+      "secretPlaceholder": "Pega aquí el Secret del token",
+      "secretHint": "Proxmox solo lo muestra al crear el token. Se guarda cifrado y solo lo usa tu Jarvis."
+    },
+    "errors": {
+      "SERVER_NAME_TAKEN": "Ya tienes un servidor con ese nombre."
+    }
+  },
+  "usage": {
+    "title": "Consumo de la IA este mes",
+    "description": "Coste estimado por los tokens usados, por agente y por origen.",
+    "ofBudget": "de {{budget}} ({{percent}}%)",
+    "noBudget": "Sin límite mensual",
+    "days": "Coste por día",
+    "byAgent": "Por agente",
+    "bySource": "Por origen",
+    "empty": "Aún sin consumo este mes.",
+    "budget": "Límite mensual (€)",
+    "budgetPlaceholder": "Sin límite",
+    "save": "Guardar",
+    "budgetHint": "Recibes un aviso al 80% y otro al 100%. Vacío = sin límite.",
+    "saved": "Límite guardado",
+    "sources": {
+      "chat": "Conversación",
+      "verify": "Verificación",
+      "study": "Estudios",
+      "schedule": "Disparos",
+      "check": "Conflictos de reglas",
+      "install": "Instalación"
+    }
+  }
+}

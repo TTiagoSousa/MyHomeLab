@@ -1,0 +1,143 @@
+{
+  "title": "Disparos",
+  "intro": "Trabalhos que um agente faz sozinho numa data ou repetidos: rever uma atualização, ver se há algo pronto às 5h, confirmar um backup. Quando corre não estás a acompanhar, por isso segue as tuas regras (o documento \"Quando corro sem ti\") e só te avisa quando há algo a dizer.",
+  "loading": "A carregar…",
+  "empty": {
+    "title": "Ainda não há disparos",
+    "text": "Cria um aqui, ou pede ao Jarvis (\"todos os dias às 5h vê se há atualizações prontas\"). Os estudos e os \"rever mais tarde\" das atualizações e os comentários nas tarefas também aparecem aqui."
+  },
+  "repeat": {
+    "ONCE": "Uma vez",
+    "DAILY": "Todos os dias",
+    "WEEKLY": "Todas as semanas",
+    "MONTHLY": "Todos os meses",
+    "ON_NEW_UPDATE": "Quando aparece uma atualização"
+  },
+  "when": {
+    "once": "Uma vez, a {{date}}",
+    "daily": "Todos os dias às {{time}}",
+    "weekly": "{{day}} às {{time}}",
+    "monthly": "Dia {{day}} de cada mês às {{time}}",
+    "onNewUpdate": "Quando aparece uma atualização nova (apps e servidor)"
+  },
+  "weekdays": {
+    "1": "Segunda",
+    "2": "Terça",
+    "3": "Quarta",
+    "4": "Quinta",
+    "5": "Sexta",
+    "6": "Sábado",
+    "7": "Domingo"
+  },
+  "state": {
+    "on": "Ligado",
+    "off": "Desligado",
+    "done": "Feito"
+  },
+  "next": "Próxima: {{date}}",
+  "createdByYou": "Criado por ti",
+  "createdBy": "Criado por {{name}}",
+  "linkedTo": "{{label}}",
+  "forUpdate": "Rever atualização",
+  "silent": "Sem avisos",
+  "never": "Ainda não correu.",
+  "run": {
+    "status": {
+      "RUNNING": "A correr",
+      "DONE": "Correu",
+      "FAILED": "Falhou"
+    },
+    "tokens": "{{tokens}} tokens",
+    "docsUsed": "Documentos usados:"
+  },
+  "actions": {
+    "new": "Novo disparo",
+    "run": "Correr agora",
+    "running": "A correr…",
+    "edit": "Editar",
+    "enable": "Ligar",
+    "disable": "Desligar",
+    "delete": "Apagar",
+    "confirmDelete": "Sim, apagar",
+    "more": "Ver mais",
+    "editText": "Editar texto"
+  },
+  "alerts": {
+    "created": "Agendamento criado.",
+    "saved": "Agendamento guardado.",
+    "running": "A correr. O resultado aparece aqui quando o agente acabar.",
+    "deleted": "Agendamento apagado."
+  },
+  "modal": {
+    "title": "Novo disparo",
+    "editTitle": "Editar disparo",
+    "kind": "Trabalho de um agente",
+    "linkedTo": "Ligado a {{label}}",
+    "updateText": "\"{{title}}\": quando chegar a hora, a atualização volta ao estudo. Aqui só mudas a data e os avisos.",
+    "name": "Nome",
+    "namePlaceholder": "Ex.: Atualizações prontas às 5h",
+    "agent": "Agente",
+    "agentOff": "{{name}} (desligado)",
+    "instruction": "O que fazer",
+    "instructionPlaceholder": "Ex.: Vê se há atualizações em Ready to update e faz as que as regras deixam fazer sem mim.",
+    "instructionHint": "Escreve como se lho pedisses agora: o agente não te pode perguntar nada enquanto corre.",
+    "when": "Quando",
+    "runAt": "Data e hora",
+    "time": "Hora",
+    "weekday": "Dia da semana",
+    "monthDay": "Dia do mês",
+    "timeZone": "Hora de Lisboa. Num mês sem esse dia, corre no último.",
+    "notify": "Avisar-me",
+    "notifyHint": "Nas notificações (site e app), só quando houver algo a dizer.",
+    "enabled": "Ligado",
+    "enabledHint": "Desligado, fica guardado mas não corre.",
+    "save": "Guardar",
+    "saving": "A guardar…",
+    "tags": "Etiquetas",
+    "tagsHint": "Enter ou vírgula para acrescentar (ex.: atualizações, backups).",
+    "toChat": "Pôr a resposta numa conversa do Jarvis",
+    "toChatHint": "Cada vez que corre, a resposta fica numa conversa nova do Assistente e recebes um aviso (ex.: um resumo diário).",
+    "onNewUpdateHint": "Sem hora: corre sempre que o MyHomeLab vê uma versão nova de uma app ou do servidor, uma vez por versão, com as atualizações no pedido."
+  },
+  "linked": {
+    "title": "Disparos",
+    "description": "Trabalhos agendados para {{label}}.",
+    "empty": "Ainda não há disparos ligados.",
+    "all": "Ver todos"
+  },
+  "card": {
+    "notice": "com aviso"
+  },
+  "filters": {
+    "search": "Procurar no nome ou no texto",
+    "allStates": "Todos os estados",
+    "allAgents": "Todos os agentes",
+    "allTags": "Todas as etiquetas"
+  },
+  "list": {
+    "count_one": "{{count}} disparo",
+    "count_other": "{{count}} disparos",
+    "noResults": "Nenhum disparo com estes filtros.",
+    "page": "{{page}} de {{pages}}",
+    "previous": "Página anterior",
+    "next": "Página seguinte"
+  },
+  "table": {
+    "name": "Disparo",
+    "when": "Quando",
+    "agent": "Agente",
+    "next": "Próxima vez",
+    "last": "Última vez",
+    "state": "Estado"
+  },
+  "detail": {
+    "notFound": "Este disparo já não existe.",
+    "info": "Quando e quem",
+    "instruction": "O que faz",
+    "tags": "Etiquetas",
+    "tagsHint": "Para filtrar na lista. Os agentes também põem etiquetas quando criam disparos.",
+    "history": "Histórico",
+    "historyHint": "As últimas vezes que correu, com o que o agente respondeu."
+  },
+  "notifies": "Avisa-te"
+}

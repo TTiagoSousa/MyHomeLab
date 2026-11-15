@@ -1,0 +1,335 @@
+{
+  "title": "Ajuda",
+  "intro": "Guias passo a passo para pôr cada parte do MyHomeLab a funcionar: onde ir buscar cada chave ou token, o que preencher e onde. Os marcados como admin são feitos uma vez por quem gere a instalação.",
+  "adminTag": "Admin",
+  "open": "Abrir {{name}}",
+  "topics": {
+    "start": {
+      "title": "Primeiros passos",
+      "summary": "Por onde começar depois de entrar pela primeira vez.",
+      "steps": [
+        "Entra com o utilizador criado na instalação (por omissão admin / admin). Se a app estiver acessível de fora de casa, cria logo outro utilizador com uma password forte.",
+        "Em Assistente → Definições → IA, liga o Claude com a tua chave. Sem ela o Jarvis não responde.",
+        "Em Email, liga as tuas contas Gmail (o admin tem de ter configurado a Google antes — ver \"Ligar o Gmail\").",
+        "Em Apps ligadas → Proxmox, adiciona o teu Proxmox. A página Servidores aparece no menu a seguir.",
+        "Opcional: instala a app Android para falares com o Jarvis no telemóvel."
+      ],
+      "notes": [
+        "Cada utilizador tem as suas coisas: contas de email, chave de IA, servidores, serviços, tarefas e conversa com o Jarvis. Ninguém vê as de outro."
+      ]
+    },
+    "ai": {
+      "title": "A IA (Claude Code, com a tua subscrição)",
+      "summary": "O Jarvis e os agentes correm no Claude Code do servidor, com a tua subscrição do Claude (Pro ou Max). Não há chaves de API nem custos à parte: gastam do teu limite da subscrição.",
+      "steps": [
+        "No servidor, o instalador do MyHomeLab já instala o Claude Code. Falta iniciar a sessão, de uma de duas formas.",
+        "No terminal do CT: runuser -u myhomelab -- env HOME=/var/lib/myhomelab claude auth login, e aprova o acesso no link que aparece.",
+        "Ou num computador com browser: corre claude setup-token, aprova, e cola o token em Assistente → Definições → IA → Usar um token. A app testa-o antes de gravar.",
+        "Em Definições → IA, Verificar tem de mostrar \"Ligado\". Em Modelos escolhes o modelo principal (o do Jarvis) e o dos agentes."
+      ],
+      "notes": [
+        "Os agentes gastam do mesmo limite que usas no claude.ai e no Claude Code (a janela de 5 horas e o semanal). Vês quanto em claude.ai → Definições → Uso.",
+        "Se a subscrição chegar ao limite, o Jarvis avisa e volta a funcionar quando o limite renovar.",
+        "Cada corrida é limpa: o Claude Code só tem as ferramentas do MyHomeLab, sem terminal, ficheiros ou skills, e nunca vê as chaves do servidor."
+      ],
+      "goTo": "Ir para Definições"
+    },
+    "google": {
+      "title": "Ligar o Gmail (Google)",
+      "summary": "Uma configuração única na Google Cloud, feita pelo admin; depois cada um liga as suas contas.",
+      "steps": [
+        "Admin: em console.cloud.google.com cria um projeto (ex: MyHomeLab).",
+        "Em APIs e serviços → Biblioteca, ativa a Gmail API.",
+        "Em Ecrã de consentimento OAuth, escolhe Externo e preenche o nome da app e o teu email. Em Utilizadores de teste, adiciona os emails das contas que vão ser ligadas.",
+        "Em Credenciais → Criar credenciais → ID de cliente OAuth, escolhe Aplicação Web. Em URIs de redirecionamento autorizados põe: https://<o endereço do MyHomeLab>/api/connected-account/google/callback",
+        "Copia o ID de cliente e o segredo. No container do MyHomeLab corre myhomelab-config, preenche GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET, grava e aceita reiniciar.",
+        "Cada utilizador: em Email carrega em Adicionar email, entra na conta Google e aceita as permissões (ler e organizar emails e marcadores)."
+      ],
+      "notes": [
+        "Enquanto a app da Google estiver em modo Teste, a Google pede para voltar a ligar a conta de 7 em 7 dias. Para evitar isso, publica a app no ecrã de consentimento.",
+        "Se aparecer redirect_uri_mismatch, o URI na Google tem de ser exatamente o endereço com que abres o MyHomeLab, incluindo o /api.",
+        "Para o Google Tasks (sincronizar as Tarefas), ativa também a Google Tasks API na Biblioteca; liga-se em Apps ligadas → Google Tasks e só pede acesso às tarefas."
+      ],
+      "goTo": "Ir para Email"
+    },
+    "emailRules": {
+      "title": "Regras de email",
+      "summary": "Organizar o Gmail sozinho: marcadores, ler, arquivar, estrela.",
+      "steps": [
+        "Em Email, abre a conta e entra nas regras.",
+        "Carrega em Nova regra. Nas condições escolhe remetente, assunto ou palavras-chave (várias palavras têm de aparecer todas; entre aspas é a frase exata).",
+        "Em Tipo de envio podes separar publicidade e newsletters (emails com \"lista de correio\" ou \"cancelar a subscrição\") dos emails da conta, mesmo do mesmo remetente.",
+        "Escolhe as ações: marcadores (caminhos como Finanças/Revolut), marcar como lido, importante, estrela, remover da caixa de entrada.",
+        "Guarda e usa Executar no Inbox para confirmar que apanha o que queres. Depois correm sozinhas com a frequência da conta."
+      ],
+      "notes": [
+        "As regras correm por ordem; \"Parar de avaliar mais regras\" impede as seguintes de mexerem no mesmo email.",
+        "A caixa de pesquisa por cima das regras procura por nome, marcadores, remetente, assunto e palavras (atalho /)."
+      ],
+      "goTo": "Ir para Email"
+    },
+    "nextcloud": {
+      "title": "Nextcloud",
+      "summary": "Liga o teu Nextcloud: a versão e as apps lá dentro (cada uma com a sua atualização), as tarefas na sincronização das Tarefas e o destino dos backups.",
+      "steps": [
+        "No Nextcloud, com uma conta de administrador, vai a Definições pessoais → Segurança → Dispositivos e sessões, escreve MyHomeLab e cria uma password de aplicação. Copia-a.",
+        "No MyHomeLab, em Apps ligadas → Nextcloud, carrega em Ligar Nextcloud.",
+        "Preenche o endereço (https://<o teu nextcloud>), o teu utilizador e a password de aplicação, diz onde corre (o servidor e o CT) e carrega em Ligar.",
+        "Na página do Nextcloud vês a versão, as apps e as atualizações: uma para o próprio Nextcloud e uma por cada app com versão nova na App Store, cada uma com o seu estudo.",
+        "Para as tarefas: em Tarefas → Sincronização, o Nextcloud aparece em \"Onde\" ao lado dos emails do Google.",
+        "Para os backups: em Backups, cria um destino com esta conta e escolhe a pasta."
+      ],
+      "notes": [
+        "Usa sempre uma password de aplicação, não a tua password principal do Nextcloud.",
+        "Sem administrador não se veem as apps nem as atualizações delas.",
+        "Em Docs, os documentos sugeridos trazem as regras do Nextcloud e as das apps (peças)."
+      ],
+      "goTo": "Ir para Apps ligadas"
+    },
+    "proxmox": {
+      "title": "Servidores Proxmox",
+      "summary": "Dar ao MyHomeLab e ao Jarvis acesso de leitura ao teu Proxmox.",
+      "steps": [
+        "Abre o painel do Proxmox (https://<IP do Proxmox>:8006).",
+        "Em Datacenter → Permissions → API Tokens, carrega em Add. User: root@pam, Token ID: myhomelab, desliga Privilege Separation.",
+        "Carrega em Add e copia o Secret — o Proxmox só o mostra uma vez.",
+        "No MyHomeLab, em Apps ligadas → Proxmox → Ligar Proxmox, põe o IP do Proxmox, a porta 8006, o Token ID (root@pam!myhomelab) e o Secret. Carrega em Testar e guardar."
+      ],
+      "notes": [
+        "Para um token só de leitura, deixa Privilege Separation ligada e dá-lhe o papel PVEAuditor em Datacenter → Permissions → Add → API Token Permission, no caminho /.",
+        "O endereço é o do Proxmox, não o do container do MyHomeLab.",
+        "A saúde dos discos (Servidores → Discos) lê o SMART através do Proxmox e precisa da permissão Sys.Audit no nó — o root@pam e o papel PVEAuditor já a têm. Discos atrás de controladoras RAID ou em caixas USB podem aparecer \"Sem SMART\".",
+        "Para os agentes mexerem nas máquinas (ligar, desligar, snapshots, backups, recursos), o token precisa do papel PVEVMAdmin em Datacenter → Permissions (ou um token do root@pam sem Privilege Separation). Com o PVEAuditor só leem.",
+        "Comandos: na página do servidor, em Comandos (SSH) → Ligar comandos, o MyHomeLab gera uma chave e mostra a linha para colares na shell do Proxmox. Os comandos correm logo e ficam no registo; o que o agente pode fazer (e o que nunca faz sem o teu sim) está nas regras do servidor, em Documentos.",
+        "Guia do servidor: é um documento ligado ao servidor (aparece em Documentos e na lista de documentos do servidor). Escreve-o tu, ou pede ao Jarvis para estudar o servidor e criar ou atualizar o guia — se o documento for teu, ele propõe a mudança e tu aprovas."
+      ],
+      "goTo": "Ir para Definições"
+    },
+    "services": {
+      "title": "Serviços vigiados e notificações",
+      "summary": "Ser avisado quando um serviço deixa de responder.",
+      "steps": [
+        "Em Servidores, no cartão Serviços, carrega em + Adicionar serviço.",
+        "Dá-lhe um nome e escolhe como verificar: HTTP(S) com o URL (qualquer resposta abaixo de 500 conta como online, incluindo um ecrã de login) ou TCP com host:porta (DNS, SSH, bases de dados).",
+        "Escolhe de quanto em quanto tempo verificar e, se quiseres, o servidor e a máquina onde corre.",
+        "Guarda: o serviço é testado logo. Se falhar duas vezes seguidas (com 10 s de intervalo), aparece uma notificação."
+      ],
+      "notes": [
+        "As notificações estão no menu Notificações, com o número das ativas. Fecham sozinhas quando o serviço volta.",
+        "Se a máquina associada desaparecer do Proxmox, também recebes uma notificação.",
+        "O container do MyHomeLab tem de conseguir chegar aos endereços que vigias."
+      ],
+      "goTo": "Ir para Servidores"
+    },
+    "forgejo": {
+      "title": "Forgejo",
+      "summary": "Os teus repositórios para os agentes, e backups automáticos deles.",
+      "steps": [
+        "No Forgejo, vai a Definições → Aplicações → Gerar token, com leitura e escrita em \"repository\" e \"issue\" e leitura em \"user\". Para o backup da instância toda, usa uma conta de administrador e dá também leitura em \"admin\".",
+        "No MyHomeLab, em Apps ligadas → Forgejo → Ligar Forgejo, põe o endereço (ex: https://git.exemplo.com) e cola o token. A app testa antes de gravar.",
+        "Para os agentes o usarem, escolhe as ferramentas do Forgejo no agente, em Assistente → Workflow.",
+        "Para os backups, abre a conta (Definições) e, em Backups automáticos, escolhe o destino, a pasta, a frequência e quantos guardar."
+      ],
+      "notes": [
+        "O backup é um .tar com o código de cada repositório (git bundle, recupera-se com git clone) e as issues, os pull requests, os comentários e as releases em JSON.",
+        "Os utilizadores e as definições do Forgejo não entram: para isso usa o forgejo dump na própria máquina."
+      ],
+      "goTo": "Ir para Apps ligadas"
+    },
+    "trek": {
+      "title": "TREK",
+      "summary": "O planeador de viagens: aviso de versão nova, do registo aberto e backups automáticos.",
+      "steps": [
+        "No TREK, cria (ou escolhe) uma conta de administrador sem MFA, só para o MyHomeLab. O TREK não tem tokens de API: o MyHomeLab entra como no ecrã de login.",
+        "No MyHomeLab, em Apps ligadas → TREK → Ligar TREK, põe o endereço (ex: https://trek.exemplo.com), o email e a password. A app confirma que entra e que é administrador antes de gravar.",
+        "Para os backups, abre o TREK (Definições) e, em Backups automáticos, escolhe o destino, a pasta, a frequência e quantos guardar."
+      ],
+      "notes": [
+        "O backup é o zip do próprio TREK: base de dados, ficheiros enviados e chave de encriptação. Recupera-se no TREK, em Admin → Backup → Restaurar.",
+        "O TREK só deixa fazer 3 backups por hora; acima disso guarda-se o último que lá estiver.",
+        "Se o registo de contas estiver aberto, a página da conta avisa: num TREK exposto, qualquer pessoa cria conta."
+      ],
+      "goTo": "Ir para Apps ligadas"
+    },
+    "assistant": {
+      "title": "O que perguntar ao Jarvis",
+      "summary": "Exemplos do que o assistente sabe fazer.",
+      "steps": [
+        "Email: \"Resume-me os emails de hoje\", \"Tenho emails da Revolut esta semana?\", \"Cria uma regra para a publicidade da getquin\".",
+        "Servidor: \"Que máquinas estão a correr?\", \"Quanta memória está a usar o immich?\".",
+        "Serviços: \"Os meus serviços estão todos online?\", \"Testa o AdGuard\", \"Houve algum alerta esta semana?\".",
+        "AdGuard: \"Quando foram atualizadas as listas do AdGuard?\", \"O AdGuard precisa de atualização?\".",
+        "Instruções: \"A partir de agora, nos resumos de email ignora a publicidade\" — o Jarvis mostra a alteração e só a aplica quando disseres que sim."
+      ],
+      "notes": [
+        "O Jarvis só vê as tuas contas, servidores e serviços. Precisa da tua chave de IA (Assistente → Definições → IA)."
+      ],
+      "goTo": "Ir para o Assistente"
+    },
+    "updates": {
+      "title": "Atualizar o MyHomeLab",
+      "summary": "Instalar versões novas sem entrar no servidor.",
+      "steps": [
+        "Em Admin, o cartão Versão mostra a versão instalada e a mais recente.",
+        "Carrega em Atualizar para vX. A janela mostra o progresso e a página recarrega sozinha no fim.",
+        "Em Ver versões tens a lista de todas as versões com as notas, e podes escolher qualquer uma mais recente."
+      ],
+      "notes": [
+        "Se um passo falhar, o servidor volta sozinho à versão anterior.",
+        "Pela consola do container: myhomelab-update (a última) ou myhomelab-update vX.Y.Z."
+      ],
+      "goTo": "Ir para Admin"
+    },
+    "users": {
+      "title": "Utilizadores",
+      "summary": "Dar acesso a outras pessoas da casa.",
+      "steps": [
+        "Em Admin, carrega em Novo utilizador e define o nome, a password e o papel (utilizador ou admin).",
+        "Passa-lhe o endereço do MyHomeLab e as credenciais. Cada utilizador configura as suas coisas (chave de IA, contas, servidores)."
+      ],
+      "notes": [
+        "Os admins também veem a página Admin: utilizadores, versões e atualizações.",
+        "Só um admin pode pedir ao Jarvis para testar URLs da rede de casa."
+      ],
+      "goTo": "Ir para Admin"
+    },
+    "homeAssistant": {
+      "title": "Home Assistant",
+      "summary": "A domótica: os agentes controlam a casa e criam automações e scripts; aviso de versão nova e backups automáticos.",
+      "steps": [
+        "No Home Assistant, com uma conta de administrador, abre o teu perfil → Segurança → Tokens de acesso de longa duração → Criar token, e copia-o (só aparece uma vez).",
+        "No MyHomeLab, em Apps ligadas → Home Assistant → Ligar Home Assistant, põe o endereço (ex: http://homeassistant.local:8123) e cola o token. A app confirma que é de um administrador antes de gravar.",
+        "Para os agentes o usarem, escolhe as ferramentas do Home Assistant no agente (por omissão, o Engenheiro de Infraestrutura), em Assistente → Workflow.",
+        "Para os backups, abre o Home Assistant (Definições) e, em Backups automáticos, escolhe o destino, a pasta, a frequência e quantos guardar."
+      ],
+      "notes": [
+        "Os agentes leem e controlam as entidades, mudam o nome, a área e o id delas, e criam, mudam ou apagam automações, scripts e cenas. Ao mudar ou apagar, guardam a versão anterior para se poder desfazer.",
+        "Só se editam as automações, scripts e cenas feitos na interface (automations.yaml, scripts.yaml, scenes.yaml); os de outros ficheiros YAML só se leem e controlam.",
+        "O que o Jarvis pode fazer escolhe-se em Assistente → Definições → Permissões → Home Assistant.",
+        "O backup é completo e recupera-se no Home Assistant, em Definições → Sistema → Cópias de segurança."
+      ],
+      "goTo": "Ir para Apps ligadas"
+    },
+    "adguard": {
+      "title": "AdGuard",
+      "summary": "O DNS da rede: os agentes veem os pedidos, bloqueiam ou permitem domínios e mexem nas listas; aviso de versão nova e backups automáticos.",
+      "steps": [
+        "No MyHomeLab, em Apps ligadas → AdGuard → Ligar AdGuard, põe o endereço do painel (ex: http://192.168.1.2) e o utilizador e a password com que lá entras. A app confirma que entra antes de gravar.",
+        "O Engenheiro de Infraestrutura já recebe as ferramentas do AdGuard. Para as dar a outro agente, escolhe-as em Assistente → Workflow.",
+        "Para os backups, abre o AdGuard (Definições) e, em Backups automáticos, escolhe o destino, a pasta, a frequência e quantos guardar."
+      ],
+      "notes": [
+        "Pede, por exemplo: \"Porque é que o site X não abre?\", \"Desbloqueia o domínio Y\", \"Pausa o AdGuard 10 minutos\", \"Cria nas.casa a apontar para 192.168.1.10\".",
+        "Para desbloquear, o agente acrescenta uma regra de permissão só para esse domínio em vez de desligar uma lista inteira. Ao mudar regras, guarda as de antes para se poder desfazer.",
+        "O que o Jarvis pode fazer escolhe-se em Assistente → Definições → Permissões → AdGuard.",
+        "O backup é um JSON com as definições; os certificados, a password e o histórico de pedidos ficam de fora."
+      ],
+      "goTo": "Ir para Apps ligadas"
+    },
+    "docs": {
+      "title": "Documentos",
+      "summary": "As tuas regras, checklists e notas, ligadas a servidores, máquinas, apps ou agentes. Os agentes seguem-nas e só te propõem mudanças.",
+      "steps": [
+        "Em Documentos, carrega em \"Criar documentos sugeridos\": ficam as regras gerais, as checklists de antes e depois de atualizar e um documento de regras por cada app ligada.",
+        "Abre um documento e escreve à vontade: títulos, listas, caixas de verificação, tabelas e diagramas.",
+        "Liga-o ao que interessa (um servidor, um CT ou VM mesmo sem integração, uma app, um serviço vigiado, um agente ou outro documento).",
+        "Marca \"Obrigatório\" nas regras: os agentes leem-nas sempre que o pedido toca no que está ligado. Sem ligações, valem para tudo."
+      ],
+      "notes": [
+        "Os agentes recebem só o índice dos documentos e os obrigatórios do que o pedido menciona; o resto procuram quando precisam. Assim gastam menos tokens.",
+        "Nos teus documentos os agentes não escrevem: propõem mudanças e aprendizagens, que aprovas ou recusas em Documentos.",
+        "Cada documento guarda as versões anteriores; podes repor qualquer uma.",
+        "O guia de cada servidor também é um documento: crias tu, ou pedes ao assistente para estudar o servidor e o escrever.",
+        "As tentativas de atualização também aparecem aqui (tipo \"Tentativa de atualização\"): ao abrir, vês os pontos das regras com \"por validar\", \"validada\" ou \"não validada\" e a prova de cada um."
+      ],
+      "goTo": "Ir para Documentos"
+    },
+    "appUpdates": {
+      "title": "Atualizações das apps",
+      "summary": "Cada versão nova de uma app ligada (ou do Proxmox) é uma tarefa no projeto do servidor: um agente estuda-a, instala sozinho o que não é um salto major e só te pergunta o resto.",
+      "steps": [
+        "Quando sai uma versão nova, o MyHomeLab abre a tarefa sozinho em Espera por estudo, e as atualizações são estudadas uma de cada vez.",
+        "O agente estuda-a (Study → Estudo feito). Se não for um salto major e as regras da app passarem, instala-a logo; senão deixa-a em Waiting for reply com a recomendação, ou em Recheck later.",
+        "O que precisa de ti aparece em Notificações → Precisa de ti (major, risco alto ou uma pergunta). Abre a tarefa e decide lá: Sim, instalar, Mais tarde ou Cancelar. Quando acaba, chega-te o aviso \"Instalado\" ou \"Falhou\".",
+        "Em Ready to update instala-se logo, uma de cada vez (se outra está a correr, a tarefa diz que está na fila): snapshot, os comandos das regras e a verificação. Se falhar, volta ao snapshot e fica em Failed."
+      ],
+      "notes": [
+        "Cada estudo e cada preparação ficam como tentativa (Documentos → tipo \"Tentativa de atualização\"), com cada ponto validado ou não e a prova.",
+        "O MyHomeLab mede, corre e regista; o que se pode fazer está nos documentos \"estudar uma atualização\" e \"instalar uma atualização\" de cada app."
+      ],
+      "goTo": "Ir para as atualizações"
+    },
+    "todos": {
+      "title": "Tarefas",
+      "summary": "Os teus afazeres: listas, prazos, prioridade, notas e sub-tarefas. Tu e o Jarvis criam e mudam-nas.",
+      "steps": [
+        "Em Tarefas, escolhe uma lista (ou \"Todas\", \"Hoje\", \"Próximos 7 dias\") e escreve a tarefa na caixa de cima — Enter cria-a.",
+        "Carrega numa tarefa para a abrir: prazo e hora, prioridade, estado, lista, notas, link e sub-tarefas. Guardar no fundo.",
+        "O círculo à esquerda dá-a como feita; \"Mostrar as feitas\" mostra as que já fizeste.",
+        "Pede ao Jarvis: \"cria a lista Servidor e mete lá: responder ao X por causa de Y, para sexta\". Quando o assunto avança, ele muda a tarefa ou dá-a como feita."
+      ],
+      "notes": [
+        "As perguntas das atualizações e as propostas de documentos não criam tarefas aqui: aparecem nas Notificações → Precisa de ti e decides na tarefa do quadro. As perguntas noutras tarefas do quadro abrem \"Responder: …\" aqui.",
+        "Ficam guardadas no MyHomeLab.",
+        "Em Sincronização (no topo da página) fazes grupos: em + Novo grupo dás-lhe um nome, escolhes Onde — as Tarefas do servidor (MyHomeLab), marcadas por omissão mas opcionais (um grupo pode ser só de contas), e as contas (os emails do Google Tasks e os Nextcloud), pelo menos dois sítios — e escolhes o que Sincroniza — Tudo (todas as listas dessas contas e, com o servidor, das Tarefas, também as que criares depois) ou Só estas listas (escolhidas pelo nome, ou escreves Outra lista e carregas em Juntar). Cada lista, pelo nome, fica igual em todos os sítios do grupo e, onde faltar, é criada (sem o servidor, as listas das Tarefas não mudam); a mesma lista da mesma conta só entra num grupo. Editar muda o grupo e o ✕ desfá-lo sem apagar tarefas. Sincroniza nos dois sentidos, de quanto em quanto tempo escolheres (5 min a 1 dia) ou quando carregas em Agora. Liga primeiro a conta em Apps ligadas → Google Tasks ou → Nextcloud. A prioridade, os links e a hora do prazo ficam só aqui."
+      ],
+      "goTo": "Ir para Tarefas"
+    },
+    "tasks": {
+      "title": "Projetos",
+      "summary": "O quadro do MyHomeLab: projetos com colunas, módulos e tarefas (como o Plane), onde tu e os agentes trabalham, e os disparos que os põem a trabalhar sozinhos.",
+      "steps": [
+        "Em Projetos, escolhe o projeto (ou cria um em \"+ Projeto\": o nome, o prefixo e os agentes que trabalham nele).",
+        "Vê as tarefas em Colunas (arrasta entre colunas), Lista ou Tabela, e filtra por coluna, prioridade, responsável, módulo e etiqueta.",
+        "Abre uma tarefa: descrição, propriedades (prazo, módulos, etiquetas), links e documentos ligados, disparos e histórico.",
+        "Escreve um comentário: se a tarefa tiver um agente responsável (ou for uma atualização), ele lê-o e trabalha nisso logo a seguir, e responde-te na tarefa."
+      ],
+      "notes": [
+        "Disparos: um agente trabalha sozinho numa data ou repetido. Os estudos e os \"rever mais tarde\" das atualizações e os teus comentários também aparecem lá.",
+        "Quando um agente precisa de uma resposta tua, a pergunta aparece nas Notificações → Precisa de ti. Abres a tarefa e decides com os botões no topo, ou respondes nos comentários.",
+        "As colunas e os módulos mudam-se nas definições do projeto (a roda dentada)."
+      ],
+      "goTo": "Ir para Projetos"
+    },
+    "today": {
+      "title": "Hoje",
+      "summary": "Por agora está vazio. O que precisa de ti está nas Notificações.",
+      "steps": [
+        "Notificações → Precisa de ti: as perguntas e as propostas dos agentes. Carrega e abre a tarefa, onde decides com um botão.",
+        "Notificações → Avisos: serviços em baixo, backups falhados, discos e certificados."
+      ],
+      "notes": [
+        "Para responder outra coisa ao agente, escreve nos comentários da tarefa."
+      ],
+      "goTo": "Ir para Hoje"
+    },
+    "shortcuts": {
+      "title": "Serviços (atalhos)",
+      "summary": "Os atalhos para os teus serviços self-hosted, arrumados por categorias.",
+      "steps": [
+        "Carrega em + e cria uma categoria (ex.: Infraestrutura, Multimédia).",
+        "Carrega em + → Serviço: nome, link, duas letras e a cor.",
+        "Marca a estrela para o pôr nos Favoritos, no topo.",
+        "Usa a caixa de pesquisa para encontrar um serviço pelo nome."
+      ],
+      "notes": [
+        "Isto são só atalhos. Para ser avisado quando um serviço cai, vê \"Serviços vigiados e notificações\"."
+      ],
+      "goTo": "Ir para Serviços"
+    },
+    "apps": {
+      "title": "Apps ligadas",
+      "summary": "As contas que o MyHomeLab e o Jarvis usam: Gmail, Google Tasks, Forgejo, Nextcloud, Proxmox, Home Assistant…",
+      "steps": [
+        "Escolhe a app e carrega em Ligar. Cada uma pede o endereço e uma chave ou password de app.",
+        "Abre a conta para ver o resumo: estado, versão e o que mudou.",
+        "Na roda dentada estão a conta, onde corre, as atualizações, os backups e os agentes que a usam."
+      ],
+      "notes": [
+        "Os agentes só veem as apps que lhes deres em cada conta."
+      ],
+      "goTo": "Ir para Apps ligadas"
+    }
+  },
+  "openTopic": "Abrir a ajuda desta página"
+}

@@ -1,0 +1,93 @@
+@use '../../../../Styles/Mixins.scss' as Mixin;
+
+.Health_Dashboard{
+  .Profile_Conditions{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Profile_Condition{
+    --condition-color: #f87171;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 11px 14px;
+    border: var(--card-border);
+    border-left: 3px solid var(--condition-color);
+    border-radius: var(--ctrl-radius);
+    background: var(--accent-soft);
+
+    &.status-treating{ --condition-color: #fbbf24; }
+    &.status-controlled{ --condition-color: #60a5fa; }
+    &.status-resolved{
+      --condition-color: #34d399;
+      background: transparent;
+    }
+  }
+
+  .Profile_Condition_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+  }
+
+  .Profile_Condition_Name{
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .Profile_Condition_Status,
+  .Profile_Condition_Severity{
+    @include Mixin.Hud_Label(9px);
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--condition-color);
+    color: var(--condition-color);
+  }
+
+  .Profile_Condition_Severity{
+    border-color: var(--hud-line-strong);
+    color: var(--text-faint);
+  }
+
+  .Profile_Condition_Actions{
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+
+    .Health_see_all{
+      height: 28px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+  }
+
+  .Profile_Condition_Dates{
+    font-size: 12.5px;
+    color: var(--text-faint);
+  }
+
+  .Profile_Condition_Facts{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 6px 14px;
+    margin: 0;
+
+    div{
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    dt{ @include Mixin.Hud_Label(8.5px); color: var(--text-faint); }
+
+    dd{
+      margin: 0;
+      font-size: 12.5px;
+      overflow-wrap: anywhere;
+    }
+  }
+}

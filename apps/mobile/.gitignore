@@ -1,0 +1,43 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# generated native folders (npx expo prebuild)
+/ios
+/android
+
+# release signing — never in git, keep a backup
+/keystore/
+/keystore.properties
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# builds
+/build/
+*.apk
+*.aab
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+
+# typescript
+*.tsbuildinfo
+
+# local env files
+.env*.local
+
+.DS_Store
+.kotlin/
+*.orig.*

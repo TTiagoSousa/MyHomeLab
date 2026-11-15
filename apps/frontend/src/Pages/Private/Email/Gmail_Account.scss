@@ -1,0 +1,89 @@
+.Apps{
+  .Gmail_stats{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .Gmail_stat{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 110px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+
+    .Gmail_stat_value{
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .Gmail_stat_label{
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--navbar-vertical-default-link-color);
+    }
+
+    &.attention{
+      background: var(--stat-attention-soft);
+      border-color: var(--stat-attention-soft);
+
+      .Gmail_stat_value{ color: var(--stat-attention); }
+    }
+
+    &.positive{
+      background: var(--stat-positive-soft);
+      border-color: var(--stat-positive-soft);
+
+      .Gmail_stat_value{ color: var(--stat-positive); }
+    }
+
+    &.neutral{
+      background: var(--stat-neutral-soft);
+      border-color: var(--stat-neutral-soft);
+
+      .Gmail_stat_value{ color: var(--stat-neutral); }
+    }
+  }
+
+  .Gmail_stat_refresh{
+    width: 38px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    background: var(--panel-background);
+    color: var(--navbar-vertical-default-link-color);
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease;
+
+    svg{
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover:not(:disabled){
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    &:disabled{ cursor: default; }
+
+    &.loading svg{ animation: Gmail_stat_spin .8s linear infinite; }
+  }
+
+  .Gmail_hint{ grid-column: 1 / -1; }
+}
+
+@keyframes Gmail_stat_spin{
+  to{ transform: rotate(360deg); }
+}

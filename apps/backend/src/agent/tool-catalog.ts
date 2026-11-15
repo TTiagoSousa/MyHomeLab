@@ -1,0 +1,812 @@
+/** O conjunto de ferramentas de onde vem cada uma: só se constrói o que um agente usa. */
+export type ToolSet =
+  | 'email'
+  | 'server'
+  | 'health'
+  | 'forgejo'
+  | 'homeAssistant'
+  | 'adguard'
+  | 'nextcloud'
+  | 'opengym'
+  | 'trek'
+  | 'docs'
+  | 'updates'
+  | 'schedules'
+  | 'board'
+  | 'todos'
+  | 'serverControl'
+  | 'serverShell'
+  | 'team';
+
+export type ToolGroup =
+  | 'email'
+  | 'emailRules'
+  | 'servers'
+  | 'backups'
+  | 'health'
+  | 'forgejo'
+  | 'homeAssistant'
+  | 'adguard'
+  | 'nextcloud'
+  | 'opengym'
+  | 'trek'
+  | 'docs'
+  | 'updates'
+  | 'schedules'
+  | 'board'
+  | 'todos'
+  | 'serverControl'
+  | 'serverShell'
+  | 'team';
+
+export interface ToolDescriptor {
+  name: string;
+  set: ToolSet;
+  /** Para a página: as ferramentas aparecem agrupadas por área. */
+  group: ToolGroup;
+  access: 'read' | 'write';
+  /** A linha que a página mostra enquanto a ferramenta corre. */
+  action: string;
+}
+
+const tool = (
+  name: string,
+  set: ToolSet,
+  group: ToolGroup,
+  access: 'read' | 'write',
+  action: string,
+): ToolDescriptor => ({ name, set, group, access, action });
+
+/**
+ * Todas as ferramentas que um agente da equipa pode receber. As ferramentas em si são
+ * código (falam com o Gmail, o Proxmox, a saúde); aqui só se diz quais existem, para a
+ * página Workflow as mostrar e para se validar o que cada agente pede.
+ */
+export const TOOL_CATALOG: ToolDescriptor[] = [
+  tool('search_emails', 'email', 'email', 'read', 'a pesquisar emails'),
+  tool(
+    'summarize_emails_today',
+    'email',
+    'email',
+    'read',
+    'a resumir os emails de hoje',
+  ),
+  tool(
+    'list_connected_emails',
+    'email',
+    'email',
+    'read',
+    'a ver as contas ligadas',
+  ),
+  tool(
+    'analyze_inbox',
+    'email',
+    'email',
+    'read',
+    'a analisar a caixa de email',
+  ),
+  tool('read_email', 'email', 'email', 'read', 'a ler um email'),
+  tool('read_email_attachment', 'email', 'email', 'read', 'a ler um anexo'),
+  tool('draft_email', 'email', 'email', 'write', 'a escrever um rascunho'),
+  tool('send_email_draft', 'email', 'email', 'write', 'a enviar um email'),
+  tool('modify_email', 'email', 'email', 'write', 'a mexer num email'),
+  tool('trash_email', 'email', 'email', 'write', 'a mandar emails para o lixo'),
+  tool(
+    'list_email_rules',
+    'email',
+    'emailRules',
+    'read',
+    'a ler as regras de email',
+  ),
+  tool(
+    'create_email_rule',
+    'email',
+    'emailRules',
+    'write',
+    'a criar uma regra de email',
+  ),
+  tool(
+    'update_email_rule',
+    'email',
+    'emailRules',
+    'write',
+    'a alterar uma regra de email',
+  ),
+  tool(
+    'delete_email_rule',
+    'email',
+    'emailRules',
+    'write',
+    'a apagar uma regra de email',
+  ),
+  tool(
+    'get_proposal_settings',
+    'email',
+    'emailRules',
+    'read',
+    'a ver as regras propostas',
+  ),
+  tool(
+    'set_proposal_settings',
+    'email',
+    'emailRules',
+    'write',
+    'a mudar as regras propostas',
+  ),
+  tool(
+    'list_email_proposals',
+    'email',
+    'emailRules',
+    'read',
+    'a ler as propostas de regras',
+  ),
+  tool(
+    'analyze_email_proposals',
+    'email',
+    'emailRules',
+    'write',
+    'a analisar e propor regras',
+  ),
+  tool(
+    'implement_email_proposal',
+    'email',
+    'emailRules',
+    'write',
+    'a implementar uma proposta',
+  ),
+  tool(
+    'dismiss_email_proposal',
+    'email',
+    'emailRules',
+    'write',
+    'a recusar uma proposta',
+  ),
+
+  tool('todo_lists', 'todos', 'todos', 'read', 'a ver as listas de tarefas'),
+  tool('todo_list', 'todos', 'todos', 'read', 'a ler as tarefas'),
+  tool('todo_create', 'todos', 'todos', 'write', 'a criar uma tarefa'),
+  tool('todo_update', 'todos', 'todos', 'write', 'a mudar uma tarefa'),
+  tool('todo_delete', 'todos', 'todos', 'write', 'a apagar uma tarefa'),
+  tool(
+    'todo_create_list',
+    'todos',
+    'todos',
+    'write',
+    'a criar uma lista de tarefas',
+  ),
+
+  tool(
+    'list_servers',
+    'server',
+    'servers',
+    'read',
+    'a ver os servidores configurados',
+  ),
+  tool(
+    'list_proxmox_guests',
+    'server',
+    'servers',
+    'read',
+    'a listar as máquinas do Proxmox',
+  ),
+  tool(
+    'get_guest_status',
+    'server',
+    'servers',
+    'read',
+    'a ver o estado de uma máquina',
+  ),
+  tool('disk_health', 'server', 'servers', 'read', 'a ver a saúde dos discos'),
+  tool(
+    'list_service_monitors',
+    'server',
+    'servers',
+    'read',
+    'a ver os serviços vigiados',
+  ),
+  tool(
+    'check_service_monitor',
+    'server',
+    'servers',
+    'read',
+    'a testar um serviço',
+  ),
+  tool(
+    'check_service_status',
+    'server',
+    'servers',
+    'read',
+    'a testar se um serviço responde',
+  ),
+  tool('list_notifications', 'server', 'servers', 'read', 'a ver os alertas'),
+  tool(
+    'pve_guest_config',
+    'serverControl',
+    'serverControl',
+    'read',
+    'a ver a configuração de uma máquina',
+  ),
+  tool(
+    'pve_list_snapshots',
+    'serverControl',
+    'serverControl',
+    'read',
+    'a ver os snapshots',
+  ),
+  tool(
+    'pve_guest_power',
+    'serverControl',
+    'serverControl',
+    'write',
+    'a ligar ou desligar uma máquina',
+  ),
+  tool(
+    'pve_create_snapshot',
+    'serverControl',
+    'serverControl',
+    'write',
+    'a tirar um snapshot',
+  ),
+  tool(
+    'pve_rollback_snapshot',
+    'serverControl',
+    'serverControl',
+    'write',
+    'a repor um snapshot',
+  ),
+  tool(
+    'pve_delete_snapshot',
+    'serverControl',
+    'serverControl',
+    'write',
+    'a apagar um snapshot',
+  ),
+  tool(
+    'pve_backup_now',
+    'serverControl',
+    'serverControl',
+    'write',
+    'a fazer um backup no Proxmox',
+  ),
+  tool(
+    'pve_set_resources',
+    'serverControl',
+    'serverControl',
+    'write',
+    'a mudar os recursos de uma máquina',
+  ),
+  tool(
+    'server_inventory',
+    'serverShell',
+    'serverShell',
+    'read',
+    'a fazer o inventário do servidor',
+  ),
+  tool(
+    'server_command_history',
+    'serverShell',
+    'serverShell',
+    'read',
+    'a ver os comandos corridos',
+  ),
+  tool(
+    'server_run_command',
+    'serverShell',
+    'serverShell',
+    'write',
+    'a correr um comando no servidor',
+  ),
+  tool('list_backups', 'server', 'backups', 'read', 'a ver os backups'),
+  tool('run_backup', 'server', 'backups', 'write', 'a fazer um backup'),
+
+  tool(
+    'health_overview',
+    'health',
+    'health',
+    'read',
+    'a ver o resumo da saúde',
+  ),
+  tool(
+    'health_metric',
+    'health',
+    'health',
+    'read',
+    'a analisar os dados de saúde',
+  ),
+  tool(
+    'health_detail',
+    'health',
+    'health',
+    'read',
+    'a abrir um dia em detalhe',
+  ),
+  tool('health_log', 'health', 'health', 'write', 'a registar na saúde'),
+  tool(
+    'health_change',
+    'health',
+    'health',
+    'write',
+    'a alterar um registo de saúde',
+  ),
+
+  tool(
+    'ha_overview',
+    'homeAssistant',
+    'homeAssistant',
+    'read',
+    'a ver o Home Assistant',
+  ),
+  tool(
+    'ha_list_updates',
+    'homeAssistant',
+    'homeAssistant',
+    'read',
+    'a ver as atualizações do Home Assistant',
+  ),
+  tool(
+    'ha_list_entities',
+    'homeAssistant',
+    'homeAssistant',
+    'read',
+    'a listar entidades do Home Assistant',
+  ),
+  tool(
+    'ha_get_entity',
+    'homeAssistant',
+    'homeAssistant',
+    'read',
+    'a abrir uma entidade',
+  ),
+  tool(
+    'ha_list_services',
+    'homeAssistant',
+    'homeAssistant',
+    'read',
+    'a ver os serviços do Home Assistant',
+  ),
+  tool(
+    'ha_list_configs',
+    'homeAssistant',
+    'homeAssistant',
+    'read',
+    'a ver as automações e scripts',
+  ),
+  tool(
+    'ha_get_config',
+    'homeAssistant',
+    'homeAssistant',
+    'read',
+    'a ler uma automação ou script',
+  ),
+  tool(
+    'ha_system_log',
+    'homeAssistant',
+    'homeAssistant',
+    'read',
+    'a ler o registo do Home Assistant',
+  ),
+  tool(
+    'ha_call_service',
+    'homeAssistant',
+    'homeAssistant',
+    'write',
+    'a controlar o Home Assistant',
+  ),
+  tool(
+    'ha_save_config',
+    'homeAssistant',
+    'homeAssistant',
+    'write',
+    'a gravar uma automação ou script',
+  ),
+  tool(
+    'ha_delete_config',
+    'homeAssistant',
+    'homeAssistant',
+    'write',
+    'a apagar uma automação ou script',
+  ),
+  tool(
+    'ha_update_entity',
+    'homeAssistant',
+    'homeAssistant',
+    'write',
+    'a alterar uma entidade',
+  ),
+
+  tool(
+    'nextcloud_overview',
+    'nextcloud',
+    'nextcloud',
+    'read',
+    'a ver o Nextcloud',
+  ),
+  tool(
+    'nextcloud_list_apps',
+    'nextcloud',
+    'nextcloud',
+    'read',
+    'a ver as apps do Nextcloud',
+  ),
+
+  tool('trek_overview', 'trek', 'trek', 'read', 'a ver o TREK'),
+  tool('trek_tools', 'trek', 'trek', 'read', 'a ver as ferramentas do TREK'),
+  tool(
+    'trek_tool_help',
+    'trek',
+    'trek',
+    'read',
+    'a ler uma ferramenta do TREK',
+  ),
+  tool('trek_read', 'trek', 'trek', 'read', 'a ler no TREK'),
+  tool('trek_write', 'trek', 'trek', 'write', 'a mudar o TREK'),
+
+  tool('opengym_overview', 'opengym', 'opengym', 'read', 'a ver o openGym'),
+  tool(
+    'opengym_search_exercises',
+    'opengym',
+    'opengym',
+    'read',
+    'a procurar exercícios no openGym',
+  ),
+  tool(
+    'opengym_list_routines',
+    'opengym',
+    'opengym',
+    'read',
+    'a ver as rotinas do openGym',
+  ),
+  tool(
+    'opengym_create_routine',
+    'opengym',
+    'opengym',
+    'write',
+    'a criar uma rotina no openGym',
+  ),
+  tool(
+    'opengym_update_routine',
+    'opengym',
+    'opengym',
+    'write',
+    'a mudar uma rotina no openGym',
+  ),
+  tool(
+    'opengym_delete_routine',
+    'opengym',
+    'opengym',
+    'write',
+    'a apagar uma rotina no openGym',
+  ),
+  tool(
+    'opengym_schedule_week',
+    'opengym',
+    'opengym',
+    'write',
+    'a marcar o plano da semana no openGym',
+  ),
+
+  tool('adguard_overview', 'adguard', 'adguard', 'read', 'a ver o AdGuard'),
+  tool(
+    'adguard_query_log',
+    'adguard',
+    'adguard',
+    'read',
+    'a ler os pedidos de DNS',
+  ),
+  tool(
+    'adguard_check_domain',
+    'adguard',
+    'adguard',
+    'read',
+    'a ver se um domínio está bloqueado',
+  ),
+  tool(
+    'adguard_list_filters',
+    'adguard',
+    'adguard',
+    'read',
+    'a ver as listas do AdGuard',
+  ),
+  tool(
+    'adguard_get_settings',
+    'adguard',
+    'adguard',
+    'read',
+    'a ler as definições do AdGuard',
+  ),
+  tool(
+    'adguard_set_protection',
+    'adguard',
+    'adguard',
+    'write',
+    'a mudar a proteção do AdGuard',
+  ),
+  tool(
+    'adguard_set_domain_rule',
+    'adguard',
+    'adguard',
+    'write',
+    'a bloquear ou permitir um domínio',
+  ),
+  tool(
+    'adguard_set_user_rules',
+    'adguard',
+    'adguard',
+    'write',
+    'a gravar as regras do AdGuard',
+  ),
+  tool(
+    'adguard_manage_filter',
+    'adguard',
+    'adguard',
+    'write',
+    'a mudar uma lista do AdGuard',
+  ),
+  tool(
+    'adguard_refresh_filters',
+    'adguard',
+    'adguard',
+    'write',
+    'a atualizar as listas do AdGuard',
+  ),
+  tool(
+    'adguard_set_filter_interval',
+    'adguard',
+    'adguard',
+    'write',
+    'a mudar quando o AdGuard atualiza as listas',
+  ),
+  tool(
+    'adguard_manage_rewrite',
+    'adguard',
+    'adguard',
+    'write',
+    'a mudar uma reescrita de DNS',
+  ),
+  tool(
+    'adguard_set_blocked_services',
+    'adguard',
+    'adguard',
+    'write',
+    'a bloquear serviços no AdGuard',
+  ),
+
+  tool('docs_search', 'docs', 'docs', 'read', 'a procurar nos documentos'),
+  tool('docs_read', 'docs', 'docs', 'read', 'a ler um documento'),
+  tool('docs_projects', 'docs', 'docs', 'read', 'a ver os projetos'),
+  tool('docs_write', 'docs', 'docs', 'write', 'a escrever um documento'),
+  tool('docs_log', 'docs', 'docs', 'write', 'a escrever no registo'),
+  tool(
+    'docs_propose',
+    'docs',
+    'docs',
+    'write',
+    'a propor uma mudança num documento',
+  ),
+
+  tool('updates_list', 'updates', 'updates', 'read', 'a ver as atualizações'),
+  tool('update_status', 'updates', 'updates', 'read', 'a ver uma atualização'),
+  tool(
+    'update_list_new',
+    'updates',
+    'updates',
+    'read',
+    'a ver as atualizações disponíveis',
+  ),
+  tool(
+    'update_start',
+    'updates',
+    'updates',
+    'write',
+    'a abrir uma atualização',
+  ),
+  tool(
+    'update_release_notes',
+    'updates',
+    'updates',
+    'read',
+    'a ler as notas das versões',
+  ),
+  tool(
+    'update_known_issues',
+    'updates',
+    'updates',
+    'read',
+    'a procurar problemas conhecidos',
+  ),
+  tool(
+    'update_save_study',
+    'updates',
+    'updates',
+    'write',
+    'a gravar o estudo de uma atualização',
+  ),
+  tool(
+    'update_set_status',
+    'updates',
+    'updates',
+    'write',
+    'a mudar o estado de uma atualização',
+  ),
+  tool(
+    'update_add_note',
+    'updates',
+    'updates',
+    'write',
+    'a escrever na tarefa da atualização',
+  ),
+  tool(
+    'update_prepare',
+    'updates',
+    'updates',
+    'write',
+    'a preparar uma atualização',
+  ),
+  tool('update_run', 'updates', 'updates', 'write', 'a correr uma atualização'),
+  tool(
+    'update_check',
+    'updates',
+    'updates',
+    'write',
+    'a validar um ponto das regras',
+  ),
+  tool(
+    'update_attempt_close',
+    'updates',
+    'updates',
+    'write',
+    'a fechar uma tentativa de atualizar',
+  ),
+  tool(
+    'update_verify',
+    'updates',
+    'updates',
+    'write',
+    'a verificar uma atualização',
+  ),
+
+  tool('board_list', 'board', 'board', 'read', 'a ver as tarefas'),
+  tool('board_get', 'board', 'board', 'read', 'a abrir uma tarefa'),
+  tool('board_create', 'board', 'board', 'write', 'a criar uma tarefa'),
+  tool('board_update', 'board', 'board', 'write', 'a mudar uma tarefa'),
+  tool('board_comment', 'board', 'board', 'write', 'a comentar uma tarefa'),
+  tool(
+    'board_ask_user',
+    'board',
+    'board',
+    'write',
+    'a pedir-te uma resposta numa tarefa',
+  ),
+
+  tool(
+    'forgejo_list_repos',
+    'forgejo',
+    'forgejo',
+    'read',
+    'a ver os repositórios do Forgejo',
+  ),
+  tool(
+    'forgejo_list_issues',
+    'forgejo',
+    'forgejo',
+    'read',
+    'a ver as issues do Forgejo',
+  ),
+  tool('forgejo_get_issue', 'forgejo', 'forgejo', 'read', 'a abrir uma issue'),
+  tool(
+    'forgejo_list_releases',
+    'forgejo',
+    'forgejo',
+    'read',
+    'a ver as releases do Forgejo',
+  ),
+  tool(
+    'forgejo_list_commits',
+    'forgejo',
+    'forgejo',
+    'read',
+    'a ver os commits do Forgejo',
+  ),
+  tool(
+    'forgejo_list_action_runs',
+    'forgejo',
+    'forgejo',
+    'read',
+    'a ver o CI do Forgejo',
+  ),
+  tool(
+    'forgejo_create_issue',
+    'forgejo',
+    'forgejo',
+    'write',
+    'a criar uma issue no Forgejo',
+  ),
+  tool(
+    'forgejo_comment_issue',
+    'forgejo',
+    'forgejo',
+    'write',
+    'a comentar uma issue no Forgejo',
+  ),
+  tool(
+    'forgejo_set_issue_state',
+    'forgejo',
+    'forgejo',
+    'write',
+    'a fechar ou reabrir uma issue',
+  ),
+
+  tool(
+    'schedule_list',
+    'schedules',
+    'schedules',
+    'read',
+    'a ver os agendamentos',
+  ),
+  tool(
+    'schedule_create',
+    'schedules',
+    'schedules',
+    'write',
+    'a agendar um trabalho',
+  ),
+  tool(
+    'schedule_update',
+    'schedules',
+    'schedules',
+    'write',
+    'a mudar um agendamento',
+  ),
+  tool(
+    'schedule_delete',
+    'schedules',
+    'schedules',
+    'write',
+    'a apagar um agendamento',
+  ),
+
+  tool('list_team', 'team', 'team', 'read', 'a ver a equipa'),
+  tool(
+    'list_available_tools',
+    'team',
+    'team',
+    'read',
+    'a ver as ferramentas disponíveis',
+  ),
+  tool('create_agent', 'team', 'team', 'write', 'a criar um agente'),
+  tool('update_agent', 'team', 'team', 'write', 'a mudar um agente'),
+  tool('delete_agent', 'team', 'team', 'write', 'a apagar um agente'),
+  tool(
+    'list_agent_prompts',
+    'team',
+    'team',
+    'read',
+    'a ler as instruções da equipa',
+  ),
+  tool(
+    'propose_agent_prompt',
+    'team',
+    'team',
+    'write',
+    'a propor instruções novas',
+  ),
+  tool(
+    'apply_agent_prompt',
+    'team',
+    'team',
+    'write',
+    'a aplicar instruções novas',
+  ),
+  tool(
+    'discard_agent_prompt',
+    'team',
+    'team',
+    'write',
+    'a descartar uma proposta',
+  ),
+];
+
+export const TOOL_NAMES = new Set(TOOL_CATALOG.map((entry) => entry.name));
+
+export const toolAction = (name: string) =>
+  TOOL_CATALOG.find((entry) => entry.name === name)?.action;

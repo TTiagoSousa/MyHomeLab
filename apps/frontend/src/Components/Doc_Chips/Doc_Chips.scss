@@ -1,0 +1,91 @@
+@use '../../Styles/Fonts.scss' as Font;
+
+.Doc_Chip{
+  height: 20px;
+  max-width: 100%;
+  padding: 0 8px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--hud-line-strong);
+  border-radius: 10px;
+  font-family: Font.$font_family_sans;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--text-soft);
+
+  &.kind{
+    border-color: var(--accent-deep);
+    background: var(--accent-soft);
+    color: var(--accent-bright);
+  }
+
+  &.kind.rules{ color: var(--agent-hue-1); border-color: var(--agent-hue-1); background: transparent; }
+  &.kind.checklist{ color: var(--agent-hue-2); border-color: var(--agent-hue-2); background: transparent; }
+  &.kind.learnings{ color: var(--agent-hue-3); border-color: var(--agent-hue-3); background: transparent; }
+  &.kind.guide{ color: var(--agent-hue-8); border-color: var(--agent-hue-8); background: transparent; }
+  &.kind.log{ color: var(--agent-hue-5); border-color: var(--agent-hue-5); background: transparent; }
+  &.kind.attempt{ color: var(--agent-hue-6); border-color: var(--agent-hue-6); background: transparent; }
+  &.kind.custom{ color: var(--agent-hue-4); border-color: var(--agent-hue-4); background: transparent; }
+
+  &.attempt_status.done{ color: var(--stat-positive); border-color: var(--stat-positive); }
+  &.attempt_status.failed{ color: var(--danger-color); border-color: var(--danger-color); }
+  &.attempt_status.checking,
+  &.attempt_status.running,
+  &.attempt_status.verifying{ color: var(--stat-attention); border-color: var(--stat-attention); }
+
+  &.required{
+    border-color: var(--stat-attention);
+    background: var(--stat-attention-soft);
+    color: var(--stat-attention);
+  }
+
+  &.agent{
+    border-style: dashed;
+    color: var(--text-soft);
+  }
+
+  &.link{
+    min-width: 0;
+    background: var(--card-global-header-background);
+    color: var(--text-main);
+    font-weight: 600;
+
+    small{
+      flex-shrink: 0;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .Doc_Chip_Label{
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    button{
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      margin-right: -3px;
+      padding: 2px;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text-faint);
+      cursor: pointer;
+
+      &:hover{
+        background: var(--danger-color-soft);
+        color: var(--danger-color);
+      }
+    }
+  }
+}

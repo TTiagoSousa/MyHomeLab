@@ -1,0 +1,491 @@
+{
+  "suggestedPrompts": {
+    "todayEmails": "Resume-me os emails de hoje",
+    "runningMachines": "Que máquinas estão a correr?",
+    "nextcloudOnline": "O Nextcloud está online?"
+  },
+  "header": {
+    "status": "Estado",
+    "processing": "A processar",
+    "listening": "Em escuta",
+    "working": "A trabalhar",
+    "realtime": "Tempo real",
+    "connected": "Ligado",
+    "down": "Em baixo",
+    "newConversation": "Nova conversa",
+    "settings": "Definições",
+    "workflow": "Workflow"
+  },
+  "conversation": {
+    "meta": "histórico guardado",
+    "emptyTitle": "Às ordens.",
+    "emptyHint": "Pergunta sobre os emails, sobre o servidor, ou o que precisares.",
+    "placeholder": "Fala com o Jarvis…",
+    "inputLabel": "Mensagem para o Jarvis",
+    "send": "Enviar",
+    "you": "Tu",
+    "docsUsed": "Documentos usados:",
+    "openTask": "Abrir tarefa {{key}}"
+  },
+  "core": {
+    "working": "a trabalhar"
+  },
+  "now": {
+    "thinking": "a pensar"
+  },
+  "thinking": {
+    "single": "núcleo → {{agent}} · {{action}}",
+    "multiple_one": "núcleo → {{count}} subagente",
+    "multiple_other": "núcleo → {{count}} subagentes"
+  },
+  "noKey": {
+    "title": "Falta a chave",
+    "text": "Para falares com o Jarvis, liga o Claude com a tua chave em Assistente → Definições → IA. Cada pessoa usa a sua.",
+    "action": "Abrir Definições"
+  },
+  "prompts": {
+    "styles": {
+      "title": "Estilo rápido",
+      "direct": {
+        "label": "Mais direto",
+        "text": "Vai direto ao assunto: começa pela resposta, sem introduções nem rodeios."
+      },
+      "short": {
+        "label": "Respostas curtas",
+        "text": "Respostas curtas: no máximo duas ou três frases, a não ser que eu peça detalhe."
+      },
+      "detailed": {
+        "label": "Mais detalhado",
+        "text": "Explica com mais detalhe e dá o contexto que ajuda a perceber os números."
+      },
+      "noFollowUp": {
+        "label": "Sem perguntas no fim",
+        "text": "Não acabes as respostas com perguntas nem ofertas de ajuda (\"queres que…?\")."
+      },
+      "casual": {
+        "label": "Descontraído",
+        "text": "Fala de forma descontraída, como um amigo."
+      },
+      "formal": {
+        "label": "Formal",
+        "text": "Usa um tom formal e neutro."
+      }
+    },
+    "preview": {
+      "title": "Ver como fica",
+      "description": "Responde outra vez à última pergunta da conversa com estas instruções (ainda sem as gravar), para comparares com a resposta que tiveste.",
+      "run": "Ver como fica",
+      "loading": "A gerar…",
+      "question": "Última pergunta: \"{{question}}\"",
+      "before": "Antes",
+      "after": "Com estas instruções"
+    }
+  },
+  "settings": {
+    "title": "Definições do assistente",
+    "back": "Jarvis",
+    "search": "Procurar uma definição (ex.: saúde, telegram, hora)…",
+    "noResults": "Nada encontrado para \"{{query}}\".",
+    "sections": {
+      "ai": "IA",
+      "permissions": "Permissões"
+    },
+    "hints": {
+      "ai": "A chave do fornecedor de IA",
+      "permissions": "O que o Jarvis pode ler e alterar"
+    },
+    "permissions": {
+      "title": "Permissões",
+      "description": "O que os agentes podem ler e alterar, área a área. O que desligares, eles recusam e dizem-te onde voltar a ligar. Vale no site, na app e em todos os agentes.",
+      "read": "Ler",
+      "write": "Alterar",
+      "allOn": "Ligar tudo",
+      "allOff": "Desligar tudo",
+      "healthNote": "O resumo geral da saúde precisa de Sono, Sinais vitais e Atividade com leitura ligada.",
+      "groups": {
+        "email": "Email",
+        "organization": "Tarefas",
+        "health": "Saúde",
+        "servers": "Servidores",
+        "development": "Desenvolvimento",
+        "assistant": "Assistente",
+        "home": "Casa"
+      },
+      "areas": {
+        "email": {
+          "name": "Emails",
+          "description": "Ler e resumir os emails, pesquisar e analisar a caixa."
+        },
+        "emailRules": {
+          "name": "Regras do Gmail",
+          "description": "Ver as regras e as propostas. Alterar é criar, mudar e apagar regras, e analisar, aceitar ou recusar propostas."
+        },
+        "todos": {
+          "name": "Tarefas",
+          "description": "Ver as tuas tarefas e listas (a página Tarefas). Alterar é criar, mudar, fechar e apagar."
+        },
+        "healthSleep": {
+          "name": "Sono",
+          "description": "As noites e as fases do sono."
+        },
+        "healthVitals": {
+          "name": "Sinais vitais",
+          "description": "Batimento, oxigénio, temperatura da pele, stress, tensão, glicemia e temperatura."
+        },
+        "healthActivity": {
+          "name": "Atividade",
+          "description": "Passos e treinos, incluindo os do openGym."
+        },
+        "healthBody": {
+          "name": "Corpo",
+          "description": "Peso, medidas do corpo e o perfil de saúde."
+        },
+        "healthNutrition": {
+          "name": "Alimentação",
+          "description": "Água, refeições, cafés, álcool, suplementos e jejuns."
+        },
+        "healthMedical": {
+          "name": "Médico",
+          "description": "Análises, medicação, consultas, vacinas, exames e doenças."
+        },
+        "healthJournal": {
+          "name": "Diário e humor",
+          "description": "Dores, sintomas, alergias, notas do dia, humor, energia e motivação."
+        },
+        "servers": {
+          "name": "Servidores e serviços",
+          "description": "Estado dos serviços vigiados, notificações, discos e Proxmox."
+        },
+        "backups": {
+          "name": "Backups",
+          "description": "Ver os backups. Alterar é fazer um backup agora e criar ou mudar os automáticos."
+        },
+        "serverControl": {
+          "name": "Controlar máquinas",
+          "description": "Ver a configuração e os snapshots das VMs e CTs. Alterar é ligar, desligar, reiniciar, snapshots, backups e recursos (Operador Proxmox)."
+        },
+        "serverShell": {
+          "name": "Comandos no servidor",
+          "description": "Ver o histórico de comandos. Alterar é correr comandos por SSH (correm logo; os agentes seguem as regras do servidor antes de mudar algo)."
+        },
+        "forgejo": {
+          "name": "Forgejo",
+          "description": "Ver repositórios, issues, releases, commits e o Actions. Alterar é criar, comentar, fechar e reabrir issues."
+        },
+        "team": {
+          "name": "Equipa de agentes",
+          "description": "Ver os agentes e as ferramentas. Alterar é o Jarvis criar, mudar e apagar agentes."
+        },
+        "prompts": {
+          "name": "Prompts dos agentes",
+          "description": "Ver os prompts. Alterar é o Jarvis propor e aplicar mudanças às instruções dos agentes."
+        },
+        "homeAssistant": {
+          "name": "Home Assistant",
+          "description": "Ver entidades, automações, scripts e o registo. Alterar é controlar dispositivos e criar, mudar ou apagar automações, scripts, cenas e entidades."
+        },
+        "adguard": {
+          "name": "AdGuard",
+          "description": "Ver o estado, os pedidos de DNS, as listas e as definições. Alterar é pausar a proteção, bloquear ou permitir domínios e mexer nas listas, regras, reescritas e serviços bloqueados."
+        },
+        "docs": {
+          "name": "Documentos",
+          "description": "Ler e procurar os teus documentos (regras, checklists, notas). Alterar é escrever os documentos dos agentes e propor-te mudanças nos teus."
+        },
+        "updates": {
+          "name": "Atualizações das apps",
+          "description": "Ver as atualizações, as notas das versões e as issues. Alterar é gravar estudos, mudar o estado, preparar e correr uma atualização (como as regras dizem)."
+        },
+        "schedules": {
+          "name": "Disparos",
+          "description": "Ver os disparos dos agentes. Alterar é criar, mudar e apagar disparos (que correm sozinhos, sem ti a acompanhar)."
+        },
+        "board": {
+          "name": "Projetos (quadro)",
+          "description": "Ver, criar e mudar tarefas, comentar e pedir-te respostas no quadro."
+        },
+        "nextcloud": {
+          "name": "Nextcloud",
+          "description": "Ver a versão, a manutenção e as apps lá dentro, com as versões novas da App Store. Mudar faz-se no servidor (occ), com as regras das atualizações."
+        },
+        "opengym": {
+          "name": "openGym (ginásio)",
+          "description": "Ver as rotinas, os treinos e o catálogo dos exercícios. Alterar é criar rotinas e marcar o plano da semana (nunca apaga as que lá estão)."
+        },
+        "trek": {
+          "name": "TREK (viagens)",
+          "description": "Ver as viagens e tudo o que está nelas pelo MCP do TREK. Alterar é criar, mudar e (com confirmação) apagar no TREK, dentro das permissões do cliente MCP."
+        }
+      },
+      "layers": "Há três sítios, do mais largo para o mais fino: as ferramentas de cada agente (Workflow), estas áreas (para todos os agentes) e cada app ligada ou servidor (na página dela → Agentes, por agente). Um agente só faz o que os três deixam."
+    }
+  },
+  "workflow": {
+    "title": "Workflow da equipa",
+    "agentsTitle": "Equipa",
+    "allAgents": "Toda a equipa",
+    "working": "{{count}}/{{total}} a trabalhar",
+    "lastActive": "em espera · {{when}}",
+    "neverActive": "em espera · ainda sem atividade",
+    "consoleTitle": "Consola",
+    "consoleMeta": "pedidos e atividade · ao vivo",
+    "route": "{{from}} → {{to}}",
+    "done": "concluído em {{duration}}",
+    "failed": "falhou ao fim de {{duration}}",
+    "automatic": "automático",
+    "older": "Carregar mais antigos",
+    "loading": "A carregar…",
+    "empty": "Ainda não há atividade. Fala com o Jarvis e o que a equipa fizer aparece aqui.",
+    "short": {
+      "main": "Jarvis",
+      "email": "Email",
+      "server": "Servidor",
+      "health": "Saúde",
+      "tasks": "Tarefas"
+    },
+    "newAgent": "Novo agente",
+    "newAgentHint": "Escolhe o que faz, a quem responde e que ferramentas usa.",
+    "ceo": "CEO",
+    "inactive": "desligado",
+    "talksToYou": "Fala contigo no site e na app",
+    "reportsTo": "Responde a {{name}}",
+    "teamSize_one": "{{count}} na equipa dele",
+    "teamSize_other": "{{count}} na equipa dele",
+    "tabs": {
+      "activity": "Atividade",
+      "config": "Configuração"
+    },
+    "toolGroups": {
+      "email": "Email",
+      "emailRules": "Regras de email",
+      "todos": "Tarefas",
+      "servers": "Servidores",
+      "backups": "Backups",
+      "serverControl": "Controlo do Proxmox",
+      "serverShell": "Comandos no servidor",
+      "health": "Saúde",
+      "forgejo": "Forgejo",
+      "team": "Governo da equipa",
+      "homeAssistant": "Home Assistant",
+      "adguard": "AdGuard",
+      "docs": "Documentos",
+      "updates": "Atualizações",
+      "schedules": "Disparos",
+      "board": "Projetos (quadro)",
+      "nextcloud": "Nextcloud",
+      "opengym": "openGym",
+      "trek": "TREK"
+    },
+    "editor": {
+      "name": "Nome",
+      "namePlaceholder": "Ex.: Gestor Financeiro",
+      "color": "Cor",
+      "description": "O que faz",
+      "descriptionPlaceholder": "Ex.: Lê os emails dos bancos e diz-te quanto gastaste no mês.",
+      "descriptionHint": "É o que o chefe dele lê para decidir quando lhe passar trabalho.",
+      "reportsTo": "Responde a",
+      "reportsToRoot": "Ninguém: fala contigo diretamente, no site e na app.",
+      "active": "Ligado",
+      "model": "Modelo",
+      "models": {
+        "OPUS": "Principal (Opus)",
+        "SONNET": "Agentes (Sonnet)"
+      },
+      "modelHints": {
+        "OPUS": "decide e escreve · mais caro",
+        "SONNET": "executa · mais barato"
+      },
+      "effort": "Esforço",
+      "efforts": {
+        "LOW": "Baixo",
+        "MEDIUM": "Médio",
+        "HIGH": "Alto"
+      },
+      "prompt": "Instruções",
+      "promptPlaceholder": "Quem é, o que faz, como usa as ferramentas e o que nunca deve fazer.",
+      "promptDefault": "as do site",
+      "promptEdited": "editadas por ti",
+      "promptHint": "Vêm do site. Podes mudá-las; \"Repor as do site\" volta às originais (e às melhorias das versões novas).",
+      "promptHintCustom": "A equipa dele e a quem responde juntam-se sozinhas no fim.",
+      "resetPrompt": "Repor as do site",
+      "extraPrompt": "Instruções extra",
+      "extraPlaceholder": "Ex.: os nomes dos marcadores sempre em português europeu.",
+      "extraHint": "Juntam-se no fim das instruções. São o que o Jarvis muda quando lhe pedes por conversa.",
+      "tools": "Ferramentas",
+      "toolsCount": "{{count}} escolhidas",
+      "toolsHint": "Só pode usar as que escolheres. As que alteram coisas respeitam as permissões do assistente.",
+      "read": "lê",
+      "write": "altera",
+      "save": "Guardar",
+      "create": "Criar agente",
+      "saving": "A guardar…",
+      "discard": "Desfazer",
+      "delete": "Apagar agente",
+      "confirmDelete": "Apagar",
+      "cancel": "Cancelar",
+      "deleteHint": "Quem lhe respondia passa a responder a {{name}}.",
+      "created": "Agente criado — já pode receber trabalho.",
+      "saved": "Agente guardado — vale a partir da próxima mensagem.",
+      "deleted": "Agente apagado."
+    },
+    "toolNames": {
+      "search_emails": "Pesquisar emails",
+      "summarize_emails_today": "Resumir os emails de hoje",
+      "list_connected_emails": "Ver as contas ligadas",
+      "analyze_inbox": "Analisar a caixa de email",
+      "read_email": "Ler um email",
+      "read_email_attachment": "Ler os anexos",
+      "draft_email": "Escrever rascunhos",
+      "send_email_draft": "Enviar emails",
+      "modify_email": "Mexer em emails",
+      "trash_email": "Mandar para o lixo",
+      "list_email_rules": "Ler as regras",
+      "create_email_rule": "Criar regras",
+      "update_email_rule": "Alterar regras",
+      "delete_email_rule": "Apagar regras",
+      "get_proposal_settings": "Ver as definições das propostas",
+      "set_proposal_settings": "Mudar as definições das propostas",
+      "list_email_proposals": "Ler as propostas",
+      "analyze_email_proposals": "Analisar e propor regras",
+      "implement_email_proposal": "Aceitar propostas",
+      "dismiss_email_proposal": "Recusar propostas",
+      "list_servers": "Ver os servidores",
+      "list_proxmox_guests": "Listar VMs e containers",
+      "get_guest_status": "Estado de uma máquina",
+      "disk_health": "Saúde dos discos",
+      "list_service_monitors": "Ver os serviços vigiados",
+      "check_service_monitor": "Testar um serviço vigiado",
+      "check_service_status": "Testar um URL",
+      "list_notifications": "Ver os alertas",
+      "list_backups": "Ver os backups",
+      "run_backup": "Fazer um backup",
+      "pve_guest_config": "Ver a configuração de uma máquina",
+      "pve_list_snapshots": "Ver os snapshots",
+      "pve_guest_power": "Ligar, desligar e reiniciar",
+      "pve_create_snapshot": "Tirar snapshots",
+      "pve_rollback_snapshot": "Repor snapshots",
+      "pve_delete_snapshot": "Apagar snapshots",
+      "pve_backup_now": "Fazer backups no Proxmox",
+      "pve_set_resources": "Mudar CPU, RAM e disco",
+      "server_command_history": "Ver os comandos corridos",
+      "server_inventory": "Fazer o inventário do servidor",
+      "server_run_command": "Correr comandos",
+      "health_overview": "Resumo da saúde",
+      "health_metric": "Analisar uma métrica",
+      "health_detail": "Abrir um dia, noite ou treino",
+      "health_log": "Registar (água, peso, refeições…)",
+      "health_change": "Corrigir ou apagar registos",
+      "forgejo_list_repos": "Ver os repositórios",
+      "forgejo_list_issues": "Ler issues e PRs",
+      "forgejo_get_issue": "Abrir uma issue",
+      "forgejo_list_releases": "Ver as releases",
+      "forgejo_list_commits": "Ler os commits",
+      "forgejo_list_action_runs": "Ver o Actions (CI)",
+      "forgejo_create_issue": "Criar issues",
+      "forgejo_comment_issue": "Comentar",
+      "forgejo_set_issue_state": "Fechar ou reabrir issues",
+      "list_team": "Ver a equipa",
+      "list_available_tools": "Ver as ferramentas disponíveis",
+      "create_agent": "Criar agentes",
+      "update_agent": "Mudar agentes",
+      "delete_agent": "Apagar agentes",
+      "list_agent_prompts": "Ler as instruções da equipa",
+      "propose_agent_prompt": "Propor instruções novas",
+      "apply_agent_prompt": "Aplicar instruções (depois do teu sim)",
+      "discard_agent_prompt": "Descartar propostas",
+      "ha_overview": "Ver o resumo",
+      "ha_list_updates": "Ver as atualizações (add-ons, HACS, firmware)",
+      "ha_list_entities": "Listar entidades",
+      "ha_get_entity": "Abrir uma entidade",
+      "ha_list_services": "Ver os serviços",
+      "ha_list_configs": "Listar automações e scripts",
+      "ha_get_config": "Ler uma automação ou script",
+      "ha_system_log": "Ler o registo",
+      "ha_call_service": "Controlar dispositivos",
+      "ha_save_config": "Criar e mudar automações e scripts",
+      "ha_delete_config": "Apagar automações e scripts",
+      "ha_update_entity": "Mudar entidades",
+      "adguard_overview": "Ver o resumo",
+      "adguard_query_log": "Ler os pedidos de DNS",
+      "adguard_check_domain": "Ver se um domínio está bloqueado",
+      "adguard_list_filters": "Ver as listas e regras",
+      "adguard_get_settings": "Ler reescritas, clientes e serviços",
+      "adguard_set_protection": "Ligar ou pausar a proteção",
+      "adguard_set_domain_rule": "Bloquear ou permitir domínios",
+      "adguard_set_user_rules": "Gravar as regras próprias",
+      "adguard_manage_filter": "Adicionar e mudar listas",
+      "adguard_refresh_filters": "Atualizar as listas",
+      "adguard_manage_rewrite": "Criar e apagar reescritas de DNS",
+      "adguard_set_blocked_services": "Bloquear serviços",
+      "docs_search": "Procurar nos documentos",
+      "docs_read": "Ler um documento",
+      "docs_write": "Escrever os documentos dos agentes",
+      "docs_log": "Escrever no registo do que fez",
+      "docs_propose": "Propor mudanças nos teus documentos",
+      "updates_list": "Ver as atualizações",
+      "update_status": "Ver uma atualização",
+      "update_release_notes": "Ler as notas das versões",
+      "update_known_issues": "Procurar problemas conhecidos",
+      "update_save_study": "Gravar o estudo de uma atualização",
+      "update_set_status": "Mudar o estado de uma atualização",
+      "update_add_note": "Escrever na tarefa da atualização",
+      "update_prepare": "Preparar uma atualização (tentativa e especificação)",
+      "update_run": "Correr uma atualização preparada",
+      "update_verify": "Verificar uma atualização instalada",
+      "schedule_list": "Ver os disparos",
+      "schedule_create": "Criar um disparo",
+      "schedule_update": "Mudar um disparo",
+      "schedule_delete": "Apagar um disparo",
+      "update_check": "Validar um ponto das regras",
+      "docs_projects": "Ver os projetos",
+      "board_list": "Ver as tarefas",
+      "board_get": "Abrir uma tarefa",
+      "board_create": "Criar uma tarefa",
+      "board_update": "Mudar uma tarefa",
+      "board_comment": "Comentar uma tarefa",
+      "board_ask_user": "Pedir-te uma resposta",
+      "update_attempt_close": "Fechar uma tentativa",
+      "todo_lists": "Ver as listas",
+      "todo_list": "Ler as tarefas",
+      "todo_create": "Criar tarefas",
+      "todo_update": "Mudar tarefas",
+      "todo_delete": "Apagar tarefas",
+      "todo_create_list": "Criar listas"
+    }
+  },
+  "conversations": {
+    "title": "Conversas",
+    "new": "Nova conversa",
+    "answering": "a responder…",
+    "empty": "Ainda não há conversas. Escreve ao Jarvis para começar uma.",
+    "rename": "Mudar o nome",
+    "delete": "Apagar",
+    "confirmDelete": "Apagar?",
+    "cancel": "Cancelar",
+    "groups": {
+      "today": "Hoje",
+      "yesterday": "Ontem",
+      "week": "Últimos 7 dias",
+      "older": "Mais antigas"
+    }
+  },
+  "access": {
+    "title": "Agentes",
+    "description": "O que cada agente pode fazer em {{label}}.",
+    "loading": "A carregar…",
+    "nobody": "Nenhum agente tem ferramentas para esta app (dá-lhas em Workflow).",
+    "custom": "Limitado aqui",
+    "fromTools": "O que as ferramentas dele deixam",
+    "agentOff": "Agente desligado",
+    "noTools": "Este agente não tem ferramentas para isto (Workflow).",
+    "others": "Sem ferramentas para esta app: {{names}}.",
+    "layers": "Vale junto com as permissões por área e as ferramentas de cada agente.",
+    "general": "Permissões por área",
+    "tools": "Ferramentas (Workflow)",
+    "levels": {
+      "NONE": "Sem acesso",
+      "READ": "Ler",
+      "WRITE": "Ler e mudar"
+    }
+  }
+}

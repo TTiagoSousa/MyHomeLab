@@ -1,0 +1,335 @@
+{
+  "title": "Help",
+  "intro": "Step-by-step guides to get each part of MyHomeLab working: where to get each key or token, what to fill in and where. Topics marked admin are done once by whoever runs the installation.",
+  "adminTag": "Admin",
+  "open": "Open {{name}}",
+  "topics": {
+    "start": {
+      "title": "Getting started",
+      "summary": "Where to begin after signing in for the first time.",
+      "steps": [
+        "Sign in with the user created during installation (admin / admin by default). If the app can be reached from outside your home, create another user with a strong password right away.",
+        "In Assistant → Settings → AI, connect Claude with your key. Without it Jarvis doesn't answer.",
+        "In Email, connect your Gmail accounts (the admin must have set up Google first — see \"Connect Gmail\").",
+        "In Connected apps → Proxmox, add your Proxmox. The Servers page then shows up in the menu.",
+        "Optional: install the Android app to talk to Jarvis on your phone."
+      ],
+      "notes": [
+        "Each user has their own things: email accounts, AI key, servers, services, tasks and the conversation with Jarvis. Nobody sees anyone else's."
+      ]
+    },
+    "ai": {
+      "title": "AI (Claude Code, with your subscription)",
+      "summary": "Jarvis and the agents run on the server's Claude Code, with your Claude subscription (Pro or Max). No API keys and no extra costs: they use your subscription limit.",
+      "steps": [
+        "On the server, the MyHomeLab installer already installs Claude Code. You only need to sign in, in one of two ways.",
+        "In the CT terminal: runuser -u myhomelab -- env HOME=/var/lib/myhomelab claude auth login, and approve access at the link it shows.",
+        "Or on a computer with a browser: run claude setup-token, approve, and paste the token in Assistant → Settings → AI → Use a token. The app tests it before saving.",
+        "In Settings → AI, Check must show \"Connected\". In Models you pick the main model (Jarvis) and the agents' model."
+      ],
+      "notes": [
+        "The agents use the same limit you use on claude.ai and in Claude Code (the 5-hour window and the weekly one). See it at claude.ai → Settings → Usage.",
+        "If the subscription hits its limit, Jarvis says so and works again when the limit resets.",
+        "Each run is clean: Claude Code only has the MyHomeLab tools, no terminal, files or skills, and never sees the server keys."
+      ],
+      "goTo": "Go to Settings"
+    },
+    "google": {
+      "title": "Connect Gmail (Google)",
+      "summary": "A one-time setup in Google Cloud done by the admin; then everyone connects their own accounts.",
+      "steps": [
+        "Admin: at console.cloud.google.com create a project (e.g. MyHomeLab).",
+        "In APIs & Services → Library, enable the Gmail API.",
+        "In OAuth consent screen, choose External and fill in the app name and your email. Under Test users, add the email addresses of the accounts that will be connected.",
+        "In Credentials → Create credentials → OAuth client ID, choose Web application. Under Authorized redirect URIs put: https://<your MyHomeLab address>/api/connected-account/google/callback",
+        "Copy the client ID and secret. In the MyHomeLab container run myhomelab-config, fill in GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET, save and accept the restart.",
+        "Each user: in Email click Add email, sign in to the Google account and accept the permissions (read and organise email and labels)."
+      ],
+      "notes": [
+        "While the Google app is in Testing mode, Google asks to reconnect the account every 7 days. To avoid it, publish the app on the consent screen.",
+        "If you see redirect_uri_mismatch, the URI in Google must be exactly the address you open MyHomeLab with, including /api.",
+        "For Google Tasks (syncing your Tasks), also enable the Google Tasks API in the Library; connect it in Connected apps → Google Tasks — it only asks for access to your tasks."
+      ],
+      "goTo": "Go to Email"
+    },
+    "emailRules": {
+      "title": "Email rules",
+      "summary": "Let Gmail organise itself: labels, read, archive, star.",
+      "steps": [
+        "In Email, open the account and go to its rules.",
+        "Click New rule. In the conditions pick sender, subject or keywords (several words must all appear; in quotes it is the exact phrase).",
+        "Mail type lets you split ads and newsletters (emails with a \"mailing list\" or an \"unsubscribe\" link) from account emails, even from the same sender.",
+        "Choose the actions: labels (paths like Finance/Revolut), mark as read, important, star, remove from the inbox.",
+        "Save and use Run on Inbox to check it catches what you want. Afterwards they run by themselves at the account's frequency."
+      ],
+      "notes": [
+        "Rules run in order; \"Stop evaluating further rules\" keeps the next ones from touching the same email.",
+        "The search box above the rules looks in names, labels, senders, subjects and keywords (shortcut /)."
+      ],
+      "goTo": "Go to Email"
+    },
+    "nextcloud": {
+      "title": "Nextcloud",
+      "summary": "Connect your Nextcloud: the version and the apps inside it (each with its own update), the tasks in Tasks sync, and the backup destination.",
+      "steps": [
+        "In Nextcloud, with an admin account, go to Personal settings → Security → Devices & sessions, type MyHomeLab and create an app password. Copy it.",
+        "In MyHomeLab, under Connected apps → Nextcloud, click Connect Nextcloud.",
+        "Fill in the address (https://<your nextcloud>), your user and the app password, say where it runs (the server and the CT) and click Connect.",
+        "The Nextcloud page shows the version, the apps and the updates: one for Nextcloud itself and one for each app with a new version in the App Store, each with its own study.",
+        "For tasks: in Tasks → Sync, Nextcloud shows up under \"Where\" next to the Google emails.",
+        "For backups: in Backups, create a destination with this account and pick the folder."
+      ],
+      "notes": [
+        "Always use an app password, not your main Nextcloud password.",
+        "Without admin, the apps and their updates are not visible.",
+        "In Docs, the suggested documents include the Nextcloud rules and the rules for its apps (parts)."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "proxmox": {
+      "title": "Proxmox servers",
+      "summary": "Give MyHomeLab and Jarvis read access to your Proxmox.",
+      "steps": [
+        "Open the Proxmox panel (https://<Proxmox IP>:8006).",
+        "In Datacenter → Permissions → API Tokens, click Add. User: root@pam, Token ID: myhomelab, turn off Privilege Separation.",
+        "Click Add and copy the Secret — Proxmox shows it only once.",
+        "In MyHomeLab, in Connected apps → Proxmox → Connect Proxmox, enter the Proxmox IP, port 8006, the Token ID (root@pam!myhomelab) and the Secret. Click Test and save."
+      ],
+      "notes": [
+        "For a read-only token, keep Privilege Separation on and give it the PVEAuditor role in Datacenter → Permissions → Add → API Token Permission, on path /.",
+        "The address is the Proxmox host's, not the MyHomeLab container's.",
+        "Disk health (Servers → Disks) reads SMART through Proxmox and needs the Sys.Audit permission on the node — root@pam and the PVEAuditor role already have it. Disks behind RAID controllers or in USB enclosures may show \"No SMART\".",
+        "For agents to work on the machines (start, shut down, snapshots, backups, resources), the token needs the PVEVMAdmin role in Datacenter → Permissions (or a root@pam token without Privilege Separation). With PVEAuditor they only read.",
+        "Commands: on the server page, under Commands (SSH) → Enable commands, MyHomeLab generates a key and shows the line to paste in the Proxmox shell. Commands run straight away and are logged; what the agent can do (and what it never does without your yes) is in the server rules, in Documents.",
+        "Server guide: it is a document linked to the server (it shows in Documents and in the server's document list). Write it yourself, or ask Jarvis to study the server and create or update the guide — if the document is yours, it proposes the change and you approve it."
+      ],
+      "goTo": "Go to Settings"
+    },
+    "services": {
+      "title": "Watched services and notifications",
+      "summary": "Get warned when a service stops responding.",
+      "steps": [
+        "In Servers, on the Services card, click + Add service.",
+        "Give it a name and choose how to check it: HTTP(S) with the URL (any response below 500 counts as online, including a login screen) or TCP with host:port (DNS, SSH, databases).",
+        "Choose how often to check and, if you like, the server and the machine it runs on.",
+        "Save: the service is checked right away. If it fails twice in a row (10 s apart), a notification appears."
+      ],
+      "notes": [
+        "Notifications are in the Notifications menu, with the number of active ones. They close by themselves when the service comes back.",
+        "If the linked machine disappears from Proxmox, you also get a notification.",
+        "The MyHomeLab container must be able to reach the addresses you watch."
+      ],
+      "goTo": "Go to Servers"
+    },
+    "forgejo": {
+      "title": "Forgejo",
+      "summary": "Your repositories for the agents, and automatic backups of them.",
+      "steps": [
+        "In Forgejo, go to Settings → Applications → Generate token, with read and write on \"repository\" and \"issue\" and read on \"user\". To back up the whole instance, use an administrator account and also give read on \"admin\".",
+        "In MyHomeLab, under Connected apps → Forgejo → Connect Forgejo, enter the address (e.g. https://git.example.com) and paste the token. The app tests it before saving.",
+        "For the agents to use it, pick Forgejo's tools on the agent, in Assistant → Workflow.",
+        "For backups, open the account (Settings) and, under Automatic backups, choose the destination, folder, frequency and how many to keep."
+      ],
+      "notes": [
+        "The backup is a .tar with each repository's code (git bundle, restored with git clone) and the issues, pull requests, comments and releases as JSON.",
+        "Forgejo's users and settings are not included: for that use forgejo dump on the machine itself."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "trek": {
+      "title": "TREK",
+      "summary": "The trip planner: new-version alerts, open sign-up warning and automatic backups.",
+      "steps": [
+        "In TREK, create (or pick) an administrator account without MFA, just for MyHomeLab. TREK has no API tokens: MyHomeLab signs in like the login screen.",
+        "In MyHomeLab, under Connected apps → TREK → Connect TREK, enter the address (e.g. https://trek.example.com), the email and the password. The app checks it signs in and is an administrator before saving.",
+        "For backups, open the TREK (Settings) and, under Automatic backups, choose the destination, folder, frequency and how many to keep."
+      ],
+      "notes": [
+        "The backup is TREK's own zip: database, uploaded files and encryption key. Restore it in TREK, under Admin → Backup → Restore.",
+        "TREK only allows 3 backups per hour; beyond that the latest one stored there is saved.",
+        "If sign-up is open, the account page warns you: on an exposed TREK, anyone can create an account."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "assistant": {
+      "title": "What to ask Jarvis",
+      "summary": "Examples of what the assistant can do.",
+      "steps": [
+        "Email: \"Summarise today's emails\", \"Did I get emails from Revolut this week?\", \"Create a rule for getquin's ads\".",
+        "Server: \"Which machines are running?\", \"How much memory is immich using?\".",
+        "Services: \"Are all my services online?\", \"Check AdGuard\", \"Were there any alerts this week?\".",
+        "AdGuard: \"When were the AdGuard lists last updated?\", \"Does AdGuard need an update?\".",
+        "Instructions: \"From now on, ignore ads in email summaries\" — Jarvis shows the change and only applies it when you say yes."
+      ],
+      "notes": [
+        "Jarvis only sees your accounts, servers and services. It needs your AI key (Assistant → Settings → AI)."
+      ],
+      "goTo": "Go to the Assistant"
+    },
+    "updates": {
+      "title": "Updating MyHomeLab",
+      "summary": "Install new versions without logging in to the server.",
+      "steps": [
+        "In Admin, the Version card shows the installed version and the latest one.",
+        "Click Update to vX. The window shows the progress and the page reloads by itself at the end.",
+        "In See versions you get the list of every version with its notes, and you can pick any newer one."
+      ],
+      "notes": [
+        "If a step fails, the server goes back to the previous version by itself.",
+        "From the container console: myhomelab-update (the latest) or myhomelab-update vX.Y.Z."
+      ],
+      "goTo": "Go to Admin"
+    },
+    "users": {
+      "title": "Users",
+      "summary": "Give access to other people at home.",
+      "steps": [
+        "In Admin, click New user and set the username, password and role (user or admin).",
+        "Give them the MyHomeLab address and the credentials. Each user sets up their own things (AI key, accounts, servers)."
+      ],
+      "notes": [
+        "Admins also see the Admin page: users, versions and updates.",
+        "Only an admin can ask Jarvis to test URLs on the home network."
+      ],
+      "goTo": "Go to Admin"
+    },
+    "homeAssistant": {
+      "title": "Home Assistant",
+      "summary": "Home automation: agents control the house and create automations and scripts; new-version alerts and automatic backups.",
+      "steps": [
+        "In Home Assistant, with an administrator account, open your profile → Security → Long-lived access tokens → Create token, and copy it (it is only shown once).",
+        "In MyHomeLab, go to Connected apps → Home Assistant → Connect Home Assistant, enter the address (e.g. http://homeassistant.local:8123) and paste the token. The app checks it belongs to an administrator before saving.",
+        "For agents to use it, pick the Home Assistant tools on the agent (by default the Infrastructure Engineer), in Assistant → Workflow.",
+        "For backups, open the Home Assistant (Settings) and, under Automatic backups, choose the destination, folder, frequency and how many to keep."
+      ],
+      "notes": [
+        "Agents read and control entities, change their name, area and id, and create, change or delete automations, scripts and scenes. When changing or deleting, they keep the previous version so it can be undone.",
+        "Only automations, scripts and scenes made in the UI (automations.yaml, scripts.yaml, scenes.yaml) can be edited; ones from other YAML files can only be read and controlled.",
+        "What Jarvis may do is chosen in Assistant → Settings → Permissions → Home Assistant.",
+        "The backup is a full one and is restored in Home Assistant, under Settings → System → Backups."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "adguard": {
+      "title": "AdGuard",
+      "summary": "The network DNS: agents see queries, block or allow domains and manage the lists; new-version alerts and automatic backups.",
+      "steps": [
+        "In MyHomeLab, go to Connected apps → AdGuard → Connect AdGuard, enter the dashboard address (e.g. http://192.168.1.2) and the username and password you log in with. The app checks they work before saving.",
+        "The Infrastructure Engineer already gets the AdGuard tools. To give them to another agent, pick them in Assistant → Workflow.",
+        "For backups, open AdGuard (Settings) and, under Automatic backups, choose the destination, folder, frequency and how many to keep."
+      ],
+      "notes": [
+        "Ask, for example: \"Why doesn't site X open?\", \"Unblock domain Y\", \"Pause AdGuard for 10 minutes\", \"Create nas.home pointing to 192.168.1.10\".",
+        "To unblock, the agent adds an allow rule just for that domain instead of turning off a whole list. When changing rules, it keeps the previous ones so they can be undone.",
+        "What Jarvis may do is chosen in Assistant → Settings → Permissions → AdGuard.",
+        "The backup is a JSON with the settings; certificates, the password and the query history are left out."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "docs": {
+      "title": "Documents",
+      "summary": "Your rules, checklists and notes, linked to servers, machines, apps or agents. The agents follow them and only propose changes to you.",
+      "steps": [
+        "In Documents, press \"Create suggested documents\": you get general rules, before/after update checklists and a rules document for each connected app.",
+        "Open a document and write freely: headings, lists, checkboxes, tables and diagrams.",
+        "Link it to what matters (a server, a CT or VM even without integration, an app, a monitored service, an agent or another document).",
+        "Mark rules as \"Required\": the agents always read them when the request touches what they are linked to. Without links, they apply to everything."
+      ],
+      "notes": [
+        "The agents only get the index of the documents and the required ones for what the request mentions; they look up the rest when needed. That saves tokens.",
+        "The agents don't write in your documents: they propose changes and learnings, which you approve or reject in Documents.",
+        "Each document keeps its previous versions; you can restore any of them.",
+        "Each server's guide is also a document: you write it, or ask the assistant to study the server and write it.",
+        "Update attempts also show up here (type \"Update attempt\"): when you open one, you see the rule points as \"to validate\", \"validated\" or \"not validated\", with the proof of each."
+      ],
+      "goTo": "Go to Documents"
+    },
+    "appUpdates": {
+      "title": "App updates",
+      "summary": "Each new version of a connected app (or of Proxmox) is a task in the server project: an agent studies it, installs by itself whatever is not a major jump and only asks you the rest.",
+      "steps": [
+        "When a new version comes out, MyHomeLab opens the task by itself in Waiting for study, and updates are studied one at a time.",
+        "The agent studies it (Study → Study done). If it is not a major jump and the app rules pass, it installs it right away; otherwise it leaves it in Waiting for reply with the recommendation, or in Recheck later.",
+        "What needs you shows up in Notifications → Needs you (major, high risk or a question). Open the task and decide there: Yes, install, Later or Cancel. When it finishes, you get an \"Instalado\" or \"Falhou\" notice.",
+        "In Ready to update it installs right away, one at a time (if another is running, the task says it is queued): snapshot, the commands from the rules and the check. If it fails, it goes back to the snapshot and stays in Failed."
+      ],
+      "notes": [
+        "Each study and each preparation stays as an attempt (Documents → type \"Update attempt\"), with each point validated or not and the proof.",
+        "MyHomeLab measures, runs and logs; what can be done is in each app's \"study an update\" and \"install an update\" documents."
+      ],
+      "goTo": "Go to the updates"
+    },
+    "todos": {
+      "title": "Tasks",
+      "summary": "Your to-dos: lists, due dates, priority, notes and subtasks. You and Jarvis create and change them.",
+      "steps": [
+        "In Tasks, pick a list (or \"All\", \"Today\", \"Next 7 days\") and type the task in the box at the top — Enter creates it.",
+        "Click a task to open it: due date and time, priority, status, list, notes, link and subtasks. Save at the bottom.",
+        "The circle on the left marks it as done; \"Show done\" shows the ones you have finished.",
+        "Ask Jarvis: \"create the Server list and add: reply to X about Y, by Friday\". When it moves on, Jarvis changes the task or marks it done."
+      ],
+      "notes": [
+        "Update questions and document proposals do not create tasks here: they appear in Notifications → Needs you and you decide in the board task. Questions on other board tasks open \"Responder: …\" here.",
+        "They are stored in MyHomeLab.",
+        "In Sync (top of the page) you make groups: in + New group you give it a name, pick Where — the Server Tasks (MyHomeLab), ticked by default but optional (a group can be only accounts), and the accounts (your Google Tasks emails and your Nextclouds), at least two places — and choose what it Syncs — Everything (all lists of those accounts and, with the server, of Tasks, including ones you create later) or Only these lists (picked by name, or type Another list and press Add). Each list, by name, stays the same in every place of the group and is created where it is missing (without the server, the Tasks lists do not change); the same list of the same account joins only one group. Edit changes the group and ✕ undoes it without deleting tasks. It syncs both ways, as often as you choose (5 min to 1 day) or when you press Now. First connect the account in Connected apps → Google Tasks or → Nextcloud. Priority, links and the due time stay only here."
+      ],
+      "goTo": "Go to Tasks"
+    },
+    "tasks": {
+      "title": "Projects",
+      "summary": "The MyHomeLab board: projects with columns, modules and tasks (like Plane), where you and the agents work, and the triggers that put them to work on their own.",
+      "steps": [
+        "In Projects, pick the project (or create one with \"+ Project\": the name, the prefix and the agents working on it).",
+        "See the tasks as Columns (drag between columns), List or Table, and filter by column, priority, assignee, module and label.",
+        "Open a task: description, properties (due date, modules, labels), linked links and documents, triggers and history.",
+        "Write a comment: if the task has an agent assigned (or is an update), it reads it and works on it right after, and answers you on the task."
+      ],
+      "notes": [
+        "Triggers: an agent works on its own on a date or on repeat. Update studies, \"recheck later\" and your comments also show up there.",
+        "When an agent needs an answer from you, the question appears in Notifications → Needs you. Open the task and decide with the buttons at the top, or reply in the comments.",
+        "Columns and modules are changed in the project settings (the gear)."
+      ],
+      "goTo": "Go to Projects"
+    },
+    "today": {
+      "title": "Today",
+      "summary": "Empty for now. What needs you is in Notifications.",
+      "steps": [
+        "Notifications → Needs you: the agents’ questions and proposals. Click to open the task, where you decide with one button.",
+        "Notifications → Warnings: services down, failed backups, disks and certificates."
+      ],
+      "notes": [
+        "To give the agent any other answer, write in the task comments."
+      ],
+      "goTo": "Go to Today"
+    },
+    "shortcuts": {
+      "title": "Services (shortcuts)",
+      "summary": "Shortcuts to your self-hosted services, sorted into categories.",
+      "steps": [
+        "Click + and create a category (e.g. Infrastructure, Media).",
+        "Click + → Service: name, link, two letters and the colour.",
+        "Star it to put it in Favourites, at the top.",
+        "Use the search box to find a service by name."
+      ],
+      "notes": [
+        "These are only shortcuts. To be warned when a service goes down, see \"Watched services and notifications\"."
+      ],
+      "goTo": "Go to Services"
+    },
+    "apps": {
+      "title": "Connected apps",
+      "summary": "The accounts MyHomeLab and Jarvis use: Gmail, Google Tasks, Forgejo, Nextcloud, Proxmox, Home Assistant…",
+      "steps": [
+        "Pick the app and click Connect. Each one asks for the address and a key or app password.",
+        "Open the account to see the summary: status, version and what changed.",
+        "The gear holds the account, where it runs, updates, backups and the agents that use it."
+      ],
+      "notes": [
+        "Agents only see the apps you give them in each account."
+      ],
+      "goTo": "Go to Connected apps"
+    }
+  },
+  "openTopic": "Open help for this page"
+}

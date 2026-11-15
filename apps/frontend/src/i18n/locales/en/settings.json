@@ -1,0 +1,120 @@
+{
+  "title": "Settings",
+  "language": {
+    "title": "Language",
+    "description": "The interface language. Saved in this browser."
+  },
+  "ai": {
+    "title": "AI",
+    "description": "Your assistant runs on this machine's Claude Code, with your Claude subscription. No API keys: the agents use your subscription limit.",
+    "state": {
+      "on": "Connected",
+      "off": "Not signed in",
+      "missing": "Not installed",
+      "unknown": "Checking"
+    },
+    "version": "Version {{version}}",
+    "subscription": "{{plan}} plan",
+    "expires": "session until {{date}}",
+    "machineLogin": "This machine's session (claude auth login)",
+    "missingHint": "Install Claude Code on this machine (on the server, the MyHomeLab installer already does it).",
+    "loginHint": "Not signed in: run claude auth login in this machine's terminal, or use a subscription token.",
+    "check": "Check",
+    "checking": "Checking…",
+    "useToken": "Use a token",
+    "replace": "Replace token",
+    "remove": "Remove token",
+    "confirmRemove": "Confirm?",
+    "saved": "Token saved.",
+    "removed": "Token removed: back to this machine's session.",
+    "modal": {
+      "title": "Use a {{name}} token",
+      "replaceTitle": "Replace the {{name}} token",
+      "where": "On a computer with a browser, run this in the terminal and approve access; then paste the token it prints:",
+      "label": "Subscription token",
+      "privacy": "It is stored encrypted on the server and only used by your assistant.",
+      "verifying": "Testing…",
+      "save": "Save"
+    },
+    "errors": {
+      "AI_KEY_INVALID": "Claude Code is not signed in (or the token was rejected). Run claude auth login or create another token with claude setup-token.",
+      "AI_KEY_UNVERIFIED": "The token could not be tested right now. Try again in a moment.",
+      "AI_KEY_MISSING": "Claude Code is not set up. Go to Settings → AI.",
+      "AI_PROVIDER_UNKNOWN": "Unknown provider.",
+      "AI_NO_CREDIT": "Your Claude subscription does not allow continuing right now.",
+      "AI_RATE_LIMITED": "Your Claude subscription hit its limit. It works again when the limit resets (see claude.ai → Settings → Usage).",
+      "AI_UNAVAILABLE": "Claude Code is not responding (or is not installed). Try again in a moment.",
+      "AI_REQUEST_REFUSED": "Claude refused the request. Check in Settings → AI → Models that the chosen model exists."
+    },
+    "models": "Models",
+    "modelsSummary": "Jarvis: {{main}} · agents: {{agent}}",
+    "mainModel": "Main model",
+    "mainModelHint": "Used by Jarvis and agents marked as Opus: decides and writes.",
+    "agentModel": "Agent model",
+    "agentModelHint": "Used by agents marked as Sonnet and simple tasks (summaries, reading PDFs).",
+    "defaultModel": "{{model}} (app default)",
+    "saveModels": "Save models",
+    "modelsSaved": "Models saved."
+  },
+  "servers": {
+    "saved": "Server saved.",
+    "removed": "Server removed.",
+    "modal": {
+      "title": "Connect {{kind}}",
+      "editTitle": "Edit {{name}}",
+      "name": "Name",
+      "namePlaceholder": "e.g. Home Proxmox",
+      "host": "Address (IP or name)",
+      "port": "Port",
+      "tokenId": "Token ID",
+      "tokenIdHint": "As Proxmox shows it: user@realm!name.",
+      "tokenSecret": "Token secret",
+      "keepSecret": "Leave blank to keep the current one",
+      "verifyTls": "Verify the HTTPS certificate",
+      "verifyTlsHint": "Off by default — Proxmox usually has a self-signed certificate.",
+      "testing": "Testing the connection…",
+      "save": "Test and save",
+      "guide": {
+        "title": "How to create the token in Proxmox",
+        "step1": "Open the Proxmox panel in your browser (https://Proxmox-IP:8006).",
+        "step2": "Go to Datacenter → Permissions → API Tokens and click Add.",
+        "step3": "User: root@pam · Token ID: myhomelab · turn off \"Privilege Separation\".",
+        "step4": "Click Add and copy the Secret that appears — Proxmox only shows it once.",
+        "step5": "Below, the Token ID is root@pam!myhomelab and the secret is that Secret.",
+        "readOnly": "Prefer a read-only token? Keep \"Privilege Separation\" on and, under Datacenter → Permissions → Add → API Token Permission, give it the PVEAuditor role on path / with \"Propagate\"."
+      },
+      "hostPlaceholder": "e.g. 192.168.1.10",
+      "hostHint": "The IP you open the Proxmox panel with — not the MyHomeLab container.",
+      "openProxmox": "Open Proxmox",
+      "tokenIdPlaceholder": "e.g. root@pam!myhomelab",
+      "secretPlaceholder": "Paste the token's Secret here",
+      "secretHint": "Proxmox only shows it when you create the token. It is stored encrypted and only your Jarvis uses it."
+    },
+    "errors": {
+      "SERVER_NAME_TAKEN": "You already have a server with that name."
+    }
+  },
+  "usage": {
+    "title": "AI usage this month",
+    "description": "Estimated cost from the tokens used, by agent and by source.",
+    "ofBudget": "of {{budget}} ({{percent}}%)",
+    "noBudget": "No monthly limit",
+    "days": "Cost per day",
+    "byAgent": "By agent",
+    "bySource": "By source",
+    "empty": "No usage this month yet.",
+    "budget": "Monthly limit (€)",
+    "budgetPlaceholder": "No limit",
+    "save": "Save",
+    "budgetHint": "You get a warning at 80% and another at 100%. Empty = no limit.",
+    "saved": "Limit saved",
+    "sources": {
+      "chat": "Chat",
+      "verify": "Verification",
+      "study": "Studies",
+      "schedule": "Triggers",
+      "check": "Rule conflicts",
+      "install": "Install"
+    }
+  }
+}

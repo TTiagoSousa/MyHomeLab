@@ -1,0 +1,310 @@
+{
+  "page": {
+    "title": "Gmail",
+    "organizerDescription": "Create rules to organise your inbox automatically",
+    "allRules": "See all rules",
+    "connections": "Connections",
+    "connect": "Connect Google account"
+  },
+  "account": {
+    "fallbackTitle": "Google account",
+    "rules_one": "{{count}} rule",
+    "rules_other": "{{count}} rules",
+    "meta": "{{rules}} · last run {{lastRun}}",
+    "viewRules": "View rules",
+    "frequency": "Frequency",
+    "stats": {
+      "inbox": "In the inbox",
+      "read": "Read",
+      "all": "All emails",
+      "refresh": "Refresh counters"
+    },
+    "viewProposals_one": "View proposals ({{count}})",
+    "viewProposals_other": "View proposals ({{count}})",
+    "proposalFrequency": "Analyse and propose",
+    "proposalsOff": "Off",
+    "autoImplement": "Implement on their own after (days)",
+    "autoImplementNever": "Never",
+    "autoImplementHint": "A proposal you leave untouched for those days becomes a rule. Empty = only by hand.",
+    "sections": {
+      "rules": "Rules",
+      "proposals": "Proposed rules",
+      "account": "Account"
+    },
+    "pending_one": "{{count}} pending",
+    "pending_other": "{{count}} pending",
+    "proposalsMeta": "{{pending}} · last analysis {{lastAnalysis}}",
+    "pendingProposals_one": "{{count}} proposal",
+    "pendingProposals_other": "{{count}} proposals",
+    "cancelRemove": "Cancel",
+    "confirmRemove": "Disconnect account",
+    "loading": "Loading…",
+    "notFound": "This Google account is no longer connected.",
+    "remove": "Disconnect"
+  },
+  "run": {
+    "inbox": "Run on Inbox",
+    "all": "Run on all email"
+  },
+  "rules": {
+    "back": "← Gmail",
+    "title": "Email rules",
+    "new": "New rule",
+    "empty": "You don't have any rules for this account yet.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "noPath": "No path set",
+    "mailKindTag": {
+      "BULK": "Ads",
+      "DIRECT": "No ads"
+    },
+    "allAccounts": "All accounts",
+    "accountsLabel": "Account",
+    "pickAccount": "Pick an account to create the rule"
+  },
+  "form": {
+    "name": "Rule name (optional)",
+    "namePlaceholder": "If empty, the path or condition is used",
+    "sections": {
+      "conditions": "Conditions",
+      "immediateActions": "Immediate actions (when the email is found)",
+      "removeFromInbox": "Remove from inbox",
+      "expiration": "Star / important expiry",
+      "paths": "Paths (labels)"
+    },
+    "from": "Sender (From) contains — who sent the email",
+    "fromPlaceholder": "e.g. google.com, invoices@",
+    "subject": "Subject contains (comma-separated)",
+    "subjectPlaceholder": "e.g. receipt, invoice",
+    "keywords": "Keywords in the body (comma-separated)",
+    "keywordsHint": "Several words must all appear, in any order. For an exact phrase, use quotes: \"Google Account\".",
+    "excludeKeywords": "Exclude keywords (comma-separated)",
+    "conditionLogic": "Condition logic",
+    "conditionLogicOptions": {
+      "ALL": "All must match",
+      "ANY": "Any one is enough"
+    },
+    "matchType": "Match type",
+    "matchTypeOptions": {
+      "CONTAINS": "Contains",
+      "EXACT": "Exact",
+      "REGEX": "Regular expression"
+    },
+    "mailKind": "Mail type",
+    "mailKindOptions": {
+      "ANY": "Any",
+      "BULK": "Only ads and newsletters",
+      "DIRECT": "No ads (account, invoices…)"
+    },
+    "mailKindHint": "Ads = emails with a \"mailing list\" or an \"unsubscribe\" link. Use it to split a company's marketing from its account emails when both come from the same sender.",
+    "hasAttachment": "Has attachment",
+    "hasAttachmentOptions": {
+      "any": "Doesn't matter",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "markAsRead": "Mark as read",
+    "markAsImportant": "Mark as important",
+    "markAsStarred": "Star it",
+    "stopProcessing": "Stop evaluating further rules",
+    "removeFromInbox": "Remove from inbox (archive)",
+    "inboxTiming": "When to remove",
+    "inboxTimingOptions": {
+      "immediate": "Immediately",
+      "after_days": "X days after it was received"
+    },
+    "inboxDays": "Days after receiving",
+    "inboxDaysPlaceholder": "e.g. 2",
+    "removeOnlyIfRead": "Only remove if already read",
+    "markAsReadOnRemove": "Mark as read when archiving",
+    "starExpires": "Star expires after (days)",
+    "importantExpires": "Important expires after (days)",
+    "neverPlaceholder": "Never",
+    "importantExpiresOnStar": "Important expires as soon as it is starred",
+    "pathsHint": "Each path is a complete, independent route, separated by \"/\" (e.g. Banks/Revolut/Money out). For each path, choose whether the email gets every label along the route or only the last one.",
+    "path": "Path {{number}}",
+    "pathPlaceholder": "e.g. Banks/Revolut/Money out",
+    "pathMode": "Mode for this path",
+    "labelModeOptions": {
+      "ALL_LEVELS": "Keep every label in the path",
+      "LEAF_ONLY": "Keep only the final label of the path"
+    },
+    "removePath": "Remove path",
+    "addPath": "+ Add path"
+  },
+  "alerts": {
+    "accountRemoved": "Account removed",
+    "ruleCreated": "Rule created",
+    "ruleUpdated": "Rule updated",
+    "ruleDeleted": "Rule deleted",
+    "runResult": "{{rules}} rules evaluated, {{matched}} emails found, {{modified}} changed{{truncated}}",
+    "runTruncated": " (limit reached, run again to continue)",
+    "proposalSettingsSaved": "Proposed-rules settings saved."
+  },
+  "search": {
+    "placeholder": "Search rules — name, label, sender, subject…  ( / )",
+    "label": "Search rules",
+    "clear": "Clear search",
+    "clearAll": "Clear filters",
+    "inLabel": "Search in",
+    "statusLabel": "Status",
+    "fields": {
+      "all": "All",
+      "name": "Name",
+      "labels": "Labels",
+      "from": "Sender",
+      "subject": "Subject",
+      "keywords": "Keywords"
+    },
+    "status": {
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive",
+      "bulk": "By mail type"
+    },
+    "count_one": "{{shown}} of {{count}} rule",
+    "count_other": "{{shown}} of {{count}} rules",
+    "total_one": "{{count}} rule",
+    "total_other": "{{count}} rules",
+    "noResults": "No rule matches the search."
+  },
+  "proposals": {
+    "title": "Proposed rules",
+    "tag": "Proposed",
+    "edited": "Edited",
+    "unnamed": "Unnamed",
+    "intro": "Jarvis analyses the emails without labels and proposes rules. Each analysis revisits the proposals you haven't touched — changes them, deletes them or adds new ones. The ones you edit stay as you left them.",
+    "lastAnalysis": "Last analysis: {{date}}.",
+    "neverAnalyzed": "No analysis yet.",
+    "analyzeNow": "Analyse now",
+    "analyzing": "Analysing…",
+    "implementAll_one": "Implement ({{count}})",
+    "implementAll_other": "Implement all ({{count}})",
+    "empty": "No proposals. Click Analyse now, or pick a frequency on the Email page.",
+    "when": "When",
+    "does": "Does",
+    "conditions": {
+      "from": "from {{values}}",
+      "subject": "subject with {{values}}",
+      "keywords": "with the words {{values}}"
+    },
+    "actions": {
+      "label": "label {{path}}",
+      "markAsRead": "marks as read",
+      "markAsImportant": "marks as important",
+      "markAsStarred": "stars it",
+      "archiveNow": "archives now",
+      "archiveAfter_one": "archives after {{count}} day",
+      "archiveAfter_other": "archives after {{count}} days",
+      "onlyIfRead": "only if read",
+      "readOnArchive": "marks as read when archiving",
+      "starExpires_one": "removes the star after {{count}} day",
+      "starExpires_other": "removes the star after {{count}} days",
+      "importantExpires_one": "removes important after {{count}} day",
+      "importantExpires_other": "removes important after {{count}} days",
+      "stop": "stops the following rules"
+    },
+    "evidence": "{{emails}} emails · {{unread}} unread · {{bulk}} advertising",
+    "autoAt": "Implements itself on {{date}} unless you touch it.",
+    "implement": "Implement",
+    "edit": "Edit",
+    "dismiss": "Dismiss",
+    "recent_one": "{{count}} proposal already decided",
+    "recent_other": "{{count}} proposals already decided",
+    "status": {
+      "IMPLEMENTED": "Implemented",
+      "DISMISSED": "Dismissed",
+      "PENDING": "Pending"
+    },
+    "alerts": {
+      "analyzed": "Analysis done: {{created}} new, {{updated}} revised, {{deleted}} deleted, {{rejected}} rejected ({{unlabeled}} emails without a label).",
+      "implementedAll_one": "{{count}} rule created.",
+      "implementedAll_other": "{{count}} rules created.",
+      "implemented": "Rule created.",
+      "dismissed": "Proposal dismissed — it won't come back.",
+      "updated": "Proposal saved.",
+      "restored": "The proposal is back among the pending ones."
+    },
+    "restore": "Propose again",
+    "decidedAt": "Decided on {{date}}"
+  },
+  "connections": {
+    "permissionsTitle": "Permissions per account",
+    "permissionsSummary": "What Google allowed MyHomeLab to do when you connected the account.",
+    "allowed": "Permission granted",
+    "missing": "Permission missing",
+    "partial": "Only in {{count}} of {{total}} accounts",
+    "noAccounts": "No Gmail accounts connected yet.",
+    "callsTitle": "Gmail API calls",
+    "callsSummary": "What can be requested from the Gmail API ({{base}}): the calls MyHomeLab already uses and the ones it does not use yet.",
+    "filterLabel": "Show calls",
+    "filter": {
+      "all": "All ({{count}})",
+      "used": "Used ({{count}})",
+      "possible": "Possible ({{count}})"
+    },
+    "table": {
+      "method": "Method",
+      "path": "Path",
+      "description": "What it does",
+      "usedBy": "Used by",
+      "scope": "Permission",
+      "status": "Status",
+      "allows": "What it allows"
+    },
+    "notUsed": "Not used yet",
+    "granted": "Granted",
+    "notGranted": "Not granted",
+    "includedIn": "included in {{scope}}",
+    "scopes": {
+      "readonly": "Read emails, labels and the profile",
+      "modify": "Read, change labels, archive, trash, drafts and send",
+      "labels": "View, create, change and delete labels",
+      "compose": "Create, change and send drafts",
+      "send": "Only send emails",
+      "settingsBasic": "Gmail filters and vacation auto-reply",
+      "fullAccess": "Everything, including deleting emails for good"
+    },
+    "usedBy": {
+      "rules": "Rules",
+      "proposals": "Proposals",
+      "assistant": "Jarvis",
+      "stats": "Counters"
+    },
+    "calls": {
+      "messagesList": "Search emails with a Gmail query",
+      "messageGet": "Read an email: headers, snippet or full content",
+      "attachmentGet": "Read an attachment",
+      "messageModify": "Add or remove labels, archive and mark as read",
+      "messageTrash": "Move an email to the trash",
+      "messageUntrash": "Take an email out of the trash",
+      "labelsList": "List the labels",
+      "labelCreate": "Create a label",
+      "labelGet": "See a label's counts (total and unread)",
+      "draftCreate": "Create a reply or forward draft",
+      "draftGet": "View a draft",
+      "draftSend": "Send a draft",
+      "profileGet": "See the profile and total emails of the account",
+      "threadsList": "Search whole conversations",
+      "threadGet": "Read a whole conversation",
+      "threadModify": "Change the labels of a whole conversation",
+      "threadTrash": "Move a whole conversation to the trash",
+      "historyList": "See what changed in the mailbox since last time",
+      "messagesBatchModify": "Change the labels of many emails at once",
+      "messageSend": "Send an email without a draft",
+      "labelPatch": "Rename or recolour a label",
+      "labelDelete": "Delete a label",
+      "draftsList": "List all drafts",
+      "draftUpdate": "Change a draft",
+      "draftDelete": "Delete a draft",
+      "watch": "Get notified when an email arrives (needs Google Pub/Sub)",
+      "filtersList": "List Gmail's own filters",
+      "filterCreate": "Create a Gmail filter",
+      "filterDelete": "Delete a Gmail filter",
+      "vacationGet": "See the vacation auto-reply",
+      "vacationUpdate": "Turn on or change the vacation auto-reply",
+      "messageDelete": "Delete an email for good, skipping the trash",
+      "messagesBatchDelete": "Delete many emails for good"
+    }
+  }
+}

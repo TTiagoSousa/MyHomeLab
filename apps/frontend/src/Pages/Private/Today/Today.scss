@@ -1,0 +1,21 @@
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Today {
+  @include Mixin.Pages_Configs;
+
+  > header{
+    @include Mixin.Page_Header;
+
+    .Right_Side span{ color: var(--card-global-header-title-color); }
+  }
+
+  .Today_Empty{
+    margin: 0;
+    padding: 32px 20px;
+    border: 1px dashed var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+}

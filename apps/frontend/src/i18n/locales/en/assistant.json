@@ -1,0 +1,491 @@
+{
+  "suggestedPrompts": {
+    "todayEmails": "Summarise today's emails for me",
+    "runningMachines": "Which machines are running?",
+    "nextcloudOnline": "Is Nextcloud online?"
+  },
+  "header": {
+    "status": "Status",
+    "processing": "Processing",
+    "listening": "Listening",
+    "working": "Working",
+    "realtime": "Real time",
+    "connected": "Connected",
+    "down": "Down",
+    "newConversation": "New conversation",
+    "settings": "Settings",
+    "workflow": "Workflow"
+  },
+  "conversation": {
+    "meta": "history saved",
+    "emptyTitle": "At your service.",
+    "emptyHint": "Ask about your emails, the server, or whatever you need.",
+    "placeholder": "Talk to Jarvis…",
+    "inputLabel": "Message to Jarvis",
+    "send": "Send",
+    "you": "You",
+    "docsUsed": "Documents used:",
+    "openTask": "Open task {{key}}"
+  },
+  "core": {
+    "working": "working"
+  },
+  "now": {
+    "thinking": "thinking"
+  },
+  "thinking": {
+    "single": "core → {{agent}} · {{action}}",
+    "multiple_one": "core → {{count}} subagent",
+    "multiple_other": "core → {{count}} subagents"
+  },
+  "noKey": {
+    "title": "Key missing",
+    "text": "To talk to Jarvis, connect Claude with your key in Assistant → Settings → AI. Everyone uses their own.",
+    "action": "Open Settings"
+  },
+  "prompts": {
+    "styles": {
+      "title": "Quick style",
+      "direct": {
+        "label": "More direct",
+        "text": "Get straight to the point: start with the answer, no introductions or detours."
+      },
+      "short": {
+        "label": "Short answers",
+        "text": "Short answers: two or three sentences at most, unless I ask for detail."
+      },
+      "detailed": {
+        "label": "More detail",
+        "text": "Explain in more detail and give the context that helps make sense of the numbers."
+      },
+      "noFollowUp": {
+        "label": "No closing questions",
+        "text": "Do not end answers with questions or offers of help (\"do you want me to…?\")."
+      },
+      "casual": {
+        "label": "Casual",
+        "text": "Talk casually, like a friend."
+      },
+      "formal": {
+        "label": "Formal",
+        "text": "Use a formal, neutral tone."
+      }
+    },
+    "preview": {
+      "title": "See how it looks",
+      "description": "Answers the last question in the conversation again with these instructions (without saving them yet), so you can compare it with the answer you got.",
+      "run": "See how it looks",
+      "loading": "Generating…",
+      "question": "Last question: \"{{question}}\"",
+      "before": "Before",
+      "after": "With these instructions"
+    }
+  },
+  "settings": {
+    "title": "Assistant settings",
+    "back": "Jarvis",
+    "search": "Search a setting (e.g. health, telegram, time)…",
+    "noResults": "Nothing found for \"{{query}}\".",
+    "sections": {
+      "ai": "AI",
+      "permissions": "Permissions"
+    },
+    "hints": {
+      "ai": "Your AI provider key",
+      "permissions": "What Jarvis can read and change"
+    },
+    "permissions": {
+      "title": "Permissions",
+      "description": "What the agents can read and change, area by area. What you turn off they refuse, and tell you where to turn it back on. It applies on the site, in the app and to every agent.",
+      "read": "Read",
+      "write": "Change",
+      "allOn": "Turn all on",
+      "allOff": "Turn all off",
+      "healthNote": "The overall health summary needs Sleep, Vital signs and Activity with reading on.",
+      "groups": {
+        "email": "Email",
+        "organization": "Tasks",
+        "health": "Health",
+        "servers": "Servers",
+        "development": "Development",
+        "assistant": "Assistant",
+        "home": "Home"
+      },
+      "areas": {
+        "email": {
+          "name": "Emails",
+          "description": "Read and summarise emails, search and analyse the inbox."
+        },
+        "emailRules": {
+          "name": "Gmail rules",
+          "description": "See rules and proposals. Changing means creating, editing and deleting rules, and analysing, accepting or dismissing proposals."
+        },
+        "todos": {
+          "name": "Tasks",
+          "description": "See your tasks and lists (the Tasks page). Changing is creating, editing, completing and deleting."
+        },
+        "healthSleep": {
+          "name": "Sleep",
+          "description": "Nights and sleep stages."
+        },
+        "healthVitals": {
+          "name": "Vital signs",
+          "description": "Heart rate, oxygen, skin temperature, stress, blood pressure, glucose and temperature."
+        },
+        "healthActivity": {
+          "name": "Activity",
+          "description": "Steps and workouts, including openGym ones."
+        },
+        "healthBody": {
+          "name": "Body",
+          "description": "Weight, body measurements and the health profile."
+        },
+        "healthNutrition": {
+          "name": "Nutrition",
+          "description": "Water, meals, coffee, alcohol, supplements and fasting."
+        },
+        "healthMedical": {
+          "name": "Medical",
+          "description": "Lab results, medication, appointments, vaccines, exams and conditions."
+        },
+        "healthJournal": {
+          "name": "Diary and mood",
+          "description": "Pain, symptoms, allergies, daily notes, mood, energy and motivation."
+        },
+        "servers": {
+          "name": "Servers and services",
+          "description": "Status of monitored services, notifications, disks and Proxmox."
+        },
+        "backups": {
+          "name": "Backups",
+          "description": "See backups. Changing means running a backup now and creating or editing automatic ones."
+        },
+        "serverControl": {
+          "name": "Control machines",
+          "description": "See the configuration and snapshots of VMs and CTs. Changing means start, shut down, reboot, snapshots, backups and resources (Proxmox Operator)."
+        },
+        "serverShell": {
+          "name": "Server commands",
+          "description": "See the command history. Changing is running commands over SSH (they run right away; agents follow the server rules before changing anything)."
+        },
+        "forgejo": {
+          "name": "Forgejo",
+          "description": "See repositories, issues, releases, commits and Actions. Changing means creating, commenting on, closing and reopening issues."
+        },
+        "team": {
+          "name": "Agent team",
+          "description": "See the agents and tools. Changing means Jarvis creating, changing and deleting agents."
+        },
+        "prompts": {
+          "name": "Agent prompts",
+          "description": "See the prompts. Changing means Jarvis proposing and applying changes to the agents' instructions."
+        },
+        "homeAssistant": {
+          "name": "Home Assistant",
+          "description": "See entities, automations, scripts and the log. Changing means controlling devices and creating, changing or deleting automations, scripts, scenes and entities."
+        },
+        "adguard": {
+          "name": "AdGuard",
+          "description": "See the status, DNS queries, lists and settings. Changing means pausing protection, blocking or allowing domains and managing the lists, rules, rewrites and blocked services."
+        },
+        "docs": {
+          "name": "Documents",
+          "description": "Read and search your documents (rules, checklists, notes). Changing means writing the agents' documents and proposing changes to yours."
+        },
+        "updates": {
+          "name": "App updates",
+          "description": "See the updates, release notes and issues. Changing is saving studies, changing the state, preparing and running an update (as the rules say)."
+        },
+        "schedules": {
+          "name": "Triggers",
+          "description": "See the agents' triggers. Changing is creating, changing and deleting triggers (they run on their own, without you watching)."
+        },
+        "board": {
+          "name": "Projects (board)",
+          "description": "See, create and change tasks, comment and ask you for answers on the board."
+        },
+        "nextcloud": {
+          "name": "Nextcloud",
+          "description": "See the version, maintenance and the apps inside, with the new versions from the App Store. Changes are made on the server (occ), following the update rules."
+        },
+        "opengym": {
+          "name": "openGym (gym)",
+          "description": "See the routines, workouts and exercise catalogue. Changing means creating routines and setting the week plan (it never deletes the existing ones)."
+        },
+        "trek": {
+          "name": "TREK (trips)",
+          "description": "See the trips and everything in them through TREK MCP. Changing means creating, changing and (with confirmation) deleting in TREK, within the MCP client scopes."
+        }
+      },
+      "layers": "There are three places, from the widest to the finest: each agent's tools (Workflow), these areas (for every agent) and each connected app or server (on its page → Agents, per agent). An agent only does what all three allow."
+    }
+  },
+  "workflow": {
+    "title": "Team workflow",
+    "agentsTitle": "Team",
+    "allAgents": "Whole team",
+    "working": "{{count}}/{{total}} working",
+    "lastActive": "idle · {{when}}",
+    "neverActive": "idle · no activity yet",
+    "consoleTitle": "Console",
+    "consoleMeta": "requests and activity · live",
+    "route": "{{from}} → {{to}}",
+    "done": "done in {{duration}}",
+    "failed": "failed after {{duration}}",
+    "automatic": "automatic",
+    "older": "Load older",
+    "loading": "Loading…",
+    "empty": "No activity yet. Talk to Jarvis and whatever the team does shows up here.",
+    "short": {
+      "main": "Jarvis",
+      "email": "Email",
+      "server": "Server",
+      "health": "Health",
+      "tasks": "Tasks"
+    },
+    "newAgent": "New agent",
+    "newAgentHint": "Choose what it does, who it reports to and which tools it uses.",
+    "ceo": "CEO",
+    "inactive": "off",
+    "talksToYou": "Talks to you on the site and in the app",
+    "reportsTo": "Reports to {{name}}",
+    "teamSize_one": "{{count}} in their team",
+    "teamSize_other": "{{count}} in their team",
+    "tabs": {
+      "activity": "Activity",
+      "config": "Settings"
+    },
+    "toolGroups": {
+      "email": "Email",
+      "emailRules": "Email rules",
+      "todos": "Tasks",
+      "servers": "Servers",
+      "backups": "Backups",
+      "serverControl": "Proxmox control",
+      "serverShell": "Server commands",
+      "health": "Health",
+      "forgejo": "Forgejo",
+      "team": "Team governance",
+      "homeAssistant": "Home Assistant",
+      "adguard": "AdGuard",
+      "docs": "Documents",
+      "updates": "Updates",
+      "schedules": "Triggers",
+      "board": "Projects (board)",
+      "nextcloud": "Nextcloud",
+      "opengym": "openGym",
+      "trek": "TREK"
+    },
+    "editor": {
+      "name": "Name",
+      "namePlaceholder": "E.g. Finance Manager",
+      "color": "Colour",
+      "description": "What it does",
+      "descriptionPlaceholder": "E.g. Reads the bank emails and tells you how much you spent this month.",
+      "descriptionHint": "This is what its boss reads to decide when to hand it work.",
+      "reportsTo": "Reports to",
+      "reportsToRoot": "Nobody: it talks to you directly, on the site and in the app.",
+      "active": "On",
+      "model": "Model",
+      "models": {
+        "OPUS": "Main (Opus)",
+        "SONNET": "Agents (Sonnet)"
+      },
+      "modelHints": {
+        "OPUS": "decides and writes · pricier",
+        "SONNET": "executes · cheaper"
+      },
+      "effort": "Effort",
+      "efforts": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High"
+      },
+      "prompt": "Instructions",
+      "promptPlaceholder": "Who it is, what it does, how it uses its tools and what it must never do.",
+      "promptDefault": "the site's",
+      "promptEdited": "edited by you",
+      "promptHint": "They come from the site. You can change them; \"Restore the site's\" goes back to the originals (and the improvements in new versions).",
+      "promptHintCustom": "Its team and who it reports to are added at the end automatically.",
+      "resetPrompt": "Restore the site's",
+      "extraPrompt": "Extra instructions",
+      "extraPlaceholder": "E.g. label names always in European Portuguese.",
+      "extraHint": "Added at the end of the instructions. This is what Jarvis changes when you ask it in chat.",
+      "tools": "Tools",
+      "toolsCount": "{{count}} chosen",
+      "toolsHint": "It can only use the ones you choose. Those that change things respect the assistant permissions.",
+      "read": "reads",
+      "write": "changes",
+      "save": "Save",
+      "create": "Create agent",
+      "saving": "Saving…",
+      "discard": "Undo",
+      "delete": "Delete agent",
+      "confirmDelete": "Delete",
+      "cancel": "Cancel",
+      "deleteHint": "Whoever reported to it will report to {{name}}.",
+      "created": "Agent created — it can take work right away.",
+      "saved": "Agent saved — it applies from the next message.",
+      "deleted": "Agent deleted."
+    },
+    "toolNames": {
+      "search_emails": "Search emails",
+      "summarize_emails_today": "Summarise today's emails",
+      "list_connected_emails": "See connected accounts",
+      "analyze_inbox": "Analyse the inbox",
+      "read_email": "Read an email",
+      "read_email_attachment": "Read attachments",
+      "draft_email": "Write drafts",
+      "send_email_draft": "Send emails",
+      "modify_email": "Change emails",
+      "trash_email": "Move to trash",
+      "list_email_rules": "Read rules",
+      "create_email_rule": "Create rules",
+      "update_email_rule": "Change rules",
+      "delete_email_rule": "Delete rules",
+      "get_proposal_settings": "See proposal settings",
+      "set_proposal_settings": "Change proposal settings",
+      "list_email_proposals": "Read proposals",
+      "analyze_email_proposals": "Analyse and propose rules",
+      "implement_email_proposal": "Accept proposals",
+      "dismiss_email_proposal": "Reject proposals",
+      "list_servers": "See servers",
+      "list_proxmox_guests": "List VMs and containers",
+      "get_guest_status": "Status of a machine",
+      "disk_health": "Disk health",
+      "list_service_monitors": "See monitored services",
+      "check_service_monitor": "Test a monitored service",
+      "check_service_status": "Test a URL",
+      "list_notifications": "See alerts",
+      "list_backups": "See backups",
+      "run_backup": "Run a backup",
+      "pve_guest_config": "See a machine's configuration",
+      "pve_list_snapshots": "See snapshots",
+      "pve_guest_power": "Start, shut down and reboot",
+      "pve_create_snapshot": "Take snapshots",
+      "pve_rollback_snapshot": "Roll back snapshots",
+      "pve_delete_snapshot": "Delete snapshots",
+      "pve_backup_now": "Back up in Proxmox",
+      "pve_set_resources": "Change CPU, RAM and disk",
+      "server_command_history": "See commands run",
+      "server_inventory": "Take the server inventory",
+      "server_run_command": "Run commands",
+      "health_overview": "Health overview",
+      "health_metric": "Analyse a metric",
+      "health_detail": "Open a day, night or workout",
+      "health_log": "Log (water, weight, meals…)",
+      "health_change": "Correct or delete entries",
+      "forgejo_list_repos": "See repositories",
+      "forgejo_list_issues": "Read issues and PRs",
+      "forgejo_get_issue": "Open an issue",
+      "forgejo_list_releases": "See releases",
+      "forgejo_list_commits": "Read commits",
+      "forgejo_list_action_runs": "See Actions (CI)",
+      "forgejo_create_issue": "Create issues",
+      "forgejo_comment_issue": "Comment",
+      "forgejo_set_issue_state": "Close or reopen issues",
+      "list_team": "See the team",
+      "list_available_tools": "See the available tools",
+      "create_agent": "Create agents",
+      "update_agent": "Change agents",
+      "delete_agent": "Delete agents",
+      "list_agent_prompts": "Read the team's instructions",
+      "propose_agent_prompt": "Propose new instructions",
+      "apply_agent_prompt": "Apply instructions (after your yes)",
+      "discard_agent_prompt": "Discard proposals",
+      "ha_overview": "See the overview",
+      "ha_list_updates": "See the updates (add-ons, HACS, firmware)",
+      "ha_list_entities": "List entities",
+      "ha_get_entity": "Open an entity",
+      "ha_list_services": "See the services",
+      "ha_list_configs": "List automations and scripts",
+      "ha_get_config": "Read an automation or script",
+      "ha_system_log": "Read the log",
+      "ha_call_service": "Control devices",
+      "ha_save_config": "Create and change automations and scripts",
+      "ha_delete_config": "Delete automations and scripts",
+      "ha_update_entity": "Change entities",
+      "adguard_overview": "See the overview",
+      "adguard_query_log": "Read DNS queries",
+      "adguard_check_domain": "Check if a domain is blocked",
+      "adguard_list_filters": "See lists and rules",
+      "adguard_get_settings": "Read rewrites, clients and services",
+      "adguard_set_protection": "Turn protection on or pause it",
+      "adguard_set_domain_rule": "Block or allow domains",
+      "adguard_set_user_rules": "Save custom rules",
+      "adguard_manage_filter": "Add and change lists",
+      "adguard_refresh_filters": "Update the lists",
+      "adguard_manage_rewrite": "Create and delete DNS rewrites",
+      "adguard_set_blocked_services": "Block services",
+      "docs_search": "Search the documents",
+      "docs_read": "Read a document",
+      "docs_write": "Write the agents' documents",
+      "docs_log": "Write to the log of what it did",
+      "docs_propose": "Propose changes to your documents",
+      "updates_list": "See the updates",
+      "update_status": "See an update",
+      "update_release_notes": "Read the release notes",
+      "update_known_issues": "Look for known issues",
+      "update_save_study": "Save an update's study",
+      "update_set_status": "Change an update's state",
+      "update_add_note": "Write on the update's task",
+      "update_prepare": "Prepare an update (attempt and specification)",
+      "update_run": "Run a prepared update",
+      "update_verify": "Verify an installed update",
+      "schedule_list": "See the triggers",
+      "schedule_create": "Create a trigger",
+      "schedule_update": "Change a trigger",
+      "schedule_delete": "Delete a trigger",
+      "update_check": "Validate a rule point",
+      "docs_projects": "See the projects",
+      "board_list": "See the tasks",
+      "board_get": "Open a task",
+      "board_create": "Create a task",
+      "board_update": "Change a task",
+      "board_comment": "Comment on a task",
+      "board_ask_user": "Ask you for an answer",
+      "update_attempt_close": "Close an attempt",
+      "todo_lists": "See the lists",
+      "todo_list": "Read the tasks",
+      "todo_create": "Create tasks",
+      "todo_update": "Change tasks",
+      "todo_delete": "Delete tasks",
+      "todo_create_list": "Create lists"
+    }
+  },
+  "conversations": {
+    "title": "Conversations",
+    "new": "New conversation",
+    "answering": "answering…",
+    "empty": "No conversations yet. Write to Jarvis to start one.",
+    "rename": "Rename",
+    "delete": "Delete",
+    "confirmDelete": "Delete?",
+    "cancel": "Cancel",
+    "groups": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "week": "Last 7 days",
+      "older": "Older"
+    }
+  },
+  "access": {
+    "title": "Agents",
+    "description": "What each agent can do in {{label}}.",
+    "loading": "Loading…",
+    "nobody": "No agent has tools for this app (give them in Workflow).",
+    "custom": "Limited here",
+    "fromTools": "What its tools allow",
+    "agentOff": "Agent turned off",
+    "noTools": "This agent has no tools for this (Workflow).",
+    "others": "No tools for this app: {{names}}.",
+    "layers": "Applies together with the per-area permissions and each agent's tools.",
+    "general": "Per-area permissions",
+    "tools": "Tools (Workflow)",
+    "levels": {
+      "NONE": "No access",
+      "READ": "Read",
+      "WRITE": "Read and change"
+    }
+  }
+}

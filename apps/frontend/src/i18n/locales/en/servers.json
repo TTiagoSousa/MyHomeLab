@@ -1,0 +1,205 @@
+{
+  "title": "Servers",
+  "refresh": "Refresh now",
+  "manage": "Manage in Proxmox",
+  "loading": "Reading the server…",
+  "updated": "updated at {{time}}",
+  "noNodes": "The server returned no nodes.",
+  "nodes": "Nodes",
+  "error": {
+    "title": "Couldn't read this server"
+  },
+  "empty": {
+    "title": "No servers",
+    "text": "Add your Proxmox in Connected apps → Proxmox.",
+    "action": "Open Proxmox"
+  },
+  "kpi": {
+    "node": "Node {{name}}",
+    "details": "Details",
+    "cpu": "CPU",
+    "memory": "Memory",
+    "rootDisk": "System disk",
+    "cores_one": "{{count}} core",
+    "cores_other": "{{count}} cores",
+    "machines": "Machines",
+    "machinesValue": "{{running}} running of {{total}}",
+    "uptime": "Up for",
+    "load": "Load (1/5/15 min)",
+    "swap": "Swap",
+    "version": "Version",
+    "cpuModel": "Processor"
+  },
+  "storage": {
+    "title": "Storage",
+    "empty": "No storage to show."
+  },
+  "guests": {
+    "title_one": "{{count}} machine",
+    "title_other": "{{count}} machines",
+    "filter": {
+      "all": "All",
+      "running": "Running",
+      "stopped": "Stopped"
+    },
+    "col": {
+      "vmid": "ID",
+      "name": "Name",
+      "status": "Status",
+      "cpu": "CPU",
+      "memory": "Memory",
+      "disk": "Disk",
+      "uptime": "Up for"
+    },
+    "status": {
+      "running": "Running",
+      "stopped": "Stopped"
+    },
+    "none": "No machines in this filter."
+  },
+  "monitors": {
+    "title_one": "{{count}} service",
+    "title_other": "{{count}} services",
+    "downCount_one": "{{count}} down",
+    "downCount_other": "{{count}} down",
+    "add": "Add service",
+    "empty": "You aren't watching any service yet. Add one to be warned when it stops responding.",
+    "noServer": "No server",
+    "every_one": "every {{count}} min",
+    "every_other": "every {{count}} min",
+    "machineMissing": "The linked machine no longer exists in Proxmox.",
+    "status": {
+      "UNKNOWN": "Checking",
+      "UP": "Online",
+      "DOWN": "Down"
+    },
+    "kind": {
+      "HTTP": "HTTP(S) — web page",
+      "TCP": "TCP — host:port"
+    },
+    "checkNow": "Check",
+    "checking": "Checking…",
+    "edit": "Edit",
+    "remove": "Remove",
+    "confirmRemove": "Confirm?",
+    "saved": "Service saved.",
+    "modal": {
+      "title": "Add service",
+      "editTitle": "Edit {{name}}",
+      "name": "Name",
+      "namePlaceholder": "e.g. Personal site",
+      "kind": "How to check",
+      "targetHTTP": "Address (URL)",
+      "targetTCP": "Address (host:port)",
+      "hintHTTP": "Any response below 500 counts as online — a login screen counts too.",
+      "hintTCP": "Only tries to open the connection. Good for DNS, SSH, databases…",
+      "interval": "Check",
+      "server": "Server (optional)",
+      "machine": "Machine (optional)",
+      "noServer": "None",
+      "noMachine": "None",
+      "loadingMachines": "Loading machines…",
+      "testing": "Saving and checking…",
+      "save": "Save and check"
+    }
+  },
+  "disks": {
+    "title_one": "Disks ({{count}})",
+    "title_other": "Disks ({{count}})",
+    "loading": "Reading…",
+    "unreadable": "Unreadable",
+    "healthy": "Healthy",
+    "attention_one": "{{count}} needs attention",
+    "attention_other": "{{count}} need attention",
+    "reading": "Reading SMART…",
+    "readNow": "Read now",
+    "none": "Proxmox did not report any physical disks on this node.",
+    "noSmart": "No SMART",
+    "pools": "ZFS pools",
+    "fewDays_one": "only {{count}} day",
+    "fewDays_other": "only {{count}} days",
+    "sparklineTitle": "Temperature over the last {{count}} days: {{min}}–{{max}} °C",
+    "hint": "Read from SMART through Proxmox every hour; one reading per day is kept. Red alert when SMART fails, a ZFS pool degrades or sector counts grow; orange below 10% life, high temperature, pending sectors or storage above 90%.",
+    "col": {
+      "disk": "Disk",
+      "health": "SMART",
+      "life": "Life",
+      "temperature": "Temp.",
+      "reallocated": "Reallocated",
+      "pending": "Pending",
+      "hours": "Power-on hours",
+      "history": "30 days"
+    }
+  },
+  "backups": {
+    "title": "Backups",
+    "add": "Create automatic backup",
+    "noDestination": "To make backups, first say where to store them.",
+    "createDestination": "Create a destination in Connected apps",
+    "paused": "automatic off",
+    "never": "Hasn't run yet.",
+    "lastOk": "Last: {{date}} · {{file}} · {{size}}",
+    "lastFailed": "Failed {{date}}: {{error}}",
+    "runNow": "Back up now",
+    "running": "Backing up…",
+    "done": "Backup saved: {{file}}",
+    "saved": "Backup saved.",
+    "history_one": "History ({{count}})",
+    "history_other": "History ({{count}})",
+    "deleted_one": "{{count}} old one deleted",
+    "deleted_other": "{{count}} old ones deleted",
+    "manual": "manual",
+    "retention": {
+      "REPLACE": {
+        "name": "Replace",
+        "hint": "Only the latest backup is kept.",
+        "short": "replaces the previous one"
+      },
+      "KEEP_LAST": {
+        "name": "Keep the latest",
+        "hint": "The N most recent are kept; older ones are deleted.",
+        "short_one": "keeps the latest",
+        "short_other": "keeps the latest {{count}}"
+      },
+      "KEEP_ALL": {
+        "name": "Never delete",
+        "hint": "All are kept. Files keep piling up.",
+        "short": "never deletes"
+      }
+    },
+    "whatTitle": "What the backup includes",
+    "modal": {
+      "title": "New automatic backup",
+      "editTitle": "Edit backup",
+      "destination": "Destination",
+      "destinationHint": "Destinations are created in Connected apps → Backups.",
+      "folder": "Folder",
+      "folderHint": "Files go to {{path}}, named {{file}}.",
+      "frequency": "Frequency",
+      "retention": "Old backups",
+      "keepCount": "How many to keep",
+      "onlyOurs": "Only files created by MyHomeLab in this folder are deleted; everything else is left alone.",
+      "active": "Back up automatically",
+      "activeHint": "When off, it only backs up when you click \"Back up now\".",
+      "save": "Save",
+      "saving": "Saving…"
+    },
+    "lastOkShort": "✓ {{date}}",
+    "lastFailedShort": "✗ Failed {{date}}",
+    "lastOkHint": "{{file}} · {{size}}",
+    "historyTitle": "Backup history",
+    "columns": {
+      "date": "Date",
+      "result": "Result",
+      "file": "File",
+      "size": "Size",
+      "cleaned": "Cleanup"
+    },
+    "result": {
+      "SUCCESS": "Done",
+      "ERROR": "Failed",
+      "PARTIAL": "Done with gaps"
+    },
+    "missing": "Left out: {{list}}"
+  }
+}

@@ -1,0 +1,56 @@
+@use '../../Styles/Fonts.scss' as Font;
+@use '../../Styles/Mixins.scss' as Mixin;
+
+.Schedule_Tags_Field{
+  .Doc_Tags_Input{
+    @include Mixin.Control_Surface;
+    min-height: 38px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 8px;
+    box-sizing: border-box;
+
+    input{
+      flex: 1;
+      min-width: 120px;
+      height: 26px;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--input-global-letter-color);
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+
+      &::placeholder{ color: var(--text-faint); }
+    }
+  }
+
+  .Doc_Tag{
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px 0 9px;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent-bright);
+    font-size: 12px;
+    font-weight: 600;
+
+    button{
+      width: 16px;
+      height: 16px;
+      padding: 3px;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+
+      &:hover{ background: var(--accent-glow); }
+    }
+  }
+}

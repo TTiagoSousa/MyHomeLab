@@ -1,0 +1,218 @@
+@use '../../../../Styles/Fonts.scss' as Font;
+@use '../../../../Styles/Mixins.scss' as Mixin;
+
+.Health_Dashboard{
+  .Body_Sections button{
+    height: 38px;
+    padding: 0 20px;
+    font-size: 13px;
+  }
+
+  .Health_Form.Body_Form{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    @media (max-width: 700px){ grid-template-columns: 1fr 1fr; }
+  }
+
+  .Health_Form.Body_Photo_Form{
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+
+    @media (max-width: 700px){ grid-template-columns: 1fr; }
+  }
+
+  .Health_Form.Body_Vitals_Form{
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .Body_Label{
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .Body_File{
+    height: 38px;
+    justify-content: flex-start;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .Body_Table_Scroll{
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  .Health_Table.body-measurements{
+    min-width: 900px;
+
+    .Health_Table_Row{
+      grid-template-columns: 1.2fr repeat(8, minmax(0, .8fr)) 110px;
+    }
+  }
+
+  .Body_Cell{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    b{ font-weight: 700; }
+
+    small{ font-size: 11px; }
+  }
+
+  .Body_Gallery{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .Body_Gallery_Day{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Body_Gallery_Grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+
+    @media (max-width: 500px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  .Body_Photo{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    min-width: 0;
+
+    figcaption{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      font-size: 12.5px;
+
+      .Health_see_all{ height: 28px; padding: 0 10px; font-size: 12px; }
+    }
+  }
+
+  .Body_Photo_Image{
+    display: block;
+    aspect-ratio: 3 / 4;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    overflow: hidden;
+    background: var(--panel-background);
+
+    img{
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .Body_Photo_Pose{ font-weight: 800; }
+
+  .Body_Photo_Notes{
+    color: var(--text-faint);
+    word-break: break-word;
+  }
+
+  .Body_Compare{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .Body_Compare_Side{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .Body_Photo_Missing{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3 / 4;
+    padding: 12px;
+    border: 1px dashed var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    color: var(--text-faint);
+    font-size: 12.5px;
+    text-align: center;
+  }
+
+  .Body_Vitals{
+    display: flex;
+    flex-direction: column;
+    max-height: 520px;
+    overflow-y: auto;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Body_Vital{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 10px 14px;
+    border-bottom: var(--card-border);
+    font-family: Font.$font_family_sans;
+    font-size: 13px;
+
+    &:last-child{ border-bottom: none; }
+
+    .Health_see_all{
+      margin-left: auto;
+      height: 28px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+  }
+
+  .Body_Vital_Main{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    min-width: 0;
+  }
+
+  .Body_Vital_When{
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .Body_Vital_Value{
+    font-weight: 800;
+    color: var(--accent-bright);
+  }
+
+  .Body_Vital_Extra{ color: var(--text-faint); }
+
+  .Body_Vital_Notes{
+    flex-basis: 100%;
+    order: 1;
+    margin: 0;
+    color: var(--text-faint);
+    font-size: 12.5px;
+    word-break: break-word;
+  }
+
+  .Body_Level{
+    @include Mixin.Hud_Label(9px);
+    padding: 3px 8px;
+    border-radius: 999px;
+
+    &.ok{ color: #10b981; background: rgba(16, 185, 129, .1); }
+    &.warn{ color: #f59e0b; background: rgba(245, 158, 11, .12); }
+    &.high{ color: #f97316; background: rgba(249, 115, 22, .12); }
+    &.danger{ color: #f43f5e; background: rgba(244, 63, 94, .12); }
+  }
+}

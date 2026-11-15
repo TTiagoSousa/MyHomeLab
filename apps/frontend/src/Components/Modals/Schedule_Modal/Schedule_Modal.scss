@@ -1,0 +1,32 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Server_Modal_Overlay .Schedule_Modal{
+  width: 520px;
+
+  .Schedule_Modal_Text{
+    @include Mixin.Control_Surface;
+    width: 100%;
+    padding: 9px 12px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: Font.$font_family_sans;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--input-global-letter-color);
+  }
+
+  .Schedule_Modal_Repeats{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    @media (max-width: 600px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    button{ align-items: center; }
+  }
+
+  .Schedule_Modal_Row{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+}
