@@ -26,6 +26,13 @@ lands in your notifications.
 It installs as a **single LXC container on Proxmox** (Node, PostgreSQL and nginx inside, no
 Docker) and updates itself from the app, with automatic rollback.
 
+<p align="center">
+  <img src="docs/screenshots/services.png" alt="Service shortcuts" width="49%">
+  <img src="docs/screenshots/projects.png" alt="Project board" width="49%">
+  <img src="docs/screenshots/apps.png" alt="Connected apps" width="49%">
+  <img src="docs/screenshots/docs.png" alt="Rules for the agents, written as documents" width="49%">
+</p>
+
 ## Features
 
 | | |

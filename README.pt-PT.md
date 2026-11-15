@@ -26,6 +26,13 @@ de uma decisão tua chega às notificações.
 Instala-se como **um único container LXC no Proxmox** (Node, PostgreSQL e nginx lá dentro, sem
 Docker) e atualiza-se a partir da própria app, com rollback automático.
 
+<p align="center">
+  <img src="docs/screenshots/services.png" alt="Atalhos dos serviços" width="49%">
+  <img src="docs/screenshots/projects.png" alt="Quadro de projetos" width="49%">
+  <img src="docs/screenshots/apps.png" alt="Apps ligadas" width="49%">
+  <img src="docs/screenshots/docs.png" alt="Regras dos agentes escritas como documentos" width="49%">
+</p>
+
 ## Funcionalidades
 
 | | |
