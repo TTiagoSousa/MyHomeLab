@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.1.0] — 2026-11-16
+
+### Features
+- **docs**: rules, maps and history with doc sets, merges and a read-before-acting gate
+
+
 ## [1.0.0] — 2026-11-15
 
 First public release of MyHomeLab.
@@ -23,3 +29,4 @@ First public release of MyHomeLab.
 - Android app, and the interface in Portuguese, English and Spanish.
 
 [1.0.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.0.0
+[1.1.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.1.0
