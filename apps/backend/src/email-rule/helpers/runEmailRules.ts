@@ -12,7 +12,10 @@ import {
   MessageHeaders,
 } from '../google/gmail-api.client';
 import { mapWithLimit } from 'src/utils/concurrency/mapWithLimit';
-import { archiveLeftoverThreads } from './archiveLeftoverThreads';
+import {
+  archiveLeftoverThreads,
+  listOwnInboxThreads,
+} from './archiveLeftoverThreads';
 import { RunScope } from '../dto/run-email-rule.dto';
 import { EmailRuleWithLabelPaths } from '../repositories/email-rule-repository';
 
@@ -126,6 +129,7 @@ async function sweepRemoveLabel(
   rule: EmailRuleWithLabelPaths,
   extraQuery: string,
   labelsToRemove: string[],
+  ownInboxThreads?: Set<string>,
 ): Promise<number> {
   const query = `${buildGmailQuery(rule, 'ALL')} ${extraQuery}`.trim();
   const candidates = await listMessageRefs(
@@ -147,16 +151,40 @@ async function sweepRemoveLabel(
 
   // O Gmail mostra a conversa na caixa de entrada enquanto uma mensagem dela lá estiver:
   // arquivar só as do remetente deixava lá as conversas em que respondeste ou reencaminhaste.
-  if (labelsToRemove.includes('INBOX')) {
+  if (labelsToRemove.includes('INBOX') && ownInboxThreads) {
     const archived = new Set(matchedIds);
-    await archiveLeftoverThreads(
+    const threadIds = candidates
+      .filter((candidate) => archived.has(candidate.id))
+      .map((candidate) => candidate.threadId);
+
+    // As que ficaram presas em execuções anteriores: o email da regra já foi arquivado,
+    // por isso a pesquisa com in:inbox já não o vê — procura-se nas conversas onde ainda
+    // há uma mensagem tua na caixa de entrada.
+    if (ownInboxThreads.size > 0) {
+      const archivedQuery =
+        `${buildGmailQuery(rule, 'ALL')} ${extraQuery.replace('in:inbox', '-in:inbox')}`.trim();
+      const stuck = (
+        await listMessageRefs(accessToken, archivedQuery, MAX_MESSAGES_PER_RULE)
+      ).filter((ref) => ownInboxThreads.has(ref.threadId));
+      const stuckIds = await filterPreciseMatches(
+        rule,
+        accessToken,
+        stuck.map((ref) => ref.id),
+      );
+      for (const ref of stuck) {
+        if (!stuckIds.includes(ref.id)) continue;
+        archived.add(ref.id);
+        threadIds.push(ref.threadId);
+      }
+    }
+
+    const released = await archiveLeftoverThreads(
       accessToken,
-      candidates
-        .filter((candidate) => archived.has(candidate.id))
-        .map((candidate) => candidate.threadId),
+      threadIds,
       archived,
       labelsToRemove,
     );
+    for (const threadId of released) ownInboxThreads.delete(threadId);
   }
 
   return matchedIds.length;
@@ -177,6 +205,9 @@ export async function runEmailRules(
 
   const labelCache = await loadLabelCache(accessToken);
   const haltedMessageIds = new Set<string>();
+  const ownInboxThreads = activeRules.some((rule) => rule.removeFromInbox)
+    ? await listOwnInboxThreads(accessToken)
+    : new Set<string>();
 
   let messagesMatched = 0;
   let messagesModified = 0;
@@ -256,6 +287,7 @@ export async function runEmailRules(
         rule,
         extra,
         labelsToRemove,
+        ownInboxThreads,
       );
       ruleModified += removedCount;
       messagesModified += removedCount;

@@ -1,5 +1,6 @@
 import {
   getThreadMessages,
+  listMessageRefs,
   modifyThread,
   ThreadMessage,
 } from '../google/gmail-api.client';
@@ -23,21 +24,35 @@ export function onlyYoursLeft(
   );
 }
 
+const OWN_INBOX_CAP = 500;
+
+/** As conversas onde há uma mensagem tua na caixa de entrada — as que podem estar presas. */
+export async function listOwnInboxThreads(
+  accessToken: string,
+): Promise<Set<string>> {
+  const refs = await listMessageRefs(
+    accessToken,
+    'in:inbox from:me',
+    OWN_INBOX_CAP,
+  );
+  return new Set(refs.map((ref) => ref.threadId));
+}
+
 /** Arquiva as conversas que ficaram na caixa de entrada só por mensagens tuas. */
 export async function archiveLeftoverThreads(
   accessToken: string,
   threadIds: string[],
   archivedIds: Set<string>,
   labelsToRemove: string[],
-): Promise<number> {
-  let archived = 0;
+): Promise<string[]> {
+  const released: string[] = [];
   for (const threadId of new Set(threadIds)) {
     const messages = await getThreadMessages(accessToken, threadId);
     if (!onlyYoursLeft(messages, archivedIds)) continue;
     await modifyThread(accessToken, threadId, {
       removeLabelIds: labelsToRemove,
     });
-    archived += 1;
+    released.push(threadId);
   }
-  return archived;
+  return released;
 }
