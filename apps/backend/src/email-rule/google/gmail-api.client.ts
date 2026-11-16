@@ -110,12 +110,27 @@ interface GmailMessageListResponse {
   resultSizeEstimate: number;
 }
 
+export interface MessageRef {
+  id: string;
+  threadId: string;
+}
+
 export async function listMessageIds(
   accessToken: string,
   query: string,
   cap: number,
 ): Promise<string[]> {
-  const ids: string[] = [];
+  const refs = await listMessageRefs(accessToken, query, cap);
+  return refs.map((ref) => ref.id);
+}
+
+/** Como o listMessageIds, mas com a conversa (threadId) de cada mensagem. */
+export async function listMessageRefs(
+  accessToken: string,
+  query: string,
+  cap: number,
+): Promise<MessageRef[]> {
+  const ids: MessageRef[] = [];
   let pageToken: string | undefined;
 
   do {
@@ -138,7 +153,7 @@ export async function listMessageIds(
 
     const data = (await response.json()) as GmailMessageListResponse;
     for (const message of data.messages ?? []) {
-      ids.push(message.id);
+      ids.push({ id: message.id, threadId: message.threadId });
       if (ids.length >= cap) break;
     }
 
@@ -466,6 +481,57 @@ export async function modifyMessage(
   if (!response.ok) {
     throw new Error(
       `Falha ao atualizar mensagem Gmail ${id}: ${response.status}`,
+    );
+  }
+}
+
+export interface ThreadMessage {
+  id: string;
+  labelIds: string[];
+}
+
+/** As mensagens de uma conversa, só com as etiquetas de cada uma. */
+export async function getThreadMessages(
+  accessToken: string,
+  threadId: string,
+): Promise<ThreadMessage[]> {
+  const response = await gmailFetch(
+    `${GMAIL_API_BASE}/threads/${threadId}?format=minimal`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+  if (!response.ok) {
+    throw new Error(
+      `Falha ao ler a conversa Gmail ${threadId}: ${response.status}`,
+    );
+  }
+  const data = (await response.json()) as {
+    messages?: { id: string; labelIds?: string[] }[];
+  };
+  return (data.messages ?? []).map((message) => ({
+    id: message.id,
+    labelIds: message.labelIds ?? [],
+  }));
+}
+
+export async function modifyThread(
+  accessToken: string,
+  threadId: string,
+  changes: { removeLabelIds: string[] },
+): Promise<void> {
+  const response = await gmailFetch(
+    `${GMAIL_API_BASE}/threads/${threadId}/modify`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(changes),
+    },
+  );
+  if (!response.ok) {
+    throw new Error(
+      `Falha ao atualizar a conversa Gmail ${threadId}: ${response.status}`,
     );
   }
 }

@@ -64,7 +64,7 @@ function actionsOf(rule: EmailRuleWithLabelPaths): string[] {
     );
   if (rule.removeFromInbox)
     actions.push(
-      `tira da caixa de entrada${rule.removeFromInboxAfterDays ? ` ao fim de ${days(rule.removeFromInboxAfterDays)}` : ''}${rule.removeOnlyIfRead ? ', só se estiver lido' : ''}${rule.markAsReadOnRemove ? ', e marca como lido' : ''}`,
+      `tira da caixa de entrada${rule.removeFromInboxAfterDays ? ` ao fim de ${days(rule.removeFromInboxAfterDays)}` : ''}${rule.removeOnlyIfRead ? ', só se estiver lido' : ''}${rule.markAsReadOnRemove ? ', e marca como lido' : ''}; a conversa sai inteira se o que lá resta são só respostas tuas`,
     );
   if (rule.stopProcessing)
     actions.push('**pára aqui** (as regras abaixo não correm)');

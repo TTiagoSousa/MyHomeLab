@@ -5,12 +5,14 @@ import {
   buildGmailQuery,
   getMessageHeaders,
   listMessageIds,
+  listMessageRefs,
   loadLabelCache,
   modifyMessage,
   resolveLabelIds,
   MessageHeaders,
 } from '../google/gmail-api.client';
 import { mapWithLimit } from 'src/utils/concurrency/mapWithLimit';
+import { archiveLeftoverThreads } from './archiveLeftoverThreads';
 import { RunScope } from '../dto/run-email-rule.dto';
 import { EmailRuleWithLabelPaths } from '../repositories/email-rule-repository';
 
@@ -126,7 +128,7 @@ async function sweepRemoveLabel(
   labelsToRemove: string[],
 ): Promise<number> {
   const query = `${buildGmailQuery(rule, 'ALL')} ${extraQuery}`.trim();
-  const candidateIds = await listMessageIds(
+  const candidates = await listMessageRefs(
     accessToken,
     query,
     MAX_MESSAGES_PER_RULE,
@@ -134,13 +136,27 @@ async function sweepRemoveLabel(
   const matchedIds = await filterPreciseMatches(
     rule,
     accessToken,
-    candidateIds,
+    candidates.map((candidate) => candidate.id),
   );
 
   for (const messageId of matchedIds) {
     await modifyMessage(accessToken, messageId, {
       removeLabelIds: labelsToRemove,
     });
+  }
+
+  // O Gmail mostra a conversa na caixa de entrada enquanto uma mensagem dela lá estiver:
+  // arquivar só as do remetente deixava lá as conversas em que respondeste ou reencaminhaste.
+  if (labelsToRemove.includes('INBOX')) {
+    const archived = new Set(matchedIds);
+    await archiveLeftoverThreads(
+      accessToken,
+      candidates
+        .filter((candidate) => archived.has(candidate.id))
+        .map((candidate) => candidate.threadId),
+      archived,
+      labelsToRemove,
+    );
   }
 
   return matchedIds.length;
