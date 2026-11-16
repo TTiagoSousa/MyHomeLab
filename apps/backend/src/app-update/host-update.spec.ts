@@ -250,7 +250,7 @@ describe('a versão nova do Proxmox VE', () => {
 describe('as regras de uma atualização do host', () => {
   it('são só as do servidor marcadas como atualização', async () => {
     const docs = {
-      requiredGeneral: jest.fn().mockResolvedValue([]),
+      generalRules: jest.fn().mockResolvedValue([]),
       linkedToAny: jest.fn().mockResolvedValue([
         { id: 'd1', tags: ['servidores', 'atualizacao', 'proxmox'] },
         { id: 'd2', tags: ['servidores', 'estudo'] },

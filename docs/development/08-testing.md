@@ -13,6 +13,7 @@ Tests sit **next to the code** they cover, for example:
 - `server-connection/helpers/commandSafety.spec.ts`, `snapshotBeforeCommand.spec.ts`
 - `todo-sync/reconcile-group.spec.ts`, `nextcloud-tasks.spec.ts`
 - `claude-code/mcpBridge.spec.ts`, `utils/lisbonTime.spec.ts`
+- `docs/doc-templates.spec.ts`
 
 Run them:
 

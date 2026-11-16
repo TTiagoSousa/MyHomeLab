@@ -222,16 +222,15 @@ through nginx (`X-Forwarded-For` present).
 | Method | Path | Purpose |
 |---|---|---|
 | GET | `/docs` | Document index with filters and search |
-| GET | `/docs/types` | User-defined document types |
-| POST | `/docs/types` | Create a type |
-| DELETE | `/docs/types/:id` | Delete a type (its documents become "Other") |
 | GET | `/docs/targets` | Things a document can be linked to |
 | GET | `/docs/linked` | Documents linked to a target (`?type=&targetId=`) |
 | GET | `/docs/proposals` | Pending agent proposals |
 | POST | `/docs/proposals/:id/approve` | Approve a proposal (optionally edited) |
 | POST | `/docs/proposals/:id/reject` | Reject a proposal |
-| POST | `/docs/starter` | Create any missing starter documents |
-| POST | `/docs/:id/check-conflicts` | Compare a document with the other required rules |
+| POST | `/docs/starter` | Create any missing starter documents (general rules, process docs, one rules doc per connected app) |
+| GET | `/docs/templates` | Template sets (installed and from the repository's `main`) |
+| POST | `/docs/templates/:id` | Create the documents of a template set (skips existing titles) |
+| POST | `/docs/:id/check-conflicts` | Compare a rules document with the other rules |
 | GET | `/docs/:id` | One document with links, versions and conflicts |
 | POST | `/docs` | Create a document |
 | PATCH | `/docs/:id` | Update (previous version kept) |

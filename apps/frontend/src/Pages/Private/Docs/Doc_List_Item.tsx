@@ -8,20 +8,21 @@ const LINKS_SHOWN = 3;
 
 interface Doc_List_Item_Props {
   doc: DocSummary;
-  typeName?: string;
+  hiddenLink?: string;
   onSelect: () => void;
 }
 
-const Doc_List_Item = ({ doc, typeName, onSelect }: Doc_List_Item_Props) => {
+const Doc_List_Item = ({ doc, hiddenLink, onSelect }: Doc_List_Item_Props) => {
   const { t } = useTranslation('docs');
-  const hiddenLinks = doc.links.length - LINKS_SHOWN;
+  const links = doc.links.filter((link) => `${link.type}:${link.targetId}` !== hiddenLink);
+  const hiddenLinks = links.length - LINKS_SHOWN;
 
   return (
     <button type='button' className='Doc_List_Item' onClick={onSelect}>
       <span className='Doc_List_Item_Title'>{doc.title}</span>
       <span className='Doc_List_Item_Chips'>
-        <Doc_Meta_Chips kind={doc.kind} typeName={typeName} required={doc.required} owner={doc.owner} />
-        {doc.links.slice(0, LINKS_SHOWN).map((link) => (
+        <Doc_Meta_Chips kind={doc.kind} owner={doc.owner} />
+        {links.slice(0, LINKS_SHOWN).map((link) => (
           <Doc_Link_Chip key={link.id} link={link} />
         ))}
         {hiddenLinks > 0 && <span className='Doc_Chip'>+{hiddenLinks}</span>}

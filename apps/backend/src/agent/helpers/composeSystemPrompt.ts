@@ -57,44 +57,39 @@ export function composeAgentPrompt(
   return sections.join('\n\n');
 }
 
-/** O índice dos documentos e os obrigatórios gerais (DocsService.agentContext). */
+/** O índice dos documentos (DocsService.agentContext). */
 export interface AgentDocs {
   index: string[];
-  general: { title: string; content: string }[];
 }
 
 /**
- * Os documentos do utilizador nas instruções: como se usam, a ordem de força,
- * o índice e o texto dos obrigatórios gerais. Os obrigatórios de uma app ou de
- * uma máquina vão no fim do pedido que as menciona (team-agent).
+ * Os documentos do utilizador nas instruções: como se usam, a ordem de força e o
+ * índice. A lista dos que o pedido toca vai no fim do pedido (team-agent), e o
+ * agente lê-os com docs_read antes de mexer.
  */
 export function docsSection(docs: AgentDocs): string {
   const index = docs.index.length
-    ? `Índice ([tipo · obrigatório] título (id) → a que está ligado #etiquetas — resumo):\n${docs.index.join('\n')}`
+    ? `Índice ([tipo] título (id) → a que está ligado #etiquetas — resumo):\n${docs.index.join('\n')}`
     : 'Ainda não há documentos.';
-  const general = docs.general.length
-    ? '\n\nOBRIGATÓRIOS (os gerais e os ligados a ti — valem sempre):\n\n' +
-      docs.general
-        .map((doc) => `── ${doc.title} ──\n${doc.content}`)
-        .join('\n\n')
-    : '';
   return (
     'OS DOCUMENTOS DO UTILIZADOR\n' +
-    'Em Documentos o utilizador escreve as regras, os processos (o "como se faz"), as checklists ' +
-    'e as notas que segues; os agentes escrevem lá os guias e os registos. Os documentos mandam: ' +
+    'Em Documentos há três tipos: as Regras (o que se pode fazer e como se faz — são do ' +
+    'utilizador e tu segues), o Mapa de cada servidor ou app (o que lá existe — mantido pelos ' +
+    'agentes) e os Registos (o que se fez — escritos pelos agentes). Os documentos mandam: ' +
     'as tuas instruções dizem quem és, os documentos dizem como se faz. Por ordem de força: as ' +
     'regras do utilizador > as tuas instruções. Entre dois ' +
     'documentos ganha o mais específico (o de uma app ao geral); se se contradizem, diz-lho.\n' +
-    '- Antes de mexer numa coisa (servidor, máquina, app), lê os documentos ligados a ela com ' +
-    'docs_read. Os obrigatórios do que o pedido menciona já vêm no fim do pedido.\n' +
+    '- Sê meticuloso com os documentos: antes de mexer numa coisa (servidor, máquina, app, email), lê ' +
+    'com docs_read todos os que lhe tocam — os da lista no fim do pedido e os do índice cujo título, ' +
+    'etiquetas ou ligações digam respeito ao que vais fazer (as regras gerais incluídas). Na dúvida, lê. ' +
+    'As ferramentas que mudam coisas recusam enquanto faltar ler algum da lista.\n' +
     '- Nos documentos do utilizador não escreves: propões com docs_propose uma versão nova e ele ' +
     'aprova (a anterior fica guardada). Quando descobrires algo que vale para a próxima vez, ' +
     'propõe-o no documento da app ou do servidor, na secção certa; não cries documentos novos para isso.\n' +
     '- Uma regra que não consegues cumprir ou verificar: paras e perguntas.\n' +
     '- O código do MyHomeLab não trava nada (mede, corre e regista): o travão és tu, a cumprir as regras.\n' +
     '- Quando verificas as regras para fazer algo (estudar, preparar ou verificar uma atualização), fica uma tentativa com cada ponto validado ou não e a prova.\n\n' +
-    index +
-    general
+    index
   );
 }
 

@@ -14,8 +14,8 @@ export function installRequest(
     'Está em Ready to update: foi ele que a pôs lá, ou o teu estudo (pequena e de risco baixo). Isso é a aprovação: não peças outro sim, nem por um salto major. O último gesto dele manda: se a pôs em Ready depois de um comentário com condições (uma hora, dias de rodagem, uma leitura por fazer), mudou de ideias e instala-se já; as regras de segurança dos documentos (backup, snapshot, partição EFI, nada a remover) continuam todas. Não voltes a perguntar o que já perguntaste. Ele não está a acompanhar: só o que precisa mesmo dele lhe chega às notificações. Os documentos da app vêm no fim deste pedido: segue-os à letra.\n' +
     (server ? `O servidor do projeto desta atualização: ${server}.\n` : '') +
     (isHostUpdate(update)
-      ? `É o host Proxmox VE de ${update.hostServer?.name ?? 'servidor'} (sem snapshot); ele autorizou ao pô-la em Ready to update. Segue "Proxmox – instalar uma atualização" (Antes de instalar, o backup da configuração, Instalar, Depois de instalar); não reinicies:\n`
-      : 'Segue "Atualizações das apps e do Proxmox – como funcionam" e o "instalar uma atualização" da app (ex.: "Forgejo – instalar uma atualização"; as apps do Nextcloud seguem "Nextcloud – instalar uma atualização", os pontos "Só apps"):\n') +
+      ? `É o host Proxmox VE de ${update.hostServer?.name ?? 'servidor'} (sem snapshot); ele autorizou ao pô-la em Ready to update. Segue as regras do servidor (os documentos dele vêm no fim: antes de instalar, o backup da configuração, instalar, depois de instalar); não reinicies:\n`
+      : 'Segue "Atualizações das apps e do Proxmox – como funcionam" e as regras da app (os documentos dela vêm no fim deste pedido; as apps dentro do Nextcloud seguem as regras do Nextcloud):\n') +
     '1. update_prepare sem checklist abre a tentativa com os pontos das regras.\n' +
     '2. Valida cada ponto e marca-o com update_check, com a prova. O que se resolve dentro das regras (backup, disco ou memória) resolve-se e volta a marcar-se.\n' +
     '3. Tudo validado (ou não se aplica) → update_prepare com checklist: [] e logo update_run.\n' +

@@ -53,7 +53,6 @@ const Task_Links = ({ task, saving, onAddLink, onRemoveLink, onLinkDoc, onUnlink
             <button type='button' className='Task_Link_Open' onClick={() => navigate(`/MyHomeLab/Docs/${doc.id}`)}>
               <Icon.Doc />
               <span>{doc.title}</span>
-              {doc.required && <small>{t('detail.required')}</small>}
             </button>
             <button type='button' className='Task_Link_Remove' onClick={() => onUnlinkDoc(doc.id)} aria-label={t('detail.unlink')}>
               <Icon.Close />

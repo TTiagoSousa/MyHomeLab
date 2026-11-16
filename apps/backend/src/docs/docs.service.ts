@@ -36,6 +36,7 @@ import {
   snippet,
 } from './helpers/docText';
 import { starterDocs } from './helpers/starterDocs';
+import { listTemplateSets, loadTemplateSet } from './helpers/docTemplates';
 import {
   proposalNoticeSubject,
   proposalTodoSubject,
@@ -85,6 +86,7 @@ export interface DocTarget {
   targetId: string;
   label: string;
   group: string; // o servidor de uma máquina, o tipo de uma app…
+  provider?: string; // a app (APP): o fornecedor, para sugerir documentos só às que se atualizam
 }
 
 export interface DocWrite {
@@ -93,14 +95,13 @@ export interface DocWrite {
   content?: string;
   summary?: string | null;
   tags?: string[];
-  required?: boolean;
   links?: DocLinkDto[];
 }
 
 /** Quem é avisado quando um documento (não registo) muda ou é apagado. */
 export type DocChangeListener = (
   userId: string,
-  doc: Pick<Doc, 'id' | 'title' | 'kind' | 'required'>,
+  doc: Pick<Doc, 'id' | 'title' | 'kind'>,
 ) => Promise<void>;
 
 /** Quem escreve: o utilizador (no site) ou um agente (pela chave). */
@@ -169,8 +170,6 @@ export class DocsService {
     const where: Prisma.DocWhereInput = {
       userId,
       ...(query.kind ? { kind: query.kind } : {}),
-      ...(query.typeId ? { typeId: query.typeId } : {}),
-      ...(query.required ? { required: true } : {}),
       ...(query.owner ? { owner: query.owner } : {}),
       ...(query.linkType
         ? {
@@ -205,9 +204,7 @@ export class DocsService {
       id: doc.id,
       title: doc.title,
       kind: doc.kind,
-      typeId: doc.typeId,
       owner: doc.owner,
-      required: doc.required,
       tags: doc.tags,
       summary: doc.summary,
       links: doc.links,
@@ -232,7 +229,7 @@ export class DocsService {
     return this.prisma.doc.findMany({
       where: { userId, links: { some: { type, targetId } } },
       include: { links: true },
-      orderBy: [{ required: 'desc' }, { title: 'asc' }],
+      orderBy: [{ kind: 'asc' }, { title: 'asc' }],
     });
   }
 
@@ -245,59 +242,18 @@ export class DocsService {
     return version;
   }
 
-  // ── Tipos (os que ele cria) ─────────────────────────────────────────────
-
-  listTypes(userId: string) {
-    return this.prisma.docType.findMany({
-      where: { userId },
-      include: { _count: { select: { docs: true } } },
-      orderBy: { name: 'asc' },
-    });
-  }
-
-  async createType(userId: string, name: string) {
-    const clean = name.trim().replace(/\s+/g, ' ');
-    const existing = await this.prisma.docType.findFirst({
-      where: { userId, name: { equals: clean, mode: 'insensitive' } },
-    });
-    if (existing)
-      throw new BadRequestException(`Já há o tipo "${existing.name}".`);
-    return this.prisma.docType.create({ data: { userId, name: clean } });
-  }
-
-  /** Apagar um tipo: os documentos dele ficam como "Outro". */
-  async deleteType(userId: string, id: string) {
-    const type = await this.prisma.docType.findFirst({ where: { id, userId } });
-    if (!type) throw new NotFoundException('Esse tipo já não existe.');
-    await this.prisma.docType.delete({ where: { id } });
-  }
-
-  /** O tipo escolhido tem de ser dele; null tira-o. */
-  private async ownType(userId: string, typeId: string | null | undefined) {
-    if (!typeId) return null;
-    const type = await this.prisma.docType.findFirst({
-      where: { id: typeId, userId },
-      select: { id: true },
-    });
-    if (!type) throw new BadRequestException('Esse tipo já não existe.');
-    return type.id;
-  }
-
   // ── Escrever ────────────────────────────────────────────────────────────
 
   async create(userId: string, input: CreateDocDto, author: DocAuthor) {
-    const typeId = await this.ownType(userId, input.typeId);
     return this.prisma.doc.create({
       data: {
         userId,
         title: input.title.trim(),
-        kind: typeId ? DocKind.OTHER : (input.kind ?? DocKind.NOTES),
-        typeId,
+        kind: input.kind ?? DocKind.RULES,
         owner: author.kind === 'user' ? DocOwner.USER : DocOwner.AGENT,
         content: input.content ?? '',
         summary: input.summary?.trim() || null,
         tags: cleanTags(input.tags) ?? [],
-        required: input.required ?? false,
         updatedBy: authorName(author),
         links: { create: uniqueLinks(input.links ?? []) },
       },
@@ -327,23 +283,17 @@ export class DocsService {
     if (textChanged) {
       await this.saveVersion(doc);
     }
-    const typeId =
-      input.typeId === undefined
-        ? undefined
-        : await this.ownType(userId, input.typeId);
     const saved = await this.prisma.doc.update({
       where: { id },
       data: {
         title,
         content,
-        kind: typeId ? DocKind.OTHER : input.kind,
-        typeId,
+        kind: input.kind,
         summary:
           input.summary === undefined
             ? undefined
             : input.summary?.trim() || null,
         tags: cleanTags(input.tags),
-        required: input.required,
         updatedBy: authorName(author),
         ...(input.links
           ? {
@@ -356,7 +306,7 @@ export class DocsService {
       },
       include: { links: true },
     });
-    if (textChanged || input.links || input.required !== undefined) {
+    if (textChanged || input.links || input.kind !== undefined) {
       this.changed(userId, saved);
     }
     return saved;
@@ -410,6 +360,9 @@ export class DocsService {
       content: string;
       reason?: string;
       links?: DocLinkDto[];
+      tags?: string[];
+      /** CREATE: os documentos que o novo junta; aprovada a proposta, apagam-se. */
+      replaces?: string[];
       proposedBy: string;
       /** A tarefa do quadro de onde veio: a proposta aparece lá, e o aviso "Aprovar: …" leva até ela. */
       task?: { id: string; key: string };
@@ -428,6 +381,8 @@ export class DocsService {
         links: input.links
           ? (uniqueLinks(input.links) as unknown as Prisma.InputJsonValue)
           : undefined,
+        tags: cleanTags(input.tags) ?? [],
+        replaces: input.replaces ?? [],
         proposedBy: input.proposedBy,
         taskId: input.task?.id ?? null,
       },
@@ -473,12 +428,25 @@ export class DocsService {
         userId,
         {
           title: proposal.title ?? 'Documento novo',
-          kind: proposal.kind ?? DocKind.NOTES,
+          kind: proposal.kind ?? DocKind.RULES,
           content: text,
-          links: (proposal.links as unknown as DocLinkDto[] | null) ?? [],
+          tags: proposal.tags,
+          // As ligações aos documentos que este junta caem com eles.
+          links: (
+            (proposal.links as unknown as DocLinkDto[] | null) ?? []
+          ).filter(
+            (link) =>
+              link.type !== DocLinkType.DOC ||
+              !proposal.replaces.includes(link.targetId),
+          ),
         },
         { kind: 'user' },
       );
+      // Juntou outros documentos num só: os antigos saem (as versões vão com eles).
+      for (const id of proposal.replaces) {
+        const old = await this.prisma.doc.findFirst({ where: { id, userId } });
+        if (old && old.id !== doc.id) await this.remove(userId, old.id);
+      }
     } else {
       const current = await this.findOwned(userId, proposal.docId);
       // Uma proposta que substitui tudo, feita sobre uma versão mais antiga, apagava o que
@@ -544,7 +512,7 @@ export class DocsService {
           orderBy: { name: 'asc' },
         }),
         this.prisma.connectedAccount.findMany({
-          where: { userId },
+          where: { userId, disconnectedAt: null },
           orderBy: { createdAt: 'asc' },
         }),
         this.prisma.serviceMonitor.findMany({
@@ -597,6 +565,7 @@ export class DocsService {
             ? `${PROVIDER_NAMES[account.provider]} · ${account.emailAddress}`
             : appLabel(account),
         group: PROVIDER_NAMES[account.provider],
+        provider: account.provider,
       });
     }
     for (const monitor of monitors) {
@@ -637,24 +606,37 @@ export class DocsService {
   // ── Para os agentes ─────────────────────────────────────────────────────
 
   /**
-   * O que vai nas instruções de um agente: o índice (uma linha por documento) e o
-   * texto inteiro dos obrigatórios gerais (sem ligações), dos ligados a ele e dos
-   * ligados aos projetos em que trabalha. Só muda quando os documentos mudam, por
-   * isso não estraga a cache entre conversas.
+   * O índice que vai nas instruções de um agente: uma linha por documento (sem os
+   * registos). Os documentos não vão inteiros: o agente lê os que o pedido toca, pelos
+   * títulos, pelas etiquetas e pelo que estão ligados (docsFor). Só muda quando os
+   * documentos mudam, por isso não estraga a cache entre conversas.
    */
-  async agentContext(
+  async agentContext(userId: string): Promise<{ index: string[] }> {
+    const docs = await this.prisma.doc.findMany({
+      where: { userId, kind: { not: DocKind.LOG } },
+      include: { links: true },
+      orderBy: [{ kind: 'asc' }, { title: 'asc' }],
+      take: INDEX_LIMIT,
+    });
+    return { index: docs.map(describeDoc) };
+  }
+
+  /**
+   * Os documentos que um agente tem de ler antes de mexer no que o pedido toca: os
+   * ligados a ele e aos projetos em que trabalha, e os que o pedido menciona — pelo
+   * nome daquilo a que estão ligados (a app, a máquina, o servidor) ou por uma etiqueta.
+   */
+  async docsFor(
     userId: string,
+    text: string,
     agentKey?: string,
-  ): Promise<{
-    index: string[];
-    general: { title: string; content: string }[];
-  }> {
+  ): Promise<DocWithLinks[]> {
+    const haystack = normalizeText(text);
     const [docs, projects] = await Promise.all([
       this.prisma.doc.findMany({
         where: { userId, kind: { not: DocKind.LOG } },
         include: { links: true },
-        orderBy: [{ required: 'desc' }, { title: 'asc' }],
-        take: INDEX_LIMIT,
+        orderBy: { title: 'asc' },
       }),
       agentKey
         ? this.prisma.project.findMany({
@@ -664,45 +646,14 @@ export class DocsService {
         : Promise.resolve([] as { id: string }[]),
     ]);
     const myProjects = new Set(projects.map((project) => project.id));
-    return {
-      index: docs.map(describeDoc),
-      general: docs
-        .filter(
-          (doc) =>
-            doc.required &&
-            doc.content.trim() &&
-            (!doc.links.length ||
-              doc.links.some(
-                (link) =>
-                  (link.type === DocLinkType.AGENT &&
-                    link.targetId === agentKey) ||
-                  (link.type === DocLinkType.PROJECT &&
-                    myProjects.has(link.targetId)),
-              )),
-        )
-        .map((doc) => ({ title: doc.title, content: doc.content.trim() })),
-    };
-  }
-
-  /** Os obrigatórios ligados a algo que o texto do pedido menciona. */
-  async requiredFor(
-    userId: string,
-    text: string,
-    agentKey?: string,
-  ): Promise<DocWithLinks[]> {
-    const haystack = normalizeText(text);
-    const docs = await this.prisma.doc.findMany({
-      where: { userId, required: true, links: { some: {} } },
-      include: { links: true },
-      orderBy: { title: 'asc' },
-    });
     return docs.filter(
       (doc) =>
-        // Os do próprio agente já vão nas instruções dele.
-        !doc.links.some(
+        doc.links.some(
           (link) =>
-            link.type === DocLinkType.AGENT && link.targetId === agentKey,
-        ) &&
+            (link.type === DocLinkType.AGENT && link.targetId === agentKey) ||
+            (link.type === DocLinkType.PROJECT &&
+              myProjects.has(link.targetId)),
+        ) ||
         [
           ...doc.links
             .filter((link) => MATCHED_LINKS.has(link.type))
@@ -718,12 +669,11 @@ export class DocsService {
   linkedToAny(
     userId: string,
     targets: { type: DocLinkType; targetId: string }[],
-    onlyRequired = false,
   ): Promise<DocWithLinks[]> {
     return this.prisma.doc.findMany({
       where: {
         userId,
-        ...(onlyRequired ? { required: true } : {}),
+        kind: { not: DocKind.LOG },
         links: { some: { OR: targets } },
       },
       include: { links: true },
@@ -736,10 +686,18 @@ export class DocsService {
     return updatesAgentKey(this.prisma, userId);
   }
 
-  /** Os obrigatórios gerais (sem ligações). */
-  requiredGeneral(userId: string): Promise<DocWithLinks[]> {
+  /**
+   * As regras gerais (sem ligações) de uma área, pelas etiquetas: as das atualizações
+   * têm #atualizacao ou #servidor ("Atualizações das apps…", "Regras gerais do servidor").
+   */
+  generalRules(userId: string, tags: string[]): Promise<DocWithLinks[]> {
     return this.prisma.doc.findMany({
-      where: { userId, required: true, links: { none: {} } },
+      where: {
+        userId,
+        kind: DocKind.RULES,
+        links: { none: {} },
+        tags: { hasSome: tags },
+      },
       include: { links: true },
       orderBy: { title: 'asc' },
     });
@@ -906,7 +864,7 @@ ${entry}`,
   /** Cria os documentos sugeridos que ainda não existem (pelo título). */
   async createStarter(userId: string) {
     const accounts = await this.prisma.connectedAccount.findMany({
-      where: { userId },
+      where: { userId, disconnectedAt: null },
     });
     const existing = new Set(
       (
@@ -926,6 +884,89 @@ ${entry}`,
     )) {
       if (existing.has(normalizeText(starter.title))) continue;
       created.push(await this.create(userId, starter, { kind: 'user' }));
+    }
+    return created;
+  }
+
+  /** Os conjuntos de documentos prontos (o exemplo e os da comunidade). */
+  templateSets() {
+    return listTemplateSets();
+  }
+
+  /**
+   * Cria os documentos de um conjunto que ainda não existem (pelo título), ligados às
+   * apps dele desses fornecedores, ao primeiro servidor e aos agentes indicados. Um
+   * documento de uma app que ele não tem ligada fica de fora.
+   */
+  async applyTemplateSet(userId: string, id: string) {
+    const loaded = await loadTemplateSet(id);
+    if (!loaded)
+      throw new NotFoundException('Este conjunto de documentos já não existe.');
+    const [accounts, server, agents, existingDocs] = await Promise.all([
+      this.prisma.connectedAccount.findMany({
+        where: { userId, disconnectedAt: null },
+      }),
+      this.prisma.serverConnection.findFirst({
+        where: { userId },
+        orderBy: { createdAt: 'asc' },
+      }),
+      this.prisma.agent.findMany({ where: { userId } }),
+      this.prisma.doc.findMany({ where: { userId }, select: { title: true } }),
+    ]);
+    const existing = new Set(
+      existingDocs.map((doc) => normalizeText(doc.title)),
+    );
+    const created: DocWithLinks[] = [];
+    for (const template of loaded.docs) {
+      if (existing.has(normalizeText(template.title))) continue;
+      const apps = accounts.filter((account) =>
+        template.apps.includes(account.provider),
+      );
+      if (template.apps.length && !apps.length) continue;
+      const links: DocLinkDto[] = [
+        ...apps.map((account) => ({
+          type: DocLinkType.APP,
+          targetId: account.id,
+          label: appLabel(account),
+        })),
+        ...(template.server && server
+          ? [
+              {
+                type: DocLinkType.SERVER,
+                targetId: server.id,
+                label: server.name,
+              },
+            ]
+          : []),
+        ...template.agents.flatMap((key) => {
+          const agent = agents.find(
+            (item) => item.key === key || item.template === key,
+          );
+          return agent
+            ? [
+                {
+                  type: DocLinkType.AGENT,
+                  targetId: agent.key,
+                  label: agent.name,
+                },
+              ]
+            : [];
+        }),
+      ];
+      created.push(
+        await this.create(
+          userId,
+          {
+            title: template.title,
+            kind: template.kind,
+            content: template.content,
+            summary: template.summary,
+            tags: template.tags,
+            links,
+          },
+          { kind: 'user' },
+        ),
+      );
     }
     return created;
   }
@@ -992,24 +1033,18 @@ export const lisbonTime = (date: Date) =>
 
 const KIND_NAMES: Record<DocKind, string> = {
   RULES: 'regras',
-  CHECKLIST: 'checklist',
-  NOTES: 'notas',
-  LEARNINGS: 'aprendizagens',
-  GUIDE: 'guia',
+  MAP: 'mapa',
   LOG: 'registo',
-  OTHER: 'outro',
 };
 
-/** Uma linha do índice: "[regras · obrigatório] Home Assistant – regras (id) → App Home Assistant — resumo". */
+/** Uma linha do índice: "[regras] Home Assistant – regras (id) → App Home Assistant #atualizacao — resumo". */
 export function describeDoc(
   doc: Pick<
     DocWithLinks,
-    'id' | 'title' | 'kind' | 'required' | 'links' | 'tags' | 'summary'
+    'id' | 'title' | 'kind' | 'links' | 'tags' | 'summary'
   >,
 ): string {
-  const flags = [KIND_NAMES[doc.kind], doc.required ? 'obrigatório' : null]
-    .filter(Boolean)
-    .join(' · ');
+  const flags = KIND_NAMES[doc.kind];
   const links = doc.links.length
     ? ` → ${doc.links.map((link) => link.label).join(', ')}`
     : ' → geral';

@@ -18,7 +18,7 @@ import { DocsService } from './docs.service';
 
 /** Espera-se este tempo depois da última mudança antes de verificar (várias mudanças seguidas = uma verificação). */
 const DEBOUNCE_MS = 60_000;
-const RULE_KINDS: DocKind[] = [DocKind.RULES, DocKind.CHECKLIST];
+const RULE_KINDS: DocKind[] = [DocKind.RULES];
 
 export interface DocConflict {
   docId: string;
@@ -52,7 +52,7 @@ export class DocConflictsService implements OnModuleInit {
 
   onModuleInit() {
     this.docs.onChange((userId, doc) => {
-      if (!doc.required || !RULE_KINDS.includes(doc.kind)) {
+      if (!RULE_KINDS.includes(doc.kind)) {
         return Promise.resolve();
       }
       clearTimeout(this.timers.get(doc.id));
@@ -86,7 +86,6 @@ export class DocConflictsService implements OnModuleInit {
       where: {
         userId,
         id: { not: doc.id },
-        required: true,
         kind: { in: RULE_KINDS },
         OR: [
           { links: { none: {} } },

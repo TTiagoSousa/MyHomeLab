@@ -21,7 +21,6 @@ import { DocsService } from './docs.service';
 import {
   ApproveDocProposalDto,
   CreateDocDto,
-  CreateDocTypeDto,
   ListDocsQueryDto,
   UpdateDocDto,
 } from './dto/doc.dto';
@@ -40,23 +39,6 @@ export class DocsController {
   @Get()
   list(@Query() query: ListDocsQueryDto, @Req() req: AuthedRequest) {
     return this.docs.list(req.user.id, query);
-  }
-
-  /** Os tipos que ele criou (com quantos documentos tem cada um). */
-  @Get('types')
-  types(@Req() req: AuthedRequest) {
-    return this.docs.listTypes(req.user.id);
-  }
-
-  @Post('types')
-  createType(@Body() dto: CreateDocTypeDto, @Req() req: AuthedRequest) {
-    return this.docs.createType(req.user.id, dto.name);
-  }
-
-  @Delete('types/:id')
-  @HttpCode(204)
-  async deleteType(@Param('id') id: string, @Req() req: AuthedRequest) {
-    await this.docs.deleteType(req.user.id, id);
   }
 
   /** Tudo a que um documento se pode ligar. */
@@ -106,6 +88,16 @@ export class DocsController {
   @Post(':id/check-conflicts')
   checkConflicts(@Param('id') id: string, @Req() req: AuthedRequest) {
     return this.conflicts.check(req.user.id, id);
+  }
+
+  @Get('templates')
+  templates() {
+    return this.docs.templateSets();
+  }
+
+  @Post('templates/:id')
+  applyTemplate(@Param('id') id: string, @Req() req: AuthedRequest) {
+    return this.docs.applyTemplateSet(req.user.id, id);
   }
 
   @Post('starter')

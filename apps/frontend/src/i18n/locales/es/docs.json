@@ -16,6 +16,10 @@
     "back": "Documentos",
     "newLinked": "Nuevo vinculado a {{label}}"
   },
+  "sections": {
+    "library": "Documentos",
+    "history": "Historial"
+  },
   "filters": {
     "search": "Buscar en los documentos…",
     "allKinds": "Todos los tipos",
@@ -32,18 +36,19 @@
     "sortLabel": "Ordenar",
     "sortRecent": "Más recientes",
     "sortTitle": "Título (A–Z)",
-    "requiredOnly": "Solo obligatorios",
-    "clear": "Limpiar filtros"
+    "clear": "Limpiar filtros",
+    "allHistory": "Todo"
   },
   "kinds": {
     "RULES": "Reglas",
-    "CHECKLIST": "Checklist",
-    "NOTES": "Notas",
-    "LEARNINGS": "Aprendizajes",
-    "GUIDE": "Guía",
+    "MAP": "Mapa",
     "LOG": "Registro",
-    "OTHER": "Otro",
     "ATTEMPT": "Intento de actualización"
+  },
+  "kindHints": {
+    "RULES": "Lo que se puede hacer y cómo se hace. Es tuyo: los agentes lo siguen y proponen cambios.",
+    "MAP": "Lo que existe en un servidor o una app (máquinas, versiones, puertos). Los agentes lo mantienen al día.",
+    "LOG": "Lo que se hizo. Normalmente lo escriben los agentes; queda en el Historial."
   },
   "linkTypes": {
     "SERVER": "Servidor",
@@ -76,7 +81,6 @@
     "TASK": "Vinculados a tareas"
   },
   "chips": {
-    "required": "Obligatorio",
     "agentOwner": "De los agentes"
   },
   "list": {
@@ -84,11 +88,23 @@
     "noResults": "Ningún documento coincide con la búsqueda.",
     "updated": "{{time}} · {{by}}",
     "count_one": "{{count}} documento",
-    "count_other": "{{count}} documentos"
+    "count_other": "{{count}} documentos",
+    "noHistory": "Todavía no hay nada en el historial.",
+    "historyCount_one": "{{count}} entrada",
+    "historyCount_other": "{{count}} entradas",
+    "showOlder": "Ver los de hace más de {{days}} días ({{count}})"
+  },
+  "groups": {
+    "general": "Generales",
+    "things": "Servidores y apps",
+    "projects": "Proyectos",
+    "addRules": "Reglas",
+    "addMap": "Mapa",
+    "missing": "Todavía sin documentos"
   },
   "empty": {
     "title": "Aún no hay documentos",
-    "text": "Los documentos guardan tus reglas, checklists y lo que los agentes van aprendiendo. Empieza por los sugeridos — puedes editarlos libremente.",
+    "text": "Los documentos guardan tus reglas y el mapa de tus servidores y apps. Empieza por los sugeridos — puedes editarlos a tu gusto.",
     "or": "o crea uno desde cero"
   },
   "detail": {
@@ -115,8 +131,6 @@
     "tags": "Etiquetas",
     "tagsPlaceholder": "Escribe y pulsa Enter",
     "removeTag": "Quitar la etiqueta {{tag}}",
-    "required": "Obligatorio",
-    "requiredHint": "Los agentes lo leen siempre que la petición toca lo que tiene vinculado. Sin vínculos, se aplica a todo.",
     "links": "Vínculos",
     "linksHint": "Vincula el documento a servidores, máquinas, apps, servicios, agentes u otros documentos.",
     "content": "Contenido",
@@ -173,7 +187,11 @@
     "approveEdited": "Aprobar con cambios",
     "editBefore": "Editar antes",
     "discardEdits": "Descartar cambios",
-    "reject": "Rechazar"
+    "reject": "Rechazar",
+    "replaces_one": "Une {{count}} documento en uno: al aprobar, ese se borra.",
+    "replaces_other": "Une {{count}} documentos en uno: al aprobar, esos se borran.",
+    "showText": "Ver el texto",
+    "hideText": "Ocultar el texto"
   },
   "editor": {
     "glyph": {
@@ -243,7 +261,7 @@
   },
   "linked": {
     "title": "Documentos",
-    "description": "Reglas y notas vinculadas a {{label}}. Los agentes las leen.",
+    "description": "Reglas y mapa vinculados a {{label}}. Los agentes los leen.",
     "empty": "Aún no hay documentos vinculados.",
     "new": "Nuevo documento",
     "loading": "Cargando…",
@@ -352,21 +370,18 @@
     "found_other": "Encontré {{count}} posibles conflictos",
     "none": "Sin conflictos con las otras reglas"
   },
-  "types": {
-    "manage": "Tus tipos",
-    "title": "Tipos de documento",
-    "kind": "Creados por ti",
-    "text": "Además de los tipos del sitio (Reglas, Checklist, Notas…), crea los tuyos para ordenar los documentos. Eliges el tipo al crear o editar un documento.",
-    "placeholder": "Nombre del tipo (ej.: Recetas)",
-    "add": "Crear",
-    "none": "Aún no has creado ningún tipo.",
-    "count_one": "{{count}} documento",
-    "count_other": "{{count}} documentos",
-    "delete": "Borrar",
-    "deleteHint": "Los documentos de este tipo quedan como \"Otro\".",
-    "confirmDelete": "Borrar de verdad",
-    "keep": "Mantener",
-    "done": "Hecho",
-    "created": "Tipo \"{{name}}\" creado."
+  "starter": {
+    "title": "Documentos sugeridos",
+    "kind": "Elige por dónde empezar",
+    "text": "Los que ya tienes con el mismo título no se repiten. Los de una app solo entran si la tienes conectada. Después edítalos a tu gusto.",
+    "generic": "Genéricos",
+    "genericName": "Los básicos",
+    "genericText": "Los procesos generales (cómo trabaja el equipo, las actualizaciones, un servicio caído…) y un documento de reglas por cada app conectada.",
+    "examples": "Ejemplo",
+    "community": "De la comunidad",
+    "loading": "Buscando los de la comunidad…",
+    "noCommunity": "Todavía no hay conjuntos de la comunidad. Cualquiera puede añadir uno en GitHub (templates/docs).",
+    "meta": "{{count}} documentos · {{author}}",
+    "close": "Cerrar"
   }
 }

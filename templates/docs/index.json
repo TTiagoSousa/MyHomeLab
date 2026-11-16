@@ -1,0 +1,36 @@
+{
+  "sets": [
+    {
+      "id": "example",
+      "author": "MyHomeLab",
+      "language": "pt-PT",
+      "name": {
+        "pt-PT": "Exemplo realista",
+        "en": "Realistic example",
+        "es": "Ejemplo realista"
+      },
+      "description": {
+        "pt-PT": "Os documentos de um home lab a sério: as regras de atualizar cada app (estudar e instalar), o DNS, um serviço em baixo, o mapa do servidor, o email, a saúde e as viagens. Para adaptar ao teu.",
+        "en": "The documents of a real home lab: the update rules for each app (study and install), DNS, a service down, the server map, email, health and travel. Adapt them to yours (written in European Portuguese).",
+        "es": "Los documentos de un home lab de verdad: las reglas para actualizar cada app (estudiar e instalar), el DNS, un servicio caído, el mapa del servidor, el email, la salud y los viajes. Para adaptar al tuyo (en portugués europeo)."
+      },
+      "files": [
+        "adguard-como-se-mexe-no-dns.md",
+        "adguard-regras.md",
+        "atualizacoes-das-apps-e-do-proxmox-como-funcionam.md",
+        "email-como-leio-respondo-e-mexo-em-emails.md",
+        "forgejo-regras.md",
+        "home-assistant-regras.md",
+        "mapa-do-servidor-como-se-escreve.md",
+        "nextcloud-regras.md",
+        "opengym-regras.md",
+        "proxmox-regras.md",
+        "saude-como-o-medico-analisa.md",
+        "servico-em-baixo-como-se-trata.md",
+        "trek-planear-uma-viagem.md",
+        "trek-regras.md",
+        "viagens-como-o-agente-planeia.md"
+      ]
+    }
+  ]
+}

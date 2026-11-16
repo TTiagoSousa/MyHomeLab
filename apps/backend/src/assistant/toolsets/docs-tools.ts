@@ -41,7 +41,7 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
     {
       name: 'docs_search',
       description:
-        'Procura nos documentos do utilizador (regras, checklists, notas, aprendizagens, guias) por palavras, no título, no texto, nas etiquetas e no que estão ligados. Devolve a linha do índice e um pedaço do texto.',
+        'Procura nos documentos do utilizador (regras, mapas dos servidores e das apps, registos) por palavras, no título, no texto, nas etiquetas e no que estão ligados. Devolve a linha do índice e um pedaço do texto.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -103,7 +103,7 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
     {
       name: 'docs_write',
       description:
-        'Cria um documento teu (dos agentes) ou reescreve um que seja dos agentes (ex.: notas de trabalho, um guia). Nos documentos do utilizador não dá: usa docs_propose.',
+        'Cria um documento teu (dos agentes) ou reescreve um que seja dos agentes — quase sempre o mapa (MAP) de um servidor ou de uma app: o que lá existe (versões, máquinas, portas, add-ons). Regras não se escrevem aqui: propõem-se com docs_propose.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -167,7 +167,7 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
           context.userId,
           {
             title: input.title,
-            kind: input.kind ?? DocKind.NOTES,
+            kind: input.kind ?? DocKind.MAP,
             content: input.content,
             summary: input.summary,
             tags: input.tags,
@@ -238,7 +238,12 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
             description: 'O documento (edit/append). Omite em create.',
           },
           title: { type: 'string', description: 'create: o título.' },
-          kind: { type: 'string', enum: KINDS, description: 'create: o tipo.' },
+          kind: {
+            type: 'string',
+            enum: KINDS,
+            description:
+              'create: RULES (o que se pode fazer e como se faz — o normal numa proposta), MAP (o que existe) ou LOG.',
+          },
           content: {
             type: 'string',
             description:
@@ -255,6 +260,18 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
               'A tarefa do quadro que levou a esta proposta (ex.: ATU-24), se houver. Fica lá um comentário com o link e a tarefa espera pela decisão.',
           },
           links: LINKS,
+          tags: {
+            type: 'array',
+            items: { type: 'string' },
+            description:
+              'create: as etiquetas do documento novo (é por elas e pelas ligações que os agentes sabem quando o ler).',
+          },
+          replaces: {
+            type: 'array',
+            items: { type: 'string' },
+            description:
+              'create: os ids dos documentos que o novo junta num só (ex.: o "estudar" e o "instalar" de uma app). Se ele aprovar, esses apagam-se: diz-lho no reason.',
+          },
         },
         required: ['action', 'content', 'reason'],
       },
@@ -267,6 +284,8 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
         reason: string;
         task?: string;
         links?: LinkInput;
+        tags?: string[];
+        replaces?: string[];
       }) => {
         let task: { id: string; key: string } | undefined;
         if (input.task?.trim()) {
@@ -277,9 +296,6 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
           if (typeof found === 'string') return found;
           const { key } = await context.board.task(context.userId, found.id);
           task = { id: found.id, key };
-        }
-        if (input.action === 'create' && input.kind === DocKind.LEARNINGS) {
-          return 'Não se criam documentos de aprendizagens: propõe uma versão nova (edit) do documento da app ou do servidor, com a regra na secção certa.';
         }
         let docId: string | undefined;
         let title = input.title?.trim() ?? '';
@@ -318,6 +334,8 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
           content: input.content,
           reason: input.reason,
           links: input.links,
+          tags: input.tags,
+          replaces: input.replaces,
           proposedBy: agentKey,
           task,
         });

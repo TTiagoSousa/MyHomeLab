@@ -124,6 +124,21 @@
     color: var(--text-faint);
   }
 
+  .Doc_Proposal_Toggle{
+    @include Mixin.Ghost_Button;
+    align-self: flex-start;
+    height: 28px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .Doc_Proposal_Replaces{
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--stat-attention);
+  }
+
   .Doc_Proposal_Reason{
     margin: 0;
     font-size: 12.5px;

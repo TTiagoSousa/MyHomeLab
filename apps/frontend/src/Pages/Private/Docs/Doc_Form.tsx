@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Doc_Editor from '../../../Components/Doc_Editor/Doc_Editor';
 import Global_Dropdown from '../../../Components/Inputs/Global_Dropdown/Global_Dropdown';
 import Global_Input from '../../../Components/Inputs/Global_Input/Global_Input';
-import { DOC_KINDS, TYPE_PREFIX, type DocKind } from '../../../Hooks/Docs/docTypes';
-import { useDocTypes } from '../../../Hooks/Docs/useDocTypes';
+import { DOC_KINDS, type DocKind } from '../../../Hooks/Docs/docTypes';
 import Doc_Links_Editor from './Doc_Links_Editor';
 import Doc_Tags_Input from './Doc_Tags_Input';
 import type { DocDraft } from './docDraft';
@@ -26,15 +25,10 @@ const Doc_Form = ({ heading, initial, docId, notice, saving, onSave, onCancel, o
   const [draft, setDraft] = useState<DocDraft>(initial);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [triedSave, setTriedSave] = useState(false);
-  const { types } = useDocTypes();
 
-  const kindOptions = [
-    ...DOC_KINDS.map((kind) => ({ value: kind, label: t(`kinds.${kind}`) })),
-    ...types.map((type) => ({ value: `${TYPE_PREFIX}${type.id}`, label: type.name })),
-  ];
+  const kindOptions = DOC_KINDS.map((kind) => ({ value: kind, label: t(`kinds.${kind}`) }));
 
-  const changeKind = (value: string) =>
-    value.startsWith(TYPE_PREFIX) ? update({ kind: 'OTHER', typeId: value.slice(TYPE_PREFIX.length) }) : update({ kind: value as DocKind, typeId: null });
+  const changeKind = (value: string) => update({ kind: value as DocKind });
 
   const update = (changes: Partial<DocDraft>) => setDraft((current) => ({ ...current, ...changes }));
   const titleMissing = !draft.title.trim();
@@ -69,20 +63,13 @@ const Doc_Form = ({ heading, initial, docId, notice, saving, onSave, onCancel, o
           <label htmlFor='doc-kind'>{t('form.kind')}</label>
           <Global_Dropdown
             id='doc-kind'
-            value={draft.typeId ? `${TYPE_PREFIX}${draft.typeId}` : draft.kind}
+            value={draft.kind}
             options={kindOptions}
             onChange={changeKind}
-            maxVisibleOptions={8}
+            searchable={false}
           />
+          <span className='Doc_Form_Hint'>{t(`kindHints.${draft.kind}`)}</span>
         </div>
-
-        <label className='Doc_Form_Toggle'>
-          <span>
-            {t('form.required')}
-            <small>{t('form.requiredHint')}</small>
-          </span>
-          <input type='checkbox' checked={draft.required} onChange={(e) => update({ required: e.target.checked })} />
-        </label>
       </div>
 
       <div className='Doc_Form_Field'>

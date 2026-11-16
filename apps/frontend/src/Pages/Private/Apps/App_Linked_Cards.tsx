@@ -67,7 +67,7 @@ const App_Linked_Cards = ({ type, targetId, onOpen }: App_Linked_Cards_Props) =>
 
   const agents = rows.filter((row) => row.canRead);
   const writers = agents.filter((row) => row.canWrite && row.level !== 'READ' && row.level !== 'NONE').length;
-  const required = docs.filter((doc) => doc.required).length;
+  const rules = docs.filter((doc) => doc.kind === 'RULES').length;
   const active = schedules.filter((schedule) => schedule.enabled).length;
 
   return (
@@ -87,7 +87,7 @@ const App_Linked_Cards = ({ type, targetId, onOpen }: App_Linked_Cards_Props) =>
         icon={Icon.Doc}
         title={t('apps.linked.docs')}
         count={loadingDocs ? null : docs.length}
-        detail={docs.length ? t('apps.linked.docsDetail', { count: required }) : t('apps.linked.docsEmpty')}
+        detail={docs.length ? t('apps.linked.docsDetail', { count: rules }) : t('apps.linked.docsEmpty')}
         names={docs.map((doc) => doc.title)}
         emptyHint={t('apps.linked.docsHint')}
         onOpen={onOpen}

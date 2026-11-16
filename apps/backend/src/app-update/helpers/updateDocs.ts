@@ -6,9 +6,12 @@ import { DocsService, guestTargetId } from 'src/docs/docs.service';
 import { normalizeText } from 'src/docs/helpers/docText';
 import { UpdateWithAccount } from '../app-update.types';
 
+/** As regras gerais (sem ligações) que valem para qualquer atualização, pelas etiquetas. */
+const GENERAL_TAGS = ['atualizacao', 'servidor'];
+
 /**
- * As regras do próprio servidor sobre o atualizar ou o guia dele ("Proxmox – instalar uma atualização",
- * "Guia do servidor – como se escreve") são do host: numa app, as caixas delas
+ * As regras do próprio servidor sobre o atualizar ou o mapa dele ("Proxmox – instalar uma atualização",
+ * "Mapa do servidor – como se escreve") são do host: numa app, as caixas delas
  * misturavam-se com as da app. Ficam de fora, a não ser que também estejam ligadas à app.
  */
 const isServerOnlyProcess = (
@@ -21,7 +24,7 @@ const isServerOnlyProcess = (
       link.type === DocLinkType.GUEST,
   ) &&
   doc.tags.some((tag) =>
-    ['atualizacao', 'estudo', 'instalacao', 'guia'].includes(
+    ['atualizacao', 'estudo', 'instalacao', 'guia', 'mapa'].includes(
       normalizeText(tag),
     ),
   );
@@ -37,12 +40,10 @@ export async function updateDocs(
     // As peças (add-ons, HACS, firmware…) seguem os documentos da app marcados
     // como "peças"; as regras do servidor (snapshot, CT, disco) não se aplicam.
     const [general, linked] = await Promise.all([
-      docs.requiredGeneral(update.userId),
-      docs.linkedToAny(
-        update.userId,
-        [{ type: DocLinkType.APP, targetId: update.accountId ?? '' }],
-        true,
-      ),
+      docs.generalRules(update.userId, GENERAL_TAGS),
+      docs.linkedToAny(update.userId, [
+        { type: DocLinkType.APP, targetId: update.accountId ?? '' },
+      ]),
     ]);
     return [
       ...general,
@@ -56,13 +57,11 @@ export async function updateDocs(
     // ("Proxmox – estudar uma atualização" e "Proxmox – instalar uma atualização"); as outras do servidor (estudar,
     // guias) não são para atualizar.
     const [general, linked] = await Promise.all([
-      docs.requiredGeneral(update.userId),
+      docs.generalRules(update.userId, GENERAL_TAGS),
       server
-        ? docs.linkedToAny(
-            update.userId,
-            [{ type: DocLinkType.SERVER, targetId: server.id }],
-            true,
-          )
+        ? docs.linkedToAny(update.userId, [
+            { type: DocLinkType.SERVER, targetId: server.id },
+          ])
         : Promise.resolve([]),
     ]);
     return [
@@ -73,31 +72,27 @@ export async function updateDocs(
     ];
   }
   const [general, linked] = await Promise.all([
-    docs.requiredGeneral(update.userId),
-    docs.linkedToAny(
-      update.userId,
-      [
-        { type: DocLinkType.APP, targetId: update.accountId },
-        {
-          type: DocLinkType.AGENT,
-          targetId: await docs.updatesAgentKey(update.userId),
-        },
-        ...(server
-          ? [
-              { type: DocLinkType.SERVER, targetId: server.id },
-              ...(vmid !== null
-                ? [
-                    {
-                      type: DocLinkType.GUEST,
-                      targetId: guestTargetId(server.id, vmid),
-                    },
-                  ]
-                : []),
-            ]
-          : []),
-      ],
-      true,
-    ),
+    docs.generalRules(update.userId, GENERAL_TAGS),
+    docs.linkedToAny(update.userId, [
+      { type: DocLinkType.APP, targetId: update.accountId },
+      {
+        type: DocLinkType.AGENT,
+        targetId: await docs.updatesAgentKey(update.userId),
+      },
+      ...(server
+        ? [
+            { type: DocLinkType.SERVER, targetId: server.id },
+            ...(vmid !== null
+              ? [
+                  {
+                    type: DocLinkType.GUEST,
+                    targetId: guestTargetId(server.id, vmid),
+                  },
+                ]
+              : []),
+          ]
+        : []),
+    ]),
   ]);
   const accountId = update.accountId;
   const seen = new Set<string>();

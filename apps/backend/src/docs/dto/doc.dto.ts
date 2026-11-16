@@ -2,7 +2,6 @@ import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   IsArray,
-  IsBoolean,
   IsEnum,
   IsIn,
   IsOptional,
@@ -42,12 +41,6 @@ export class CreateDocDto {
   @IsEnum(DocKind)
   kind?: DocKind;
 
-  /** Um tipo criado por ele (null tira-o). */
-  @IsOptional()
-  @IsString()
-  @MaxLength(60)
-  typeId?: string | null;
-
   @IsOptional()
   @IsString()
   @MaxLength(200_000)
@@ -64,10 +57,6 @@ export class CreateDocDto {
   @IsString({ each: true })
   @MaxLength(40, { each: true })
   tags?: string[];
-
-  @IsOptional()
-  @IsBoolean()
-  required?: boolean;
 
   @IsOptional()
   @IsArray()
@@ -88,12 +77,6 @@ export class UpdateDocDto {
   @IsEnum(DocKind)
   kind?: DocKind;
 
-  /** Um tipo criado por ele (null tira-o). */
-  @IsOptional()
-  @IsString()
-  @MaxLength(60)
-  typeId?: string | null;
-
   @IsOptional()
   @IsString()
   @MaxLength(200_000)
@@ -110,10 +93,6 @@ export class UpdateDocDto {
   @IsString({ each: true })
   @MaxLength(40, { each: true })
   tags?: string[];
-
-  @IsOptional()
-  @IsBoolean()
-  required?: boolean;
 
   @IsOptional()
   @IsArray()
@@ -134,11 +113,6 @@ export class ListDocsQueryDto {
   kind?: DocKind;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(60)
-  typeId?: string;
-
-  @IsOptional()
   @IsEnum(DocLinkType)
   linkType?: DocLinkType;
 
@@ -146,11 +120,6 @@ export class ListDocsQueryDto {
   @IsString()
   @MaxLength(200)
   targetId?: string;
-
-  /** '1' = só os obrigatórios. */
-  @IsOptional()
-  @IsIn(['1'])
-  required?: '1';
 
   @IsOptional()
   @IsEnum(DocOwner)
@@ -167,11 +136,4 @@ export class ApproveDocProposalDto {
   @IsString()
   @MaxLength(200_000)
   content?: string;
-}
-
-export class CreateDocTypeDto {
-  @IsString()
-  @MinLength(1)
-  @MaxLength(40)
-  name!: string;
 }

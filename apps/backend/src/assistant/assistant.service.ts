@@ -900,7 +900,7 @@ ${extra}`
     );
     const bridge = openBridge(tools, TERMINAL_SESSION_MS);
     const trek = await trekDirect(TERMINAL_TOOLS, context, TERMINAL_AGENT);
-    const docs = await this.docs.agentContext(user.id, TERMINAL_AGENT);
+    const docs = await this.docs.agentContext(user.id);
     return {
       user: user.username,
       model: ai.models.main,

@@ -185,7 +185,6 @@ export async function writeEmailRulesDoc(
       tags: ['email', 'regras', EMAIL_RULES_DOC_TAG],
       // Grande (centenas de regras): não entra em todos os pedidos; o agente
       // abre-o quando precisa (docs_search), e as regras vê-as com list_email_rules.
-      required: false,
       owner: 'USER',
       kind: 'RULES',
       updatedBy: 'MyHomeLab',

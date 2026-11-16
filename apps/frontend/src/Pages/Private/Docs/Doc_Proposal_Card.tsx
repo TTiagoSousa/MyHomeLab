@@ -16,6 +16,7 @@ interface Doc_Proposal_Card_Props {
 const Doc_Proposal_Card = ({ proposal, busy, approveLabel, onApprove, onReject }: Doc_Proposal_Card_Props) => {
   const { t } = useTranslation('docs');
   const [editing, setEditing] = useState(false);
+  const [open, setOpen] = useState(false);
   const [content, setContent] = useState(proposal.content);
 
   const edited = editing && content !== proposal.content;
@@ -53,15 +54,25 @@ const Doc_Proposal_Card = ({ proposal, busy, approveLabel, onApprove, onReject }
         </p>
       )}
 
-      {proposal.action === 'CREATE' && Boolean(proposal.kind || proposal.links?.length) && (
+      {proposal.action === 'CREATE' && Boolean(proposal.kind || proposal.links?.length || proposal.tags.length) && (
         <div className='Doc_Proposal_Links'>
           {proposal.kind && <span className='Doc_Chip kind'>{t(`kinds.${proposal.kind}`)}</span>}
           {proposal.links?.map((link) => (
             <Doc_Link_Chip key={`${link.type}:${link.targetId}`} link={link} />
           ))}
+          {proposal.tags.map((tag) => (
+            <span key={tag} className='Doc_Chip'>#{tag}</span>
+          ))}
         </div>
       )}
 
+      {proposal.replaces.length > 0 && <p className='Doc_Proposal_Replaces'>{t('proposals.replaces', { count: proposal.replaces.length })}</p>}
+
+      <button type='button' className='Doc_Proposal_Toggle' onClick={() => setOpen(!open)} aria-expanded={open || editing}>
+        {open || editing ? t('proposals.hideText') : t('proposals.showText')}
+      </button>
+
+      {(open || editing) && (
       <div className={`Doc_Proposal_Compare${showCurrent ? ' split' : ''}`}>
         {showCurrent && (
           <div className='Doc_Proposal_Pane'>
@@ -78,6 +89,7 @@ const Doc_Proposal_Card = ({ proposal, busy, approveLabel, onApprove, onReject }
           </div>
         </div>
       </div>
+      )}
 
       <footer>
         <button type='button' className='Doc_Proposal_Reject' onClick={onReject} disabled={busy}>

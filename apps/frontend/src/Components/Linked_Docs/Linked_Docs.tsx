@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Apps_Section } from '../../Pages/Private/Apps/appsShared';
 import { Doc_Meta_Chips } from '../Doc_Chips/Doc_Chips';
 import { useLinkedDocs } from '../../Hooks/Docs/useLinkedDocs';
-import { useDocTypes } from '../../Hooks/Docs/useDocTypes';
 import type { DocLinkType } from '../../Hooks/Docs/docTypes';
 import * as Icon from '../../Imports/icons';
 import './Linked_Docs.scss';
@@ -21,7 +20,6 @@ const Linked_Docs = ({ type, targetId, label }: Linked_Docs_Props) => {
   const { t } = useTranslation('docs');
   const navigate = useNavigate();
   const { docs, loading, error } = useLinkedDocs(type, targetId);
-  const { types } = useDocTypes();
   const [page, setPage] = useState(0);
 
   const pages = Math.max(1, Math.ceil(docs.length / PAGE_SIZE));
@@ -53,7 +51,7 @@ const Linked_Docs = ({ type, targetId, label }: Linked_Docs_Props) => {
           <button key={doc.id} type='button' className='Linked_Docs_Item' onClick={() => navigate(`/MyHomeLab/Docs/${doc.id}`)}>
             <span className='Linked_Docs_Title'>{doc.title}</span>
             <span className='Linked_Docs_Chips'>
-              <Doc_Meta_Chips kind={doc.kind} typeName={types.find((item) => item.id === doc.typeId)?.name} required={doc.required} owner={doc.owner} />
+              <Doc_Meta_Chips kind={doc.kind} owner={doc.owner} />
             </span>
             {doc.summary && <span className='Linked_Docs_Summary'>{doc.summary}</span>}
           </button>

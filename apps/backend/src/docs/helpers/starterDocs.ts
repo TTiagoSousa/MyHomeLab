@@ -3,11 +3,11 @@ import {
   DocKind,
   DocLinkType,
 } from 'src/generated/prisma/client/client';
+import { PROCESS_DOCS } from './processDocs';
 
 export interface StarterDoc {
   title: string;
   kind: DocKind;
-  required: boolean;
   tags: string[];
   summary: string;
   content: string;
@@ -21,7 +21,6 @@ export const CHECK_LEGEND =
 export const GENERAL_RULES: StarterDoc = {
   title: 'Regras gerais do servidor',
   kind: DocKind.RULES,
-  required: true,
   tags: ['regras', 'servidor'],
   summary:
     'Como os agentes mexem nos servidores e nas apps que lá correm: antes, durante e depois, horários e o que nunca fazer.',
@@ -290,13 +289,14 @@ ${CHECK_LEGEND}
 }
 
 /**
- * Os documentos sugeridos para começar: as regras gerais e um documento de regras
- * por cada app ligada que tem versão (as regras de atualizar são por app).
+ * Os documentos sugeridos para começar: as regras gerais, os processos gerais (como a
+ * equipa trabalha, as atualizações, um serviço em baixo…) e um documento de regras por
+ * cada app ligada que tem versão. Os mapas não se sugerem: escreve-os o agente ao estudar.
  */
 export function starterDocs(
   apps: { id: string; provider: ConnectionProvider; label: string }[],
 ): StarterDoc[] {
-  const docs = [GENERAL_RULES];
+  const docs = [GENERAL_RULES, ...PROCESS_DOCS];
   for (const app of apps) {
     const rules = APP_RULES[app.provider];
     const content = appRulesContent(app.provider, app.label);
@@ -307,7 +307,6 @@ export function starterDocs(
     docs.push({
       title: `${app.label} – regras`,
       kind: DocKind.RULES,
-      required: true,
       tags: ['atualizacao', rules.name.toLowerCase()],
       summary: `Onde corre o ${rules.name}, como se atualiza e o que verificar antes e depois.`,
       links,
@@ -317,7 +316,6 @@ export function starterDocs(
       docs.push({
         title: `${app.label} – peças (add-ons, HACS, firmware)`,
         kind: DocKind.RULES,
-        required: true,
         tags: ['atualizacao', 'home assistant', 'pecas'],
         summary:
           'As atualizações dentro do Home Assistant (add-ons, HACS, firmware): backup do HA com menos de 2 h, sem snapshot da VM.',
@@ -329,7 +327,6 @@ export function starterDocs(
       docs.push({
         title: `${app.label} – apps (peças)`,
         kind: DocKind.RULES,
-        required: true,
         tags: ['atualizacao', 'nextcloud', 'pecas'],
         summary:
           'As atualizações das apps dentro do Nextcloud: uma por app, com occ app:update na máquina (CT ou VM) e snapshot antes.',

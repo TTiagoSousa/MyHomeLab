@@ -101,7 +101,7 @@
         "A saúde dos discos (Servidores → Discos) lê o SMART através do Proxmox e precisa da permissão Sys.Audit no nó — o root@pam e o papel PVEAuditor já a têm. Discos atrás de controladoras RAID ou em caixas USB podem aparecer \"Sem SMART\".",
         "Para os agentes mexerem nas máquinas (ligar, desligar, snapshots, backups, recursos), o token precisa do papel PVEVMAdmin em Datacenter → Permissions (ou um token do root@pam sem Privilege Separation). Com o PVEAuditor só leem.",
         "Comandos: na página do servidor, em Comandos (SSH) → Ligar comandos, o MyHomeLab gera uma chave e mostra a linha para colares na shell do Proxmox. Os comandos correm logo e ficam no registo; o que o agente pode fazer (e o que nunca faz sem o teu sim) está nas regras do servidor, em Documentos.",
-        "Guia do servidor: é um documento ligado ao servidor (aparece em Documentos e na lista de documentos do servidor). Escreve-o tu, ou pede ao Jarvis para estudar o servidor e criar ou atualizar o guia — se o documento for teu, ele propõe a mudança e tu aprovas."
+        "Mapa do servidor: é um documento ligado ao servidor com o que lá existe (máquinas, discos, rede). Pede ao Jarvis para estudar o servidor e escrever o mapa — ele mantém-no em dia."
       ],
       "goTo": "Ir para Definições"
     },
@@ -228,18 +228,18 @@
     },
     "docs": {
       "title": "Documentos",
-      "summary": "As tuas regras, checklists e notas, ligadas a servidores, máquinas, apps ou agentes. Os agentes seguem-nas e só te propõem mudanças.",
+      "summary": "As tuas regras e o mapa dos servidores e das apps, ligados ao que dizem respeito. Os agentes seguem as regras e só te propõem mudanças; o que fizeram fica no Histórico.",
       "steps": [
-        "Em Documentos, carrega em \"Criar documentos sugeridos\": ficam as regras gerais, as checklists de antes e depois de atualizar e um documento de regras por cada app ligada.",
+        "Em Documentos, carrega em \"Criar documentos sugeridos\": ficam os documentos gerais (como a equipa trabalha, as atualizações, um serviço em baixo…) e um documento de regras por cada app ligada.",
         "Abre um documento e escreve à vontade: títulos, listas, caixas de verificação, tabelas e diagramas.",
         "Liga-o ao que interessa (um servidor, um CT ou VM mesmo sem integração, uma app, um serviço vigiado, um agente ou outro documento).",
-        "Marca \"Obrigatório\" nas regras: os agentes leem-nas sempre que o pedido toca no que está ligado. Sem ligações, valem para tudo."
+        "Dá títulos e etiquetas claras e liga cada regra ao que diz respeito (a app, o servidor, a máquina): é por aí que os agentes sabem que documentos ler."
       ],
       "notes": [
-        "Os agentes recebem só o índice dos documentos e os obrigatórios do que o pedido menciona; o resto procuram quando precisam. Assim gastam menos tokens.",
-        "Nos teus documentos os agentes não escrevem: propõem mudanças e aprendizagens, que aprovas ou recusas em Documentos.",
+        "Os agentes recebem o índice dos documentos e a lista dos que o pedido toca (pelos títulos, etiquetas e ligações). Têm de ler esses antes de mexer em alguma coisa — as ferramentas que mudam coisas só respondem depois.",
+        "Nos teus documentos os agentes não escrevem: propõem mudanças, que aprovas ou recusas em Documentos. O que aprendem chega-te assim, como uma mudança a uma regra.",
         "Cada documento guarda as versões anteriores; podes repor qualquer uma.",
-        "O guia de cada servidor também é um documento: crias tu, ou pedes ao assistente para estudar o servidor e o escrever.",
+        "O mapa de cada servidor e de cada app também é um documento: escreve-o o agente quando estuda, e mantém-no em dia.",
         "As tentativas de atualização também aparecem aqui (tipo \"Tentativa de atualização\"): ao abrir, vês os pontos das regras com \"por validar\", \"validada\" ou \"não validada\" e a prova de cada um."
       ],
       "goTo": "Ir para Documentos"

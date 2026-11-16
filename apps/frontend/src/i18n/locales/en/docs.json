@@ -16,6 +16,10 @@
     "back": "Documents",
     "newLinked": "New linked to {{label}}"
   },
+  "sections": {
+    "library": "Documents",
+    "history": "History"
+  },
   "filters": {
     "search": "Search documents…",
     "allKinds": "All kinds",
@@ -32,18 +36,19 @@
     "sortLabel": "Sort",
     "sortRecent": "Most recent",
     "sortTitle": "Title (A–Z)",
-    "requiredOnly": "Required only",
-    "clear": "Clear filters"
+    "clear": "Clear filters",
+    "allHistory": "Everything"
   },
   "kinds": {
     "RULES": "Rules",
-    "CHECKLIST": "Checklist",
-    "NOTES": "Notes",
-    "LEARNINGS": "Learnings",
-    "GUIDE": "Guide",
+    "MAP": "Map",
     "LOG": "Log",
-    "OTHER": "Other",
     "ATTEMPT": "Update attempt"
+  },
+  "kindHints": {
+    "RULES": "What may be done and how. Yours: the agents follow it and propose changes.",
+    "MAP": "What exists on a server or an app (machines, versions, ports). The agents keep it up to date.",
+    "LOG": "What was done. Usually written by the agents; it lives in History."
   },
   "linkTypes": {
     "SERVER": "Server",
@@ -76,7 +81,6 @@
     "TASK": "Linked to tasks"
   },
   "chips": {
-    "required": "Required",
     "agentOwner": "By the agents"
   },
   "list": {
@@ -84,11 +88,23 @@
     "noResults": "No document matches your search.",
     "updated": "{{time}} · {{by}}",
     "count_one": "{{count}} document",
-    "count_other": "{{count}} documents"
+    "count_other": "{{count}} documents",
+    "noHistory": "Nothing in the history yet.",
+    "historyCount_one": "{{count}} entry",
+    "historyCount_other": "{{count}} entries",
+    "showOlder": "Show older than {{days}} days ({{count}})"
+  },
+  "groups": {
+    "general": "General",
+    "things": "Servers and apps",
+    "projects": "Projects",
+    "addRules": "Rules",
+    "addMap": "Map",
+    "missing": "No documents yet"
   },
   "empty": {
     "title": "No documents yet",
-    "text": "Documents hold your rules, checklists and what the agents learn along the way. Start with the suggested ones — you can edit them freely.",
+    "text": "Documents hold your rules and the map of your servers and apps. Start with the suggested ones — you can edit them freely.",
     "or": "or create one from scratch"
   },
   "detail": {
@@ -115,8 +131,6 @@
     "tags": "Tags",
     "tagsPlaceholder": "Type and press Enter",
     "removeTag": "Remove the tag {{tag}}",
-    "required": "Required",
-    "requiredHint": "The agents always read it when a request touches what it is linked to. Without links, it applies to everything.",
     "links": "Links",
     "linksHint": "Link the document to servers, machines, apps, services, agents or other documents.",
     "content": "Content",
@@ -173,7 +187,11 @@
     "approveEdited": "Approve with changes",
     "editBefore": "Edit first",
     "discardEdits": "Discard changes",
-    "reject": "Reject"
+    "reject": "Reject",
+    "replaces_one": "Merges {{count}} document into one: approving removes it.",
+    "replaces_other": "Merges {{count}} documents into one: approving removes them.",
+    "showText": "Show the text",
+    "hideText": "Hide the text"
   },
   "editor": {
     "glyph": {
@@ -243,7 +261,7 @@
   },
   "linked": {
     "title": "Documents",
-    "description": "Rules and notes linked to {{label}}. The agents read them.",
+    "description": "Rules and map linked to {{label}}. The agents read them.",
     "empty": "No linked documents yet.",
     "new": "New document",
     "loading": "Loading…",
@@ -352,21 +370,18 @@
     "found_other": "Found {{count}} possible conflicts",
     "none": "No conflicts with the other rules"
   },
-  "types": {
-    "manage": "Your types",
-    "title": "Document types",
-    "kind": "Created by you",
-    "text": "Besides the site types (Rules, Checklist, Notes…), create your own to organise documents. You pick the type when creating or editing a document.",
-    "placeholder": "Type name (e.g. Recipes)",
-    "add": "Create",
-    "none": "You have not created any type yet.",
-    "count_one": "{{count}} document",
-    "count_other": "{{count}} documents",
-    "delete": "Delete",
-    "deleteHint": "Documents of this type become \"Other\".",
-    "confirmDelete": "Really delete",
-    "keep": "Keep",
-    "done": "Done",
-    "created": "Type \"{{name}}\" created."
+  "starter": {
+    "title": "Suggested documents",
+    "kind": "Choose where to start",
+    "text": "Documents you already have with the same title are not repeated. An app's documents are only added if that app is connected. Edit them freely afterwards.",
+    "generic": "Generic",
+    "genericName": "The basics",
+    "genericText": "The general processes (how the team works, updates, a service down…) and a rules document for each connected app.",
+    "examples": "Example",
+    "community": "From the community",
+    "loading": "Looking for community sets…",
+    "noCommunity": "No community sets yet. Anyone can add one on GitHub (templates/docs).",
+    "meta": "{{count}} documents · {{author}}",
+    "close": "Close"
   }
 }

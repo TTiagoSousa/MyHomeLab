@@ -4,9 +4,8 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useDocs } from '../../../Hooks/Docs/useDocs';
 import { useDoc } from '../../../Hooks/Docs/useDoc';
 import { useDocProposals } from '../../../Hooks/Docs/useDocProposals';
-import { useDocTypes } from '../../../Hooks/Docs/useDocTypes';
 import { useDocTargets } from '../../../Hooks/Docs/useDocTargets';
-import { ATTEMPT_KIND, TYPE_PREFIX, type DocKind, type DocLinkType, type DocTarget } from '../../../Hooks/Docs/docTypes';
+import { ATTEMPT_KIND, type DocKind, type DocLinkType, type DocTarget } from '../../../Hooks/Docs/docTypes';
 import { useUpdateAttempts } from '../../../Hooks/Updates/useUpdateAttempts';
 import Attempt_List_Item from './Attempt_List_Item';
 import Attempt_Detail from './Attempt_Detail';
@@ -18,14 +17,19 @@ import Doc_List_Item from './Doc_List_Item';
 import Doc_Detail from './Doc_Detail';
 import Doc_Form from './Doc_Form';
 import Doc_Proposals from './Doc_Proposals';
-import Doc_Types_Modal from './Doc_Types_Modal';
-import { draftToPayload, emptyDraft, linkFromQuery, type DocDraft } from './docDraft';
+import Docs_Groups from './Docs_Groups';
+import Docs_Starter_Modal from './Docs_Starter_Modal';
+import { useDocTemplates } from '../../../Hooks/Docs/useDocTemplates';
+import { draftToPayload, emptyDraft, kindFromQuery, linkFromQuery, type DocDraft } from './docDraft';
 import './Docs.scss';
 
 const SEARCH_DELAY_MS = 300;
 const DOCS_PATH = '/MyHomeLab/Docs';
-const NEW_DOC_PARAMS = ['linkType', 'targetId', 'label'];
-const FILTER_PARAMS = ['q', 'kind', 'link', 'target', 'targetLabel', 'required', 'author', 'sort'];
+const NEW_DOC_PARAMS = ['linkType', 'targetId', 'label', 'newKind'];
+const HISTORY_DAYS = 90;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const FILTER_PARAMS = ['q', 'kind', 'link', 'target', 'targetLabel', 'author', 'sort'];
+const HISTORY_VIEW = 'history';
 
 const Docs = () => {
   const { t } = useTranslation('docs');
@@ -33,16 +37,18 @@ const Docs = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('q') ?? '';
+  const history = searchParams.get('view') === HISTORY_VIEW;
+  const [olderShown, setOlderShown] = useState(false);
+  const [historyFrom] = useState(() => Date.now() - HISTORY_DAYS * DAY_MS);
+  const [choosingStarter, setChoosingStarter] = useState(false);
   const kind = searchParams.get('kind') ?? '';
   const linkType = (searchParams.get('link') ?? '') as DocLinkType | '';
   const targetId = linkType ? (searchParams.get('target') ?? '') : '';
   const targetLabel = searchParams.get('targetLabel') ?? '';
-  const requiredOnly = searchParams.get('required') === '1';
   const author = (searchParams.get('author') ?? '') as DocsFilterValues['author'];
   const sort = (searchParams.get('sort') === 'title' ? 'title' : 'recent') as DocsFilterValues['sort'];
   const [searchText, setSearchText] = useState(search);
   const [creatingDoc, setCreatingDoc] = useState(false);
-  const [managingTypes, setManagingTypes] = useState(false);
 
   const setFilter = (name: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -74,9 +80,17 @@ const Docs = () => {
     setSearchParams(next, { replace: true });
   };
 
+  const setView = (value: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('kind');
+    if (value) next.set('view', value);
+    else next.delete('view');
+    setSearchParams(next, { replace: true });
+  };
+
   const filterQuery = () => {
     const filters = new URLSearchParams();
-    FILTER_PARAMS.forEach((param) => {
+    ['view', ...FILTER_PARAMS].forEach((param) => {
       const value = searchParams.get(param);
       if (value) filters.set(param, value);
     });
@@ -91,30 +105,42 @@ const Docs = () => {
     return () => clearTimeout(timer);
   }, [searchText]);
 
-  const typeId = kind.startsWith(TYPE_PREFIX) ? kind.slice(TYPE_PREFIX.length) : '';
-  const docKind = (kind === ATTEMPT_KIND || typeId ? '' : kind) as DocKind | '';
-  const { docs, loading, error, creatingStarter, fetchDocs, createDoc, createStarterDocs } = useDocs({ search, kind: docKind, typeId, linkType, targetId, required: requiredOnly, owner: author, sort });
-  const { types, saving: savingType, fetchTypes, createType, deleteType } = useDocTypes();
+  const docKind = (history ? (kind === ATTEMPT_KIND ? '' : 'LOG') : kind) as DocKind | '';
+  const { docs, loading, error, creatingStarter, fetchDocs, createDoc, createStarterDocs, createFromTemplate } = useDocs({ search, kind: docKind, linkType, targetId, owner: author, sort });
   const { targets } = useDocTargets();
+  const { sets, loading: loadingSets, fetchSets } = useDocTemplates();
+
+  const openStarter = () => {
+    setChoosingStarter(true);
+    void fetchSets();
+  };
+
+  const chooseStarter = async (id: string | null) => {
+    if (id) await createFromTemplate(id);
+    else await createStarterDocs();
+    setChoosingStarter(false);
+  };
   const { attempts } = useUpdateAttempts(linkType === 'APP' && targetId ? targetId : undefined);
   const docState = useDoc(docId);
   const { proposals, busyId, approveProposal, rejectProposal } = useDocProposals();
 
-  const showDocs = kind !== ATTEMPT_KIND;
-  const showAttempts = (!kind || kind === ATTEMPT_KIND) && (!linkType || linkType === 'APP') && !requiredOnly && author !== 'USER';
+  const libraryDocs = docs.filter((doc) => doc.kind !== 'LOG');
+  const showDocs = history && kind !== ATTEMPT_KIND;
+  const showAttempts = history && (!kind || kind === ATTEMPT_KIND) && (!linkType || linkType === 'APP') && author !== 'USER';
   const shownDocs = showDocs ? docs : [];
   const shownAttempts = showAttempts
     ? attempts.filter((attempt) => !search || attempt.title.toLowerCase().includes(search.toLowerCase()))
     : [];
-  const items = [
+  const allItems = [
     ...shownDocs.map((doc) => ({ key: doc.id, title: doc.title, date: doc.updatedAt, doc, attempt: null })),
     ...shownAttempts.map((attempt) => ({ key: attempt.id, title: attempt.title, date: attempt.updatedAt, doc: null, attempt })),
   ].sort((a, b) => (sort === 'title' ? a.title.localeCompare(b.title) : new Date(b.date).getTime() - new Date(a.date).getTime()));
-  const typeName = (id: string | null) => types.find((type) => type.id === id)?.name;
+  const items = olderShown ? allItems : allItems.filter((item) => new Date(item.date).getTime() >= historyFrom);
+  const olderCount = allItems.length - items.length;
 
   const creating = !docId && searchParams.get('new') === '1';
   const onPage = Boolean(docId || attemptId) || creating;
-  const filtering = Boolean(search || kind || linkType || requiredOnly || author);
+  const filtering = Boolean(search || kind || linkType || author || history);
   const isEmpty = !loading && !error && docs.length === 0 && attempts.length === 0 && !filtering;
 
   const openDoc = (id: string) => navigate(`${DOCS_PATH}/${id}${filterQuery()}`);
@@ -128,6 +154,11 @@ const Docs = () => {
       params.set('targetId', targetId);
       params.set('label', targetLabel || targetId);
     }
+    navigate(`${DOCS_PATH}?${params.toString()}`);
+  };
+
+  const openNewFor = (target: DocTarget, newKind: DocKind) => {
+    const params = new URLSearchParams({ new: '1', linkType: target.type, targetId: target.targetId, label: target.label, newKind });
     navigate(`${DOCS_PATH}?${params.toString()}`);
   };
 
@@ -156,19 +187,13 @@ const Docs = () => {
     backToList();
   };
 
-  const removeType = async (id: string) => {
-    const removed = await deleteType(id);
-    if (removed && typeId === id) setFilter('kind', '');
-    if (removed) await fetchDocs();
-  };
-
   const renderPage = () => {
     if (creating) {
       return (
         <Doc_Form
           key={NEW_DOC_PARAMS.map((name) => searchParams.get(name) ?? '').join('|')}
           heading={t('form.newTitle')}
-          initial={emptyDraft(linkFromQuery(searchParams))}
+          initial={emptyDraft(linkFromQuery(searchParams), kindFromQuery(searchParams))}
           saving={creatingDoc}
           onSave={create}
           onCancel={cancelCreate}
@@ -179,16 +204,31 @@ const Docs = () => {
     return <Doc_Detail key={docId} docId={docId!} docState={docState} onChanged={fetchDocs} onDeleted={handleDeleted} />;
   };
 
+  const shownCount = history ? allItems.length : libraryDocs.length;
+
   const renderList = () => {
     if (loading) return <p className='Docs_list_note'>{t('list.loading')}</p>;
     if (error) return <p className='Docs_list_note error'>{error}</p>;
-    if (items.length === 0) return <p className='Docs_list_note'>{t('list.noResults')}</p>;
-    return items.map((item) =>
+    if (shownCount === 0) return <p className='Docs_list_note'>{t(history ? 'list.noHistory' : 'list.noResults')}</p>;
+    if (!history) {
+      return <Docs_Groups docs={libraryDocs} targets={targets} showMissing={!search && !kind && !linkType && !author} onSelect={openDoc} onCreate={openNewFor} />;
+    }
+    const rows = items.map((item) =>
       item.attempt ? (
         <Attempt_List_Item key={item.key} attempt={item.attempt} onSelect={() => openAttempt(item.key)} />
       ) : (
-        <Doc_List_Item key={item.key} doc={item.doc!} typeName={typeName(item.doc!.typeId)} onSelect={() => openDoc(item.key)} />
+        <Doc_List_Item key={item.key} doc={item.doc!} onSelect={() => openDoc(item.key)} />
       ),
+    );
+    return (
+      <>
+        {rows}
+        {olderCount > 0 && (
+          <button type='button' className='Docs_older' onClick={() => setOlderShown(true)}>
+            {t('list.showOlder', { count: olderCount, days: HISTORY_DAYS })}
+          </button>
+        )}
+      </>
     );
   };
 
@@ -216,7 +256,7 @@ const Docs = () => {
           <Page_Help topic='docs' />
         </div>
         <div className='Left_Side'>
-          <button type='button' className='Docs_starter' onClick={createStarterDocs} disabled={creatingStarter}>
+          <button type='button' className='Docs_starter' onClick={openStarter} disabled={creatingStarter}>
             {creatingStarter ? t('actions.starterBusy') : t('actions.starter')}
           </button>
           <button type='button' className='Docs_new' onClick={openNew}>
@@ -228,37 +268,46 @@ const Docs = () => {
 
       <Doc_Proposals proposals={proposals} busyId={busyId} onApprove={approve} onReject={rejectProposal} />
 
+      <nav className='Docs_Sections' aria-label={t('title')}>
+        <button type='button' aria-current={!history ? 'page' : undefined} className={!history ? 'active' : ''} onClick={() => setView('')}>
+          <Icon.Doc />
+          {t('sections.library')}
+        </button>
+        <button type='button' aria-current={history ? 'page' : undefined} className={history ? 'active' : ''} onClick={() => setView(HISTORY_VIEW)}>
+          <Icon.Clock />
+          {t('sections.history')}
+        </button>
+      </nav>
+
       {isEmpty ? (
-        <Docs_Empty creatingStarter={creatingStarter} onStarter={createStarterDocs} onNew={openNew} />
+        <Docs_Empty creatingStarter={creatingStarter} onStarter={openStarter} onNew={openNew} />
       ) : (
         <>
           <Docs_Filters
-            values={{ search: searchText, kind, linkType, targetId, required: requiredOnly, author, sort }}
-            types={types}
+            values={{ search: searchText, kind, linkType, targetId, author, sort }}
+            history={history}
             targets={targets}
             onSearch={setSearchText}
             onChange={setFilter}
             onTarget={setTarget}
             onClear={clearFilters}
-            onManageTypes={() => setManagingTypes(true)}
           />
           <section className='Docs_list_pane'>
-            {!loading && !error && <span className='Docs_count'>{t('list.count', { count: items.length })}</span>}
+            {!loading && !error && <span className='Docs_count'>{t(history ? 'list.historyCount' : 'list.count', { count: shownCount })}</span>}
             <div className='Docs_list'>{renderList()}</div>
           </section>
         </>
       )}
 
-      {managingTypes && (
-        <Doc_Types_Modal
-          types={types}
-          saving={savingType}
-          onCreate={createType}
-          onDelete={removeType}
-          onClose={() => {
-            setManagingTypes(false);
-            void fetchTypes();
-          }}
+
+      {choosingStarter && (
+        <Docs_Starter_Modal
+          sets={sets}
+          loading={loadingSets}
+          busy={creatingStarter}
+          onGeneric={() => void chooseStarter(null)}
+          onSet={(id) => void chooseStarter(id)}
+          onClose={() => setChoosingStarter(false)}
         />
       )}
     </div>

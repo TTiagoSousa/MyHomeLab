@@ -79,7 +79,7 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     key: 'infra',
     name: 'Engenheiro de Infraestrutura',
     description:
-      'Vigia, estuda e mantém os servidores (Proxmox, serviços e alertas, discos e backups), estuda e faz as atualizações das apps com a tua aprovação, corre comandos, escreve o guia de cada servidor e trata do AdGuard (DNS), do Nextcloud e do Forgejo (código e CI).',
+      'Vigia, estuda e mantém os servidores (Proxmox, serviços e alertas, discos e backups), estuda e faz as atualizações das apps com a tua aprovação, corre comandos, mantém o mapa de cada servidor e trata do AdGuard (DNS), do Nextcloud e do Forgejo (código e CI).',
     prompt: INFRA_PROMPT,
     model: 'SONNET',
     effort: 'LOW',

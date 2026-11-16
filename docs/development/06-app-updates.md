@@ -14,7 +14,7 @@ agents. The code lives in `apps/backend/src/app-update/` and the agent tools in
 - **Nothing installs without the user.** The study ends with a recommendation; only the
   user moves an update to *Ready to update*, and that move is the approval.
 - **The rules are documents.** What to check before and after, and how to install a given
-  app, are checklists in the user's documents (for example "<app> – rules", with
+  app, are rules in the user's documents (for example "<app> – rules", with
   `## Before updating`, `## After updating` and `## Never` sections). The code measures,
   runs and records.
 - **Everything leaves a trail.** Each study, preparation and verification is an

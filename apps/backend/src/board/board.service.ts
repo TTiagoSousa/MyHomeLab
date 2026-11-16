@@ -545,7 +545,6 @@ export class BoardService {
           id: true,
           title: true,
           kind: true,
-          required: true,
           summary: true,
         },
         orderBy: { title: 'asc' },

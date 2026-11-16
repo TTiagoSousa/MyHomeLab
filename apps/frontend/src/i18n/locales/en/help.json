@@ -101,7 +101,7 @@
         "Disk health (Servers → Disks) reads SMART through Proxmox and needs the Sys.Audit permission on the node — root@pam and the PVEAuditor role already have it. Disks behind RAID controllers or in USB enclosures may show \"No SMART\".",
         "For agents to work on the machines (start, shut down, snapshots, backups, resources), the token needs the PVEVMAdmin role in Datacenter → Permissions (or a root@pam token without Privilege Separation). With PVEAuditor they only read.",
         "Commands: on the server page, under Commands (SSH) → Enable commands, MyHomeLab generates a key and shows the line to paste in the Proxmox shell. Commands run straight away and are logged; what the agent can do (and what it never does without your yes) is in the server rules, in Documents.",
-        "Server guide: it is a document linked to the server (it shows in Documents and in the server's document list). Write it yourself, or ask Jarvis to study the server and create or update the guide — if the document is yours, it proposes the change and you approve it."
+        "Server map: a document linked to the server with what is on it (machines, disks, network). Ask Jarvis to study the server and write the map — it keeps it up to date."
       ],
       "goTo": "Go to Settings"
     },
@@ -228,18 +228,18 @@
     },
     "docs": {
       "title": "Documents",
-      "summary": "Your rules, checklists and notes, linked to servers, machines, apps or agents. The agents follow them and only propose changes to you.",
+      "summary": "Your rules and the map of your servers and apps, linked to what they are about. The agents follow the rules and only propose changes to you; what they did goes to History.",
       "steps": [
-        "In Documents, press \"Create suggested documents\": you get general rules, before/after update checklists and a rules document for each connected app.",
+        "In Documents, press \"Create suggested documents\": you get the general documents (how the team works, updates, a service down…) and a rules document for each connected app.",
         "Open a document and write freely: headings, lists, checkboxes, tables and diagrams.",
         "Link it to what matters (a server, a CT or VM even without integration, an app, a monitored service, an agent or another document).",
-        "Mark rules as \"Required\": the agents always read them when the request touches what they are linked to. Without links, they apply to everything."
+        "Give clear titles and tags and link each rule to what it is about (the app, the server, the machine): that is how the agents know which documents to read."
       ],
       "notes": [
-        "The agents only get the index of the documents and the required ones for what the request mentions; they look up the rest when needed. That saves tokens.",
-        "The agents don't write in your documents: they propose changes and learnings, which you approve or reject in Documents.",
+        "The agents get the index of the documents and the list of those the request touches (by titles, tags and links). They must read those before changing anything — the tools that change things only answer afterwards.",
+        "The agents don't write in your documents: they propose changes, which you approve or reject in Documents. What they learn reaches you that way, as a change to a rule.",
         "Each document keeps its previous versions; you can restore any of them.",
-        "Each server's guide is also a document: you write it, or ask the assistant to study the server and write it.",
+        "Each server's and app's map is also a document: the agent writes it when studying and keeps it up to date.",
         "Update attempts also show up here (type \"Update attempt\"): when you open one, you see the rule points as \"to validate\", \"validated\" or \"not validated\", with the proof of each."
       ],
       "goTo": "Go to Documents"

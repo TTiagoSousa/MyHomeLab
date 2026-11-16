@@ -132,7 +132,6 @@ model User {
   contactLensCycles   ContactLensCycle[]
   healthReminders     HealthReminderSent[]
   docs                Doc[]
-  docTypes            DocType[]
   todoLists           TodoList[]
   todos               Todo[]
   todoSyncSetting     TodoSyncSetting?
@@ -1590,13 +1589,9 @@ model AssistantPermissionSetting {
 // ── Documentos ─────────────────────────────────────────────────────────────
 
 enum DocKind {
-  RULES // regras que os agentes seguem
-  CHECKLIST // pontos a verificar (antes/depois de atualizar…)
-  NOTES
-  LEARNINGS // o que os agentes aprenderam, aprovado pelo utilizador
-  GUIDE // o guia de um servidor, escrito pelo agente ao estudá-lo
-  LOG // registo do que os agentes fizeram (atualizações, comandos…), escrito por eles
-  OTHER
+  RULES // o que se pode fazer e como se faz — do utilizador; os agentes seguem e propõem
+  MAP // o que existe (servidor, máquinas, apps, portas) — mantido pelo agente
+  LOG // o que se fez (estudos, instalações, comandos) — escrito pelos agentes
 }
 
 enum DocOwner {
@@ -1615,23 +1610,19 @@ enum DocLinkType {
   TASK // Task.id — uma tarefa do quadro
 }
 
-/// Um documento do utilizador (Markdown): regras, checklists, notas, aprendizagens e
-/// os guias dos servidores. Liga-se a qualquer coisa (DocLink); os "obrigatórios"
-/// entram sempre no contexto dos agentes quando o pedido toca no que estão ligados.
+/// Um documento do utilizador (Markdown): regras, o mapa de um servidor ou app, ou um
+/// registo do que os agentes fizeram. Liga-se a qualquer coisa (DocLink); os agentes leem os
+/// que o pedido toca, pelos títulos, pelas etiquetas e pelo que estão ligados.
 model Doc {
   id                 String    @id @default(uuid())
   userId             String
   user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title              String
-  kind               DocKind   @default(NOTES)
+  kind               DocKind   @default(RULES)
   owner              DocOwner  @default(USER)
   content            String    @default("") @db.Text
   summary            String? // uma linha para o índice que os agentes leem
   tags               String[]  @default([])
-  required           Boolean   @default(false)
-  /// Um tipo criado pelo utilizador (ex.: "Receitas"); o kind fica OTHER.
-  typeId             String?
-  type               DocType?  @relation(fields: [typeId], references: [id], onDelete: SetNull)
   updatedBy          String? // "user" ou a chave do agente
   /// [{ docId, title, text }] onde contradiz outros documentos (o verificador)
   conflicts          Json?
@@ -1645,18 +1636,6 @@ model Doc {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
-}
-
-/// Os tipos de documento que o utilizador cria, além dos do site (Regras, Checklist…).
-model DocType {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name      String
-  docs      Doc[]
-  createdAt DateTime @default(now())
-
-  @@unique([userId, name])
 }
 
 model DocLink {
@@ -1710,6 +1689,10 @@ model DocProposal {
   content    String            @db.Text
   reason     String?           @db.Text
   links      Json? // CREATE: [{ type, targetId, label }]
+  // CREATE: as etiquetas do documento novo
+  tags       String[]          @default([])
+  // CREATE: os documentos que o novo junta e substitui; aprovada, apagam-se
+  replaces   String[]          @default([])
   proposedBy String
   // A tarefa do quadro de onde veio: a decisão aparece lá.
   taskId     String?

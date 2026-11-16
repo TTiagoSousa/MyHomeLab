@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Doc_Editor from '../../../Components/Doc_Editor/Doc_Editor';
 import { Doc_Link_Chip, Doc_Meta_Chips } from '../../../Components/Doc_Chips/Doc_Chips';
 import type { Doc } from '../../../Hooks/Docs/docTypes';
-import { useDocTypes } from '../../../Hooks/Docs/useDocTypes';
 import * as Icon from '../../../Imports/icons';
 import { formatRelativeTime } from '../Apps/relativeTime';
 import { authorLabel } from './docFormat';
@@ -24,8 +23,6 @@ const Doc_View = ({ doc, onEdit, versionsOpen, onToggleVersions, checking, onChe
   const navigate = useNavigate();
   const { t } = useTranslation('docs');
   const versionCount = doc.versions?.length ?? 0;
-  const { types } = useDocTypes();
-  const typeName = types.find((type) => type.id === doc.typeId)?.name;
 
   return (
     <article className='Doc_View'>
@@ -33,11 +30,11 @@ const Doc_View = ({ doc, onEdit, versionsOpen, onToggleVersions, checking, onChe
         <div className='Doc_View_Title'>
           <h1>{doc.title}</h1>
           <div className='Doc_View_Chips'>
-            <Doc_Meta_Chips kind={doc.kind} typeName={typeName} required={doc.required} owner={doc.owner} />
+            <Doc_Meta_Chips kind={doc.kind} owner={doc.owner} />
           </div>
         </div>
         <div className='Doc_View_Actions'>
-          {doc.required && (doc.kind === 'RULES' || doc.kind === 'CHECKLIST') && (
+          {doc.kind === 'RULES' && (
             <button type='button' className='Doc_View_Ghost' onClick={onCheckConflicts} disabled={checking} title={t('conflicts.checkHint')}>
               {checking ? t('conflicts.checking') : t('conflicts.check')}
             </button>

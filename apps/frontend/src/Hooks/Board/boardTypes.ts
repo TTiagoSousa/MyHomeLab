@@ -125,7 +125,7 @@ export interface TaskDetail extends BoardTask {
   activity: TaskActivity[];
   children: { id: string; key: string; title: string; state: BoardState }[];
   parent: { id: string; key: string; title: string } | null;
-  docs: { id: string; title: string; kind: string; required: boolean; summary: string | null }[];
+  docs: { id: string; title: string; kind: string; summary: string | null }[];
   schedules: Schedule[];
   cycle: BoardCycle | null;
   conversation: { id: string; lastMessageAt: string } | null;

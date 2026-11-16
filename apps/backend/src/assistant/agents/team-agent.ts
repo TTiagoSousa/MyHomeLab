@@ -31,33 +31,71 @@ const usesDocs = (agent: Agent) =>
   );
 
 /**
- * Os documentos obrigatórios ligados ao que o pedido menciona ("atualiza o
- * AdGuard" → as regras do AdGuard) vão no fim do último pedido, e não nas
- * instruções: mudam de pedido para pedido e as instruções têm de ficar iguais
- * para a cache valer.
+ * As ferramentas que mudam coisas num servidor, numa app ou no email. Antes de uma
+ * delas, o agente tem de ter lido (docs_read) os documentos do que o pedido toca.
  */
-async function withRequiredDocs(
+const ACTS =
+  /^(server_run_command|pve_(guest_power|create_snapshot|rollback_snapshot|delete_snapshot|backup_now|set_resources)|run_backup|update_(save_study|prepare|run|verify)|adguard_(set|manage|refresh)_\w+|ha_(call_service|save_config|delete_config|update_entity)|forgejo_(create|comment|set)_\w+|opengym_(create|delete|update|schedule)_\w+|trek_write|(create|update|delete)_email_rule|implement_email_proposal|modify_email|trash_email|send_email_draft)$/;
+
+/**
+ * Os documentos que o pedido toca (DocsService.docsFor) vão no fim do último pedido
+ * como uma lista para ler — e não inteiros: o agente lê-os com docs_read, um a um.
+ * Os que o próprio pedido já traz inteiros (o bloco DOCUMENTOS de uma atualização,
+ * com o id) contam como lidos. Fica no fim do pedido, e não nas instruções, para as
+ * instruções ficarem iguais e a cache valer.
+ */
+async function withDocsToRead(
   messages: MessageParam[],
   context: AgentContext,
+  toRead: Map<string, string>,
 ): Promise<MessageParam[]> {
   const index = messages.map((message) => message.role).lastIndexOf('user');
   const last = messages[index];
   if (index < 0 || typeof last.content !== 'string') return messages;
-  const docs = await context.docs.requiredFor(
+  const docs = await context.docs.docsFor(
     context.userId,
     last.content,
     context.agentKey,
   );
-  if (!docs.length) return messages;
-  for (const doc of docs) context.docsUsed?.set(doc.id, doc.title);
+  for (const doc of docs) {
+    if (last.content.includes(`(${doc.id})`))
+      context.docsUsed?.set(doc.id, doc.title);
+    else toRead.set(doc.id, doc.title);
+  }
+  if (!toRead.size) return messages;
   const block =
-    'DOCUMENTOS OBRIGATÓRIOS PARA ESTE PEDIDO (regras do utilizador sobre o que o pedido toca — segue-as):\n' +
-    docs
-      .map((doc) => `── ${doc.title} (${doc.id}) ──\n${doc.content.trim()}`)
-      .join('\n\n');
+    'DOCUMENTOS PARA LER ANTES DE AGIR (o que o pedido toca, pelos títulos, etiquetas e ligações — lê cada um com docs_read antes de mudar o que quer que seja; as ferramentas que mudam coisas só respondem depois):\n' +
+    [...toRead].map(([id, title]) => `- ${title} (${id})`).join('\n') +
+    '\nSe no índice houver outro documento que toque no que vais fazer (pelo título ou pelas etiquetas), lê-o também.';
   const copy = [...messages];
   copy[index] = { ...last, content: `${last.content}\n\n${block}` };
   return copy;
+}
+
+/** Recusa uma ferramenta que muda coisas enquanto houver documentos por ler. */
+function readFirst(
+  tools: AgentTool[],
+  toRead: Map<string, string>,
+  read: Map<string, string>,
+): AgentTool[] {
+  return tools.map((tool) =>
+    ACTS.test(tool.name)
+      ? {
+          ...tool,
+          handler: async (input: unknown) => {
+            const missing = [...toRead].filter(([id]) => !read.has(id));
+            if (missing.length) {
+              return (
+                'Ainda não leste as regras do que vais mexer. Lê primeiro com docs_read: ' +
+                missing.map(([id, title]) => `"${title}" (${id})`).join(', ') +
+                '. Depois volta a chamar esta ferramenta.'
+              );
+            }
+            return tool.handler(input);
+          },
+        }
+      : tool,
+  );
 }
 
 /** O pormenor de uma ação para o histórico: o ficheiro, a pesquisa, o destinatário… */
@@ -94,12 +132,18 @@ export async function runTeamAgent(
   const toolNames = trek
     ? agent.tools.filter((tool) => !TREK_PROXY_TOOLS.has(tool))
     : agent.tools;
+  const read = context.docsUsed ?? new Map<string, string>();
+  const toRead = new Map<string, string>();
   const tools = [
-    ...(await buildToolbox(toolNames, { ...context, agentKey: agent.key })),
+    ...(await buildToolbox(toolNames, {
+      ...context,
+      agentKey: agent.key,
+      docsUsed: read,
+    })),
     ...members.map((member) => delegationTool(agent, member, context, depth)),
   ];
   const docs = usesDocs(agent)
-    ? await context.docs.agentContext(context.userId, agent.key)
+    ? await context.docs.agentContext(context.userId)
     : null;
 
   return runAgent(
@@ -110,12 +154,20 @@ export async function runTeamAgent(
 
 O TREK: as ferramentas do próprio TREK estão ligadas diretamente (mcp__${TREK_SERVER}__<nome>, ex.: mcp__${TREK_SERVER}__list_trips). Usa-as em vez de trek_tools/trek_read/trek_write.`
         : ''),
-    guardTools(tools, context.deniedPermissions, {
-      agentKey: agent.key,
-      targets: context.appAccess,
-    }),
+    readFirst(
+      guardTools(tools, context.deniedPermissions, {
+        agentKey: agent.key,
+        targets: context.appAccess,
+      }),
+      toRead,
+      read,
+    ),
     docs
-      ? await withRequiredDocs(messages, { ...context, agentKey: agent.key })
+      ? await withDocsToRead(
+          messages,
+          { ...context, agentKey: agent.key, docsUsed: read },
+          toRead,
+        )
       : messages,
     {
       onToolUse: (toolName, input) => {

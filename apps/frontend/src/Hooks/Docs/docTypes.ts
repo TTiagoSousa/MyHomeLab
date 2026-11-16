@@ -1,9 +1,10 @@
-export type DocKind = 'RULES' | 'CHECKLIST' | 'NOTES' | 'LEARNINGS' | 'GUIDE' | 'LOG' | 'OTHER';
+export type DocKind = 'RULES' | 'MAP' | 'LOG';
 export type DocOwner = 'USER' | 'AGENT';
 export type DocLinkType = 'SERVER' | 'GUEST' | 'APP' | 'MONITOR' | 'AGENT' | 'PROJECT' | 'TASK' | 'DOC';
 export type DocProposalAction = 'EDIT' | 'APPEND' | 'CREATE';
 
-export const DOC_KINDS: DocKind[] = ['RULES', 'CHECKLIST', 'NOTES', 'LEARNINGS', 'GUIDE', 'LOG', 'OTHER'];
+export const DOC_KINDS: DocKind[] = ['RULES', 'MAP', 'LOG'];
+export const LIBRARY_KINDS: DocKind[] = ['RULES', 'MAP'];
 export const ATTEMPT_KIND = 'ATTEMPT';
 export type DocListKind = DocKind | typeof ATTEMPT_KIND;
 
@@ -20,21 +21,11 @@ export interface DocLink extends DocLinkInput {
   docId: string;
 }
 
-export interface DocUserType {
-  id: string;
-  name: string;
-  _count?: { docs: number };
-}
-
-export const TYPE_PREFIX = 'type:';
-
 export interface DocSummary {
   id: string;
   title: string;
   kind: DocKind;
-  typeId: string | null;
   owner: DocOwner;
-  required: boolean;
   tags: string[];
   summary: string | null;
   links: DocLink[];
@@ -54,12 +45,10 @@ export interface Doc {
   id: string;
   title: string;
   kind: DocKind;
-  typeId: string | null;
   owner: DocOwner;
   content: string;
   summary: string | null;
   tags: string[];
-  required: boolean;
   updatedBy: string;
   links: DocLink[];
   createdAt: string;
@@ -81,12 +70,19 @@ export interface DocVersion {
 export interface DocPayload {
   title?: string;
   kind?: DocKind;
-  typeId?: string | null;
   content?: string;
   summary?: string;
   tags?: string[];
-  required?: boolean;
   links?: DocLinkInput[];
+}
+
+export interface DocTemplateSet {
+  id: string;
+  author: string;
+  language: string;
+  name: Partial<Record<'pt-PT' | 'en' | 'es', string>>;
+  description: Partial<Record<'pt-PT' | 'en' | 'es', string>>;
+  files: string[];
 }
 
 export interface DocTarget {
@@ -94,6 +90,7 @@ export interface DocTarget {
   targetId: string;
   label: string;
   group: string;
+  provider?: string;
 }
 
 export interface DocProposal {
@@ -105,6 +102,8 @@ export interface DocProposal {
   content: string;
   reason: string | null;
   links: DocLinkInput[] | null;
+  tags: string[];
+  replaces: string[];
   proposedBy: string;
   taskId: string | null;
   status: string;
@@ -115,10 +114,8 @@ export interface DocProposal {
 export interface DocFilters {
   search: string;
   kind: DocKind | '';
-  typeId?: string;
   linkType: DocLinkType | '';
   targetId?: string;
-  required?: boolean;
   owner?: DocOwner | '';
   sort?: 'recent' | 'title';
 }

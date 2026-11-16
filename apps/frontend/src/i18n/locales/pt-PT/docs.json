@@ -16,6 +16,10 @@
     "back": "Documentos",
     "newLinked": "Novo ligado a {{label}}"
   },
+  "sections": {
+    "library": "Documentos",
+    "history": "Histórico"
+  },
   "filters": {
     "search": "Procurar nos documentos…",
     "allKinds": "Todos os tipos",
@@ -32,18 +36,19 @@
     "sortLabel": "Ordenar",
     "sortRecent": "Mais recentes",
     "sortTitle": "Título (A–Z)",
-    "requiredOnly": "Só obrigatórios",
-    "clear": "Limpar filtros"
+    "clear": "Limpar filtros",
+    "allHistory": "Tudo"
   },
   "kinds": {
     "RULES": "Regras",
-    "CHECKLIST": "Checklist",
-    "NOTES": "Notas",
-    "LEARNINGS": "Aprendizagens",
-    "GUIDE": "Guia",
+    "MAP": "Mapa",
     "LOG": "Registo",
-    "OTHER": "Outro",
     "ATTEMPT": "Tentativa de atualização"
+  },
+  "kindHints": {
+    "RULES": "O que se pode fazer e como se faz. É teu: os agentes seguem e propõem mudanças.",
+    "MAP": "O que existe num servidor ou numa app (máquinas, versões, portas). Os agentes mantêm-no em dia.",
+    "LOG": "O que se fez. Normalmente escrito pelos agentes; fica no Histórico."
   },
   "linkTypes": {
     "SERVER": "Servidor",
@@ -76,7 +81,6 @@
     "TASK": "Ligados a tarefas"
   },
   "chips": {
-    "required": "Obrigatório",
     "agentOwner": "Dos agentes"
   },
   "list": {
@@ -84,11 +88,23 @@
     "noResults": "Nenhum documento corresponde à pesquisa.",
     "updated": "{{time}} · {{by}}",
     "count_one": "{{count}} documento",
-    "count_other": "{{count}} documentos"
+    "count_other": "{{count}} documentos",
+    "noHistory": "Ainda não há nada no histórico.",
+    "historyCount_one": "{{count}} entrada",
+    "historyCount_other": "{{count}} entradas",
+    "showOlder": "Ver os mais antigos que {{days}} dias ({{count}})"
+  },
+  "groups": {
+    "general": "Gerais",
+    "things": "Servidores e apps",
+    "projects": "Projetos",
+    "addRules": "Regras",
+    "addMap": "Mapa",
+    "missing": "Ainda sem documentos"
   },
   "empty": {
     "title": "Ainda não há documentos",
-    "text": "Os documentos guardam as tuas regras, checklists e o que os agentes vão aprendendo. Começa pelos sugeridos — podes editá-los à vontade.",
+    "text": "Os documentos guardam as tuas regras e o mapa dos teus servidores e apps. Começa pelos sugeridos — podes editá-los à vontade.",
     "or": "ou cria um do zero"
   },
   "detail": {
@@ -115,8 +131,6 @@
     "tags": "Etiquetas",
     "tagsPlaceholder": "Escreve e carrega Enter",
     "removeTag": "Remover a etiqueta {{tag}}",
-    "required": "Obrigatório",
-    "requiredHint": "Os agentes leem-no sempre que o pedido toca no que está ligado a ele. Sem ligações, aplica-se a tudo.",
     "links": "Ligações",
     "linksHint": "Associa o documento a servidores, máquinas, apps, serviços, agentes ou outros documentos.",
     "content": "Conteúdo",
@@ -173,7 +187,11 @@
     "approveEdited": "Aprovar com alterações",
     "editBefore": "Editar antes",
     "discardEdits": "Descartar alterações",
-    "reject": "Recusar"
+    "reject": "Recusar",
+    "replaces_one": "Junta {{count}} documento num só: ao aprovar, esse sai.",
+    "replaces_other": "Junta {{count}} documentos num só: ao aprovar, esses saem.",
+    "showText": "Ver o texto",
+    "hideText": "Esconder o texto"
   },
   "editor": {
     "glyph": {
@@ -243,7 +261,7 @@
   },
   "linked": {
     "title": "Documentos",
-    "description": "Regras e notas ligadas a {{label}}. Os agentes leem-nas.",
+    "description": "Regras e mapa ligados a {{label}}. Os agentes leem-nos.",
     "empty": "Ainda não há documentos ligados.",
     "new": "Novo documento",
     "loading": "A carregar…",
@@ -352,21 +370,18 @@
     "found_other": "Encontrei {{count}} possíveis conflitos",
     "none": "Sem conflitos com as outras regras"
   },
-  "types": {
-    "manage": "Os teus tipos",
-    "title": "Tipos de documento",
-    "kind": "Criados por ti",
-    "text": "Além dos tipos do site (Regras, Checklist, Notas…), cria os teus para arrumar os documentos. Escolhes o tipo ao criar ou editar um documento.",
-    "placeholder": "Nome do tipo (ex.: Receitas)",
-    "add": "Criar",
-    "none": "Ainda não criaste nenhum tipo.",
-    "count_one": "{{count}} documento",
-    "count_other": "{{count}} documentos",
-    "delete": "Apagar",
-    "deleteHint": "Os documentos deste tipo ficam como \"Outro\".",
-    "confirmDelete": "Apagar mesmo",
-    "keep": "Manter",
-    "done": "Feito",
-    "created": "Tipo \"{{name}}\" criado."
+  "starter": {
+    "title": "Documentos sugeridos",
+    "kind": "Escolhe por onde começar",
+    "text": "Os que já tens com o mesmo título não se repetem. Os de uma app só entram se a tiveres ligada. Depois edita-os à vontade.",
+    "generic": "Genéricos",
+    "genericName": "Os básicos",
+    "genericText": "Os processos gerais (como a equipa trabalha, as atualizações, um serviço em baixo…) e um documento de regras por cada app ligada.",
+    "examples": "Exemplo",
+    "community": "Da comunidade",
+    "loading": "A procurar os da comunidade…",
+    "noCommunity": "Ainda não há conjuntos da comunidade. Qualquer pessoa pode juntar um no GitHub (templates/docs).",
+    "meta": "{{count}} documentos · {{author}}",
+    "close": "Fechar"
   }
 }

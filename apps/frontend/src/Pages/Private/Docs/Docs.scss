@@ -107,30 +107,6 @@
       }
     }
 
-    .Docs_filter_with_action{
-      display: flex;
-      gap: 6px;
-
-      > :first-child{
-        flex: 1;
-        min-width: 0;
-      }
-    }
-
-    .Docs_filter_action{
-      @include Mixin.Ghost_Button;
-      width: 34px;
-      height: 34px;
-      padding: 0;
-      flex-shrink: 0;
-      justify-content: center;
-
-      svg{
-        width: 14px;
-        height: 14px;
-      }
-    }
-
     .Docs_filter_check{
       height: 34px;
       display: flex;
@@ -176,6 +152,106 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+  }
+
+  > .Docs_Sections{
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--hud-line);
+
+    button{
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 36px;
+      padding: 0 12px;
+      margin-bottom: -1px;
+      border: none;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: var(--text-soft);
+      transition: color .16s ease, border-color .16s ease;
+
+      svg{ width: 15px; height: 15px; }
+
+      &:hover{ color: var(--text-main); }
+
+      &.active{
+        color: var(--accent-bright);
+        border-bottom-color: var(--accent);
+      }
+    }
+  }
+
+  .Docs_Group{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    & + .Docs_Group{ margin-top: 10px; }
+  }
+
+  .Docs_Group_Title{
+    @include Mixin.Hud_Label(10px);
+    color: var(--accent-bright);
+    padding: 2px 2px 4px;
+    border-bottom: 1px solid var(--hud-line);
+  }
+
+  .Docs_Group_Target{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 10px;
+    border-left: 2px solid var(--hud-line);
+
+    & + .Docs_Group_Target{ margin-top: 4px; }
+  }
+
+  .Docs_Group_Target_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-top: 4px;
+  }
+
+  .Docs_Group_Target_Name{
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .Docs_Group_Target.missing .Docs_Group_Target_Name{ color: var(--text-soft); }
+
+  .Docs_Group_Missing{
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .Docs_Group_Add{
+    @include Mixin.Ghost_Button;
+    height: 26px;
+    padding: 0 9px;
+    font-size: 11.5px;
+
+    svg{
+      width: 11px;
+      height: 11px;
+    }
+  }
+
+  .Docs_older{
+    @include Mixin.Ghost_Button;
+    align-self: center;
+    height: 32px;
+    padding: 0 14px;
+    margin-top: 4px;
   }
 
   .Docs_list_note{
@@ -353,70 +429,46 @@
   }
 }
 
-.Doc_Types_Modal{
-  .Doc_Types_Modal_New{
-    display: flex;
-    gap: 8px;
+.Docs_Starter_Modal{
+  width: 560px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
 
-    > :first-child{
-      flex: 1;
-      min-width: 0;
-    }
+  .Docs_Starter_Group{
+    @include Mixin.Hud_Label(9.5px);
+    color: var(--accent-bright);
+    margin-top: 6px;
   }
 
-  .Doc_Types_Modal_Add{
-    @include Mixin.Solid_Button;
-    height: 38px;
-    padding: 0 14px;
-    flex-shrink: 0;
-
-    svg{
-      width: 14px;
-      height: 14px;
-    }
-  }
-
-  .Doc_Types_Modal_List{
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  .Docs_Starter_Option{
+    @include Mixin.Control_Surface;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    max-height: 280px;
-    overflow-y: auto;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+    padding: 10px 12px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .16s ease;
 
-    li{
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      border: 1px solid var(--hud-line);
-      border-radius: var(--ctrl-radius);
-    }
-
-    button{
-      @include Mixin.Ghost_Button;
-      height: 28px;
-      padding: 0 10px;
-      font-size: 11.5px;
-
-      &.danger{
-        border-color: var(--danger-color);
-        color: var(--danger-color);
-      }
-    }
+    &:hover:not(:disabled){ border-color: var(--accent); }
+    &:disabled{ opacity: .6; cursor: wait; }
   }
 
-  .Doc_Types_Modal_Name{
-    flex: 1;
-    min-width: 0;
+  .Docs_Starter_Option_Name{
     font-size: 13px;
     font-weight: 700;
-    overflow-wrap: anywhere;
+    color: var(--text-main);
   }
 
-  .Doc_Types_Modal_Count{
+  .Docs_Starter_Option_Text{
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-soft);
+  }
+
+  .Docs_Starter_Option_Meta{
     font-family: Font.$font_family_mono;
     font-size: 10.5px;
     color: var(--text-faint);

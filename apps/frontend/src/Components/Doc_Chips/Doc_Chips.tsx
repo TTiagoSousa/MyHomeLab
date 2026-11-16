@@ -5,18 +5,15 @@ import './Doc_Chips.scss';
 
 interface Doc_Meta_Chips_Props {
   kind: DocKind;
-  typeName?: string;
-  required: boolean;
   owner?: DocOwner;
 }
 
-export const Doc_Meta_Chips = ({ kind, typeName, required, owner }: Doc_Meta_Chips_Props) => {
+export const Doc_Meta_Chips = ({ kind, owner }: Doc_Meta_Chips_Props) => {
   const { t } = useTranslation('docs');
 
   return (
     <>
-      {typeName ? <span className='Doc_Chip kind custom'>{typeName}</span> : <span className={`Doc_Chip kind ${kind.toLowerCase()}`}>{t(`kinds.${kind}`)}</span>}
-      {required && <span className='Doc_Chip required'>{t('chips.required')}</span>}
+      <span className={`Doc_Chip kind ${kind.toLowerCase()}`}>{t(`kinds.${kind}`)}</span>
       {owner === 'AGENT' && <span className='Doc_Chip agent'>{t('chips.agentOwner')}</span>}
     </>
   );

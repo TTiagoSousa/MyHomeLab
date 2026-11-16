@@ -19,10 +19,8 @@ export const useDocs = (filters: DocFilters) => {
         params: {
           search: filters.search || undefined,
           kind: filters.kind || undefined,
-          typeId: filters.typeId || undefined,
           linkType: filters.linkType || undefined,
           targetId: filters.targetId || undefined,
-          required: filters.required ? '1' : undefined,
           owner: filters.owner || undefined,
           sort: filters.sort === 'title' ? 'title' : undefined,
         },
@@ -39,7 +37,7 @@ export const useDocs = (filters: DocFilters) => {
 
   useEffect(() => {
     fetchDocs();
-  }, [filters.search, filters.kind, filters.typeId, filters.linkType, filters.targetId, filters.required, filters.owner, filters.sort]);
+  }, [filters.search, filters.kind, filters.linkType, filters.targetId, filters.owner, filters.sort]);
 
   const createDoc = async (payload: DocPayload): Promise<Doc | null> => {
     try {
@@ -70,5 +68,22 @@ export const useDocs = (filters: DocFilters) => {
     }
   };
 
-  return { docs, loading, error, creatingStarter, fetchDocs, createDoc, createStarterDocs };
+  const createFromTemplate = async (id: string) => {
+    setCreatingStarter(true);
+    try {
+      const response = await http.post(End_Points.Docs_Template_Endpoint(id), {}, { withCredentials: true });
+      const created: Doc[] = response.data;
+      await fetchDocs();
+      const message = created.length
+        ? i18n.t('docs:alerts.starterCreated', { count: created.length })
+        : i18n.t('docs:alerts.starterNone');
+      setAlert({ open: true, message, type: created.length ? 'success' : 'info' });
+    } catch (error) {
+      setAlert({ open: true, message: docErrorMessage(error), type: 'error' });
+    } finally {
+      setCreatingStarter(false);
+    }
+  };
+
+  return { docs, loading, error, creatingStarter, fetchDocs, createDoc, createStarterDocs, createFromTemplate };
 };

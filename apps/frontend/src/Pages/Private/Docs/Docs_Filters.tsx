@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import Global_Dropdown from '../../../Components/Inputs/Global_Dropdown/Global_Dropdown';
-import { ATTEMPT_KIND, DOC_KINDS, DOC_LINK_TYPES, TYPE_PREFIX, type DocLinkType, type DocTarget, type DocUserType } from '../../../Hooks/Docs/docTypes';
+import { ATTEMPT_KIND, DOC_LINK_TYPES, LIBRARY_KINDS, type DocLinkType, type DocTarget } from '../../../Hooks/Docs/docTypes';
 import * as Icon from '../../../Imports/icons';
 
 export interface DocsFilterValues {
@@ -8,31 +8,30 @@ export interface DocsFilterValues {
   kind: string;
   linkType: DocLinkType | '';
   targetId: string;
-  required: boolean;
   author: '' | 'USER' | 'AGENT';
   sort: 'recent' | 'title';
 }
 
 interface Docs_Filters_Props {
   values: DocsFilterValues;
-  types: DocUserType[];
+  history: boolean;
   targets: DocTarget[];
   onSearch: (value: string) => void;
   onChange: (name: string, value: string) => void;
   onTarget: (target: DocTarget | null) => void;
   onClear: () => void;
-  onManageTypes: () => void;
 }
 
-const Docs_Filters = ({ values, types, targets, onSearch, onChange, onTarget, onClear, onManageTypes }: Docs_Filters_Props) => {
+const Docs_Filters = ({ values, history, targets, onSearch, onChange, onTarget, onClear }: Docs_Filters_Props) => {
   const { t } = useTranslation('docs');
 
-  const kindOptions = [
-    { value: '', label: t('filters.allKinds') },
-    ...DOC_KINDS.map((value) => ({ value, label: t(`kinds.${value}`) })),
-    ...types.map((type) => ({ value: `${TYPE_PREFIX}${type.id}`, label: type.name })),
-    { value: ATTEMPT_KIND, label: t('kinds.ATTEMPT') },
-  ];
+  const kindOptions = history
+    ? [
+        { value: '', label: t('filters.allHistory') },
+        { value: 'LOG', label: t('kinds.LOG') },
+        { value: ATTEMPT_KIND, label: t('kinds.ATTEMPT') },
+      ]
+    : [{ value: '', label: t('filters.allKinds') }, ...LIBRARY_KINDS.map((value) => ({ value, label: t(`kinds.${value}`) }))];
 
   const linkOptions = [
     { value: '', label: t('filters.allLinks') },
@@ -56,7 +55,7 @@ const Docs_Filters = ({ values, types, targets, onSearch, onChange, onTarget, on
     { value: 'title', label: t('filters.sortTitle') },
   ];
 
-  const active = Boolean(values.search || values.kind || values.linkType || values.required || values.author || values.sort !== 'recent');
+  const active = Boolean(values.search || values.kind || values.linkType || values.author || values.sort !== 'recent');
 
   return (
     <section className='Docs_filters'>
@@ -73,12 +72,7 @@ const Docs_Filters = ({ values, types, targets, onSearch, onChange, onTarget, on
 
       <div className='Docs_filter_field'>
         <span>{t('filters.kindLabel')}</span>
-        <div className='Docs_filter_with_action'>
-          <Global_Dropdown value={values.kind} options={kindOptions} onChange={(value) => onChange('kind', value)} maxVisibleOptions={9} />
-          <button type='button' className='Docs_filter_action' onClick={onManageTypes} title={t('types.manage')}>
-            <Icon.Plus />
-          </button>
-        </div>
+        <Global_Dropdown value={values.kind} options={kindOptions} onChange={(value) => onChange('kind', value)} searchable={false} />
       </div>
 
       <div className='Docs_filter_field'>
@@ -108,11 +102,6 @@ const Docs_Filters = ({ values, types, targets, onSearch, onChange, onTarget, on
         <span>{t('filters.sortLabel')}</span>
         <Global_Dropdown value={values.sort} options={sortOptions} onChange={(value) => onChange('sort', value)} searchable={false} />
       </div>
-
-      <label className='Docs_filter_check'>
-        <input type='checkbox' checked={values.required} onChange={(e) => onChange('required', e.target.checked ? '1' : '')} />
-        <span>{t('filters.requiredOnly')}</span>
-      </label>
 
       {active && (
         <button type='button' className='Docs_filter_clear' onClick={onClear}>

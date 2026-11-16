@@ -24,12 +24,9 @@
   }
 
   &.kind.rules{ color: var(--agent-hue-1); border-color: var(--agent-hue-1); background: transparent; }
-  &.kind.checklist{ color: var(--agent-hue-2); border-color: var(--agent-hue-2); background: transparent; }
-  &.kind.learnings{ color: var(--agent-hue-3); border-color: var(--agent-hue-3); background: transparent; }
-  &.kind.guide{ color: var(--agent-hue-8); border-color: var(--agent-hue-8); background: transparent; }
+  &.kind.map{ color: var(--agent-hue-8); border-color: var(--agent-hue-8); background: transparent; }
   &.kind.log{ color: var(--agent-hue-5); border-color: var(--agent-hue-5); background: transparent; }
   &.kind.attempt{ color: var(--agent-hue-6); border-color: var(--agent-hue-6); background: transparent; }
-  &.kind.custom{ color: var(--agent-hue-4); border-color: var(--agent-hue-4); background: transparent; }
 
   &.attempt_status.done{ color: var(--stat-positive); border-color: var(--stat-positive); }
   &.attempt_status.failed{ color: var(--danger-color); border-color: var(--danger-color); }

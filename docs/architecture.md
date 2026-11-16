@@ -133,24 +133,30 @@ See [Agents and tools](./development/05-agents-and-tools.md) for the details.
 
 ## Docs as rules
 
-Users keep Markdown **documents** in the app (rules, checklists, notes, learnings, server
-guides, logs). Documents can be linked to a server, a machine, an app, a service monitor,
-an agent, a project or a task, and can be marked **required**.
+Users keep Markdown **documents** in the app, of three kinds: **Rules** (what may be done and
+how — the user's; agents follow them and propose changes), **Map** (what exists on a server or
+an app — kept up to date by the agents) and **Log** (what was done — written by the agents and
+shown in the History tab). The Documents tab groups rules and maps into General, Servers and
+apps (by what they are linked to) and Projects. Documents can be linked to a server, a machine, an app, a service monitor,
+an agent, a project or a task. Starter documents and template sets (from
+`templates/docs/` in the repository) give a new user something to start from.
 
 Agents read these documents instead of having rules hard-coded:
 
-- required documents (general ones, and those linked to the agent or its projects) are
-  added to the agent's instructions; documents linked to whatever the request mentions are
-  added to the request;
-- agents search and read documents with `docs_search` / `docs_read`;
-- agents can write their own documents (guides, logs), but for the user's documents they
-  can only **propose** a change, which the user approves or rejects;
-- precedence is **user rules > approved learnings > agent instructions**, and the more
-  specific rule wins.
+- the agent's instructions carry only the index of the documents (one line each, no
+  content); the documents linked to the agent or its projects, and those the request
+  mentions, are listed at the end of the request as documents to read before acting;
+- agents search and read documents with `docs_search` / `docs_read`; tools that change
+  things refuse to run until every listed document has been read;
+- agents can write their own documents (maps, logs), but for the user's documents they
+  can only **propose** a change, which the user approves or rejects — what an agent learns
+  reaches the user that way, as a change to a rule (a proposal can also merge several
+  documents into one);
+- precedence is **user rules > agent instructions**, and the more specific rule wins.
 
 The code measures, executes and records; the brakes (what needs approval, which commands
 are destructive) are the rules in the documents that the agents follow. A conflict checker
-compares required rules with each other and flags contradictions.
+compares rules documents with each other and flags contradictions.
 
 ## App updates
 
@@ -172,7 +178,7 @@ available → Waiting for study → Study → Waiting for reply ──(user appr
    *Ready to update* (drag on the board, "Yes, install" on the task, or saying so in chat);
    that move is the approval.
 3. **Install** — the installer picks up ready updates, **one at a time** per user, and asks
-   an agent to prepare (validate the "before" checklist), snapshot and run it, with
+   an agent to prepare (validate the "before" points of the rules), snapshot and run it, with
    rollback if it fails.
 4. **Verify** — the agent checks the "after" points and closes it as done.
 

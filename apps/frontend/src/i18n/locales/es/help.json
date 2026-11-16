@@ -101,7 +101,7 @@
         "La salud de los discos (Servidores → Discos) lee el SMART a través de Proxmox y necesita el permiso Sys.Audit en el nodo — root@pam y el rol PVEAuditor ya lo tienen. Los discos detrás de controladoras RAID o en cajas USB pueden aparecer \"Sin SMART\".",
         "Para que los agentes trabajen en las máquinas (encender, apagar, snapshots, copias, recursos), el token necesita el rol PVEVMAdmin en Datacenter → Permissions (o un token de root@pam sin Privilege Separation). Con PVEAuditor solo leen.",
         "Comandos: en la página del servidor, en Comandos (SSH) → Activar comandos, MyHomeLab genera una clave y muestra la línea para pegar en la shell de Proxmox. Los comandos se ejecutan enseguida y quedan registrados; lo que el agente puede hacer (y lo que nunca hace sin tu sí) está en las reglas del servidor, en Documentos.",
-        "Guía del servidor: es un documento vinculado al servidor (aparece en Documentos y en la lista de documentos del servidor). Escríbela tú, o pide a Jarvis que estudie el servidor y cree o actualice la guía — si el documento es tuyo, propone el cambio y tú lo apruebas."
+        "Mapa del servidor: es un documento vinculado al servidor con lo que hay en él (máquinas, discos, red). Pide a Jarvis que estudie el servidor y escriba el mapa — lo mantiene al día."
       ],
       "goTo": "Ir a Ajustes"
     },
@@ -228,18 +228,18 @@
     },
     "docs": {
       "title": "Documentos",
-      "summary": "Tus reglas, checklists y notas, vinculadas a servidores, máquinas, apps o agentes. Los agentes las siguen y solo te proponen cambios.",
+      "summary": "Tus reglas y el mapa de los servidores y las apps, vinculados a lo que tratan. Los agentes siguen las reglas y solo te proponen cambios; lo que hicieron queda en el Historial.",
       "steps": [
-        "En Documentos, pulsa \"Crear documentos sugeridos\": quedan las reglas generales, las checklists de antes y después de actualizar y un documento de reglas por cada app conectada.",
+        "En Documentos, pulsa \"Crear documentos sugeridos\": quedan los documentos generales (cómo trabaja el equipo, las actualizaciones, un servicio caído…) y un documento de reglas por cada app conectada.",
         "Abre un documento y escribe libremente: títulos, listas, casillas, tablas y diagramas.",
         "Vincúlalo a lo que importa (un servidor, un CT o VM incluso sin integración, una app, un servicio vigilado, un agente u otro documento).",
-        "Marca \"Obligatorio\" en las reglas: los agentes las leen siempre que la petición toca lo vinculado. Sin vínculos, valen para todo."
+        "Pon títulos y etiquetas claros y vincula cada regla a lo que trata (la app, el servidor, la máquina): así saben los agentes qué documentos leer."
       ],
       "notes": [
-        "Los agentes reciben solo el índice de los documentos y los obligatorios de lo que menciona la petición; el resto lo buscan cuando lo necesitan. Así gastan menos tokens.",
-        "En tus documentos los agentes no escriben: proponen cambios y aprendizajes, que apruebas o rechazas en Documentos.",
+        "Los agentes reciben el índice de los documentos y la lista de los que toca la petición (por títulos, etiquetas y vínculos). Tienen que leerlos antes de cambiar algo — las herramientas que cambian cosas solo responden después.",
+        "En tus documentos los agentes no escriben: proponen cambios, que apruebas o rechazas en Documentos. Lo que aprenden te llega así, como un cambio a una regla.",
         "Cada documento guarda las versiones anteriores; puedes restaurar cualquiera.",
-        "La guía de cada servidor también es un documento: la escribes tú, o pides al asistente que estudie el servidor y la escriba.",
+        "El mapa de cada servidor y de cada app también es un documento: lo escribe el agente al estudiar y lo mantiene al día.",
         "Los intentos de actualización también aparecen aquí (tipo \"Intento de actualización\"): al abrir uno, ves los puntos de las reglas como \"por validar\", \"validada\" o \"no validada\", con la prueba de cada uno."
       ],
       "goTo": "Ir a Documentos"

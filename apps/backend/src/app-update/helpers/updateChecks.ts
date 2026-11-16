@@ -29,25 +29,20 @@ const GB = 1024 ** 3;
 export const formatGb = (bytes: number) => `${(bytes / GB).toFixed(1)} GB`;
 
 /**
- * As caixas (`- [ ]`) de uma fase escrita nos documentos: as checklists cujo
- * título fala dela (sem os títulos da outra fase lá dentro) e, nos outros
- * documentos, as que estão debaixo de um título com o nome dela.
+ * As caixas (`- [ ]`) de uma fase escrita nos documentos: as que estão debaixo de
+ * um título com o nome dela ("## Antes de atualizar", "## Depois"…).
  */
 function phasePoints(
-  docs: { title: string; kind: string; content: string }[],
+  docs: { title: string; content: string }[],
   phase: RegExp,
-  other: RegExp,
 ): string[] {
   const points: string[] = [];
   for (const doc of docs) {
-    const wholeDoc = doc.kind === 'CHECKLIST' && phase.test(doc.title);
-    if (doc.kind === 'CHECKLIST' && !wholeDoc && other.test(doc.title))
-      continue;
-    let inPhase = wholeDoc;
+    let inPhase = false;
     for (const line of doc.content.split(/\r?\n/)) {
       const heading = /^#{1,6}\s+(.*)$/.exec(line);
       if (heading) {
-        inPhase = wholeDoc ? !other.test(heading[1]) : phase.test(heading[1]);
+        inPhase = phase.test(heading[1]);
         continue;
       }
       const box = /^\s*[-*]\s+\[[ xX]\]\s+(.*)$/.exec(line);
@@ -60,17 +55,17 @@ function phasePoints(
 /** Os pontos de "antes de atualizar" escritos nos documentos. */
 export const beforePoints = (
   docs: { title: string; kind: string; content: string }[],
-) => phasePoints(docs, /antes/i, /depois/i);
+) => phasePoints(docs, /antes/i);
 
 /** Os pontos do estudo escritos nos documentos (ex.: "## As regras do estudo"). */
 export const studyPoints = (
   docs: { title: string; kind: string; content: string }[],
-) => phasePoints(docs, /^(?!.*(antes|depois)).*estud/i, /antes|depois/i);
+) => phasePoints(docs, /^(?!.*(antes|depois)).*estud/i);
 
 /** Os pontos de "depois de atualizar" escritos nos documentos. */
 export const afterPoints = (
   docs: { title: string; kind: string; content: string }[],
-) => phasePoints(docs, /depois/i, /antes/i);
+) => phasePoints(docs, /depois/i);
 
 export const describeChecks = (checks: UpdateCheck[]) =>
   checks

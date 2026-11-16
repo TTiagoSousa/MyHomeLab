@@ -50,7 +50,7 @@ POST /assistant/chat
   model as errors instead of failing the request.
 - **Usage** (input, output, cache read/write tokens) is recorded per day, agent, model and
   source (`chat`, `schedule`, `study`, `install`, `verify`, `check`).
-- **Docs used**: required documents injected into the request, and any read with
+- **Docs used**: the documents listed in the request to read before acting, and any read with
   `docs_read`, are saved on the reply and shown under it.
 
 ### Prompt caching rule
@@ -65,9 +65,9 @@ removing tools.
 
 `composeAgentPrompt` builds: the agent's instructions → the user's extra instructions
 ("follow them unless they contradict the rules above") → **YOUR TEAM** (subordinates) →
-**WHO YOU REPORT TO** → the user's documents (index and required rules). An agent can
-change another agent's extra instructions only through a two-turn proposal: propose in one
-turn, apply after the user says yes in the next — enforced in code by comparing turn ids.
+**WHO YOU REPORT TO** → the user's documents (the index only; the agent reads what it
+needs with `docs_read`). An agent can change another agent's extra instructions only
+through a two-turn proposal: propose in one turn, apply after the user says yes in the next — enforced in code by comparing turn ids.
 
 ## Tools and toolsets
 
@@ -121,8 +121,9 @@ A blocked call returns a "no permission" message the model can explain to the us
 
 Behaviour that should be configurable (what needs approval, which commands are
 destructive, how to update a given app) belongs in the user's **documents**, not in code
-or prompts. Agents read the required documents and the ones linked to what they are
-working on; they propose changes to user documents and the user approves them. The code
+or prompts. The documents linked to an agent and to what it is working on are listed at
+the end of the request, and the tools that change things wait until those are read with
+`docs_read`. Agents propose changes to user documents and the user approves them. The code
 measures, executes and records — the agents, following the rules, are the brakes.
 
 For example, server shell commands run as soon as an agent calls them; the code only
