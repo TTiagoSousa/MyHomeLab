@@ -158,5 +158,5 @@ systemctl start "$SERVICE"
 wait_backend
 
 trap - ERR
-status success done "Restored the backup from ${BACKUP_CREATED_AT:-an unknown date}"
+status success "done" "Restored the backup from ${BACKUP_CREATED_AT:-an unknown date}"
 msg "Restored. Sign in again: the sessions belong to the restored data."
