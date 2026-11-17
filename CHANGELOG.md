@@ -7,6 +7,16 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.3.0] — 2026-11-17
+
+### Features
+- **backup**: full encrypted MyHomeLab backups with schedules, a local destination and restore from the app or the CT
+- **projects**: tidier board with a filters panel, hidden empty columns and several fixes
+
+### Fixes
+- **deploy**: restart PostgreSQL after an OOM kill and start it before dumps
+
+
 ## [1.2.0] — 2026-11-17
 
 ### Features
@@ -55,3 +65,4 @@ First public release of MyHomeLab.
 [1.1.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.1.1
 [1.1.2]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.1.2
 [1.2.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.2.0
+[1.3.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.3.0
