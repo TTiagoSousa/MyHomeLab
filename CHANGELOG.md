@@ -7,6 +7,14 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.6.0] — 2026-11-17
+
+### Features
+- **solidtime**: connect solidtime with a personal token, with timer, time entry, report and catalogue tools, organisation export backups and a Timekeeper agent; official colour logos for the app icons
+- **paperless**: connect Paperless-ngx with an API token, with document search, filing, bulk edit, metadata and settings tools, backups, version checks and an Archivist agent
+- **immich**: connect Immich with an API key, with photo, album, people, queue and settings tools, database backups, version checks and a Photo Curator agent
+
+
 ## [1.5.0] — 2026-11-17
 
 ### Features
@@ -80,3 +88,4 @@ First public release of MyHomeLab.
 [1.3.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.3.0
 [1.4.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.4.0
 [1.5.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.5.0
+[1.6.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.6.0
