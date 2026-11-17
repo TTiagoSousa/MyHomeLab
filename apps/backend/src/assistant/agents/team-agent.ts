@@ -128,7 +128,13 @@ export async function runTeamAgent(
           (member) => member.reportsToId === agent.id && member.isActive,
         )
       : [];
-  const trek = await trekDirect(agent.tools, context, agent.key);
+  // O TREK de duas maneiras, pelo fornecedor da IA: no Claude Code, o MCP do TREK ligado
+  // diretamente ao agente (mcp__trek__*); na API, as ferramentas trek_* do MyHomeLab, que
+  // chamam o mesmo MCP a partir do backend (a API não chega ao TREK da rede de casa).
+  const trek =
+    context.ai.provider === 'CLAUDE_CODE'
+      ? await trekDirect(agent.tools, context, agent.key)
+      : null;
   const toolNames = trek
     ? agent.tools.filter((tool) => !TREK_PROXY_TOOLS.has(tool))
     : agent.tools;
@@ -153,7 +159,11 @@ export async function runTeamAgent(
         ? `
 
 O TREK: as ferramentas do próprio TREK estão ligadas diretamente (mcp__${TREK_SERVER}__<nome>, ex.: mcp__${TREK_SERVER}__list_trips). Usa-as em vez de trek_tools/trek_read/trek_write.`
-        : ''),
+        : agent.tools.some((tool) => TREK_PROXY_TOOLS.has(tool))
+          ? `
+
+O TREK: usa as ferramentas do MyHomeLab — trek_tools para ver o que há, trek_tool_help para os argumentos de uma, trek_read para ler e trek_write para mudar.`
+          : ''),
     readFirst(
       guardTools(tools, context.deniedPermissions, {
         agentKey: agent.key,

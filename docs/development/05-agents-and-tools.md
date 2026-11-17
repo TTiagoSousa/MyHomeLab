@@ -96,6 +96,11 @@ Toolsets: `email`, `server`, `serverControl`, `serverShell`, `health`, `forgejo`
 `team` (plus `trek`, `opengym` and others). `buildToolbox(names, context)` builds only the
 toolsets an agent uses.
 
+**TREK** reaches the agent one of two ways, by AI provider: with **Claude Code** the agent gets
+TREK's own MCP server directly (`mcp__trek__*`, `trekDirect`); with the **Claude API** it uses the
+MyHomeLab `trek_*` tools, which call the same MCP from the backend (the API cannot reach a TREK
+on the home network).
+
 ### Permissions (three layers)
 
 | Layer | Where it is set | Enforced by |
