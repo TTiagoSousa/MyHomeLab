@@ -16,6 +16,7 @@ import App_Modal from './App_Modal';
 import App_Linked_Cards, { type App_Linked_Panel } from './App_Linked_Cards';
 import { appSettingsItems } from './appSettingsItems';
 import OpenGym_Account_Modal from '../../../Components/Modals/OpenGym_Account_Modal/OpenGym_Account_Modal';
+import OpenGym_Mcp_Modal from '../../../Components/Modals/OpenGym_Mcp_Modal/OpenGym_Mcp_Modal';
 import Linked_Docs from '../../../Components/Linked_Docs/Linked_Docs';
 import Agent_Access from '../../../Components/Agent_Access/Agent_Access';
 import Update_Attempts from '../../../Components/Update_Attempts/Update_Attempts';
@@ -44,6 +45,7 @@ const OpenGym_Account = () => {
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<OpenGym_Panel | null>(null);
   const [pairing, setPairing] = useState(false);
+  const [editingMcp, setEditingMcp] = useState(false);
   const [linkedVersion, setLinkedVersion] = useState(0);
 
   const account = connectedAccounts.find((item) => item.id === accountId);
@@ -52,6 +54,8 @@ const OpenGym_Account = () => {
   const baseUrl = account?.appHost ? `https://${account.appHost}` : '';
   const state = !account?.isActive ? 'off' : error ? 'error' : checking && !status ? 'checking' : status ? 'ok' : 'unknown';
   const expires = dayOf(status?.tokenExpiresAt ?? account?.tokenExpiresAt);
+  const mcp = status?.mcp;
+  const mcpValue = !mcp ? '—' : !mcp.configured ? t('apps.openGym.mcp.off') : mcp.error ? t('apps.openGym.mcp.failing') : t('apps.openGym.mcp.on', { count: mcp.tools });
 
   const disconnect = async () => {
     if (account && (await deleteConnectedAccount(account.id))) navigate('/MyHomeLab/Apps/OpenGym');
@@ -62,9 +66,17 @@ const OpenGym_Account = () => {
     setPanel(null);
   };
 
-  const menuItems = appSettingsItems(['account', 'location', 'updates', 'backups', 'agents', 'docs', 'schedules'], t, t('apps.openGym.credentialsHint')).map(
-    (item) => (PANEL_SECTIONS[item.id] ? { ...item, onSelect: () => setPanel(PANEL_SECTIONS[item.id]) } : item),
-  );
+  const menuItems = [
+    ...appSettingsItems(['account', 'location'], t, t('apps.openGym.credentialsHint')),
+    {
+      id: 'mcp',
+      icon: Icon.Agents,
+      name: t('apps.openGym.mcp.title'),
+      hint: mcp?.configured ? t('apps.openGym.mcp.menuOn') : t('apps.openGym.mcp.menuOff'),
+      onSelect: () => setEditingMcp(true),
+    },
+    ...appSettingsItems(['updates', 'backups', 'agents', 'docs', 'schedules'], t),
+  ].map((item) => (PANEL_SECTIONS[item.id] ? { ...item, onSelect: () => setPanel(PANEL_SECTIONS[item.id]) } : item));
 
   return (
     <div className='Apps'>
@@ -116,10 +128,16 @@ const OpenGym_Account = () => {
                 value: expires ? t('apps.openGym.tokenUntil', { day: expires }) : '—',
                 hint: t('apps.openGym.tokenHint'),
               },
+              {
+                label: t('apps.openGym.mcp.fact'),
+                value: mcpValue,
+                hint: mcp?.error ?? t('apps.openGym.mcp.factHint'),
+              },
             ]}
           >
             {error && <p className='Apps_section_note error'>{error}</p>}
             {status && !status.writable && <p className='Apps_section_note error'>{t('apps.openGym.notWritable')}</p>}
+            {mcp?.error && <p className='Apps_section_note error'>{mcp.error}</p>}
           </App_Summary>
 
           <App_Updates accountId={account.id} appName={t('apps.openGym.title')} />
@@ -156,9 +174,14 @@ const OpenGym_Account = () => {
               removing={removing}
               onDisconnect={disconnect}
               actions={
-                <button type='button' onClick={() => setPairing(true)}>
-                  {t('apps.openGym.pairAgain')}
-                </button>
+                <>
+                  <button type='button' onClick={() => setPairing(true)}>
+                    {t('apps.openGym.pairAgain')}
+                  </button>
+                  <button type='button' onClick={() => setEditingMcp(true)}>
+                    {t('apps.openGym.mcp.title')}
+                  </button>
+                </>
               }
               details={
                 expires && (
@@ -175,6 +198,18 @@ const OpenGym_Account = () => {
           {panel === 'docs' && <Linked_Docs type='APP' targetId={account.id} label={label} />}
           {panel === 'schedules' && <Linked_Schedules type='APP' targetId={account.id} label={label} />}
         </App_Modal>
+      )}
+
+      {account && editingMcp && (
+        <OpenGym_Mcp_Modal
+          accountId={account.id}
+          configured={Boolean(mcp?.configured)}
+          onClose={() => setEditingMcp(false)}
+          onSaved={() => {
+            setEditingMcp(false);
+            void fetchStatus();
+          }}
+        />
       )}
 
       {pairing && (

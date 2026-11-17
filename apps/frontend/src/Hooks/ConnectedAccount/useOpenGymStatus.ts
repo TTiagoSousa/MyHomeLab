@@ -13,6 +13,7 @@ export interface OpenGymStatus {
   lastWorkout: string | null;
   plannedDays: number;
   tokenExpiresAt: string | null;
+  mcp: { configured: boolean; tools: number; error: string | null };
   version: string | null;
   latestVersion: string | null;
   latestUrl: string | null;

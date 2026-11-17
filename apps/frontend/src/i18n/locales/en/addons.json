@@ -1235,6 +1235,23 @@
           "adminAudit": "See the audit log",
           "adminInvite": "Create a sign-up invite"
         }
+      },
+      "mcp": {
+        "title": "MCP (agents)",
+        "hint": "In openGym: Settings → Integrations → API tokens, create a token with the permissions the agents may have and copy it (ogt_…). MCP must be enabled on the openGym server. With Claude Code in use, agents only use openGym's MCP; with the Claude API, they keep using the MyHomeLab tools.",
+        "token": "API token",
+        "tokenHint": "Stored encrypted in MyHomeLab. The pairing code does not work for MCP.",
+        "save": "Save and test",
+        "remove": "Remove token",
+        "saved": "openGym MCP connected: {{count}} tools.",
+        "removed": "MCP token removed.",
+        "fact": "MCP (agents)",
+        "factHint": "With Claude Code, agents use openGym's MCP; with the Claude API, the MyHomeLab tools.",
+        "on": "{{count}} tools",
+        "off": "No token",
+        "failing": "Failing",
+        "menuOn": "On: with Claude Code, agents use openGym's MCP.",
+        "menuOff": "Off: agents use the MyHomeLab tools."
       }
     }
   },

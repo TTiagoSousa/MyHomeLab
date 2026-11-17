@@ -25,6 +25,7 @@ export const End_Points = {
     Connected_Account_Forgejo_Status_Endpoint: (id: string) => `/connected-account/${id}/forgejo-status`,
     Connected_Account_OpenGym_Endpoint: () => '/connected-account/opengym',
     Connected_Account_OpenGym_Status_Endpoint: (id: string) => `/connected-account/${id}/opengym-status`,
+    Connected_Account_OpenGym_Mcp_Endpoint: (id: string) => `/connected-account/${id}/opengym-mcp`,
     Connected_Account_Nextcloud_Status_Endpoint: (id: string) => `/connected-account/${id}/nextcloud-status`,
     Connected_Account_Trek_Endpoint: () => '/connected-account/trek',
     Connected_Account_Trek_Status_Endpoint: (id: string) => `/connected-account/${id}/trek-status`,

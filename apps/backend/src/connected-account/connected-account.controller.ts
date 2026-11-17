@@ -24,6 +24,7 @@ import { CreateForgejoAccountDto } from './dto/create-forgejo-account.dto';
 import { CreateOpenGymAccountDto } from './dto/create-opengym-account.dto';
 import { CreateTrekAccountDto } from './dto/create-trek-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
+import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
 import { CreateHomeAssistantAccountDto } from './dto/create-home-assistant-account.dto';
 import { CreateAdguardAccountDto } from './dto/create-adguard-account.dto';
 import { SetAdguardSettingsDto } from './dto/set-adguard-settings.dto';
@@ -127,6 +128,17 @@ export class ConnectedAccountController {
     @Req() req: Request & { user: JwtPayload },
   ) {
     return this.connectedAccountService.openGymStatus(id, req.user.id);
+  }
+
+  /** O token de API do MCP do openGym: { token } (vazio tira-o). */
+  @UseGuards(JwtAuthGuard)
+  @Put(':id/opengym-mcp')
+  setOpenGymMcp(
+    @Param('id') id: string,
+    @Body() dto: SetOpenGymMcpDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.setOpenGymMcp(id, req.user.id, dto);
   }
 
   @UseGuards(JwtAuthGuard)

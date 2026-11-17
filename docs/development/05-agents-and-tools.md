@@ -101,6 +101,12 @@ TREK's own MCP server directly (`mcp__trek__*`, `trekDirect`); with the **Claude
 MyHomeLab `trek_*` tools, which call the same MCP from the backend (the API cannot reach a TREK
 on the home network).
 
+**openGym** works the same way: with **Claude Code** and an openGym API token (`ogt_…`, set in
+Apps → openGym → MCP) the agent gets openGym's own MCP server directly (`mcp__opengym__*`,
+`openGymDirect`) and none of the `opengym_*` tools; with the **Claude API**, without the token or
+with the MCP down, it uses the MyHomeLab `opengym_*` tools (the openGym REST API with the pairing
+token). The pairing token is not accepted by openGym's `/mcp`.
+
 ### Permissions (three layers)
 
 | Layer | Where it is set | Enforced by |

@@ -19,7 +19,7 @@ export const TREK_PROXY_TOOLS = new Set([
   'trek_write',
 ]);
 
-export interface TrekDirect {
+export interface DirectMcp {
   servers: Record<string, unknown>;
   allowedTools: string[];
 }
@@ -36,7 +36,7 @@ export async function trekDirect(
   agentTools: string[],
   context: AgentContext,
   agentKey: string,
-): Promise<TrekDirect | null> {
+): Promise<DirectMcp | null> {
   if (!agentTools.some((tool) => tool.startsWith('trek_'))) return null;
   const account = await trekTarget(
     context.connectedAccountRepository,

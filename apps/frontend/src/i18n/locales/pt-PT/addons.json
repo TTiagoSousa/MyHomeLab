@@ -1235,6 +1235,23 @@
           "adminAudit": "Ver o registo de auditoria",
           "adminInvite": "Criar um convite de registo"
         }
+      },
+      "mcp": {
+        "title": "MCP (agentes)",
+        "hint": "No openGym: Definições → Integrações → Tokens de API, cria um token com as permissões que os agentes podem ter e copia-o (ogt_…). O MCP tem de estar ligado no servidor do openGym. Com o Claude Code em uso, os agentes passam a usar só o MCP do openGym; com a Claude API, continuam com as ferramentas do MyHomeLab.",
+        "token": "Token de API",
+        "tokenHint": "Fica cifrado no MyHomeLab. O código de emparelhamento não serve para o MCP.",
+        "save": "Guardar e testar",
+        "remove": "Tirar o token",
+        "saved": "MCP do openGym ligado: {{count}} ferramentas.",
+        "removed": "Token do MCP tirado.",
+        "fact": "MCP (agentes)",
+        "factHint": "Com o Claude Code, os agentes usam o MCP do openGym; com a Claude API, as ferramentas do MyHomeLab.",
+        "on": "{{count}} ferramentas",
+        "off": "Sem token",
+        "failing": "Com erro",
+        "menuOn": "Ligado: com o Claude Code, os agentes usam o MCP do openGym.",
+        "menuOff": "Desligado: os agentes usam as ferramentas do MyHomeLab."
       }
     }
   },

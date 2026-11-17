@@ -16,6 +16,7 @@ import {
 import { buildToolbox } from '../toolsets/toolbox';
 import { AgentContext } from './agent-context';
 import { TREK_PROXY_TOOLS, TREK_SERVER, trekDirect } from './trekDirect';
+import { OPENGYM_SERVER, openGymDirect } from './openGymDirect';
 
 /** Mais fundo do que isto é uma equipa mal montada, não trabalho útil. */
 const MAX_DEPTH = 5;
@@ -128,16 +129,22 @@ export async function runTeamAgent(
           (member) => member.reportsToId === agent.id && member.isActive,
         )
       : [];
-  // O TREK de duas maneiras, pelo fornecedor da IA: no Claude Code, o MCP do TREK ligado
-  // diretamente ao agente (mcp__trek__*); na API, as ferramentas trek_* do MyHomeLab, que
-  // chamam o mesmo MCP a partir do backend (a API não chega ao TREK da rede de casa).
-  const trek =
-    context.ai.provider === 'CLAUDE_CODE'
-      ? await trekDirect(agent.tools, context, agent.key)
-      : null;
-  const toolNames = trek
-    ? agent.tools.filter((tool) => !TREK_PROXY_TOOLS.has(tool))
-    : agent.tools;
+  // O TREK e o openGym de duas maneiras, pelo fornecedor da IA: no Claude Code, o MCP de
+  // cada um ligado diretamente ao agente (mcp__trek__*, mcp__opengym__*); na API, as
+  // ferramentas trek_* e opengym_* do MyHomeLab, que falam com eles a partir do backend
+  // (a API não chega às apps da rede de casa).
+  const claudeCode = context.ai.provider === 'CLAUDE_CODE';
+  const [trek, openGym] = claudeCode
+    ? await Promise.all([
+        trekDirect(agent.tools, context, agent.key),
+        openGymDirect(agent.tools, context, agent.key),
+      ])
+    : [null, null];
+  const toolNames = agent.tools.filter(
+    (tool) =>
+      !(trek && TREK_PROXY_TOOLS.has(tool)) &&
+      !(openGym && tool.startsWith('opengym_')),
+  );
   const read = context.docsUsed ?? new Map<string, string>();
   const toRead = new Map<string, string>();
   const tools = [
@@ -163,7 +170,12 @@ O TREK: as ferramentas do próprio TREK estão ligadas diretamente (mcp__${TREK_
           ? `
 
 O TREK: usa as ferramentas do MyHomeLab — trek_tools para ver o que há, trek_tool_help para os argumentos de uma, trek_read para ler e trek_write para mudar.`
-          : ''),
+          : '') +
+      (openGym
+        ? `
+
+O openGym: as ferramentas do próprio openGym estão ligadas diretamente (mcp__${OPENGYM_SERVER}__<nome>, ex.: mcp__${OPENGYM_SERVER}__list_routines). Usa só essas; as opengym_* não estão disponíveis.`
+        : ''),
     readFirst(
       guardTools(tools, context.deniedPermissions, {
         agentKey: agent.key,
@@ -186,6 +198,9 @@ O TREK: usa as ferramentas do MyHomeLab — trek_tools para ver o que há, trek_
           (toolName.startsWith(`mcp__${TREK_SERVER}__`)
             ? `no TREK: ${toolName.slice(`mcp__${TREK_SERVER}__`.length)}`
             : null) ??
+          (toolName.startsWith(`mcp__${OPENGYM_SERVER}__`)
+            ? `no openGym: ${toolName.slice(`mcp__${OPENGYM_SERVER}__`.length)}`
+            : null) ??
           delegationAction(toolName, members) ??
           `a usar ${toolName}`;
         const detail = actionDetail(input);
@@ -194,8 +209,12 @@ O TREK: usa as ferramentas do MyHomeLab — trek_tools para ver o que há, trek_
         );
         context.activity.update(context.userId, agent.key, action);
       },
-      mcpServers: trek?.servers,
-      allowedTools: trek?.allowedTools,
+      mcpServers:
+        trek || openGym ? { ...trek?.servers, ...openGym?.servers } : undefined,
+      allowedTools:
+        trek || openGym
+          ? [...(trek?.allowedTools ?? []), ...(openGym?.allowedTools ?? [])]
+          : undefined,
       onUsage: (usage) => {
         context.onUsage?.(usage);
         context.recordUsage?.(agent.key, usage);

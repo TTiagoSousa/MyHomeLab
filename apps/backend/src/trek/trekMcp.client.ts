@@ -103,7 +103,7 @@ async function accessToken(credentials: TrekMcpCredentials, fresh = false) {
 }
 
 /** A resposta JSON-RPC de um pedido: em JSON ou numa stream SSE ("data: {…}"). */
-export function rpcResult(body: unknown, id: number): unknown {
+export function rpcResult(body: unknown, id: number, app = 'TREK'): unknown {
   const messages: unknown[] = [];
   if (typeof body === 'string') {
     for (const line of body.split(/\r?\n/)) {
@@ -122,11 +122,11 @@ export function rpcResult(body: unknown, id: number): unknown {
     .flat()
     .find((message) => (message as { id?: unknown } | null)?.id === id) as
     { result?: unknown; error?: { message?: string } } | undefined;
-  if (!reply) throw new Error('o TREK não respondeu ao pedido MCP');
+  if (!reply) throw new Error(`o ${app} não respondeu ao pedido MCP`);
   if (reply.error) {
     throw new AppIntegrationError(
       'APP_UNREACHABLE',
-      `O MCP do TREK recusou: ${reply.error.message ?? 'erro'}`,
+      `O MCP do ${app} recusou: ${reply.error.message ?? 'erro'}`,
     );
   }
   return reply.result;

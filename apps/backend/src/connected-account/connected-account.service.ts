@@ -22,6 +22,9 @@ import { refreshOpenGymAccount } from './helpers/refreshOpenGymAccount';
 import { CreateOpenGymAccountDto } from './dto/create-opengym-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { setTrekMcp } from './helpers/setTrekMcp';
+import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
+import { setOpenGymMcp } from './helpers/setOpenGymMcp';
+import { openGymMcpOf, openGymMcpTools } from 'src/opengym/openGymMcp.client';
 import { findConnectedAccount } from './helpers/findConnectedAccount';
 import {
   isReadOnlyTool,
@@ -283,10 +286,35 @@ export class ConnectedAccountService {
       lastWorkout: status.lastWorkout,
       plannedDays: status.plannedDays,
       tokenExpiresAt: status.tokenExpiresAt,
+      mcp: await this.openGymMcpStatus(account),
       version: account.appVersion,
       latestVersion: account.appLatestVersion,
       latestUrl: account.appLatestUrl,
     };
+  }
+
+  /** Se o MCP do openGym tem token e entra (quantas ferramentas), sem falhar o estado. */
+  private async openGymMcpStatus(account: ConnectedAccount) {
+    const mcp = openGymMcpOf(account);
+    if (!mcp) return { configured: false, tools: 0, error: null };
+    try {
+      return {
+        configured: true,
+        tools: (await openGymMcpTools(mcp)).length,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        configured: true,
+        tools: 0,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  /** Liga, troca ou tira o token de API do MCP do openGym (os agentes no Claude Code). */
+  setOpenGymMcp(id: string, userId: string, dto: SetOpenGymMcpDto) {
+    return setOpenGymMcp(id, userId, dto, this.connectedAccountRepository);
   }
 
   async createHomeAssistant(
