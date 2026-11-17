@@ -10,6 +10,7 @@ import { buildHomeAssistantTools } from './home-assistant-tools';
 import { buildAdguardTools } from './adguard-tools';
 import { buildNextcloudTools } from './nextcloud-tools';
 import { buildOpenGymTools } from './opengym-tools';
+import { buildGameTrackerTools } from './gametracker-tools';
 import { buildTrekTools } from './trek-tools';
 import { buildDocsTools } from './docs-tools';
 import { buildUpdatesTools } from './updates-tools';
@@ -33,6 +34,7 @@ const TOOL_SETS: Record<
   adguard: buildAdguardTools,
   nextcloud: buildNextcloudTools,
   opengym: buildOpenGymTools,
+  gametracker: buildGameTrackerTools,
   trek: buildTrekTools,
   docs: buildDocsTools,
   updates: buildUpdatesTools,

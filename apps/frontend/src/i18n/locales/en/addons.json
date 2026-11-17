@@ -49,7 +49,8 @@
     "homeAssistantConnected": "Home Assistant connected",
     "adguardConnected": "AdGuard connected",
     "locationSaved": "Saved where the app runs.",
-    "openGymConnected": "openGym connected"
+    "openGymConnected": "openGym connected",
+    "gameTrackerConnected": "GamesTracker connected"
   },
   "backups": {
     "title": "Backups",
@@ -1253,6 +1254,119 @@
         "menuOn": "On: with Claude Code, agents use openGym's MCP.",
         "menuOff": "Off: agents use the MyHomeLab tools."
       }
+    },
+    "gameTracker": {
+      "title": "GamesTracker",
+      "description": "The game shelf: what you play, finished and want to play, the hours and the prices. The Games Curator reads and changes the shelf.",
+      "connect": "Connect GamesTracker",
+      "agentsNote": "The Games Curator uses GamesTracker (add it in Assistant → Workflow). For another agent, pick its tools in Workflow.",
+      "notFound": "This GamesTracker does not exist or was disconnected.",
+      "accountDescription": "The connection to GamesTracker, with a personal token (gtv_…). The token acts as the user who created it: an admin's also reaches the backups.",
+      "credentialsHint": "The address, the user and the token. To change the token, connect again with a new one.",
+      "profile": "User",
+      "shelf": "Shelf",
+      "shelfValue_one": "{{count}} game",
+      "shelfValue_other": "{{count}} games",
+      "shelfHint": "{{playing}} playing · {{finished}} finished · {{planned}} to play",
+      "hours": "Hours",
+      "hoursValue_one": "{{count}} hour",
+      "hoursValue_other": "{{count}} hours",
+      "rating": "Average rating {{rating}}",
+      "token": "Token",
+      "tokenAdmin": "An admin's",
+      "tokenUser": "A user's",
+      "tokenHint": "A read-only token can read, but agents cannot change the shelf.",
+      "notAdmin": "The token is not an admin's: GamesTracker backups do not work with it.",
+      "replaceToken": "Change the token",
+      "updateChip": "New {{version}}",
+      "backup": {
+        "description": "Saves the GamesTracker database to a destination, as often as you choose.",
+        "included": "The backup GamesTracker itself makes (pg_dump, gzip): the shelf, ratings, followed prices, users and settings.",
+        "notIncluded": "Needs an admin's token. TOKEN_ENCRYPTION_KEY is not included: keep it separately (without it the stored keys cannot be read).",
+        "restore": "To restore: on the server, stop gametracker and import the file with psql (docs/backup-restore.md)."
+      },
+      "connections": {
+        "title": "Connections",
+        "permissionsTitle": "What the connection allows",
+        "permissionsAdmin": "The token acts as the user who created it, with their current role. This one is an admin: it also reaches the backups and the version. A read-only token only makes GET requests.",
+        "permissionsNotAdmin": "The token acts as the user who created it, with their current role. This one is not an admin: admin calls (backups, version, users) do not work. A read-only token only makes GET requests.",
+        "callsTitle": "GamesTracker API calls",
+        "callsSummary": "What can be asked of GamesTracker ({{base}}) and its GitHub (the releases): what MyHomeLab already uses and what it does not yet.",
+        "filterLabel": "Show calls",
+        "filter": {
+          "all": "All ({{count}})",
+          "used": "Used ({{count}})",
+          "possible": "Possible ({{count}})"
+        },
+        "table": {
+          "method": "Method",
+          "path": "Path",
+          "description": "What it does",
+          "usedBy": "Used by",
+          "access": "Access",
+          "status": "Status",
+          "allows": "What it allows",
+          "needed": "MyHomeLab uses",
+          "account": "This token"
+        },
+        "access": {
+          "public": "Public",
+          "user": "User (token)",
+          "admin": "Administrator",
+          "github": "GamesTracker GitHub"
+        },
+        "allows": {
+          "public": "Server health and the installed version",
+          "user": "The user's shelf, stats, IGDB search, prices and alerts",
+          "admin": "Backups, the version and updates, and users",
+          "github": "Published releases, no login"
+        },
+        "need": {
+          "read": "Read",
+          "write": "Read and write",
+          "none": "Not used"
+        },
+        "granted": "Has",
+        "notGranted": "Does not have",
+        "notUsed": "Not used yet",
+        "available": "Available",
+        "needsAdmin": "Needs admin",
+        "usedBy": {
+          "connect": "Connect",
+          "status": "App status",
+          "updates": "Updates",
+          "backups": "Backups",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "health": "Says whether it is a GamesTracker, whether it is fine and the installed version",
+          "me": "Who the token is: the user and whether they are an admin",
+          "library": "The whole shelf, or filtered by shelf or status, with the counts",
+          "stats": "The stats: hours, ratings, genres, platforms, finished per year",
+          "entry": "How a game is on the shelf",
+          "entryPut": "Adds or changes a game on the shelf (replaces the whole entry)",
+          "entryDelete": "Removes a game from the shelf",
+          "search": "Searches IGDB for games",
+          "game": "A game's full IGDB record",
+          "price": "A game's best price, history and whether it is followed",
+          "watchlist": "The followed games, with the target and today's price",
+          "watchPut": "Follows a game (price alert) or changes the target",
+          "watchDelete": "Stops following a game",
+          "backupCreate": "Makes a new database backup",
+          "backupDownload": "Downloads a backup (or the latest)",
+          "releases": "Published releases, with the notes",
+          "discover": "Suggests a well-rated game that is not on the shelf",
+          "filters": "The search filters (platforms, genres, themes…)",
+          "backlogPrices": "The \"to play\" shelf at today's prices",
+          "featured": "Featured deals",
+          "notifications": "Price alerts",
+          "aiChat": "Asks GamesTracker's own assistant",
+          "backups": "The backups list and settings",
+          "systemVersion": "The installed version and whether there is a new one",
+          "systemUpdate": "Updates GamesTracker to a new version",
+          "users": "The instance's users"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1313,6 +1427,16 @@
     "code": "Pairing code",
     "codePlaceholder": "E.g. K7WQ2MZP",
     "codeHint": "In openGym: Settings → pair the phone app → it shows an 8-letter code. Paste it here within 5 minutes (it works once). MyHomeLab connects like the phone app.",
+    "connect": "Connect"
+  },
+  "gameTrackerModal": {
+    "title": "Connect GamesTracker",
+    "name": "Name (optional)",
+    "namePlaceholder": "E.g. Games",
+    "url": "Address",
+    "urlPlaceholder": "https://gametracker.example.com",
+    "token": "API token",
+    "tokenHint": "In GamesTracker: Settings → API → New token. For agents to change the shelf, do not make it read-only; for backups, create it as an admin. Stored encrypted in MyHomeLab.",
     "connect": "Connect"
   }
 }

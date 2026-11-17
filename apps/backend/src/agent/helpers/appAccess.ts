@@ -26,6 +26,7 @@ export const SET_TARGET: Partial<
   adguard: ConnectionProvider.ADGUARD,
   nextcloud: ConnectionProvider.NEXTCLOUD,
   opengym: ConnectionProvider.OPENGYM,
+  gametracker: ConnectionProvider.GAMETRACKER,
   trek: ConnectionProvider.TREK,
   server: 'PROXMOX',
   serverControl: 'PROXMOX',

@@ -6,6 +6,7 @@ import { DOCTOR_PROMPT } from 'src/assistant/agents/prompts/doctor.prompt';
 import { HEALTH_DATA_PROMPT } from 'src/assistant/agents/prompts/health-data.prompt';
 import { TRAINER_PROMPT } from 'src/assistant/agents/prompts/trainer.prompt';
 import { TRAVEL_PROMPT } from 'src/assistant/agents/prompts/travel.prompt';
+import { GAMES_PROMPT } from 'src/assistant/agents/prompts/games.prompt';
 import { SMARTHOME_PROMPT } from 'src/assistant/agents/prompts/smarthome.prompt';
 import { PROXMOX_OPERATOR_PROMPT } from 'src/assistant/agents/prompts/proxmox-operator.prompt';
 import { TOOL_CATALOG, ToolGroup } from './tool-catalog';
@@ -192,6 +193,19 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     tools: [...toolsOf('trek'), ...DOCS_READ],
     reportsTo: 'ceo',
     color: 7,
+    legacyKeys: [],
+  },
+  {
+    key: 'games',
+    name: 'Curador de Jogos',
+    description:
+      'A prateleira de jogos no GamesTracker: o que joga, acabou e quer jogar, horas, notas, recomendações e alertas de preço.',
+    prompt: GAMES_PROMPT,
+    model: 'SONNET',
+    effort: 'LOW',
+    tools: [...toolsOf('gametracker'), ...DOCS_READ],
+    reportsTo: 'ceo',
+    color: 8,
     legacyKeys: [],
   },
 ];

@@ -212,6 +212,10 @@
           "name": "openGym (gym)",
           "description": "See the routines, workouts and exercise catalogue. Changing means creating routines and setting the week plan (it never deletes the existing ones)."
         },
+        "gametracker": {
+          "name": "GamesTracker (games)",
+          "description": "See the game shelf, the stats, search IGDB and the prices. Changing is adding and editing games on the shelf, removing them (with confirmation) and following prices."
+        },
         "trek": {
           "name": "TREK (trips)",
           "description": "See the trips and everything in them through TREK MCP. Changing means creating, changing and (with confirmation) deleting in TREK, within the MCP client scopes."
@@ -274,6 +278,7 @@
       "board": "Projects (board)",
       "nextcloud": "Nextcloud",
       "opengym": "openGym",
+      "gametracker": "GamesTracker",
       "trek": "TREK"
     },
     "editor": {

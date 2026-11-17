@@ -212,6 +212,10 @@
           "name": "openGym (ginásio)",
           "description": "Ver as rotinas, os treinos e o catálogo dos exercícios. Alterar é criar rotinas e marcar o plano da semana (nunca apaga as que lá estão)."
         },
+        "gametracker": {
+          "name": "GamesTracker (jogos)",
+          "description": "Ver a prateleira de jogos, as estatísticas, procurar no IGDB e os preços. Alterar é pôr e mudar jogos na prateleira, tirá-los (com confirmação) e seguir preços."
+        },
         "trek": {
           "name": "TREK (viagens)",
           "description": "Ver as viagens e tudo o que está nelas pelo MCP do TREK. Alterar é criar, mudar e (com confirmação) apagar no TREK, dentro das permissões do cliente MCP."
@@ -274,6 +278,7 @@
       "board": "Projetos (quadro)",
       "nextcloud": "Nextcloud",
       "opengym": "openGym",
+      "gametracker": "GamesTracker",
       "trek": "TREK"
     },
     "editor": {

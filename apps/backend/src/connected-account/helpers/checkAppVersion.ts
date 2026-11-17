@@ -15,6 +15,10 @@ import {
 import { fetchTrekAppConfig, TREK_REPOSITORY } from 'src/trek/trek.client';
 import { OPENGYM_REPOSITORY, openGymVersion } from 'src/opengym/opengym.client';
 import {
+  GAMETRACKER_REPOSITORY,
+  gameTrackerVersion,
+} from 'src/gametracker/gametracker.client';
+import {
   createHomeAssistantClient,
   HOME_ASSISTANT_REPOSITORY,
 } from 'src/home-assistant/home-assistant.client';
@@ -63,6 +67,12 @@ export const VERSION_SOURCES: Partial<
     repository: { host: 'github', repo: OPENGYM_REPOSITORY },
     installed: (account) => openGymVersion(account.baseUrl ?? ''),
     latest: () => latestGithubRelease(OPENGYM_REPOSITORY),
+  },
+  [ConnectionProvider.GAMETRACKER]: {
+    appName: 'GamesTracker',
+    repository: { host: 'github', repo: GAMETRACKER_REPOSITORY },
+    installed: (account) => gameTrackerVersion(account.baseUrl ?? ''),
+    latest: () => latestGithubRelease(GAMETRACKER_REPOSITORY),
   },
   [ConnectionProvider.HOME_ASSISTANT]: {
     appName: 'Home Assistant',

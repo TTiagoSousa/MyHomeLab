@@ -49,7 +49,8 @@
     "homeAssistantConnected": "Home Assistant ligado",
     "adguardConnected": "AdGuard ligado",
     "locationSaved": "Guardado onde a app corre.",
-    "openGymConnected": "openGym ligado"
+    "openGymConnected": "openGym ligado",
+    "gameTrackerConnected": "GamesTracker ligado"
   },
   "backups": {
     "title": "Backups",
@@ -1253,6 +1254,119 @@
         "menuOn": "Ligado: com o Claude Code, os agentes usam o MCP do openGym.",
         "menuOff": "Desligado: os agentes usam as ferramentas do MyHomeLab."
       }
+    },
+    "gameTracker": {
+      "title": "GamesTracker",
+      "description": "A prateleira de jogos: o que jogas, acabaste e queres jogar, as horas e os preços. O Curador de Jogos lê e muda a prateleira.",
+      "connect": "Ligar GamesTracker",
+      "agentsNote": "O Curador de Jogos usa o GamesTracker (acrescenta-o em Assistente → Workflow). Para outro agente, escolhe as ferramentas dele no Workflow.",
+      "notFound": "Este GamesTracker não existe ou já foi desligado.",
+      "accountDescription": "A ligação ao GamesTracker, com um token pessoal (gtv_…). O token age como o utilizador que o criou: de um admin, chega também aos backups.",
+      "credentialsHint": "O endereço, o utilizador e o token. Para trocar o token, liga outra vez com um novo.",
+      "profile": "Utilizador",
+      "shelf": "Prateleira",
+      "shelfValue_one": "{{count}} jogo",
+      "shelfValue_other": "{{count}} jogos",
+      "shelfHint": "{{playing}} a jogar · {{finished}} acabados · {{planned}} para jogar",
+      "hours": "Horas",
+      "hoursValue_one": "{{count}} hora",
+      "hoursValue_other": "{{count}} horas",
+      "rating": "Nota média {{rating}}",
+      "token": "Token",
+      "tokenAdmin": "De um admin",
+      "tokenUser": "De um utilizador",
+      "tokenHint": "Um token só de leitura deixa ver, mas os agentes não mudam a prateleira.",
+      "notAdmin": "O token não é de um admin: os backups do GamesTracker não funcionam com ele.",
+      "replaceToken": "Trocar o token",
+      "updateChip": "Nova {{version}}",
+      "backup": {
+        "description": "Guarda a base de dados do GamesTracker num destino, com a frequência que escolheres.",
+        "included": "Entra o backup que o próprio GamesTracker faz (pg_dump, gzip): a prateleira, as notas, os preços seguidos, os utilizadores e as definições.",
+        "notIncluded": "Precisa do token de um admin. A TOKEN_ENCRYPTION_KEY não entra: guarda-a à parte (sem ela, as chaves guardadas não se leem).",
+        "restore": "Para recuperar: no servidor, para o gametracker e importa o ficheiro com psql (docs/backup-restore.md)."
+      },
+      "connections": {
+        "title": "Ligações",
+        "permissionsTitle": "O que a ligação deixa fazer",
+        "permissionsAdmin": "O token age como o utilizador que o criou, com o papel de agora. Este é admin: chega também aos backups e à versão. Se o token for só de leitura, só faz pedidos GET.",
+        "permissionsNotAdmin": "O token age como o utilizador que o criou, com o papel de agora. Este não é admin: as chamadas de admin (backups, versão, utilizadores) não funcionam. Se o token for só de leitura, só faz pedidos GET.",
+        "callsTitle": "Chamadas à API do GamesTracker",
+        "callsSummary": "O que dá para pedir ao GamesTracker ({{base}}) e ao GitHub dele (as versões): o que o MyHomeLab já usa e o que ainda não usa.",
+        "filterLabel": "Mostrar chamadas",
+        "filter": {
+          "all": "Todas ({{count}})",
+          "used": "Usadas ({{count}})",
+          "possible": "Possíveis ({{count}})"
+        },
+        "table": {
+          "method": "Método",
+          "path": "Caminho",
+          "description": "O que faz",
+          "usedBy": "Quem usa",
+          "access": "Acesso",
+          "status": "Estado",
+          "allows": "O que deixa fazer",
+          "needed": "O MyHomeLab usa",
+          "account": "Este token"
+        },
+        "access": {
+          "public": "Público",
+          "user": "Utilizador (token)",
+          "admin": "Administrador",
+          "github": "GitHub do GamesTracker"
+        },
+        "allows": {
+          "public": "A saúde do servidor e a versão instalada",
+          "user": "A prateleira, as estatísticas, a pesquisa no IGDB, os preços e os alertas do utilizador",
+          "admin": "Os backups, a versão e as atualizações, e os utilizadores",
+          "github": "As versões publicadas, sem login"
+        },
+        "need": {
+          "read": "Leitura",
+          "write": "Leitura e escrita",
+          "none": "Não usa"
+        },
+        "granted": "Tem",
+        "notGranted": "Não tem",
+        "notUsed": "Ainda não usada",
+        "available": "Disponível",
+        "needsAdmin": "Precisa de admin",
+        "usedBy": {
+          "connect": "Ligar",
+          "status": "Estado da app",
+          "updates": "Atualizações",
+          "backups": "Backups",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "health": "Diz se é um GamesTracker, se está bem e a versão instalada",
+          "me": "Quem é o token: o utilizador e se é admin",
+          "library": "A prateleira inteira, ou filtrada por estante ou estado, com as contagens",
+          "stats": "As estatísticas: horas, notas, géneros, plataformas, acabados por ano",
+          "entry": "Como está um jogo na prateleira",
+          "entryPut": "Põe ou muda um jogo na prateleira (substitui a entrada inteira)",
+          "entryDelete": "Tira um jogo da prateleira",
+          "search": "Procura jogos no IGDB",
+          "game": "A ficha completa de um jogo no IGDB",
+          "price": "O melhor preço de um jogo, o histórico e se está seguido",
+          "watchlist": "Os jogos seguidos, com o alvo e o preço de agora",
+          "watchPut": "Segue um jogo (alerta de preço) ou muda o alvo",
+          "watchDelete": "Deixa de seguir um jogo",
+          "backupCreate": "Faz um backup novo da base de dados",
+          "backupDownload": "Descarrega um backup (ou o último)",
+          "releases": "As versões publicadas, com as notas",
+          "discover": "Sugere um jogo bem avaliado que não está na prateleira",
+          "filters": "Os filtros da pesquisa (plataformas, géneros, temas…)",
+          "backlogPrices": "A estante \"para jogar\" aos preços de hoje",
+          "featured": "As promoções em destaque",
+          "notifications": "Os avisos de preço",
+          "aiChat": "Pergunta ao assistente do próprio GamesTracker",
+          "backups": "A lista dos backups e as definições",
+          "systemVersion": "A versão instalada e se há uma nova",
+          "systemUpdate": "Atualiza o GamesTracker para uma versão nova",
+          "users": "Os utilizadores da instância"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1313,6 +1427,16 @@
     "code": "Código de emparelhamento",
     "codePlaceholder": "Ex: K7WQ2MZP",
     "codeHint": "No openGym: Definições → emparelhar a app do telemóvel → mostra um código de 8 letras. Cola-o aqui nos 5 minutos seguintes (só serve uma vez). O MyHomeLab fica ligado como a app do telemóvel.",
+    "connect": "Ligar"
+  },
+  "gameTrackerModal": {
+    "title": "Ligar GamesTracker",
+    "name": "Nome (opcional)",
+    "namePlaceholder": "Ex: Jogos",
+    "url": "Endereço",
+    "urlPlaceholder": "https://gametracker.exemplo.com",
+    "token": "Token da API",
+    "tokenHint": "No GamesTracker: Definições → API → Novo token. Para os agentes mudarem a prateleira, não o marques só de leitura; para os backups, cria-o com um admin. Fica cifrado no MyHomeLab.",
     "connect": "Ligar"
   }
 }

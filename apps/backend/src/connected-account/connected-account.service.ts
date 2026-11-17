@@ -20,6 +20,9 @@ import { CreateTrekAccountDto } from './dto/create-trek-account.dto';
 import { createOpenGymAccount } from './helpers/createOpenGymAccount';
 import { refreshOpenGymAccount } from './helpers/refreshOpenGymAccount';
 import { CreateOpenGymAccountDto } from './dto/create-opengym-account.dto';
+import { createGameTrackerAccount } from './helpers/createGameTrackerAccount';
+import { refreshGameTrackerAccount } from './helpers/refreshGameTrackerAccount';
+import { CreateGameTrackerAccountDto } from './dto/create-gametracker-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { setTrekMcp } from './helpers/setTrekMcp';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
@@ -315,6 +318,52 @@ export class ConnectedAccountService {
   /** Liga, troca ou tira o token de API do MCP do openGym (os agentes no Claude Code). */
   setOpenGymMcp(id: string, userId: string, dto: SetOpenGymMcpDto) {
     return setOpenGymMcp(id, userId, dto, this.connectedAccountRepository);
+  }
+
+  async createGameTracker(dto: CreateGameTrackerAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    const account = await this.afterConnect(
+      await createGameTrackerAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+    void this.checkVersion(account);
+    return account;
+  }
+
+  /** O estado do GamesTracker (utilizador do token, a prateleira) e a versão. */
+  async gameTrackerStatus(id: string, userId: string) {
+    const status = await refreshGameTrackerAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      status.account,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      profile: status.profile,
+      isAdmin: status.isAdmin,
+      total: status.total,
+      playing: status.playing,
+      finished: status.finished,
+      planned: status.planned,
+      hours: status.hours,
+      rating: status.rating,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
   }
 
   async createHomeAssistant(

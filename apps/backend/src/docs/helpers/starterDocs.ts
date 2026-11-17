@@ -148,6 +148,20 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
       'Mudar o segredo das sessões (desliga todas as apps emparelhadas).',
     ],
   },
+  [ConnectionProvider.GAMETRACKER]: {
+    name: 'GamesTracker',
+    before: [
+      '🤖 O backup do MyHomeLab do GamesTracker (a base de dados, pg_dump) correu há pouco — prova: a hora do último bom',
+    ],
+    after: [
+      '🤖 O /api/health responde ok com a versão nova — prova: o JSON',
+      '🤖 A prateleira está lá, com os mesmos jogos (gametracker_overview) — prova: os números',
+    ],
+    never: [
+      'Apagar a base de dados do GamesTracker ou os backups em /var/backups/gametracker.',
+      'Mudar ou perder a TOKEN_ENCRYPTION_KEY (sem ela as chaves guardadas não se leem).',
+    ],
+  },
   [ConnectionProvider.HOME_ASSISTANT]: {
     name: 'Home Assistant',
     before: [

@@ -14,6 +14,9 @@ export { default as NextcloudConnections } from '../Pages/Private/Apps/Nextcloud
 export { default as OpenGymAccounts } from '../Pages/Private/Apps/OpenGym_Accounts';
 export { default as OpenGymAccount } from '../Pages/Private/Apps/OpenGym_Account';
 export { default as OpenGymConnections } from '../Pages/Private/Apps/OpenGym_Connections';
+export { default as GameTrackerAccounts } from '../Pages/Private/Apps/GameTracker_Accounts';
+export { default as GameTrackerAccount } from '../Pages/Private/Apps/GameTracker_Account';
+export { default as GameTrackerConnections } from '../Pages/Private/Apps/GameTracker_Connections';
 export { default as ForgejoAccounts } from '../Pages/Private/Apps/Forgejo_Accounts';
 export { default as ForgejoAccount } from '../Pages/Private/Apps/Forgejo_Account';
 export { default as ForgejoConnections } from '../Pages/Private/Apps/Forgejo_Connections';

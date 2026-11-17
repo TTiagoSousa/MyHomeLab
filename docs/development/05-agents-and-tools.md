@@ -93,7 +93,7 @@ export function buildTodoTools(context: AgentContext): AgentTool[] {
 
 Toolsets: `email`, `server`, `serverControl`, `serverShell`, `health`, `forgejo`,
 `homeAssistant`, `adguard`, `nextcloud`, `docs`, `updates`, `schedules`, `board`, `todos`,
-`team` (plus `trek`, `opengym` and others). `buildToolbox(names, context)` builds only the
+`team` (plus `trek`, `opengym`, `gametracker` and others). `buildToolbox(names, context)` builds only the
 toolsets an agent uses.
 
 **TREK** reaches the agent one of two ways, by AI provider: with **Claude Code** the agent gets
@@ -106,6 +106,12 @@ Apps → openGym → MCP) the agent gets openGym's own MCP server directly (`mcp
 `openGymDirect`) and none of the `opengym_*` tools; with the **Claude API**, without the token or
 with the MCP down, it uses the MyHomeLab `opengym_*` tools (the openGym REST API with the pairing
 token). The pairing token is not accepted by openGym's `/mcp`.
+
+**GamesTracker Vault** has no MCP: the `gametracker_*` tools (overview, shelf, IGDB search, game,
+watchlist; set or remove a game, follow a price) call its REST API with the account's personal token
+(`gtv_…`) on either provider. The **Games Curator** template (`games`, under Jarvis) has them; add it in
+Workflow. `gametracker_set_game` merges with the current entry, because the API's `PUT` replaces the
+whole entry.
 
 ### Permissions (three layers)
 

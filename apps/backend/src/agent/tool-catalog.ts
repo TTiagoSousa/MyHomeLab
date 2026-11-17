@@ -8,6 +8,7 @@ export type ToolSet =
   | 'adguard'
   | 'nextcloud'
   | 'opengym'
+  | 'gametracker'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -29,6 +30,7 @@ export type ToolGroup =
   | 'adguard'
   | 'nextcloud'
   | 'opengym'
+  | 'gametracker'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -483,6 +485,63 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'opengym',
     'write',
     'a marcar o plano da semana no openGym',
+  ),
+
+  tool(
+    'gametracker_overview',
+    'gametracker',
+    'gametracker',
+    'read',
+    'a ver o GamesTracker',
+  ),
+  tool(
+    'gametracker_shelf',
+    'gametracker',
+    'gametracker',
+    'read',
+    'a ver a prateleira de jogos',
+  ),
+  tool(
+    'gametracker_search',
+    'gametracker',
+    'gametracker',
+    'read',
+    'a procurar jogos',
+  ),
+  tool(
+    'gametracker_game',
+    'gametracker',
+    'gametracker',
+    'read',
+    'a ver um jogo',
+  ),
+  tool(
+    'gametracker_watchlist',
+    'gametracker',
+    'gametracker',
+    'read',
+    'a ver os preços seguidos',
+  ),
+  tool(
+    'gametracker_set_game',
+    'gametracker',
+    'gametracker',
+    'write',
+    'a mudar a prateleira de jogos',
+  ),
+  tool(
+    'gametracker_remove_game',
+    'gametracker',
+    'gametracker',
+    'write',
+    'a tirar um jogo da prateleira',
+  ),
+  tool(
+    'gametracker_watch_price',
+    'gametracker',
+    'gametracker',
+    'write',
+    'a seguir o preço de um jogo',
   ),
 
   tool('adguard_overview', 'adguard', 'adguard', 'read', 'a ver o AdGuard'),

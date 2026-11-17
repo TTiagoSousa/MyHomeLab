@@ -9,6 +9,7 @@ import { homeAssistantBackup } from './homeAssistantBackup';
 import { adguardBackup } from './adguardBackup';
 import { nextcloudBackup } from './nextcloudBackup';
 import { openGymBackup } from './openGymBackup';
+import { gameTrackerBackup } from './gameTrackerBackup';
 
 /** O ficheiro que uma app entrega para guardar no destino. */
 export interface BackupFile {
@@ -69,5 +70,11 @@ export const BACKUP_SOURCES: Partial<Record<ConnectionProvider, BackupSource>> =
       extension: 'json',
       defaultFolder: 'openGym',
       create: openGymBackup,
+    },
+    [ConnectionProvider.GAMETRACKER]: {
+      prefix: 'gametracker',
+      extension: 'sql.gz',
+      defaultFolder: 'GamesTracker',
+      create: gameTrackerBackup,
     },
   };

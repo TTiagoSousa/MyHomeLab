@@ -83,6 +83,8 @@ there too.
 | GET | `/connected-account/:id/trek-status` | JWT | TREK settings, MCP status and version |
 | PUT | `/connected-account/:id/trek-mcp` | JWT | Set or clear the TREK MCP machine client |
 | PUT | `/connected-account/:id/opengym-mcp` | JWT | Set or clear the openGym MCP API token (`ogt_…`) |
+| POST | `/connected-account/gametracker` | JWT | Connect GamesTracker Vault with a personal API token (`gtv_…`) |
+| GET | `/connected-account/:id/gametracker-status` | JWT | GamesTracker user, shelf counts, hours, rating and version |
 | GET | `/connected-account/:id/trek-tools` | JWT | Tools exposed by TREK's MCP server |
 | POST | `/connected-account/home-assistant` | JWT | Connect Home Assistant (admin token) |
 | GET | `/connected-account/:id/home-assistant-status` | JWT | Entities, automations, pending updates and version |

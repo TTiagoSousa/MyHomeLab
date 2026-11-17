@@ -22,6 +22,7 @@ import { UpdateConnectedAccountDto } from './dto/update-connected-account.dto';
 import { CreateNextcloudAccountDto } from './dto/create-nextcloud-account.dto';
 import { CreateForgejoAccountDto } from './dto/create-forgejo-account.dto';
 import { CreateOpenGymAccountDto } from './dto/create-opengym-account.dto';
+import { CreateGameTrackerAccountDto } from './dto/create-gametracker-account.dto';
 import { CreateTrekAccountDto } from './dto/create-trek-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
@@ -109,6 +110,25 @@ export class ConnectedAccountController {
     @Req() req: Request & { user: JwtPayload },
   ) {
     return this.connectedAccountService.forgejoStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('gametracker')
+  connectGameTracker(
+    @Body() dto: CreateGameTrackerAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createGameTracker(dto, req.user.id);
+  }
+
+  /** O estado do GamesTracker agora (utilizador do token, a prateleira, a versão). */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/gametracker-status')
+  gameTrackerStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.gameTrackerStatus(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

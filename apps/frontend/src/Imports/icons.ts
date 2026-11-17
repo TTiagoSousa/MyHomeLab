@@ -34,5 +34,6 @@ export { default as Gmail } from '../Assets/Icons/Gmail/Gmail';
 export { default as GoogleTasks } from '../Assets/Icons/GoogleTasks/GoogleTasks';
 export { default as Nextcloud } from '../Assets/Icons/Nextcloud/Nextcloud';
 export { default as OpenGym } from '../Assets/Icons/OpenGym/OpenGym';
+export { default as GameTracker } from '../Assets/Icons/GameTracker/GameTracker';
 export { default as Trek } from '../Assets/Icons/Trek/Trek';
 export { default as Adguard } from '../Assets/Icons/Adguard/Adguard';

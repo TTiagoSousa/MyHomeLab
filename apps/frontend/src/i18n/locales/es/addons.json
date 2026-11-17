@@ -49,7 +49,8 @@
     "homeAssistantConnected": "Home Assistant conectado",
     "adguardConnected": "AdGuard conectado",
     "locationSaved": "Guardado dónde corre la app.",
-    "openGymConnected": "openGym conectado"
+    "openGymConnected": "openGym conectado",
+    "gameTrackerConnected": "GamesTracker conectado"
   },
   "backups": {
     "title": "Copias de seguridad",
@@ -1253,6 +1254,119 @@
         "menuOn": "Activado: con Claude Code, los agentes usan el MCP de openGym.",
         "menuOff": "Desactivado: los agentes usan las herramientas de MyHomeLab."
       }
+    },
+    "gameTracker": {
+      "title": "GamesTracker",
+      "description": "La estantería de juegos: lo que juegas, has terminado y quieres jugar, las horas y los precios. El Curador de Juegos lee y cambia la estantería.",
+      "connect": "Conectar GamesTracker",
+      "agentsNote": "El Curador de Juegos usa GamesTracker (añádelo en Asistente → Workflow). Para otro agente, elige sus herramientas en Workflow.",
+      "notFound": "Este GamesTracker no existe o ya se desconectó.",
+      "accountDescription": "La conexión a GamesTracker, con un token personal (gtv_…). El token actúa como el usuario que lo creó: el de un admin llega también a las copias.",
+      "credentialsHint": "La dirección, el usuario y el token. Para cambiar el token, conecta otra vez con uno nuevo.",
+      "profile": "Usuario",
+      "shelf": "Estantería",
+      "shelfValue_one": "{{count}} juego",
+      "shelfValue_other": "{{count}} juegos",
+      "shelfHint": "{{playing}} jugando · {{finished}} terminados · {{planned}} por jugar",
+      "hours": "Horas",
+      "hoursValue_one": "{{count}} hora",
+      "hoursValue_other": "{{count}} horas",
+      "rating": "Nota media {{rating}}",
+      "token": "Token",
+      "tokenAdmin": "De un admin",
+      "tokenUser": "De un usuario",
+      "tokenHint": "Un token de solo lectura deja ver, pero los agentes no cambian la estantería.",
+      "notAdmin": "El token no es de un admin: las copias de GamesTracker no funcionan con él.",
+      "replaceToken": "Cambiar el token",
+      "updateChip": "Nueva {{version}}",
+      "backup": {
+        "description": "Guarda la base de datos de GamesTracker en un destino, con la frecuencia que elijas.",
+        "included": "Entra la copia que hace el propio GamesTracker (pg_dump, gzip): la estantería, las notas, los precios seguidos, los usuarios y los ajustes.",
+        "notIncluded": "Necesita el token de un admin. La TOKEN_ENCRYPTION_KEY no entra: guárdala aparte (sin ella, las claves guardadas no se leen).",
+        "restore": "Para recuperar: en el servidor, para gametracker e importa el archivo con psql (docs/backup-restore.md)."
+      },
+      "connections": {
+        "title": "Conexiones",
+        "permissionsTitle": "Lo que permite la conexión",
+        "permissionsAdmin": "El token actúa como el usuario que lo creó, con su rol actual. Este es admin: llega también a las copias y a la versión. Un token de solo lectura solo hace peticiones GET.",
+        "permissionsNotAdmin": "El token actúa como el usuario que lo creó, con su rol actual. Este no es admin: las llamadas de admin (copias, versión, usuarios) no funcionan. Un token de solo lectura solo hace peticiones GET.",
+        "callsTitle": "Llamadas a la API de GamesTracker",
+        "callsSummary": "Lo que se puede pedir a GamesTracker ({{base}}) y a su GitHub (las versiones): lo que MyHomeLab ya usa y lo que aún no.",
+        "filterLabel": "Mostrar llamadas",
+        "filter": {
+          "all": "Todas ({{count}})",
+          "used": "Usadas ({{count}})",
+          "possible": "Posibles ({{count}})"
+        },
+        "table": {
+          "method": "Método",
+          "path": "Ruta",
+          "description": "Qué hace",
+          "usedBy": "Quién la usa",
+          "access": "Acceso",
+          "status": "Estado",
+          "allows": "Lo que permite",
+          "needed": "MyHomeLab usa",
+          "account": "Este token"
+        },
+        "access": {
+          "public": "Público",
+          "user": "Usuario (token)",
+          "admin": "Administrador",
+          "github": "GitHub de GamesTracker"
+        },
+        "allows": {
+          "public": "La salud del servidor y la versión instalada",
+          "user": "La estantería, las estadísticas, la búsqueda en IGDB, los precios y los avisos del usuario",
+          "admin": "Las copias, la versión y las actualizaciones, y los usuarios",
+          "github": "Las versiones publicadas, sin login"
+        },
+        "need": {
+          "read": "Lectura",
+          "write": "Lectura y escritura",
+          "none": "No usa"
+        },
+        "granted": "Tiene",
+        "notGranted": "No tiene",
+        "notUsed": "Aún no usada",
+        "available": "Disponible",
+        "needsAdmin": "Necesita admin",
+        "usedBy": {
+          "connect": "Conectar",
+          "status": "Estado de la app",
+          "updates": "Actualizaciones",
+          "backups": "Copias",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "health": "Dice si es un GamesTracker, si está bien y la versión instalada",
+          "me": "Quién es el token: el usuario y si es admin",
+          "library": "La estantería entera, o filtrada por estante o estado, con los recuentos",
+          "stats": "Las estadísticas: horas, notas, géneros, plataformas, terminados por año",
+          "entry": "Cómo está un juego en la estantería",
+          "entryPut": "Añade o cambia un juego en la estantería (sustituye la entrada entera)",
+          "entryDelete": "Quita un juego de la estantería",
+          "search": "Busca juegos en IGDB",
+          "game": "La ficha completa de un juego en IGDB",
+          "price": "El mejor precio de un juego, el historial y si se sigue",
+          "watchlist": "Los juegos seguidos, con el objetivo y el precio de hoy",
+          "watchPut": "Sigue un juego (aviso de precio) o cambia el objetivo",
+          "watchDelete": "Deja de seguir un juego",
+          "backupCreate": "Hace una copia nueva de la base de datos",
+          "backupDownload": "Descarga una copia (o la última)",
+          "releases": "Las versiones publicadas, con las notas",
+          "discover": "Sugiere un juego bien valorado que no está en la estantería",
+          "filters": "Los filtros de búsqueda (plataformas, géneros, temas…)",
+          "backlogPrices": "La estantería \"por jugar\" a los precios de hoy",
+          "featured": "Las ofertas destacadas",
+          "notifications": "Los avisos de precio",
+          "aiChat": "Pregunta al asistente del propio GamesTracker",
+          "backups": "La lista de copias y los ajustes",
+          "systemVersion": "La versión instalada y si hay una nueva",
+          "systemUpdate": "Actualiza GamesTracker a una versión nueva",
+          "users": "Los usuarios de la instancia"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1313,6 +1427,16 @@
     "code": "Código de emparejamiento",
     "codePlaceholder": "Ej: K7WQ2MZP",
     "codeHint": "En openGym: Ajustes → emparejar la app del móvil → muestra un código de 8 letras. Pégalo aquí en los 5 minutos siguientes (solo sirve una vez). MyHomeLab se conecta como la app del móvil.",
+    "connect": "Conectar"
+  },
+  "gameTrackerModal": {
+    "title": "Conectar GamesTracker",
+    "name": "Nombre (opcional)",
+    "namePlaceholder": "Ej: Juegos",
+    "url": "Dirección",
+    "urlPlaceholder": "https://gametracker.ejemplo.com",
+    "token": "Token de la API",
+    "tokenHint": "En GamesTracker: Ajustes → API → Nuevo token. Para que los agentes cambien la estantería, no lo marques de solo lectura; para las copias, créalo con un admin. Se guarda cifrado en MyHomeLab.",
     "connect": "Conectar"
   }
 }
