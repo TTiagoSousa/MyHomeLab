@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.4.0] — 2026-11-17
+
+### Features
+- **backup**: MyHomeLab backups as a password-protected zip with one folder per area, restored table by table without pg_dump
+
+
 ## [1.3.0] — 2026-11-17
 
 ### Features
@@ -66,3 +72,4 @@ First public release of MyHomeLab.
 [1.1.2]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.1.2
 [1.2.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.2.0
 [1.3.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.3.0
+[1.4.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.4.0
