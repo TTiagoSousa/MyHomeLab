@@ -41,6 +41,13 @@ export interface CreatePaperlessAccountPayload extends AppLocationPayload {
   token: string;
 }
 
+export interface CreateSolidtimeAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  token: string;
+  organization?: string;
+}
+
 export interface CreateTrekAccountPayload extends AppLocationPayload {
   displayName?: string;
   baseUrl: string;
@@ -172,6 +179,21 @@ export const useConnectedAccount = () => {
     }
   };
 
+  const createSolidtimeAccount = async (data: CreateSolidtimeAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Solidtime_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.solidtimeConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const createHomeAssistantAccount = async (data: CreateHomeAssistantAccountPayload) => {
     setLoading(true);
     try {
@@ -285,6 +307,7 @@ export const useConnectedAccount = () => {
     createGameTrackerAccount,
     createImmichAccount,
     createPaperlessAccount,
+    createSolidtimeAccount,
     createTrekAccount,
     createHomeAssistantAccount,
     createAdguardAccount,

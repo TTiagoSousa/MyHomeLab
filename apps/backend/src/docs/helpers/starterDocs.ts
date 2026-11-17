@@ -195,6 +195,21 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
       'Mudar a PAPERLESS_SECRET_KEY (desliga as sessões) sem o sim dele.',
     ],
   },
+  [ConnectionProvider.SOLIDTIME]: {
+    name: 'solidtime',
+    before: [
+      '🤖 O backup do MyHomeLab do solidtime (o export da organização) correu há pouco — prova: a hora do último bom',
+      '🤖 As notas da versão nova não pedem passos à mão (migrações, mudanças no .env ou no docker-compose) — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O /health-check/up responde e o solidtime_overview mostra a organização — prova: a resposta',
+      '🤖 As horas da semana estão lá, com os mesmos totais (solidtime_report) — prova: os números',
+    ],
+    never: [
+      'Apagar a base de dados do solidtime, registos de horas ou projetos.',
+      'Mudar a APP_KEY ou as chaves do Passport (deixam de valer os tokens e as sessões).',
+    ],
+  },
   [ConnectionProvider.HOME_ASSISTANT]: {
     name: 'Home Assistant',
     before: [

@@ -52,7 +52,8 @@
     "openGymConnected": "openGym ligado",
     "gameTrackerConnected": "GamesTracker ligado",
     "immichConnected": "Immich ligado",
-    "paperlessConnected": "Paperless ligado"
+    "paperlessConnected": "Paperless ligado",
+    "solidtimeConnected": "solidtime ligado"
   },
   "backups": {
     "title": "Backups",
@@ -1629,6 +1630,118 @@
           "logs": "Os registos do servidor"
         }
       }
+    },
+    "solidtime": {
+      "title": "solidtime",
+      "description": "O registo de horas: o Gestor de Horas põe e para o cronómetro, regista horas esquecidas, soma as horas por projeto ou cliente e arruma os projetos.",
+      "connect": "Ligar solidtime",
+      "agentsNote": "O Gestor de Horas usa o solidtime (acrescenta-o em Assistente → Workflow). Para outro agente, escolhe as ferramentas dele no Workflow.",
+      "notFound": "Este solidtime não existe ou já foi desligado.",
+      "accountDescription": "A ligação ao solidtime, com um token pessoal da API. Cada ligação é uma organização; o token age como o utilizador, com o papel que ele lá tem.",
+      "credentialsHint": "O endereço, a organização e o token. Para trocar o token, liga outra vez com um novo.",
+      "profile": "Utilizador",
+      "organization": "Organização",
+      "roles": {
+        "owner": "Dono",
+        "admin": "Administrador",
+        "manager": "Gestor",
+        "employee": "Colaborador",
+        "placeholder": "Marcador"
+      },
+      "week": "Últimos 7 dias",
+      "hoursValue_one": "{{count}} hora",
+      "hoursValue_other": "{{count}} horas",
+      "catalogHint": "{{projects}} projetos · {{clients}} clientes",
+      "timer": "Cronómetro",
+      "timerOn": "A contar",
+      "timerOff": "Parado",
+      "timerHint": "O Gestor de Horas põe-no a contar quando lhe pedes.",
+      "notAdmin": "O papel do utilizador não é de dono nem de administrador: os backups (o export da organização) e criar projetos ou clientes podem não funcionar.",
+      "noVersion": "O solidtime não diz a versão instalada, por isso não há avisos de versão nova para ele.",
+      "replaceToken": "Trocar o token",
+      "updateChip": "Nova {{version}}",
+      "backup": {
+        "description": "Guarda a organização do solidtime num destino, com a frequência que escolheres.",
+        "included": "Entra o export que o próprio solidtime faz (um zip): os registos de horas, os projetos, os clientes, as tarefas, as etiquetas e os membros.",
+        "notIncluded": "Precisa de um papel que possa exportar (dono ou administrador). As outras organizações não entram: liga-as à parte.",
+        "restore": "Para recuperar: no solidtime, Importar → solidtime (o mesmo zip)."
+      },
+      "connections": {
+        "title": "Ligações",
+        "permissionsTitle": "O que a ligação deixa fazer",
+        "permissionsAdmin": "O token age como o utilizador, nesta organização com o papel de dono ou administrador: chega também a criar projetos e clientes e ao export.",
+        "permissionsNotAdmin": "O token age como o utilizador, nesta organização sem papel de dono nem de administrador: regista as horas dele, mas criar projetos e clientes e o export podem não deixar.",
+        "callsTitle": "Chamadas à API do solidtime",
+        "callsSummary": "O que dá para pedir ao solidtime ({{base}}): o que o MyHomeLab já usa e o que ainda não usa.",
+        "filterLabel": "Mostrar chamadas",
+        "filter": {
+          "all": "Todas ({{count}})",
+          "used": "Usadas ({{count}})",
+          "possible": "Possíveis ({{count}})"
+        },
+        "table": {
+          "method": "Método",
+          "path": "Caminho",
+          "description": "O que faz",
+          "usedBy": "Quem usa",
+          "access": "Acesso",
+          "status": "Estado",
+          "allows": "O que deixa fazer",
+          "needed": "O MyHomeLab usa",
+          "account": "Este token"
+        },
+        "access": {
+          "public": "Público",
+          "user": "Utilizador (token)",
+          "admin": "Dono ou administrador"
+        },
+        "allows": {
+          "public": "Saber se está de pé",
+          "user": "As horas dele, o cronómetro, os relatórios e ver os projetos, os clientes, as tarefas e as etiquetas",
+          "admin": "Criar e mudar projetos, clientes, tarefas e etiquetas, os membros e o export"
+        },
+        "need": {
+          "read": "Leitura",
+          "write": "Leitura e escrita",
+          "none": "Não usa"
+        },
+        "granted": "Tem",
+        "notGranted": "Não tem",
+        "notUsed": "Ainda não usada",
+        "available": "Disponível",
+        "needsAdmin": "Precisa de dono ou administrador",
+        "usedBy": {
+          "connect": "Ligar",
+          "status": "Estado da app",
+          "backups": "Backups",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "up": "Diz se o solidtime está de pé (sem token)",
+          "me": "Quem é o token: o nome, o email, o fuso e o início da semana",
+          "memberships": "As organizações dele e o papel em cada uma",
+          "active": "O cronómetro que está a contar",
+          "entries": "Os registos de horas de um período",
+          "aggregate": "As horas somadas por dia, projeto, cliente, tarefa ou etiqueta",
+          "entryCreate": "Regista horas ou põe o cronómetro a contar",
+          "entryUpdate": "Muda um registo ou para o cronómetro",
+          "projects": "Os projetos, com o cliente e as horas gastas",
+          "clients": "Os clientes",
+          "tasks": "As tarefas dos projetos",
+          "tags": "As etiquetas",
+          "objectSave": "Cria um projeto, um cliente, uma tarefa ou uma etiqueta",
+          "objectUpdate": "Muda um projeto, um cliente, uma tarefa ou uma etiqueta",
+          "export": "O export da organização (um zip com tudo)",
+          "entryDelete": "Apaga um registo de horas",
+          "entriesExport": "Exporta os registos (CSV, PDF…)",
+          "charts": "O histórico das semanas (o gráfico do painel)",
+          "reports": "Os relatórios guardados e partilhados",
+          "goals": "As metas de horas",
+          "members": "Os membros da organização",
+          "invitations": "Convida alguém para a organização",
+          "import": "Importa dados de outro serviço (Toggl, Clockify…)"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1719,6 +1832,19 @@
     "urlPlaceholder": "https://paperless.exemplo.com",
     "token": "Token da API",
     "tokenHint": "No Paperless: o teu perfil (canto superior direito) → Perfil → Token de autenticação da API → gerar. Para os agentes mexerem na configuração, usa o de um superutilizador. Fica cifrado no MyHomeLab.",
+    "connect": "Ligar"
+  },
+  "solidtimeModal": {
+    "title": "Ligar solidtime",
+    "name": "Nome (opcional)",
+    "namePlaceholder": "Ex: Horas",
+    "url": "Endereço",
+    "urlPlaceholder": "https://solidtime.exemplo.com",
+    "token": "Token da API",
+    "tokenHint": "No solidtime: o teu perfil → Tokens da API → Criar token. Copia-o inteiro (é comprido). Fica cifrado no MyHomeLab.",
+    "organization": "Organização (opcional)",
+    "organizationPlaceholder": "Ex: A minha empresa",
+    "organizationHint": "Só se estiveres em mais do que uma: o nome da que queres ligar. Para outra, liga outra vez.",
     "connect": "Ligar"
   }
 }

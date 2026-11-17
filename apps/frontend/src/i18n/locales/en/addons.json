@@ -52,7 +52,8 @@
     "openGymConnected": "openGym connected",
     "gameTrackerConnected": "GamesTracker connected",
     "immichConnected": "Immich connected",
-    "paperlessConnected": "Paperless connected"
+    "paperlessConnected": "Paperless connected",
+    "solidtimeConnected": "solidtime connected"
   },
   "backups": {
     "title": "Backups",
@@ -1629,6 +1630,118 @@
           "logs": "The server logs"
         }
       }
+    },
+    "solidtime": {
+      "title": "solidtime",
+      "description": "Time tracking: the Timekeeper starts and stops the timer, logs forgotten hours, sums hours by project or client and organises projects.",
+      "connect": "Connect solidtime",
+      "agentsNote": "The Timekeeper uses solidtime (add it in Assistant → Workflow). For another agent, choose its tools in Workflow.",
+      "notFound": "This solidtime does not exist or was disconnected.",
+      "accountDescription": "The connection to solidtime, with a personal API token. Each connection is one organisation; the token acts as the user, with their role there.",
+      "credentialsHint": "The address, the organisation and the token. To change the token, connect again with a new one.",
+      "profile": "User",
+      "organization": "Organisation",
+      "roles": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "manager": "Manager",
+        "employee": "Employee",
+        "placeholder": "Placeholder"
+      },
+      "week": "Last 7 days",
+      "hoursValue_one": "{{count}} hour",
+      "hoursValue_other": "{{count}} hours",
+      "catalogHint": "{{projects}} projects · {{clients}} clients",
+      "timer": "Timer",
+      "timerOn": "Running",
+      "timerOff": "Stopped",
+      "timerHint": "The Timekeeper starts it when you ask.",
+      "notAdmin": "The user's role is not owner or admin: backups (the organisation export) and creating projects or clients may not work.",
+      "noVersion": "solidtime does not report its installed version, so there are no new-version alerts for it.",
+      "replaceToken": "Replace token",
+      "updateChip": "New {{version}}",
+      "backup": {
+        "description": "Saves the solidtime organisation to a destination, as often as you choose.",
+        "included": "The export solidtime itself makes (a zip): time entries, projects, clients, tasks, tags and members.",
+        "notIncluded": "Needs a role that can export (owner or admin). Other organisations are not included: connect them separately.",
+        "restore": "To restore: in solidtime, Import → solidtime (the same zip)."
+      },
+      "connections": {
+        "title": "Connections",
+        "permissionsTitle": "What the connection allows",
+        "permissionsAdmin": "The token acts as the user, in this organisation as owner or admin: it can also create projects and clients and export.",
+        "permissionsNotAdmin": "The token acts as the user, in this organisation without owner or admin role: it logs their own time, but creating projects and clients and exporting may be refused.",
+        "callsTitle": "solidtime API calls",
+        "callsSummary": "What can be asked of solidtime ({{base}}): what MyHomeLab already uses and what it does not yet.",
+        "filterLabel": "Show calls",
+        "filter": {
+          "all": "All ({{count}})",
+          "used": "Used ({{count}})",
+          "possible": "Possible ({{count}})"
+        },
+        "table": {
+          "method": "Method",
+          "path": "Path",
+          "description": "What it does",
+          "usedBy": "Used by",
+          "access": "Access",
+          "status": "Status",
+          "allows": "What it allows",
+          "needed": "MyHomeLab uses",
+          "account": "This token"
+        },
+        "access": {
+          "public": "Public",
+          "user": "User (token)",
+          "admin": "Owner or admin"
+        },
+        "allows": {
+          "public": "Whether it is up",
+          "user": "Their time, the timer, reports, and seeing projects, clients, tasks and tags",
+          "admin": "Creating and changing projects, clients, tasks and tags, members and the export"
+        },
+        "need": {
+          "read": "Read",
+          "write": "Read and write",
+          "none": "Not used"
+        },
+        "granted": "Has it",
+        "notGranted": "Does not have it",
+        "notUsed": "Not used yet",
+        "available": "Available",
+        "needsAdmin": "Needs owner or admin",
+        "usedBy": {
+          "connect": "Connect",
+          "status": "App status",
+          "backups": "Backups",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "up": "Whether solidtime is up (no token)",
+          "me": "Who the token is: name, email, time zone and week start",
+          "memberships": "Their organisations and the role in each",
+          "active": "The running timer",
+          "entries": "The time entries of a period",
+          "aggregate": "Hours summed by day, project, client, task or tag",
+          "entryCreate": "Logs time or starts the timer",
+          "entryUpdate": "Changes an entry or stops the timer",
+          "projects": "The projects, with client and time spent",
+          "clients": "The clients",
+          "tasks": "The project tasks",
+          "tags": "The tags",
+          "objectSave": "Creates a project, client, task or tag",
+          "objectUpdate": "Changes a project, client, task or tag",
+          "export": "The organisation export (a zip with everything)",
+          "entryDelete": "Deletes a time entry",
+          "entriesExport": "Exports the entries (CSV, PDF…)",
+          "charts": "The weekly history (the dashboard chart)",
+          "reports": "The saved and shared reports",
+          "goals": "The time goals",
+          "members": "The organisation members",
+          "invitations": "Invites someone to the organisation",
+          "import": "Imports data from another service (Toggl, Clockify…)"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1719,6 +1832,19 @@
     "urlPlaceholder": "https://paperless.example.com",
     "token": "API token",
     "tokenHint": "In Paperless: your profile (top right) → My Profile → API Auth Token → generate. For agents to change the configuration, use a superuser's. Stored encrypted in MyHomeLab.",
+    "connect": "Connect"
+  },
+  "solidtimeModal": {
+    "title": "Connect solidtime",
+    "name": "Name (optional)",
+    "namePlaceholder": "E.g. Hours",
+    "url": "Address",
+    "urlPlaceholder": "https://solidtime.example.com",
+    "token": "API token",
+    "tokenHint": "In solidtime: your profile → API Tokens → Create token. Copy all of it (it is long). Stored encrypted in MyHomeLab.",
+    "organization": "Organisation (optional)",
+    "organizationPlaceholder": "E.g. My company",
+    "organizationHint": "Only if you are in more than one: the name of the one to connect. For another, connect again.",
     "connect": "Connect"
   }
 }

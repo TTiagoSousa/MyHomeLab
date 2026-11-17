@@ -224,6 +224,10 @@
           "name": "Paperless (documents)",
           "description": "See and read documents (the OCR text), search, tags, correspondents, types, tasks, workflows and configuration. Changing means filing documents (one or many), adding notes, creating tags, correspondents and types, and changing the configuration (it shows what changes first). It never deletes documents."
         },
+        "solidtime": {
+          "name": "solidtime (hours)",
+          "description": "See logged time, the timer, reports by project, client or day, and projects, clients, tasks and tags. Changing means starting and stopping the timer, logging and changing time and creating or changing projects, clients, tasks and tags. It never deletes."
+        },
         "trek": {
           "name": "TREK (trips)",
           "description": "See the trips and everything in them through TREK MCP. Changing means creating, changing and (with confirmation) deleting in TREK, within the MCP client scopes."
@@ -289,6 +293,7 @@
       "gametracker": "GamesTracker",
       "immich": "Immich",
       "paperless": "Paperless",
+      "solidtime": "solidtime",
       "trek": "TREK"
     },
     "editor": {

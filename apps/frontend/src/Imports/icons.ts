@@ -37,5 +37,7 @@ export { default as OpenGym } from '../Assets/Icons/OpenGym/OpenGym';
 export { default as GameTracker } from '../Assets/Icons/GameTracker/GameTracker';
 export { default as Immich } from '../Assets/Icons/Immich/Immich';
 export { default as Paperless } from '../Assets/Icons/Paperless/Paperless';
+export { default as Solidtime } from '../Assets/Icons/Solidtime/Solidtime';
 export { default as Trek } from '../Assets/Icons/Trek/Trek';
+export { default as HomeAssistant } from '../Assets/Icons/HomeAssistant/HomeAssistant';
 export { default as Adguard } from '../Assets/Icons/Adguard/Adguard';

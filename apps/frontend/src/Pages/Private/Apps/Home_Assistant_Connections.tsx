@@ -143,7 +143,7 @@ const Home_Assistant_Connections = () => {
             <Access_Table isAdmin={isAdmin} />
           </Apps_Section>
 
-          <Apps_Section icon={<Icon.House />} title={t('apps.homeAssistant.connections.callsTitle')} description={t('apps.homeAssistant.connections.callsSummary', { base: account.appHost ?? '' })}>
+          <Apps_Section icon={<Icon.HomeAssistant />} title={t('apps.homeAssistant.connections.callsTitle')} description={t('apps.homeAssistant.connections.callsSummary', { base: account.appHost ?? '' })}>
             <div className='Gmail_Filters' role='group' aria-label={t('apps.homeAssistant.connections.filterLabel')}>
               {FILTERS.map((item) => (
                 <button key={item} type='button' className={filter === item ? 'active' : ''} aria-pressed={filter === item} onClick={() => setFilter(item)}>

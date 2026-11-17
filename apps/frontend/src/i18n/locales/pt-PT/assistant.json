@@ -224,6 +224,10 @@
           "name": "Paperless (documentos)",
           "description": "Ver e ler os documentos (o texto do OCR), procurar, as etiquetas, os correspondentes, os tipos, as tarefas, os fluxos e a configuração. Alterar é arrumar documentos (um ou vários), acrescentar notas, criar etiquetas, correspondentes e tipos, e mudar a configuração (mostra antes o que muda). Nunca apaga documentos."
         },
+        "solidtime": {
+          "name": "solidtime (horas)",
+          "description": "Ver as horas registadas, o cronómetro, os relatórios por projeto, cliente ou dia, e os projetos, clientes, tarefas e etiquetas. Alterar é pôr e parar o cronómetro, registar e mudar horas e criar ou mudar projetos, clientes, tarefas e etiquetas. Nunca apaga."
+        },
         "trek": {
           "name": "TREK (viagens)",
           "description": "Ver as viagens e tudo o que está nelas pelo MCP do TREK. Alterar é criar, mudar e (com confirmação) apagar no TREK, dentro das permissões do cliente MCP."
@@ -289,6 +293,7 @@
       "gametracker": "GamesTracker",
       "immich": "Immich",
       "paperless": "Paperless",
+      "solidtime": "solidtime",
       "trek": "TREK"
     },
     "editor": {

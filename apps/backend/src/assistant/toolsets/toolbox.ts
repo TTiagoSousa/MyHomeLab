@@ -13,6 +13,7 @@ import { buildOpenGymTools } from './opengym-tools';
 import { buildGameTrackerTools } from './gametracker-tools';
 import { buildImmichTools } from './immich-tools';
 import { buildPaperlessTools } from './paperless-tools';
+import { buildSolidtimeTools } from './solidtime-tools';
 import { buildTrekTools } from './trek-tools';
 import { buildDocsTools } from './docs-tools';
 import { buildUpdatesTools } from './updates-tools';
@@ -39,6 +40,7 @@ const TOOL_SETS: Record<
   gametracker: buildGameTrackerTools,
   immich: buildImmichTools,
   paperless: buildPaperlessTools,
+  solidtime: buildSolidtimeTools,
   trek: buildTrekTools,
   docs: buildDocsTools,
   updates: buildUpdatesTools,

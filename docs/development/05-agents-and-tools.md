@@ -93,7 +93,7 @@ export function buildTodoTools(context: AgentContext): AgentTool[] {
 
 Toolsets: `email`, `server`, `serverControl`, `serverShell`, `health`, `forgejo`,
 `homeAssistant`, `adguard`, `nextcloud`, `docs`, `updates`, `schedules`, `board`, `todos`,
-`team` (plus `trek`, `opengym`, `gametracker`, `immich`, `paperless` and others). `buildToolbox(names, context)` builds only the
+`team` (plus `trek`, `opengym`, `gametracker`, `immich`, `paperless`, `solidtime` and others). `buildToolbox(names, context)` builds only the
 toolsets an agent uses.
 
 **TREK** reaches the agent one of two ways, by AI provider: with **Claude Code** the agent gets
@@ -132,6 +132,14 @@ needs `confirm`), create or change a tag/correspondent/type/path with its auto-m
 configuration (needs `confirm`, secrets are never shown or changed). It never deletes documents. Names
 are resolved to ids. The **Archivist** template (`archivist`, under Jarvis) has them. Configuration
 and system status need a superuser's token.
+
+**solidtime** has no official MCP (a community one exists): the `solidtime_*` tools call its REST API
+(`/api/v1`, `Authorization: Bearer` with a personal token). Each connection is one organisation (the
+member id is stored in `username`). Overview, entries, report (aggregate by day/week/project/client/
+task/tag…) and the catalogue (read); start and stop the timer, log or change an entry, and create or
+change a project, client, task or tag (write). It never deletes. Times are taken and shown in the
+user's time zone (from `/users/me`) and sent in UTC. The **Timekeeper** template (`timekeeper`) has
+them. solidtime does not report its installed version, so it has no new-version alerts.
 
 ### Permissions (three layers)
 

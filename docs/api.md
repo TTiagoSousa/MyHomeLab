@@ -89,6 +89,8 @@ there too.
 | GET | `/connected-account/:id/immich-status` | JWT | Immich user, key permissions, photos, videos, disk, failed jobs, paused queues and version |
 | POST | `/connected-account/paperless` | JWT | Connect Paperless-ngx with an API token |
 | GET | `/connected-account/:id/paperless-status` | JWT | Paperless user and permissions, documents, inbox, disk, health problems, failed tasks and version |
+| POST | `/connected-account/solidtime` | JWT | Connect solidtime with a personal API token (one organisation per connection) |
+| GET | `/connected-account/:id/solidtime-status` | JWT | solidtime user, organisation and role, running timer, last 7 days, projects and clients |
 | GET | `/connected-account/:id/trek-tools` | JWT | Tools exposed by TREK's MCP server |
 | POST | `/connected-account/home-assistant` | JWT | Connect Home Assistant (admin token) |
 | GET | `/connected-account/:id/home-assistant-status` | JWT | Entities, automations, pending updates and version |

@@ -29,6 +29,9 @@ import { CreateImmichAccountDto } from './dto/create-immich-account.dto';
 import { createPaperlessAccount } from './helpers/createPaperlessAccount';
 import { refreshPaperlessAccount } from './helpers/refreshPaperlessAccount';
 import { CreatePaperlessAccountDto } from './dto/create-paperless-account.dto';
+import { createSolidtimeAccount } from './helpers/createSolidtimeAccount';
+import { refreshSolidtimeAccount } from './helpers/refreshSolidtimeAccount';
+import { CreateSolidtimeAccountDto } from './dto/create-solidtime-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { setTrekMcp } from './helpers/setTrekMcp';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
@@ -402,6 +405,32 @@ export class ConnectedAccountService {
     );
     void this.checkVersion(account);
     return account;
+  }
+
+  async createSolidtime(dto: CreateSolidtimeAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createSolidtimeAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+  }
+
+  /** O estado do solidtime (a API não diz a versão instalada: não há avisos de versão). */
+  async solidtimeStatus(id: string, userId: string) {
+    const { account, ...status } = await refreshSolidtimeAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    return { ...status, version: account.appVersion };
   }
 
   /** O estado do Paperless (utilizador do token, documentos, caixa de entrada, saúde) e a versão. */

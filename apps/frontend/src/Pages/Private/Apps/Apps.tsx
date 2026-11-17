@@ -23,6 +23,7 @@ const CATALOG: { kind: App_Kind; descriptionKey: string }[] = [
   { kind: 'GAMETRACKER', descriptionKey: 'apps.gameTracker.description' },
   { kind: 'IMMICH', descriptionKey: 'apps.immich.description' },
   { kind: 'PAPERLESS', descriptionKey: 'apps.paperless.description' },
+  { kind: 'SOLIDTIME', descriptionKey: 'apps.solidtime.description' },
   { kind: 'PROXMOX', descriptionKey: 'apps.proxmox.description' },
 ];
 

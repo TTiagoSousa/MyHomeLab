@@ -25,6 +25,7 @@ import { CreateOpenGymAccountDto } from './dto/create-opengym-account.dto';
 import { CreateGameTrackerAccountDto } from './dto/create-gametracker-account.dto';
 import { CreateImmichAccountDto } from './dto/create-immich-account.dto';
 import { CreatePaperlessAccountDto } from './dto/create-paperless-account.dto';
+import { CreateSolidtimeAccountDto } from './dto/create-solidtime-account.dto';
 import { CreateTrekAccountDto } from './dto/create-trek-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
@@ -169,6 +170,25 @@ export class ConnectedAccountController {
     @Req() req: Request & { user: JwtPayload },
   ) {
     return this.connectedAccountService.paperlessStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('solidtime')
+  connectSolidtime(
+    @Body() dto: CreateSolidtimeAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createSolidtime(dto, req.user.id);
+  }
+
+  /** O estado do solidtime agora (utilizador, organização, papel, cronómetro, horas da semana). */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/solidtime-status')
+  solidtimeStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.solidtimeStatus(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

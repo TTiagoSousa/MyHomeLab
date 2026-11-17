@@ -9,6 +9,7 @@ import { TRAVEL_PROMPT } from 'src/assistant/agents/prompts/travel.prompt';
 import { GAMES_PROMPT } from 'src/assistant/agents/prompts/games.prompt';
 import { PHOTOS_PROMPT } from 'src/assistant/agents/prompts/photos.prompt';
 import { ARCHIVIST_PROMPT } from 'src/assistant/agents/prompts/archivist.prompt';
+import { TIMEKEEPER_PROMPT } from 'src/assistant/agents/prompts/timekeeper.prompt';
 import { SMARTHOME_PROMPT } from 'src/assistant/agents/prompts/smarthome.prompt';
 import { PROXMOX_OPERATOR_PROMPT } from 'src/assistant/agents/prompts/proxmox-operator.prompt';
 import { TOOL_CATALOG, ToolGroup } from './tool-catalog';
@@ -236,6 +237,19 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     tools: [...toolsOf('paperless'), ...DOCS_READ],
     reportsTo: 'ceo',
     color: 2,
+    legacyKeys: [],
+  },
+  {
+    key: 'timekeeper',
+    name: 'Gestor de Horas',
+    description:
+      'As horas no solidtime: pôr e parar o cronómetro, registar horas esquecidas, ver e somar as horas por projeto, cliente ou dia, e arrumar projetos, clientes, tarefas e etiquetas.',
+    prompt: TIMEKEEPER_PROMPT,
+    model: 'SONNET',
+    effort: 'LOW',
+    tools: [...toolsOf('solidtime'), ...DOCS_READ],
+    reportsTo: 'ceo',
+    color: 4,
     legacyKeys: [],
   },
 ];

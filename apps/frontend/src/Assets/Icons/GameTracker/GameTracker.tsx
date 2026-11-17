@@ -1,14 +1,11 @@
-interface GameTrackerProps {
-  color?: string;
-}
-
-const GameTracker = ({ color = '#8B5CF6' }: GameTrackerProps) => (
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M6 11h4" />
-    <path d="M8 9v4" />
-    <path d="M15 12h.01" />
-    <path d="M18 10h.01" />
-    <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59l-.705 6.36A3 3 0 0 0 4.98 18.3c.98 0 1.86-.6 2.22-1.5L8 15h8l.8 1.8c.36.9 1.24 1.5 2.22 1.5a3 3 0 0 0 2.983-3.35l-.705-6.36A4 4 0 0 0 17.32 5z" />
+const GameTracker = () => (
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none">
+    <rect width="24" height="24" rx="5" fill="#0E0E12" />
+    <g transform="translate(2.4 2.4) scale(.8)">
+      <circle cx="12" cy="12" r="8" stroke="#FF8A1F" strokeWidth="2.4" />
+      <path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3" stroke="#FF8A1F" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M10 8.6v6.8a.6.6 0 0 0 .9.5l5.4-3.4a.6.6 0 0 0 0-1L10.9 8.1a.6.6 0 0 0-.9.5z" fill="#FF8A1F" />
+    </g>
   </svg>
 );
 

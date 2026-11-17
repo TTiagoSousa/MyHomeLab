@@ -37,6 +37,7 @@ export const ASSISTANT_PERMISSION_AREAS: readonly AssistantPermissionArea[] = [
   { key: 'gametracker', group: 'organization', access: ['read', 'write'] },
   { key: 'immich', group: 'organization', access: ['read', 'write'] },
   { key: 'paperless', group: 'organization', access: ['read', 'write'] },
+  { key: 'solidtime', group: 'organization', access: ['read', 'write'] },
   { key: 'servers', group: 'servers', access: ['read', 'write'] },
   { key: 'backups', group: 'servers', access: ['read', 'write'] },
   { key: 'serverControl', group: 'servers', access: ['read', 'write'] },

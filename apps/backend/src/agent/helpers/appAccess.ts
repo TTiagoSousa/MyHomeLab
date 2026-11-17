@@ -29,6 +29,7 @@ export const SET_TARGET: Partial<
   gametracker: ConnectionProvider.GAMETRACKER,
   immich: ConnectionProvider.IMMICH,
   paperless: ConnectionProvider.PAPERLESS,
+  solidtime: ConnectionProvider.SOLIDTIME,
   trek: ConnectionProvider.TREK,
   server: 'PROXMOX',
   serverControl: 'PROXMOX',

@@ -58,7 +58,7 @@ const Home_Assistant_Account = () => {
       ) : (
         <div className='Apps_list'>
           <App_Account
-            icon={<Icon.House />}
+            icon={<Icon.HomeAssistant />}
             description={t('apps.homeAssistant.accountDescription')}
             type={t('apps.homeAssistant.title')}
             name={name}

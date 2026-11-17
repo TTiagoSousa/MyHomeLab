@@ -10,4 +10,5 @@ export const APP_PAGES: Record<string, string> = {
   GAMETRACKER: '/MyHomeLab/Apps/GameTracker',
   IMMICH: '/MyHomeLab/Apps/Immich',
   PAPERLESS: '/MyHomeLab/Apps/Paperless',
+  SOLIDTIME: '/MyHomeLab/Apps/Solidtime',
 };

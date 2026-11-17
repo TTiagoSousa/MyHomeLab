@@ -23,6 +23,9 @@ export { default as ImmichConnections } from '../Pages/Private/Apps/Immich_Conne
 export { default as PaperlessAccounts } from '../Pages/Private/Apps/Paperless_Accounts';
 export { default as PaperlessAccount } from '../Pages/Private/Apps/Paperless_Account';
 export { default as PaperlessConnections } from '../Pages/Private/Apps/Paperless_Connections';
+export { default as SolidtimeAccounts } from '../Pages/Private/Apps/Solidtime_Accounts';
+export { default as SolidtimeAccount } from '../Pages/Private/Apps/Solidtime_Account';
+export { default as SolidtimeConnections } from '../Pages/Private/Apps/Solidtime_Connections';
 export { default as ForgejoAccounts } from '../Pages/Private/Apps/Forgejo_Accounts';
 export { default as ForgejoAccount } from '../Pages/Private/Apps/Forgejo_Account';
 export { default as ForgejoConnections } from '../Pages/Private/Apps/Forgejo_Connections';

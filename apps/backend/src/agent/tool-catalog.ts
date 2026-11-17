@@ -11,6 +11,7 @@ export type ToolSet =
   | 'gametracker'
   | 'immich'
   | 'paperless'
+  | 'solidtime'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -35,6 +36,7 @@ export type ToolGroup =
   | 'gametracker'
   | 'immich'
   | 'paperless'
+  | 'solidtime'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -679,6 +681,63 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'paperless',
     'write',
     'a mudar a configuração do Paperless',
+  ),
+
+  tool(
+    'solidtime_overview',
+    'solidtime',
+    'solidtime',
+    'read',
+    'a ver o solidtime',
+  ),
+  tool(
+    'solidtime_entries',
+    'solidtime',
+    'solidtime',
+    'read',
+    'a ver as horas registadas',
+  ),
+  tool(
+    'solidtime_report',
+    'solidtime',
+    'solidtime',
+    'read',
+    'a somar as horas',
+  ),
+  tool(
+    'solidtime_catalog',
+    'solidtime',
+    'solidtime',
+    'read',
+    'a ver os projetos do solidtime',
+  ),
+  tool(
+    'solidtime_start_timer',
+    'solidtime',
+    'solidtime',
+    'write',
+    'a pôr o cronómetro a contar',
+  ),
+  tool(
+    'solidtime_stop_timer',
+    'solidtime',
+    'solidtime',
+    'write',
+    'a parar o cronómetro',
+  ),
+  tool(
+    'solidtime_save_entry',
+    'solidtime',
+    'solidtime',
+    'write',
+    'a registar horas',
+  ),
+  tool(
+    'solidtime_save_object',
+    'solidtime',
+    'solidtime',
+    'write',
+    'a criar um projeto no solidtime',
   ),
 
   tool('adguard_overview', 'adguard', 'adguard', 'read', 'a ver o AdGuard'),
