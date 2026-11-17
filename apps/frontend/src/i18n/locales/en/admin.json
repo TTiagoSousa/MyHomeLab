@@ -44,5 +44,68 @@
     "nextRun": "Next run",
     "problems": "Recent warnings and errors",
     "noProblems": "No warnings or errors since startup."
+  },
+  "backup": {
+    "title": "MyHomeLab backup",
+    "description": "A copy of everything: documents and the links between them, agents and the team, tasks, services, servers, connected apps with their logins, rules and settings — and the keys that encrypt the logins. The file (.mhlbackup) is encrypted with your backup password.",
+    "download": "Create and download",
+    "creating": "Creating the backup…",
+    "downloaded": "Backup downloaded. Keep it off this server.",
+    "password": {
+      "title": "Backup password",
+      "changeTitle": "Change the backup password",
+      "hint": "Encrypts the MyHomeLab backups. Without it no backup can be restored — keep it in a password manager.",
+      "changeHint": "Backups made before still open with the old password.",
+      "label": "Password",
+      "repeat": "Repeat the password",
+      "placeholder": "At least {{count}} characters",
+      "mismatch": "The passwords do not match.",
+      "save": "Save",
+      "saved": "Backup password saved.",
+      "set": "Set password",
+      "change": "Change password",
+      "missing": "Set the backup password to be able to create backups.",
+      "setOn": "Password set on {{date}}."
+    },
+    "jobs": {
+      "description": "Automatic MyHomeLab backups to a destination (Nextcloud or this server), with a frequency and how many to keep.",
+      "included": "Everything in the database goes — documents, agents, tasks, services, connected apps (with logins and tokens), rules and settings — plus the TOKEN_ENCRYPTION_KEY, JWT_SECRET and Google keys.",
+      "notIncluded": "Not included: the Claude Code session stored on the server (sign in again in Settings → AI), and the address, port and database password (they belong to the install).",
+      "restore": "To restore: Admin → Backup → Restore a backup, or myhomelab-restore <file> in the CT."
+    },
+    "restore": {
+      "open": "Restore a backup",
+      "title": "Restore a backup",
+      "warning": "This deletes all current MyHomeLab data and puts the backup in its place, keys included. It cannot be undone from the app.",
+      "safety": "Before restoring, the server saves a dump of the current database in /var/backups/myhomelab; if anything fails, it goes back to it on its own.",
+      "file": "Backup file (.mhlbackup)",
+      "password": "Backup password",
+      "confirm": "Type {{word}} to confirm",
+      "uploading": "Uploading… {{progress}}%",
+      "checking": "Checking…",
+      "start": "Restore",
+      "from": "Backup from {{date}}",
+      "waiting": "MyHomeLab is restarting…",
+      "signIn": "Sign in again",
+      "disabled": "Restoring from the app only works on the server install; here, use myhomelab-restore.",
+      "states": {
+        "idle": "Nothing to restore",
+        "queued": "Waiting to start…",
+        "running": "Restoring…",
+        "success": "Restored. Sign in again.",
+        "failed": "The restore failed"
+      },
+      "steps": {
+        "decrypt": "Decrypting",
+        "extract": "Reading the backup",
+        "dump": "Saving the current database",
+        "database": "Restoring the database",
+        "keys": "Restoring the keys",
+        "migrate": "Applying migrations",
+        "start": "Starting MyHomeLab",
+        "rollback": "Going back to the previous data",
+        "done": "Done"
+      }
+    }
   }
 }

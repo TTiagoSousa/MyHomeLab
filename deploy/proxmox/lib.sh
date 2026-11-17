@@ -57,11 +57,12 @@ build_app() {
 # Dump da base de dados antes de uma atualização (as migrações podem apagar dados e o
 # rollback do código não os traz de volta). Fica em $BACKUP_DIR com os dumps do cron,
 # e é apagado com eles ao fim de 14 dias. Deixa o caminho em DB_DUMP.
+# O argumento opcional dá o fim do nome (por omissão before-update).
 dump_db() {
   ensure_postgres
   mkdir -p "$BACKUP_DIR"
   chmod 700 "$BACKUP_DIR"
-  DB_DUMP="$BACKUP_DIR/$DB_NAME-$(date +%Y%m%d-%H%M)-before-update.sql.gz"
+  DB_DUMP="$BACKUP_DIR/$DB_NAME-$(date +%Y%m%d-%H%M)-${1:-before-update}.sql.gz"
   msg "Saving the database to $DB_DUMP…"
   runuser -u postgres -- pg_dump --clean --if-exists "$DB_NAME" | gzip > "$DB_DUMP.tmp"
   mv "$DB_DUMP.tmp" "$DB_DUMP"
@@ -301,8 +302,34 @@ OOMPolicy=continue
 ExecStart=/usr/bin/bash ${APP_DIR}/deploy/proxmox/update.sh --from-request
 EOF
 
+  # A reposição de um backup pedida pela app (Admin → Backup): o mesmo mecanismo.
+  cat > /etc/systemd/system/myhomelab-restore.path <<EOF
+[Unit]
+Description=MyHomeLab — watch for backup restore requests from the app
+
+[Path]
+PathExists=${UPDATES_DIR}/restore-request
+Unit=myhomelab-restore.service
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  cat > /etc/systemd/system/myhomelab-restore.service <<EOF
+[Unit]
+Description=MyHomeLab — backup restore requested from the app
+
+[Service]
+Type=oneshot
+Environment=LANG=C.UTF-8 LC_ALL=C.UTF-8
+OOMScoreAdjust=-900
+OOMPolicy=continue
+ExecStart=/usr/bin/bash ${APP_DIR}/deploy/proxmox/restore.sh --from-request
+EOF
+
   systemctl daemon-reload
   systemctl enable --now myhomelab-updater.path >/dev/null 2>&1
+  systemctl enable --now myhomelab-restore.path >/dev/null 2>&1
 }
 
 # myhomelab-update / myhomelab-config. In /usr/bin and not /usr/local/bin: the shell
@@ -312,5 +339,6 @@ install_commands() {
   chmod +x "$dir"/*.sh
   ln -sf "$dir/update.sh" /usr/bin/myhomelab-update
   ln -sf "$dir/config.sh" /usr/bin/myhomelab-config
+  ln -sf "$dir/restore.sh" /usr/bin/myhomelab-restore
   rm -f /usr/local/bin/myhomelab-update /usr/local/bin/myhomelab-config
 }

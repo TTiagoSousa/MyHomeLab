@@ -62,7 +62,8 @@
       "NEXTCLOUD": "Nextcloud",
       "SMB": "USB drive or disk on the network (SMB)",
       "SFTP": "SFTP server",
-      "NFS": "NFS shared folder"
+      "NFS": "NFS shared folder",
+      "LOCAL": "This server"
     },
     "checking": "Connecting…",
     "connected": "Connected as {{user}}",
@@ -103,13 +104,15 @@
       },
       "account": "Account from connected apps",
       "accountHint": "Uses that account's address and app password; if you change them in connected apps, the backups follow.",
-      "noAccounts": "There is no Nextcloud account in connected apps yet."
+      "noAccounts": "There is no Nextcloud account in connected apps yet.",
+      "localHint": "Backups stay in a folder on the MyHomeLab server itself. It is fast, but if the server is lost they go with it: also use a destination elsewhere (Nextcloud)."
     },
     "soon": "Coming soon",
     "remove": "Remove",
     "confirmRemove": "Confirm?",
     "linkedAccount": "Connected account: {{name}}",
-    "accountDisconnected": "the account was disconnected"
+    "accountDisconnected": "the account was disconnected",
+    "localMeta": "A folder on the MyHomeLab server"
   },
   "apps": {
     "loading": "Loading…",

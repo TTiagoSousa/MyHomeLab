@@ -1469,6 +1469,7 @@ model HealthReminderSent {
 
 enum BackupDestinationKind {
   NEXTCLOUD
+  LOCAL // uma pasta no próprio servidor do MyHomeLab (BACKUP_LOCAL_DIR)
 }
 
 enum BackupRetention {
@@ -1513,9 +1514,9 @@ model BackupJob {
   id            String            @id @default(uuid())
   userId        String
   user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  // A app ligada (Apps ligadas) de onde vem o backup.
-  accountId     String
-  account       ConnectedAccount  @relation("AccountBackups", fields: [accountId], references: [id], onDelete: Cascade)
+  // A app ligada (Apps ligadas) de onde vem o backup; sem ela, é o backup do próprio MyHomeLab.
+  accountId     String?
+  account       ConnectedAccount? @relation("AccountBackups", fields: [accountId], references: [id], onDelete: Cascade)
   destinationId String
   destination   BackupDestination @relation(fields: [destinationId], references: [id], onDelete: Restrict)
   folder        String // dentro da pasta do destino, ex: Forgejo
@@ -1535,6 +1536,13 @@ model BackupJob {
 
   @@index([userId])
   @@index([accountId])
+}
+
+/// A password que cifra os backups do próprio MyHomeLab (cifrada com TOKEN_ENCRYPTION_KEY). Uma só linha.
+model InstanceBackupSetting {
+  id        String   @id @default("default")
+  password  String   @db.Text
+  updatedAt DateTime @updatedAt
 }
 
 /// Cada vez que um backup correu (ficam os últimos 30 de cada um).

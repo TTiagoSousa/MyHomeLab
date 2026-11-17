@@ -18,7 +18,7 @@ const formatDateTime = (date: string) =>
   new Date(date).toLocaleString(dateLocale(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
 interface App_Backups_Props {
-  accountId: string;
+  accountId: string | null;
   serviceName: string;
   defaultFolder: string;
   fileExample: string;

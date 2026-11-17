@@ -14,6 +14,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import {
+  BackupDestinationKind,
   BackupRetention,
   RunFrequency,
 } from 'src/generated/prisma/client/client';
@@ -24,6 +25,11 @@ const FOLDER_MESSAGE =
   'A pasta só pode ter nomes separados por "/", sem ".." nem \\ : * ? " < > |';
 
 export class CreateBackupDestinationDto {
+  /** NEXTCLOUD (por omissão) ou LOCAL — uma pasta no próprio servidor. */
+  @IsOptional()
+  @IsEnum(BackupDestinationKind)
+  kind?: BackupDestinationKind;
+
   @IsString()
   @MinLength(1)
   @MaxLength(60)
@@ -104,9 +110,10 @@ export class UpdateBackupDestinationDto {
 }
 
 export class CreateBackupJobDto {
-  /** A app ligada de onde vem o backup. */
+  /** A app ligada de onde vem o backup; sem ela, o backup do próprio MyHomeLab. */
+  @IsOptional()
   @IsUUID()
-  accountId!: string;
+  accountId?: string;
 
   @IsUUID()
   destinationId!: string;

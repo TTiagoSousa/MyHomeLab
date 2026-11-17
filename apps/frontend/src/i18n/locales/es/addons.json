@@ -62,7 +62,8 @@
       "NEXTCLOUD": "Nextcloud",
       "SMB": "Memoria USB o disco en la red (SMB)",
       "SFTP": "Servidor SFTP",
-      "NFS": "Carpeta compartida NFS"
+      "NFS": "Carpeta compartida NFS",
+      "LOCAL": "Este servidor"
     },
     "checking": "Conectando…",
     "connected": "Conectado como {{user}}",
@@ -103,13 +104,15 @@
       },
       "account": "Cuenta de apps conectadas",
       "accountHint": "Usa la dirección y la contraseña de aplicación de esa cuenta; si las cambias en apps conectadas, las copias las siguen.",
-      "noAccounts": "Aún no hay ninguna cuenta de Nextcloud en apps conectadas."
+      "noAccounts": "Aún no hay ninguna cuenta de Nextcloud en apps conectadas.",
+      "localHint": "Las copias quedan en una carpeta del propio servidor de MyHomeLab. Es rápido, pero si el servidor se pierde se pierden con él: usa también un destino fuera (Nextcloud)."
     },
     "soon": "Próximamente",
     "remove": "Quitar",
     "confirmRemove": "¿Confirmar?",
     "linkedAccount": "Cuenta conectada: {{name}}",
-    "accountDisconnected": "la cuenta se desconectó"
+    "accountDisconnected": "la cuenta se desconectó",
+    "localMeta": "Una carpeta en el servidor de MyHomeLab"
   },
   "apps": {
     "loading": "Cargando…",

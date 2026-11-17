@@ -4,11 +4,13 @@ import { NotificationModule } from 'src/notification/notification.module';
 import { BackupController } from './backup.controller';
 import { BackupScheduler } from './backup.scheduler';
 import { BackupService } from './backup.service';
+import { InstanceBackupController } from './instance-backup.controller';
+import { InstanceBackupService } from './instance-backup.service';
 
 @Module({
   imports: [NotificationModule, ConnectedAccountModule],
-  controllers: [BackupController],
-  providers: [BackupService, BackupScheduler],
+  controllers: [InstanceBackupController, BackupController],
+  providers: [BackupService, InstanceBackupService, BackupScheduler],
   exports: [BackupService],
 })
 export class BackupModule {}

@@ -5,10 +5,11 @@ import Global_Input from '../../Inputs/Global_Input/Global_Input';
 import Global_Dropdown from '../../Inputs/Global_Dropdown/Global_Dropdown';
 import { useConnectedAccounts } from '../../../Hooks/ConnectedAccount/useConnectedAccounts';
 import { accountLabel } from '../../../Hooks/ConnectedAccount/accountLabel';
-import type { BackupDestination, BackupDestinationPayload } from '../../../Hooks/Backups/backupTypes';
+import type { BackupDestination, BackupDestinationKind, BackupDestinationPayload } from '../../../Hooks/Backups/backupTypes';
 
 interface Backup_Destination_Modal_Props {
   existing: BackupDestination | null;
+  kind?: BackupDestinationKind;
   saving: boolean;
   onSave: (payload: BackupDestinationPayload) => Promise<string | null>;
   onClose: () => void;
@@ -16,12 +17,13 @@ interface Backup_Destination_Modal_Props {
 
 const GUIDE_STEPS = ['step1', 'step2', 'step3', 'step4'] as const;
 
-const Backup_Destination_Modal = ({ existing, saving, onSave, onClose }: Backup_Destination_Modal_Props) => {
+const Backup_Destination_Modal = ({ existing, kind = 'NEXTCLOUD', saving, onSave, onClose }: Backup_Destination_Modal_Props) => {
   const { t } = useTranslation('addons');
+  const isLocal = (existing?.kind ?? kind) === 'LOCAL';
   const { connectedAccounts: nextcloudAccounts, loading: loadingAccounts } = useConnectedAccounts('NEXTCLOUD');
   const [mode, setMode] = useState<'account' | 'manual' | null>(existing ? (existing.accountId ? 'account' : 'manual') : null);
   const [accountId, setAccountId] = useState(existing?.accountId ?? '');
-  const [name, setName] = useState(existing?.name ?? 'Nextcloud');
+  const [name, setName] = useState(existing?.name ?? (isLocal ? t('backups.kinds.LOCAL') : 'Nextcloud'));
   const [url, setUrl] = useState(existing?.accountId ? '' : (existing?.url ?? ''));
   const [username, setUsername] = useState(existing?.accountId ? '' : (existing?.username ?? ''));
   const [password, setPassword] = useState('');
@@ -35,16 +37,17 @@ const Backup_Destination_Modal = ({ existing, saving, onSave, onClose }: Backup_
     urlValid && username.trim().length > 0 && (existing && !existing.accountId ? true : password.trim().length > 0);
   const canSave =
     !saving &&
-    currentMode !== null &&
     name.trim().length > 0 &&
     folder.trim().length > 0 &&
-    (currentMode === 'account' ? Boolean(selectedAccount) : manualOk);
+    (isLocal || (currentMode !== null && (currentMode === 'account' ? Boolean(selectedAccount) : manualOk)));
 
   const handleSave = async () => {
     if (!canSave) return;
     setError('');
     const failure = await onSave(
-      currentMode === 'account'
+      isLocal
+        ? { kind: 'LOCAL', name: name.trim(), accountId: null, folder: folder.trim() }
+        : currentMode === 'account'
         ? { name: name.trim(), accountId: selectedAccount, folder: folder.trim() }
         : {
             name: name.trim(),
@@ -90,15 +93,18 @@ const Backup_Destination_Modal = ({ existing, saving, onSave, onClose }: Backup_
     <div className='Server_Modal_Overlay' onClick={() => !saving && onClose()}>
       <div className='Server_Modal' onClick={(e) => e.stopPropagation()}>
         <div className='Server_Modal_Head'>
-          <span className='Server_Modal_Mark'>N</span>
+          <span className='Server_Modal_Mark'>{isLocal ? 'S' : 'N'}</span>
           <div>
             <span className='Server_Modal_Title'>
               {existing ? t('backups.modal.editTitle', { name: existing.name }) : t('backups.modal.title')}
             </span>
-            <span className='Server_Modal_Kind'>{t('backups.kinds.NEXTCLOUD')}</span>
+            <span className='Server_Modal_Kind'>{t(isLocal ? 'backups.kinds.LOCAL' : 'backups.kinds.NEXTCLOUD')}</span>
           </div>
         </div>
 
+        {isLocal && <p className='Server_Modal_Hint'>{t('backups.modal.localHint')}</p>}
+
+        {!isLocal && (
         <div className='Server_Modal_Field'>
           <label>{t('backups.modal.source')}</label>
           <div className='Server_Modal_Choices'>
@@ -118,8 +124,9 @@ const Backup_Destination_Modal = ({ existing, saving, onSave, onClose }: Backup_
             <span className='Server_Modal_Hint'>{t('backups.modal.noAccounts')}</span>
           )}
         </div>
+        )}
 
-        {currentMode === 'account' && (
+        {!isLocal && currentMode === 'account' && (
           <div className='Server_Modal_Field'>
             <label>{t('backups.modal.account')}</label>
             <Global_Dropdown
@@ -132,7 +139,7 @@ const Backup_Destination_Modal = ({ existing, saving, onSave, onClose }: Backup_
           </div>
         )}
 
-        {currentMode === 'manual' && (
+        {!isLocal && currentMode === 'manual' && (
         <details className='Server_Modal_Guide' open={!existing}>
           <summary>{t('backups.modal.guide.title')}</summary>
           <ol>
@@ -149,7 +156,7 @@ const Backup_Destination_Modal = ({ existing, saving, onSave, onClose }: Backup_
           placeholder: t('backups.modal.namePlaceholder'),
         })}
 
-        {currentMode === 'manual' && (
+        {!isLocal && currentMode === 'manual' && (
           <>
             {field('backup-destination-url', t('backups.modal.url'), url, setUrl, {
               placeholder: 'https://nextcloud.exemplo.com',

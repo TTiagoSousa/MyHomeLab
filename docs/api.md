@@ -213,16 +213,21 @@ through nginx (`X-Forwarded-For` present).
 
 | Method | Path | Purpose |
 |---|---|---|
-| GET | `/backups/destinations` | List backup destinations (Nextcloud / WebDAV) |
+| GET | `/backups/destinations` | List backup destinations (Nextcloud / WebDAV, or `LOCAL` — a folder on the server) |
 | POST | `/backups/destinations` | Add a destination (tested) |
 | PATCH | `/backups/destinations/:id` | Update a destination |
 | DELETE | `/backups/destinations/:id` | Delete (409 while backups use it) |
 | GET | `/backups/destinations/:id/check` | Test a destination; reports free space |
-| GET | `/backups/jobs` | List backup jobs with recent runs (`?accountId=`) |
-| POST | `/backups/jobs` | Create a backup job for a connected app |
+| GET | `/backups/jobs` | List backup jobs with recent runs (`?accountId=`, or `?instance=1` for MyHomeLab's own) |
+| POST | `/backups/jobs` | Create a backup job for a connected app; without `accountId`, a MyHomeLab backup (admin) |
 | PATCH | `/backups/jobs/:id` | Update a job (frequency, retention, options) |
 | DELETE | `/backups/jobs/:id` | Delete a job (files already written stay) |
 | POST | `/backups/jobs/:id/run` | Run a backup now |
+| GET | `/backups/instance` | MyHomeLab backup settings: password set, restore available (admin) |
+| PUT | `/backups/instance/password` | Set the backup password (min. 10 characters; admin) |
+| POST | `/backups/instance/download` | Create a full encrypted backup and download it (`.mhlbackup`; admin) |
+| POST | `/backups/instance/restore` | Upload a backup (`file`, `password`); checks it and asks the server to restore it (202; admin) |
+| GET | `/backups/instance/restore/status` | Restore progress and log (admin) |
 
 ## Documents · `/docs`
 

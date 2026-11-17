@@ -1,0 +1,53 @@
+@use '../../../Styles/Fonts.scss' as Font;
+
+.Server_Modal_Overlay .Server_Modal.Instance_Restore_Modal{
+  .Instance_Restore_Warning{
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--danger-color);
+    border-radius: var(--ctrl-radius);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--danger-color);
+  }
+
+  .Instance_Restore_File{
+    font-size: 12.5px;
+    color: var(--text-soft);
+  }
+
+  .Server_Modal_Actions .Save_Button.danger{
+    background-color: var(--danger-color);
+    color: #fff;
+  }
+
+  .Instance_Restore_State{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border: var(--card-border);
+    border-radius: var(--ctrl-radius);
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    strong{ color: var(--text-main); }
+
+    &.success strong{ color: var(--stat-positive); }
+    &.failed strong{ color: var(--danger-color); }
+  }
+
+  .Instance_Restore_Log{
+    margin: 0;
+    max-height: 200px;
+    overflow: auto;
+    padding: 8px 10px;
+    border-radius: var(--ctrl-radius);
+    background: var(--cards-background);
+    font-family: Font.$font_family_mono;
+    font-size: 11px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    color: var(--text-soft);
+  }
+}

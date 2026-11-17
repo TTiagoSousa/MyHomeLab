@@ -42,6 +42,93 @@
     }
   }
 
+  .Admin_Backup{
+    @include Mixin.Frame_Corners;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-box-shadow);
+    background-color: var(--cards-background);
+    border: var(--card-border);
+
+    > header{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+
+      p{
+        margin: 4px 0 0;
+        max-width: 720px;
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--text-soft);
+      }
+    }
+
+    .Admin_Backup_Title{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+
+      svg{ width: 16px; height: 16px; }
+    }
+
+    .Admin_Backup_Actions{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .Admin_Backup_Actions button,
+    .Admin_Backup_Password button{
+      @include Mixin.Ghost_Button;
+      height: 34px;
+      padding: 0 12px;
+      font-size: 12.5px;
+
+      &.danger{
+        border-color: var(--danger-color);
+        color: var(--danger-color);
+      }
+    }
+
+    .Admin_Backup_Password{
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--hud-line);
+      border-radius: var(--ctrl-radius);
+      font-size: 12.5px;
+      color: var(--text-soft);
+
+      &.missing{
+        border-color: var(--danger-color);
+        color: var(--danger-color);
+      }
+    }
+
+    .Admin_Backup_Note{
+      margin: 0;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .Admin_Backup_Jobs{
+      padding: 0;
+      min-height: 0;
+    }
+  }
+
   .Admin_List{
     @include Mixin.Frame_Corners;
     display: flex;

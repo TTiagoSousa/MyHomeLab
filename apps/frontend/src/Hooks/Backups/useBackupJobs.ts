@@ -6,7 +6,7 @@ import i18n from '../../i18n';
 import type { BackupJob, BackupJobPayload, BackupRunResult } from './backupTypes';
 import { backupErrorMessage } from './useBackupDestinations';
 
-export const useBackupJobs = (accountId: string) => {
+export const useBackupJobs = (accountId: string | null) => {
   const [jobs, setJobs] = useState<BackupJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,7 +16,7 @@ export const useBackupJobs = (accountId: string) => {
   const fetchJobs = async () => {
     try {
       const response = await http.get(End_Points.Backup_Jobs_Endpoint(), {
-        params: { accountId },
+        params: accountId ? { accountId } : { instance: '1' },
         withCredentials: true,
       });
       setJobs(response.data);
@@ -37,7 +37,7 @@ export const useBackupJobs = (accountId: string) => {
       if (id) {
         await http.patch(End_Points.Backup_Job_By_Id_Endpoint(id), payload, { withCredentials: true });
       } else {
-        await http.post(End_Points.Backup_Jobs_Endpoint(), { ...payload, accountId }, { withCredentials: true });
+        await http.post(End_Points.Backup_Jobs_Endpoint(), accountId ? { ...payload, accountId } : payload, { withCredentials: true });
       }
       await fetchJobs();
       setAlert({ open: true, message: i18n.t('servers:backups.saved'), type: 'success' });

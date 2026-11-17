@@ -44,5 +44,68 @@
     "nextRun": "Próxima vez",
     "problems": "Avisos e erros recentes",
     "noProblems": "Sem avisos nem erros desde o arranque."
+  },
+  "backup": {
+    "title": "Backup do MyHomeLab",
+    "description": "Uma cópia de tudo: documentos e as ligações entre eles, agentes e a equipa, tarefas, serviços, servidores, apps ligadas com os logins, regras e definições — e as chaves que cifram os logins. O ficheiro (.mhlbackup) vai cifrado com a tua password dos backups.",
+    "download": "Criar e descarregar",
+    "creating": "A criar o backup…",
+    "downloaded": "Backup descarregado. Guarda-o fora deste servidor.",
+    "password": {
+      "title": "Password dos backups",
+      "changeTitle": "Mudar a password dos backups",
+      "hint": "Cifra os backups do MyHomeLab. Sem ela não se repõe nenhum backup — guarda-a num gestor de passwords.",
+      "changeHint": "Os backups já feitos continuam a abrir com a password antiga.",
+      "label": "Password",
+      "repeat": "Repetir a password",
+      "placeholder": "Pelo menos {{count}} caracteres",
+      "mismatch": "As passwords não são iguais.",
+      "save": "Guardar",
+      "saved": "Password dos backups guardada.",
+      "set": "Definir password",
+      "change": "Mudar password",
+      "missing": "Define a password dos backups para poderes criar backups.",
+      "setOn": "Password definida a {{date}}."
+    },
+    "jobs": {
+      "description": "Backups automáticos do MyHomeLab para um destino (Nextcloud ou neste servidor), com frequência e quantos guardar.",
+      "included": "Vai tudo o que está na base de dados — documentos, agentes, tarefas, serviços, apps ligadas (com logins e tokens), regras e definições — e as chaves TOKEN_ENCRYPTION_KEY, JWT_SECRET e as do Google.",
+      "notIncluded": "Não vão a sessão do Claude Code guardada no servidor (volta a entrar em Definições → IA), o endereço, a porta e a password da base de dados (são da instalação).",
+      "restore": "Para repor: Admin → Backup → Repor um backup, ou no CT myhomelab-restore <ficheiro>."
+    },
+    "restore": {
+      "open": "Repor um backup",
+      "title": "Repor um backup",
+      "warning": "Isto apaga todos os dados atuais do MyHomeLab e põe no lugar os do backup, incluindo as chaves. Não se desfaz pela app.",
+      "safety": "Antes de repor, o servidor guarda um dump da base de dados atual em /var/backups/myhomelab; se algo falhar, volta a ele sozinho.",
+      "file": "Ficheiro do backup (.mhlbackup)",
+      "password": "Password do backup",
+      "confirm": "Escreve {{word}} para confirmar",
+      "uploading": "A enviar… {{progress}}%",
+      "checking": "A verificar…",
+      "start": "Repor",
+      "from": "Backup de {{date}}",
+      "waiting": "O MyHomeLab está a reiniciar…",
+      "signIn": "Entrar outra vez",
+      "disabled": "Repor pela app só funciona na instalação do servidor; aqui, usa o myhomelab-restore.",
+      "states": {
+        "idle": "Nada a repor",
+        "queued": "À espera de começar…",
+        "running": "A repor…",
+        "success": "Reposto. Entra outra vez.",
+        "failed": "A reposição falhou"
+      },
+      "steps": {
+        "decrypt": "A decifrar",
+        "extract": "A ler o backup",
+        "dump": "A guardar a base de dados atual",
+        "database": "A repor a base de dados",
+        "keys": "A repor as chaves",
+        "migrate": "A aplicar as migrações",
+        "start": "A arrancar o MyHomeLab",
+        "rollback": "A voltar aos dados de antes",
+        "done": "Feito"
+      }
+    }
   }
 }

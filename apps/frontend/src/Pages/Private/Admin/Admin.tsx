@@ -8,6 +8,7 @@ import { dateLocale } from '../../../i18n';
 import { useNavigate } from 'react-router-dom';
 import * as Icon from '../../../Imports/icons';
 import Page_Help from '../../../Components/Page_Help/Page_Help';
+import Instance_Backup from './Instance_Backup';
 
 const Admin = () => {
   const { t } = useTranslation('admin');
@@ -36,6 +37,8 @@ const Admin = () => {
       </header>
 
       <Version_Card />
+
+      <Instance_Backup />
 
       <div className='Admin_List'>
         <div className='Admin_Row Admin_Row_Head'>

@@ -1,6 +1,6 @@
 import type { RunFrequency } from '@myhomelab/shared';
 
-export type BackupDestinationKind = 'NEXTCLOUD';
+export type BackupDestinationKind = 'NEXTCLOUD' | 'LOCAL';
 
 export type BackupRetention = 'REPLACE' | 'KEEP_LAST' | 'KEEP_ALL';
 
@@ -20,6 +20,7 @@ export interface BackupDestination {
 }
 
 export interface BackupDestinationPayload {
+  kind?: BackupDestinationKind;
   name: string;
   accountId: string | null;
   url?: string;
@@ -49,7 +50,7 @@ export interface BackupRun {
 
 export interface BackupJob {
   id: string;
-  accountId: string;
+  accountId: string | null;
   destinationId: string;
   folder: string;
   runFrequency: RunFrequency;
@@ -59,7 +60,7 @@ export interface BackupJob {
   lastRunAt: string | null;
   lastSuccessAt: string | null;
   lastError: string | null;
-  account: { id: string; provider: string; displayName: string | null; username: string | null; baseUrl: string | null };
+  account: { id: string; provider: string; displayName: string | null; username: string | null; baseUrl: string | null } | null;
   destination: { id: string; name: string; kind: BackupDestinationKind; folder: string };
   runs: BackupRun[];
 }

@@ -9,6 +9,7 @@ import { RUN_FREQUENCY_INTERVAL_MS } from '@myhomelab/shared';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   BackupDestination,
+  BackupDestinationKind,
   BackupRunStatus,
   ConnectionProvider,
   NotificationKind,
@@ -29,6 +30,15 @@ import { backupFileName } from './helpers/backupFileName';
 import { BACKUP_SOURCES } from './helpers/backupSources';
 import { backupsToDelete } from './helpers/backupsToDelete';
 import { createNextcloudFiles, joinPath } from './helpers/nextcloudFiles';
+import { createLocalFiles } from './helpers/localFiles';
+import { InstanceBackupService } from './instance-backup.service';
+
+/** O backup do próprio MyHomeLab (um BackupJob sem app ligada). */
+const INSTANCE_SOURCE = {
+  prefix: 'myhomelab',
+  extension: 'mhlbackup',
+  name: 'MyHomeLab',
+} as const;
 
 /** Quantas execuções de cada backup ficam no histórico. */
 const RUNS_KEPT = 30;
@@ -94,11 +104,16 @@ const errorMessage = (error: unknown) => {
 const nextcloudBase = (caldavUrl: string) =>
   caldavUrl.replace(/\/remote\.php\/.*$/i, '').replace(/\/+$/, '');
 
-const accountName = (account: {
-  displayName: string | null;
-  username: string | null;
-  provider: ConnectionProvider;
-}) => account.displayName ?? account.username ?? account.provider;
+const accountName = (
+  account: {
+    displayName: string | null;
+    username: string | null;
+    provider: ConnectionProvider;
+  } | null,
+) =>
+  account
+    ? (account.displayName ?? account.username ?? account.provider)
+    : INSTANCE_SOURCE.name;
 
 /**
  * Os backups: destinos (o Nextcloud, por WebDAV — a conta de Apps ligadas ou
@@ -115,6 +130,7 @@ export class BackupService {
     private readonly prisma: PrismaService,
     private readonly notifications: NotificationService,
     private readonly accounts: PrismaConnectedAccountRepository,
+    private readonly instance: InstanceBackupService,
   ) {}
 
   // ── Destinos ─────────────────────────────────────────────────────────────
@@ -147,6 +163,19 @@ export class BackupService {
    */
   async createDestination(userId: string, dto: CreateBackupDestinationDto) {
     const folder = joinPath(dto.folder ?? 'backups');
+    if (dto.kind === BackupDestinationKind.LOCAL) {
+      await this.assertNextcloud(createLocalFiles(), folder);
+      return this.prisma.backupDestination.create({
+        data: {
+          userId,
+          kind: BackupDestinationKind.LOCAL,
+          name: dto.name.trim(),
+          folder,
+          lastCheckedAt: new Date(),
+        },
+        select: { id: true },
+      });
+    }
     const credentials = await this.destinationCredentials(userId, dto, null);
     await this.assertNextcloud(credentials.files, folder);
     return this.prisma.backupDestination.create({
@@ -168,6 +197,19 @@ export class BackupService {
   ) {
     const current = await this.findDestination(userId, id);
     const folder = joinPath(dto.folder ?? current.folder);
+    if (current.kind === BackupDestinationKind.LOCAL) {
+      await this.assertNextcloud(createLocalFiles(), folder);
+      await this.prisma.backupDestination.update({
+        where: { id },
+        data: {
+          name: dto.name?.trim() ?? current.name,
+          folder,
+          lastCheckedAt: new Date(),
+          lastError: null,
+        },
+      });
+      return { id };
+    }
     const credentials = await this.destinationCredentials(userId, dto, current);
     await this.assertNextcloud(credentials.files, folder);
 
@@ -302,28 +344,41 @@ export class BackupService {
 
   // ── Backups ──────────────────────────────────────────────────────────────
 
-  async jobs(userId: string, accountId?: string) {
+  /** `accountId` — só os de uma app; `instance` — só os do próprio MyHomeLab. */
+  async jobs(userId: string, accountId?: string, instance = false) {
     return this.prisma.backupJob.findMany({
-      where: { userId, ...(accountId ? { accountId } : {}) },
+      where: {
+        userId,
+        ...(instance ? { accountId: null } : accountId ? { accountId } : {}),
+      },
       orderBy: { createdAt: 'asc' },
       include: JOB_INCLUDE,
     });
   }
 
-  async createJob(userId: string, dto: CreateBackupJobDto) {
-    const account = await this.accounts.findById(dto.accountId);
-    if (!account || account.userId !== userId || account.disconnectedAt) {
-      throw new NotFoundException('App ligada não encontrada');
-    }
-    if (!BACKUP_SOURCES[account.provider]) {
-      throw new BadRequestException('Esta app ainda não tem backups.');
+  /** Sem `accountId`, um backup do próprio MyHomeLab (só administradores). */
+  async createJob(userId: string, dto: CreateBackupJobDto, isAdmin = false) {
+    let accountId: string | null = null;
+    if (dto.accountId) {
+      const account = await this.accounts.findById(dto.accountId);
+      if (!account || account.userId !== userId || account.disconnectedAt) {
+        throw new NotFoundException('App ligada não encontrada');
+      }
+      if (!BACKUP_SOURCES[account.provider]) {
+        throw new BadRequestException('Esta app ainda não tem backups.');
+      }
+      accountId = account.id;
+    } else if (!isAdmin) {
+      throw new BadRequestException(
+        'Só um administrador faz backups do MyHomeLab.',
+      );
     }
     await this.findDestination(userId, dto.destinationId);
 
     return this.prisma.backupJob.create({
       data: {
         userId,
-        accountId: account.id,
+        accountId,
         destinationId: dto.destinationId,
         folder: joinPath(dto.folder),
         runFrequency: dto.runFrequency,
@@ -409,24 +464,34 @@ export class BackupService {
       where: { id },
       include: { destination: true },
     });
-    const account = await this.accounts.findById(job.accountId);
+    const isInstance = !job.accountId;
+    const account = job.accountId
+      ? await this.accounts.findById(job.accountId)
+      : null;
     const startedAt = new Date();
     const source = account ? BACKUP_SOURCES[account.provider] : undefined;
-    const prefix = source?.prefix ?? 'backup';
+    const prefix = isInstance
+      ? INSTANCE_SOURCE.prefix
+      : (source?.prefix ?? 'backup');
+    const extension = isInstance
+      ? INSTANCE_SOURCE.extension
+      : (source?.extension ?? 'json');
     const folder = joinPath(job.destination.folder, job.folder);
     let result: BackupRunResult;
 
     try {
-      if (!account || !source) {
+      if (!isInstance && (!account || !source)) {
         throw new Error('Esta app não sabe fazer backups.');
       }
       const files = await this.filesFor(job.destination);
       const { userId: davUser } = await files.account();
-      const fileName = backupFileName(prefix, startedAt, source.extension);
+      const fileName = backupFileName(prefix, startedAt, extension);
       // A pasta primeiro: se não existir (ou tiver sido apagada), é criada.
       await files.ensureFolder(davUser, folder);
 
-      const backup = await source.create(account, job.options);
+      const backup = isInstance
+        ? await this.instance.create()
+        : await source!.create(account!, job.options);
       try {
         await files.upload(
           davUser,
@@ -482,9 +547,9 @@ export class BackupService {
       await this.notifications.openUserSubject({
         userId: job.userId,
         subject: `backup:${job.id}`,
-        connectedAccountId: job.accountId,
+        connectedAccountId: job.accountId ?? undefined,
         kind: NotificationKind.BACKUP_FAILED,
-        title: `O backup de ${account ? accountName(account) : 'uma app'} falhou`,
+        title: `O backup de ${isInstance ? INSTANCE_SOURCE.name : account ? accountName(account) : 'uma app'} falhou`,
         message: `Não foi possível guardar o backup em ${job.destination.name} (${folder}): ${result.error}`,
       });
     }
@@ -535,7 +600,10 @@ export class BackupService {
   }
 
   private async assertNextcloud(
-    files: ReturnType<typeof createNextcloudFiles>,
+    files: Pick<
+      ReturnType<typeof createNextcloudFiles>,
+      'account' | 'ensureFolder'
+    >,
     folder: string,
   ) {
     try {
@@ -548,6 +616,9 @@ export class BackupService {
 
   /** As credenciais do destino: as da conta de Apps ligadas, ou as próprias. */
   private async filesFor(destination: BackupDestination) {
+    if (destination.kind === BackupDestinationKind.LOCAL) {
+      return createLocalFiles();
+    }
     if (destination.accountId) {
       const account = await this.nextcloudAccount(
         destination.userId,

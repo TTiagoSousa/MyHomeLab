@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBackupDestinations } from '../../../Hooks/Backups/useBackupDestinations';
-import type { BackupDestination, BackupDestinationCheck } from '../../../Hooks/Backups/backupTypes';
+import type { BackupDestination, BackupDestinationCheck, BackupDestinationKind } from '../../../Hooks/Backups/backupTypes';
 import { BACKUP_DESTINATION_KINDS } from '../../../Constants/backupDestinationKinds';
 import Backup_Destination_Modal from '../../../Components/Modals/Backup_Destination_Modal/Backup_Destination_Modal';
 import Add_Menu from '../../../Components/Add_Menu/Add_Menu';
@@ -39,12 +39,14 @@ const Destination_Row = ({ destination, confirmingRemove, checkDestination, onEd
 
       <div className='Apps_pair_info'>
         <span className='Apps_pair_title'>
-          {destination.name} · {t('backups.kinds.NEXTCLOUD')}
+          {destination.name} · {t(`backups.kinds.${destination.kind}`)}
         </span>
         <span className='Apps_pair_meta'>
-          {destination.account
-            ? t('backups.linkedAccount', { name: destination.account.name ?? destination.username })
-            : [destination.url, destination.username].filter(Boolean).join(' · ')}{' '}
+          {destination.kind === 'LOCAL'
+            ? t('backups.localMeta')
+            : destination.account
+              ? t('backups.linkedAccount', { name: destination.account.name ?? destination.username })
+              : [destination.url, destination.username].filter(Boolean).join(' · ')}{' '}
           · /{destination.folder}
           {destination.account?.disconnected && ` · ${t('backups.accountDisconnected')}`}
         </span>
@@ -72,7 +74,7 @@ const Destination_Row = ({ destination, confirmingRemove, checkDestination, onEd
 const Apps_Backups = () => {
   const { t } = useTranslation('addons');
   const { destinations, loading, saving, saveDestination, removeDestination, checkDestination } = useBackupDestinations();
-  const [editing, setEditing] = useState<{ destination: BackupDestination | null } | null>(null);
+  const [editing, setEditing] = useState<{ destination: BackupDestination | null; kind?: BackupDestinationKind } | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
 
   const menuOptions = BACKUP_DESTINATION_KINDS.map((kind) => ({
@@ -106,7 +108,7 @@ const Apps_Backups = () => {
           title={t('backups.menuLabel')}
           soonLabel={t('backups.soon')}
           options={menuOptions}
-          onSelect={() => setEditing({ destination: null })}
+          onSelect={(kind) => setEditing({ destination: null, kind: kind === 'LOCAL' ? 'LOCAL' : 'NEXTCLOUD' })}
         />
       </header>
 
@@ -133,6 +135,7 @@ const Apps_Backups = () => {
       {editing && (
         <Backup_Destination_Modal
           existing={editing.destination}
+          kind={editing.kind}
           saving={saving}
           onSave={(payload) => saveDestination(payload, editing.destination?.id)}
           onClose={() => setEditing(null)}

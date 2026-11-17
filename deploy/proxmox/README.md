@@ -187,6 +187,20 @@ gunzip -c /var/backups/myhomelab/<ficheiro>.sql.gz | runuser -u postgres -- psql
 O backup do Proxmox (vzdump) apanha o container inteiro, mas um snapshot com o Postgres
 a correr nem sempre é consistente — o dump diário é o que garante a base de dados.
 
+### Backup completo do MyHomeLab
+
+Em **Admin → Backup** define-se a password dos backups e cria-se um backup completo
+(`myhomelab-<data>.mhlbackup`, cifrado): a base de dados inteira e as chaves que leem os logins
+guardados. Descarrega-se, ou agenda-se para o Nextcloud ou para uma pasta do próprio CT
+(destino "Neste servidor"). Repõe-se pela app (Admin → Backup → Repor um backup) ou aqui:
+
+```bash
+myhomelab-restore /root/myhomelab-2026-11-17_030000.mhlbackup   # pede a password e RESTORE
+```
+
+Para passar para um CT novo: instala-o (`ct-create.sh`) e corre o `myhomelab-restore` com o
+backup. Antes de repor guarda-se um dump da base de dados atual; se algo falhar, volta a ele.
+
 ## Utilizadores
 
 O instalador cria o primeiro utilizador (ADMIN, por omissão `admin`/`admin`). A partir daí o registo público está

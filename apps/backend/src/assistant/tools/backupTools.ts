@@ -37,7 +37,9 @@ const retentionText = (job: BackupJobView) => {
 };
 
 const jobName = (job: BackupJobView) =>
-  job.account.displayName ?? job.account.username ?? job.account.provider;
+  job.account
+    ? (job.account.displayName ?? job.account.username ?? job.account.provider)
+    : 'MyHomeLab';
 
 function describeJob(job: BackupJobView): string {
   const last = job.runs[0];

@@ -14,6 +14,7 @@ import {
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { JwtPayload } from 'src/auth/jwt-payload.interface';
+import { Role } from 'src/generated/prisma/client/client';
 import { BackupService } from './backup.service';
 import {
   CreateBackupDestinationDto,
@@ -63,18 +64,23 @@ export class BackupController {
     return this.backups.checkDestination(req.user.id, id);
   }
 
-  /** `?accountId=` — só os backups de uma app ligada. */
+  /** `?accountId=` — só os backups de uma app ligada; `?instance=1` — só os do MyHomeLab. */
   @Get('jobs')
   jobs(
     @Query('accountId') accountId: string | undefined,
+    @Query('instance') instance: string | undefined,
     @Req() req: AuthedRequest,
   ) {
-    return this.backups.jobs(req.user.id, accountId);
+    return this.backups.jobs(req.user.id, accountId, instance === '1');
   }
 
   @Post('jobs')
   createJob(@Body() dto: CreateBackupJobDto, @Req() req: AuthedRequest) {
-    return this.backups.createJob(req.user.id, dto);
+    return this.backups.createJob(
+      req.user.id,
+      dto,
+      req.user.role === Role.ADMIN,
+    );
   }
 
   @Patch('jobs/:id')

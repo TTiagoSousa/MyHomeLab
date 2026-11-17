@@ -44,5 +44,68 @@
     "nextRun": "Próxima vez",
     "problems": "Avisos y errores recientes",
     "noProblems": "Sin avisos ni errores desde el arranque."
+  },
+  "backup": {
+    "title": "Copia de seguridad de MyHomeLab",
+    "description": "Una copia de todo: documentos y los enlaces entre ellos, agentes y el equipo, tareas, servicios, servidores, apps conectadas con sus accesos, reglas y ajustes — y las claves que cifran los accesos. El archivo (.mhlbackup) va cifrado con tu contraseña de copias.",
+    "download": "Crear y descargar",
+    "creating": "Creando la copia…",
+    "downloaded": "Copia descargada. Guárdala fuera de este servidor.",
+    "password": {
+      "title": "Contraseña de las copias",
+      "changeTitle": "Cambiar la contraseña de las copias",
+      "hint": "Cifra las copias de MyHomeLab. Sin ella no se puede restaurar ninguna copia — guárdala en un gestor de contraseñas.",
+      "changeHint": "Las copias ya hechas siguen abriéndose con la contraseña anterior.",
+      "label": "Contraseña",
+      "repeat": "Repetir la contraseña",
+      "placeholder": "Al menos {{count}} caracteres",
+      "mismatch": "Las contraseñas no coinciden.",
+      "save": "Guardar",
+      "saved": "Contraseña de las copias guardada.",
+      "set": "Definir contraseña",
+      "change": "Cambiar contraseña",
+      "missing": "Define la contraseña de las copias para poder crear copias.",
+      "setOn": "Contraseña definida el {{date}}."
+    },
+    "jobs": {
+      "description": "Copias automáticas de MyHomeLab a un destino (Nextcloud o este servidor), con frecuencia y cuántas guardar.",
+      "included": "Va todo lo que está en la base de datos — documentos, agentes, tareas, servicios, apps conectadas (con accesos y tokens), reglas y ajustes — y las claves TOKEN_ENCRYPTION_KEY, JWT_SECRET y las de Google.",
+      "notIncluded": "No van la sesión de Claude Code guardada en el servidor (vuelve a entrar en Ajustes → IA), ni la dirección, el puerto y la contraseña de la base de datos (son de la instalación).",
+      "restore": "Para restaurar: Admin → Copia de seguridad → Restaurar una copia, o myhomelab-restore <archivo> en el CT."
+    },
+    "restore": {
+      "open": "Restaurar una copia",
+      "title": "Restaurar una copia",
+      "warning": "Esto borra todos los datos actuales de MyHomeLab y pone en su lugar los de la copia, claves incluidas. No se puede deshacer desde la app.",
+      "safety": "Antes de restaurar, el servidor guarda un volcado de la base de datos actual en /var/backups/myhomelab; si algo falla, vuelve a él solo.",
+      "file": "Archivo de la copia (.mhlbackup)",
+      "password": "Contraseña de la copia",
+      "confirm": "Escribe {{word}} para confirmar",
+      "uploading": "Enviando… {{progress}}%",
+      "checking": "Comprobando…",
+      "start": "Restaurar",
+      "from": "Copia del {{date}}",
+      "waiting": "MyHomeLab se está reiniciando…",
+      "signIn": "Entrar de nuevo",
+      "disabled": "Restaurar desde la app solo funciona en la instalación del servidor; aquí, usa myhomelab-restore.",
+      "states": {
+        "idle": "Nada que restaurar",
+        "queued": "Esperando para empezar…",
+        "running": "Restaurando…",
+        "success": "Restaurado. Entra de nuevo.",
+        "failed": "La restauración falló"
+      },
+      "steps": {
+        "decrypt": "Descifrando",
+        "extract": "Leyendo la copia",
+        "dump": "Guardando la base de datos actual",
+        "database": "Restaurando la base de datos",
+        "keys": "Restaurando las claves",
+        "migrate": "Aplicando las migraciones",
+        "start": "Arrancando MyHomeLab",
+        "rollback": "Volviendo a los datos anteriores",
+        "done": "Hecho"
+      }
+    }
   }
 }
