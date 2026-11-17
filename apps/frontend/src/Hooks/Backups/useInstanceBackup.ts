@@ -13,7 +13,7 @@ export interface InstanceBackupSettings {
 }
 
 const fileNameFrom = (disposition: string | undefined) =>
-  /filename="([^"]+)"/.exec(disposition ?? '')?.[1] ?? 'myhomelab.mhlbackup';
+  /filename="([^"]+)"/.exec(disposition ?? '')?.[1] ?? 'myhomelab.zip';
 
 const saveFile = (data: Blob, name: string) => {
   const url = URL.createObjectURL(data);

@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
-# Repõe um backup do MyHomeLab: a base de dados inteira e as chaves (TOKEN_ENCRYPTION_KEY,
-# JWT_SECRET, Google). Tudo o que existe agora é substituído pelo que está no backup.
+# Repõe um backup do MyHomeLab (o .zip com uma pasta por área, de Admin → Backup): todos
+# os dados e as chaves (TOKEN_ENCRYPTION_KEY, JWT_SECRET, Google). Tudo o que existe agora
+# é substituído pelo que está no backup.
 #
-#   myhomelab-restore <ficheiro.mhlbackup>   no CT, como root (pede a password)
-#   restore.sh --from-request                pedido pela app (Admin → Backup → Repor): a app
-#                                            já decifrou e validou o ficheiro para
-#                                            $UPDATES_DIR/restore/backup.tar
+#   myhomelab-restore <backup.zip>      no CT, como root (pede a password do backup)
+#   restore.sh --from-request           pedido pela app (Admin → Backup → Repor): a app já
+#                                       confirmou a password e deixou o .zip e a password em
+#                                       $UPDATES_DIR/restore/
 #
 # Antes de mexer guarda um dump da base de dados atual e uma cópia do .env; se um passo
-# falhar, volta a eles. Depois de repor aplica as migrações (um backup de uma versão mais
-# antiga fica atualizado). O progresso vai para restore-status.json e o output para restore.log.
+# falhar, volta a eles. Os dados entram pelo backend (dist/src/cli/backup-tool.js import),
+# tabela a tabela, a partir dos .jsonl do backup. O progresso vai para restore-status.json
+# e o output para restore.log.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
@@ -24,6 +26,7 @@ cd "$APP_DIR"
 
 STATUS_FILE="$UPDATES_DIR/restore-status.json"
 LOG_FILE="$UPDATES_DIR/restore.log"
+REQUEST_DIR="$UPDATES_DIR/restore"
 TOOL="$APP_DIR/apps/backend/dist/src/cli/backup-tool.js"
 BACKUP_CREATED_AT=""
 STARTED_AT="$(date -Is)"
@@ -55,63 +58,65 @@ flock -n 9 || die "An update or a restore is already running."
 
 WORK="$(mktemp -d /var/tmp/myhomelab-restore.XXXXXX)"
 chmod 700 "$WORK"
-REQUEST_TAR=""
+FROM_REQUEST=0
 cleanup() {
   rm -rf "$WORK"
-  if [ -n "$REQUEST_TAR" ]; then rm -f "$REQUEST_TAR"; fi
+  if [ "$FROM_REQUEST" = 1 ]; then rm -rf "$REQUEST_DIR"; fi
 }
 trap cleanup EXIT
+
+[ -f "$TOOL" ] || die "Missing $TOOL — build the backend first (myhomelab-update)."
 
 if [ "${1:-}" = "--from-request" ]; then
   [ -f "$UPDATES_DIR/restore-request" ] || exit 0
   request="$(tr -d '[:space:]' < "$UPDATES_DIR/restore-request")"
   # Apagado logo: enquanto existir, a unit .path volta a disparar.
   rm -f "$UPDATES_DIR/restore-request"
+  FROM_REQUEST=1
   : > "$LOG_FILE"
   chmod 644 "$LOG_FILE"
   exec > >(tee -a "$LOG_FILE") 2>&1
-  if [ "$request" != "restore/backup.tar" ] || [ ! -f "$UPDATES_DIR/$request" ]; then
+  if [ "$request" != "restore/backup.zip" ] || [ ! -f "$REQUEST_DIR/backup.zip" ] || [ ! -f "$REQUEST_DIR/password" ]; then
     status failed request "Invalid restore request"
     die "Invalid restore request: '$request'"
   fi
-  REQUEST_TAR="$UPDATES_DIR/$request"
-  TAR="$REQUEST_TAR"
+  ZIP="$REQUEST_DIR/backup.zip"
+  MYHOMELAB_BACKUP_PASSWORD="$(cat "$REQUEST_DIR/password")"
+  rm -f "$REQUEST_DIR/password"
 else
-  FILE="${1:-}"
-  if [ -z "$FILE" ] || [ ! -f "$FILE" ]; then
-    die "Usage: myhomelab-restore <file.mhlbackup>"
+  ZIP="${1:-}"
+  if [ -z "$ZIP" ] || [ ! -f "$ZIP" ]; then
+    die "Usage: myhomelab-restore <backup.zip>"
   fi
-  [ -f "$TOOL" ] || die "Missing $TOOL — build the backend first (myhomelab-update)."
   if [ -z "${MYHOMELAB_BACKUP_PASSWORD:-}" ]; then
     read -rsp "Backup password: " MYHOMELAB_BACKUP_PASSWORD
     echo
   fi
-  export MYHOMELAB_BACKUP_PASSWORD
+fi
+export MYHOMELAB_BACKUP_PASSWORD
+
+status running check "Reading the backup"
+if ! summary="$(node "$TOOL" check "$ZIP" 2>&1)"; then
+  status failed check "$summary"
+  die "$summary"
+fi
+BACKUP_CREATED_AT="$(printf '%s' "$summary" | sed -n 's/^Backup from \([^ ]*\).*/\1/p')"
+msg "$summary"
+
+if [ "$FROM_REQUEST" = 0 ]; then
   warn "This replaces ALL MyHomeLab data (and its keys) with the backup."
   read -rp "Type RESTORE to continue: " answer
   [ "$answer" = "RESTORE" ] || die "Cancelled."
   : > "$LOG_FILE"
   chmod 644 "$LOG_FILE"
   exec > >(tee -a "$LOG_FILE") 2>&1
-  TAR="$WORK/backup.tar"
-  status running decrypt "Decrypting the backup"
-  msg "Decrypting $FILE…"
-  node "$TOOL" decrypt "$FILE" "$TAR" || { status failed decrypt "Wrong password or not a MyHomeLab backup"; die "Could not decrypt the backup."; }
 fi
-
-status running extract "Reading the backup"
-mkdir -p "$WORK/backup"
-tar -xf "$TAR" -C "$WORK/backup"
-for entry in manifest.json database.sql secrets.env; do
-  [ -f "$WORK/backup/$entry" ] || { status failed extract "The backup is incomplete ($entry missing)"; die "The backup has no $entry."; }
-done
-BACKUP_CREATED_AT="$(sed -n 's/.*"createdAt": *"\([^"]*\)".*/\1/p' "$WORK/backup/manifest.json" | head -1)"
-msg "Backup from ${BACKUP_CREATED_AT:-an unknown date}."
 
 STEP=""
 REPLACED=0
 DB_DUMP=""
 ENV_BEFORE="$WORK/env.before"
+KEYS="$WORK/keys.env"
 rollback() {
   trap - ERR
   set +e
@@ -138,17 +143,14 @@ step dump "Saving the current database"
 dump_db before-restore
 cp "$ENV_FILE" "$ENV_BEFORE"
 
-step database "Restoring the database"
+step database "Restoring the data"
 load_env
 systemctl stop "$SERVICE"
 REPLACED=1
-runuser -u postgres -- dropdb --if-exists --force "$DB_NAME"
-runuser -u postgres -- createdb -O "$DB_USER" "$DB_NAME"
-# Como o utilizador da app: as tabelas ficam dele (o dump vem sem donos).
-psql "${DATABASE_URL%%\?*}" -q -v ON_ERROR_STOP=1 -f "$WORK/backup/database.sql" > /dev/null
+node "$TOOL" import "$ZIP" "$KEYS"
 
 step keys "Restoring the keys"
-node "$TOOL" merge-env "$WORK/backup/secrets.env" "$ENV_FILE"
+node "$TOOL" merge-env "$KEYS" "$ENV_FILE"
 
 step migrate "Applying database migrations"
 migrate_db

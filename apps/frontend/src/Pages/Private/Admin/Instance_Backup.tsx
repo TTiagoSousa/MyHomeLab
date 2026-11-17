@@ -55,7 +55,7 @@ const Instance_Backup = () => {
             accountId={null}
             serviceName='MyHomeLab'
             defaultFolder='MyHomeLab'
-            fileExample='myhomelab-2026-11-17_030000.mhlbackup'
+            fileExample='myhomelab-2026-11-17_030000.zip'
             textKey='admin:backup.jobs'
           />
         </div>

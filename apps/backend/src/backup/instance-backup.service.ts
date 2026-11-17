@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { promises as fs } from 'fs';
@@ -10,20 +11,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { decryptToken, encryptToken } from 'src/utils/crypto/token-cipher';
 import { getInstalledVersion } from 'src/system/helpers/getInstalledVersion';
 import { updatesDir } from 'src/system/helpers/updateFiles';
-import {
-  BackupFormatError,
-  BackupPasswordError,
-  decryptBackup,
-} from './helpers/backupCipher';
 import { BackupFile } from './helpers/backupSources';
 import {
   createInstanceBackup,
-  INSTANCE_BACKUP_FORMAT,
+  InstanceBackupError,
   InstanceBackupManifest,
   knownMigrations,
 } from './helpers/instanceBackup';
+import {
+  BackupFormatError,
+  BackupPasswordError,
+  readBackupManifest,
+} from './helpers/instanceImport';
 import { localBackupRoot } from './helpers/localFiles';
-import { readTarEntry } from './helpers/readTarEntry';
 
 export type RestoreState = 'idle' | 'queued' | 'running' | 'success' | 'failed';
 
@@ -104,15 +104,22 @@ export class InstanceBackupService {
     return rows[0]?.migration_name ?? null;
   }
 
-  /** O ficheiro .mhlbackup, cifrado com a password guardada. */
+  /** O .zip com uma pasta por área, com a password guardada. */
   async create(): Promise<BackupFile> {
     const password = await this.password();
     const installed = await getInstalledVersion();
-    return createInstanceBackup({
-      password,
-      version: installed.version ?? installed.baseVersion,
-      migration: await this.lastMigration(),
-    });
+    try {
+      return await createInstanceBackup({
+        password,
+        version: installed.version ?? installed.baseVersion,
+        migration: await this.lastMigration(),
+      });
+    } catch (error) {
+      if (!(error instanceof InstanceBackupError)) throw error;
+      throw error.unavailable
+        ? new ServiceUnavailableException(error.message)
+        : new InternalServerErrorException(error.message);
+    }
   }
 
   // ── Repor ────────────────────────────────────────────────────────────────
@@ -128,8 +135,8 @@ export class InstanceBackupService {
   }
 
   /**
-   * Decifra o ficheiro enviado, confirma que é um backup que esta versão sabe repor
-   * e pede a reposição. O ficheiro enviado é apagado no fim, corra bem ou não.
+   * Abre o .zip enviado com a password, confirma que é um backup que esta versão sabe
+   * repor e pede a reposição. O ficheiro enviado é apagado no fim, corra bem ou não.
    */
   async requestRestore(uploadPath: string, password: string) {
     const dir = this.restoreDir();
@@ -150,13 +157,10 @@ export class InstanceBackupService {
         );
       }
 
-      const folder = join(dir, 'restore');
-      await fs.mkdir(folder, { recursive: true, mode: 0o700 });
-      const tarPath = join(folder, 'backup.tar');
+      let manifest: InstanceBackupManifest;
       try {
-        await decryptBackup(uploadPath, tarPath, password);
+        manifest = await readBackupManifest(uploadPath, password);
       } catch (error) {
-        await fs.rm(tarPath, { force: true });
         if (
           error instanceof BackupPasswordError ||
           error instanceof BackupFormatError
@@ -165,10 +169,24 @@ export class InstanceBackupService {
         }
         throw error;
       }
+      const known = await knownMigrations();
+      if (
+        manifest.migration &&
+        known.length > 0 &&
+        !known.includes(manifest.migration)
+      ) {
+        throw new BadRequestException(
+          `Este backup${manifest.version ? ` (${manifest.version})` : ''} é de uma versão mais recente do que a instalada. Atualiza o MyHomeLab primeiro e depois repõe.`,
+        );
+      }
 
-      const manifest = await this.readManifest(tarPath);
+      // O restore.sh (root) lê o .zip e a password daqui e apaga-os no fim.
+      const folder = join(dir, 'restore');
+      await fs.mkdir(folder, { recursive: true, mode: 0o700 });
+      await fs.copyFile(uploadPath, join(folder, 'backup.zip'));
+      await fs.writeFile(join(folder, 'password'), password, { mode: 0o600 });
       const written = join(dir, `.restore-request-${process.pid}`);
-      await fs.writeFile(written, 'restore/backup.tar\n', { mode: 0o644 });
+      await fs.writeFile(written, 'restore/backup.zip\n', { mode: 0o644 });
       await fs.rename(written, join(dir, 'restore-request'));
       return {
         ...(await this.restoreStatus(0)),
@@ -177,44 +195,6 @@ export class InstanceBackupService {
     } finally {
       await fs.rm(uploadPath, { force: true });
     }
-  }
-
-  private async readManifest(tarPath: string): Promise<InstanceBackupManifest> {
-    const invalid = async (message: string) => {
-      await fs.rm(tarPath, { force: true });
-      return new BadRequestException(message);
-    };
-    const raw = await readTarEntry(tarPath, 'manifest.json');
-    let manifest: InstanceBackupManifest | null = null;
-    try {
-      manifest = raw
-        ? (JSON.parse(raw.toString('utf8')) as InstanceBackupManifest)
-        : null;
-    } catch {
-      manifest = null;
-    }
-    if (!manifest || manifest.app !== 'myhomelab') {
-      throw await invalid('Este ficheiro não é um backup do MyHomeLab.');
-    }
-    if (manifest.format > INSTANCE_BACKUP_FORMAT) {
-      throw await invalid(
-        'Este backup foi feito por uma versão mais recente do MyHomeLab. Atualiza primeiro.',
-      );
-    }
-    const known = await knownMigrations();
-    if (
-      manifest.migration &&
-      known.length > 0 &&
-      !known.includes(manifest.migration)
-    ) {
-      throw await invalid(
-        `Este backup${manifest.version ? ` (${manifest.version})` : ''} é de uma versão mais recente do que a instalada. Atualiza o MyHomeLab primeiro e depois repõe.`,
-      );
-    }
-    if (!(await readTarEntry(tarPath, 'secrets.env'))) {
-      throw await invalid('Este backup está incompleto (faltam as chaves).');
-    }
-    return manifest;
   }
 
   async restoreStatus(logLines = 40): Promise<RestoreStatus> {

@@ -55,7 +55,7 @@ const Instance_Restore_Modal = ({ onClose }: Instance_Restore_Modal_Props) => {
                 id='instance-restore-file'
                 className='Instance_Restore_File'
                 type='file'
-                accept='.mhlbackup'
+                accept='.zip'
                 onChange={(e) => {
                   setFile(e.target.files?.[0] ?? null);
                   setError('');

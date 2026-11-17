@@ -1,13 +1,24 @@
-import { readFile, writeFile } from 'fs/promises';
-import { decryptBackup } from '../backup/helpers/backupCipher';
+import { copyFile, mkdtemp, readFile, rm, writeFile } from 'fs/promises';
+import { tmpdir } from 'os';
+import { join } from 'path';
+import {
+  extractBackup,
+  importBackup,
+  readBackupManifest,
+} from '../backup/helpers/instanceImport';
+import { KEYS_FILE } from '../backup/helpers/instanceBackup';
 
 /**
  * Ferramenta do deploy/proxmox/restore.sh e do myhomelab-restore (sem o Nest):
  *
- *   node dist/src/cli/backup-tool.js decrypt <ficheiro.mhlbackup> <saída.tar>
- *       (a password vem em MYHOMELAB_BACKUP_PASSWORD)
- *   node dist/src/cli/backup-tool.js merge-env <secrets.env> <myhomelab.env>
+ *   node dist/src/cli/backup-tool.js check <backup.zip>
+ *       (confirma a password e mostra de quando é o backup)
+ *   node dist/src/cli/backup-tool.js import <backup.zip> <chaves.env>
+ *       (repõe os dados no DATABASE_URL e copia as chaves do backup para <chaves.env>)
+ *   node dist/src/cli/backup-tool.js merge-env <chaves.env> <myhomelab.env>
  *       (troca ou acrescenta no .env as chaves que vêm no backup)
+ *
+ * A password do .zip vem em MYHOMELAB_BACKUP_PASSWORD.
  */
 const KEY_LINE = /^([A-Z][A-Z0-9_]*)=(.*)$/;
 
@@ -33,20 +44,47 @@ async function mergeEnv(secretsPath: string, envPath: string) {
   console.log(`Keys restored: ${[...secrets.keys()].join(', ') || 'none'}`);
 }
 
+const password = () => {
+  const value = process.env.MYHOMELAB_BACKUP_PASSWORD;
+  if (!value) throw new Error('MYHOMELAB_BACKUP_PASSWORD is not set.');
+  return value;
+};
+
+async function importZip(zipPath: string, keysOut: string) {
+  const work = await mkdtemp(join(tmpdir(), 'myhomelab-restore-'));
+  try {
+    console.log('Extracting the backup…');
+    await extractBackup(zipPath, password(), work);
+    console.log('Loading the data…');
+    const manifest = await importBackup(work, (line) =>
+      console.log(`  ${line}`),
+    );
+    await copyFile(join(work, KEYS_FILE), keysOut);
+    console.log(`Restored the backup from ${manifest.createdAt}.`);
+  } finally {
+    await rm(work, { recursive: true, force: true });
+  }
+}
+
 async function main() {
-  const [command, input, output] = process.argv.slice(2);
-  if (command === 'decrypt' && input && output) {
-    const password = process.env.MYHOMELAB_BACKUP_PASSWORD;
-    if (!password) throw new Error('MYHOMELAB_BACKUP_PASSWORD is not set.');
-    await decryptBackup(input, output, password);
+  const [command, first, second] = process.argv.slice(2);
+  if (command === 'check' && first) {
+    const manifest = await readBackupManifest(first, password());
+    console.log(
+      `Backup from ${manifest.createdAt}${manifest.version ? ` (${manifest.version})` : ''}`,
+    );
     return;
   }
-  if (command === 'merge-env' && input && output) {
-    await mergeEnv(input, output);
+  if (command === 'import' && first && second) {
+    await importZip(first, second);
+    return;
+  }
+  if (command === 'merge-env' && first && second) {
+    await mergeEnv(first, second);
     return;
   }
   console.error(
-    'Usage: backup-tool decrypt <in.mhlbackup> <out.tar> | merge-env <secrets.env> <env file>',
+    'Usage: backup-tool check <backup.zip> | import <backup.zip> <keys.env> | merge-env <keys.env> <env file>',
   );
   process.exit(2);
 }

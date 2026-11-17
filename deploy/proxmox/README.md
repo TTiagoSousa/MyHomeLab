@@ -190,12 +190,13 @@ a correr nem sempre é consistente — o dump diário é o que garante a base de
 ### Backup completo do MyHomeLab
 
 Em **Admin → Backup** define-se a password dos backups e cria-se um backup completo
-(`myhomelab-<data>.mhlbackup`, cifrado): a base de dados inteira e as chaves que leem os logins
+(`myhomelab-<data>.zip`, com password): abre como uma pasta com uma subpasta por área
+(agentes, documentos, projetos, tarefas, apps ligadas, IA, …) e as chaves que leem os logins
 guardados. Descarrega-se, ou agenda-se para o Nextcloud ou para uma pasta do próprio CT
 (destino "Neste servidor"). Repõe-se pela app (Admin → Backup → Repor um backup) ou aqui:
 
 ```bash
-myhomelab-restore /root/myhomelab-2026-11-17_030000.mhlbackup   # pede a password e RESTORE
+myhomelab-restore /root/myhomelab-2026-11-17_030000.zip   # pede a password e RESTORE
 ```
 
 Para passar para um CT novo: instala-o (`ct-create.sh`) e corre o `myhomelab-restore` com o

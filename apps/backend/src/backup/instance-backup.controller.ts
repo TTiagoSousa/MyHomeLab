@@ -56,8 +56,10 @@ export class InstanceBackupController {
     const stream = backup.content as Readable;
     stream.once('close', () => void backup.cleanup?.());
     res.set({
-      'Content-Type': 'application/octet-stream',
-      'Content-Disposition': `attachment; filename="${backupFileName('myhomelab', new Date(), 'mhlbackup')}"`,
+      'Content-Type': 'application/zip',
+      // Em desenvolvimento a app está noutra origem: sem isto não lê o nome do ficheiro.
+      'Access-Control-Expose-Headers': 'Content-Disposition',
+      'Content-Disposition': `attachment; filename="${backupFileName('myhomelab', new Date(), 'zip')}"`,
       ...(backup.sizeBytes
         ? { 'Content-Length': String(backup.sizeBytes) }
         : {}),
@@ -78,9 +80,7 @@ export class InstanceBackupController {
     @Body() dto: RestoreInstanceBackupDto,
   ) {
     if (!file)
-      throw new BadRequestException(
-        'Escolhe o ficheiro do backup (.mhlbackup).',
-      );
+      throw new BadRequestException('Escolhe o ficheiro do backup (.zip).');
     return this.instance.requestRestore(file.path, dto.password);
   }
 

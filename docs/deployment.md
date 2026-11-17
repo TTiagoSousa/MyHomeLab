@@ -39,7 +39,7 @@ buffering disabled and a long read timeout so the live agent stream (SSE) works.
 | `install.sh` | inside the CT | Packages, Node, PostgreSQL, environment file and secrets, build, migrations, systemd units, nginx, backup cron, first admin user. Safe to re-run: existing config, secrets and data are kept |
 | `update.sh` (`myhomelab-update`) | inside the CT | Fetch, checkout, `npm ci`, build, database dump, migrations, publish frontend, rewrite units and nginx, restart — with rollback |
 | `backup.sh` | cron, 03:30 | `pg_dump` to `/var/backups/myhomelab`, 14 days of retention |
-| `restore.sh` (`myhomelab-restore`) | inside the CT | Restores a full MyHomeLab backup (`.mhlbackup`), with rollback; also run by `myhomelab-restore.path` when a restore is requested from the app |
+| `restore.sh` (`myhomelab-restore`) | inside the CT | Restores a full MyHomeLab backup (`.zip`), with rollback; also run by `myhomelab-restore.path` when a restore is requested from the app |
 | `config.sh` (`myhomelab-config`) | inside the CT | Menu to edit the settings; `--raw` opens the file in an editor |
 
 ## 1. Create and install
@@ -184,34 +184,44 @@ running is not always consistent — the daily dump is what guarantees the datab
 
 ### Full MyHomeLab backups (Admin → Backup)
 
-A full backup is one encrypted file, `myhomelab-<date>.mhlbackup`, with the whole database
-(documents and their links, agents, tasks, services, servers, connected apps with their
-logins, rules, settings) and the keys that make the stored logins readable
-(`TOKEN_ENCRYPTION_KEY`, `JWT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`). It is a
-`.tar` (`manifest.json`, `database.sql` from `pg_dump --no-owner`, `secrets.env`), gzipped
-and encrypted with AES-256-GCM using a key derived (scrypt) from the **backup password** set
-in Admin → Backup. Without that password a backup cannot be restored.
+A full backup is a password-protected `.zip` (AES-256), `myhomelab-<date>.zip`, that opens
+as a folder with one subfolder per area: `agentes/`, `documentos/`, `projetos/`, `tarefas/`,
+`apps-ligadas/`, `ia/`, `servidores/`, `servicos/`, `email/`, `saude/`, `disparos/`,
+`notificacoes/`, `backups/`, `utilizadores/`, … Every database table goes whole into a
+`.jsonl` file (one JSON record per line) in its area's folder — a table with no folder yet goes
+to `outros/`, so nothing is left out. Documents (`documentos/leitura/`, by section) and agent
+prompts (`agentes/*.md`) are also written as Markdown, to read. `manifest.json` lists the
+tables, rows and columns; `LEIA-ME.txt` explains the folders; `_restauro/chaves.env` holds the
+keys that make the stored logins readable (`TOKEN_ENCRYPTION_KEY`, `JWT_SECRET`,
+`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`). The export runs in one read-only snapshot
+transaction and needs no `pg_dump`. Open it with 7-Zip, WinRAR or macOS using the **backup
+password** set in Admin → Backup (Windows Explorer alone does not open AES zips). Without that
+password a backup cannot be restored.
 
 - **Download:** Admin → Backup → *Create and download*.
 - **Scheduled:** add a backup job in the same section, to a Nextcloud destination or to
   *This server* (a `LOCAL` destination: a folder on the CT, `BACKUP_LOCAL_DIR`, by default
   `/var/lib/myhomelab/myhomelab-backups`). Same frequency and retention as app backups.
 - **Restore from the app:** Admin → Backup → *Restore a backup* (file, password, type
-  `REPOR`). The backend decrypts and checks the file (a backup from a newer version than the
-  installed one is refused), leaves it in `$SYSTEM_UPDATES_DIR/restore/` and writes
-  `restore-request`; `myhomelab-restore.path` runs `restore.sh --from-request` as root.
+  `REPOR`). The backend opens the zip with the password and checks it (a backup from a newer
+  version than the installed one is refused), leaves it and the password in
+  `$SYSTEM_UPDATES_DIR/restore/` and writes `restore-request`; `myhomelab-restore.path` runs
+  `restore.sh --from-request` as root.
 - **Restore from the console** (also how you move to a new CT: install, then restore):
 
 ```bash
-myhomelab-restore /root/myhomelab-2026-11-17_030000.mhlbackup   # asks for the password
+myhomelab-restore /root/myhomelab-2026-11-17_030000.zip   # asks for the password
 ```
 
-`restore.sh` dumps the current database (`…-before-restore.sql.gz`) and copies the
-environment file, stops the backend, recreates the database, loads `database.sql` as the app
-user, merges the keys into `/etc/myhomelab/myhomelab.env`, runs the migrations (an older
-backup is brought up to date) and starts the backend. If a step fails, it puts the previous
-database and environment file back. Everyone signs in again afterwards. Not included: the
-Claude Code session stored on the server (sign in again in Settings → AI).
+`restore.sh` checks the zip, dumps the current database (`…-before-restore.sql.gz`) and copies
+the environment file, stops the backend, and loads the data with
+`node apps/backend/dist/src/cli/backup-tool.js import`: in one transaction, with the foreign
+keys made deferrable while loading, it empties every table and inserts the `.jsonl` rows
+(`json_populate_recordset`; columns that no longer exist are skipped, new ones get their
+default), then resets the sequences. It then merges the keys into
+`/etc/myhomelab/myhomelab.env`, runs the migrations and starts the backend. If a step fails, it
+puts the previous database and environment file back. Everyone signs in again afterwards. Not
+included: the Claude Code session stored on the server (sign in again in Settings → AI).
 
 ## Network notes
 

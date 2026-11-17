@@ -225,7 +225,7 @@ through nginx (`X-Forwarded-For` present).
 | POST | `/backups/jobs/:id/run` | Run a backup now |
 | GET | `/backups/instance` | MyHomeLab backup settings: password set, restore available (admin) |
 | PUT | `/backups/instance/password` | Set the backup password (min. 10 characters; admin) |
-| POST | `/backups/instance/download` | Create a full encrypted backup and download it (`.mhlbackup`; admin) |
+| POST | `/backups/instance/download` | Create a full backup and download it (password-protected `.zip`, one folder per area; admin) |
 | POST | `/backups/instance/restore` | Upload a backup (`file`, `password`); checks it and asks the server to restore it (202; admin) |
 | GET | `/backups/instance/restore/status` | Restore progress and log (admin) |
 

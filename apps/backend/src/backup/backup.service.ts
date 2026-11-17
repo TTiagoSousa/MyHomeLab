@@ -36,7 +36,7 @@ import { InstanceBackupService } from './instance-backup.service';
 /** O backup do próprio MyHomeLab (um BackupJob sem app ligada). */
 const INSTANCE_SOURCE = {
   prefix: 'myhomelab',
-  extension: 'mhlbackup',
+  extension: 'zip',
   name: 'MyHomeLab',
 } as const;
 

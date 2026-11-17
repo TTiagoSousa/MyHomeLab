@@ -14,6 +14,6 @@ export function backupFileName(
 /** Só os ficheiros com este formato contam como backups nossos (e podem ser apagados). */
 export function isBackupFileName(prefix: string, name: string) {
   return new RegExp(
-    `^${prefix}-\\d{4}-\\d{2}-\\d{2}_\\d{6}\\.(?:json|zip|tar|sql\\.gz|mhlbackup)$`,
+    `^${prefix}-\\d{4}-\\d{2}-\\d{2}_\\d{6}\\.(?:json|zip|tar|sql\\.gz)$`,
   ).test(name);
 }

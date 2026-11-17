@@ -24,7 +24,7 @@ export interface BackupFile {
 export interface BackupSource {
   /** Início do nome dos ficheiros, ex: "forgejo" → forgejo-2026-10-29_030000.tar */
   prefix: string;
-  extension: 'json' | 'zip' | 'tar' | 'sql.gz' | 'mhlbackup';
+  extension: 'json' | 'zip' | 'tar' | 'sql.gz';
   defaultFolder: string;
   create: (account: ConnectedAccount, options: unknown) => Promise<BackupFile>;
 }
