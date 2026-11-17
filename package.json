@@ -1,6 +1,6 @@
 {
   "name": "myhomelab",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "private": true,
   "description": "Self-hosted control panel for a Proxmox home lab, with a team of AI agents (Claude) that study, install and verify updates, organise Gmail and more.",
   "workspaces": [

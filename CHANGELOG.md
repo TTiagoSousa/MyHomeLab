@@ -7,6 +7,16 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.2.0] — 2026-11-17
+
+### Features
+- **gametracker**: connect GamesTracker Vault with shelf tools, backups, version checks and a Games Curator agent
+- **opengym**: direct MCP with Claude Code via an API token, MyHomeLab tools with the Claude API
+- **trek**: direct MCP with Claude Code, MyHomeLab TREK tools with the Claude API
+- **ai**: choose between Claude Code and the Claude API
+- **docs**: generated maps, user sections and sub-documents
+
+
 ## [1.1.2] — 2026-11-16
 
 ### Fixes
@@ -44,3 +54,4 @@ First public release of MyHomeLab.
 [1.1.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.1.0
 [1.1.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.1.1
 [1.1.2]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.1.2
+[1.2.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.2.0
