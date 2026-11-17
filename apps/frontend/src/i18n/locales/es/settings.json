@@ -6,7 +6,7 @@
   },
   "ai": {
     "title": "IA",
-    "description": "Tu asistente funciona con el Claude Code de esta máquina, con tu suscripción de Claude. Sin claves de API: los agentes gastan del límite de la suscripción.",
+    "description": "Tu asistente funciona con el Claude Code de esta máquina (con tu suscripción de Claude) o con la Claude API (con una clave de pago por uso). Solo uno está en uso; cambias cuando quieras.",
     "state": {
       "on": "Conectado",
       "off": "Sin sesión",
@@ -54,7 +54,34 @@
     "agentModelHint": "El de los agentes marcados como Sonnet y de las tareas simples (resúmenes, lectura de PDF).",
     "defaultModel": "{{model}} (de la app)",
     "saveModels": "Guardar modelos",
-    "modelsSaved": "Modelos guardados."
+    "modelsSaved": "Modelos guardados.",
+    "inUse": "En uso",
+    "use": "Usar este",
+    "activated": "El asistente pasa a usar {{name}}.",
+    "api": {
+      "ready": "Clave guardada",
+      "noKey": "Sin clave",
+      "cost": "Pago por uso, aparte de la suscripción: cada petición gasta del saldo de tu cuenta de la API de Anthropic.",
+      "addKey": "Poner la clave",
+      "replaceKey": "Cambiar la clave",
+      "removeKey": "Quitar la clave",
+      "saved": "Clave guardada.",
+      "removed": "Clave quitada.",
+      "modal": {
+        "title": "Usar la {{name}}",
+        "replaceTitle": "Cambiar la clave de la {{name}}",
+        "where": "Crea una clave en Settings → API Keys, en la consola de Anthropic, y pégala aquí:",
+        "label": "Clave de la API"
+      }
+    },
+    "apiErrors": {
+      "AI_KEY_INVALID": "La clave de la API fue rechazada. Compruébala o crea otra en la consola de Anthropic.",
+      "AI_KEY_UNVERIFIED": "No se pudo probar la clave ahora. Inténtalo otra vez en un momento.",
+      "AI_KEY_MISSING": "Guarda primero la clave de la API en Ajustes → IA.",
+      "AI_NO_CREDIT": "La cuenta de la API de Anthropic no tiene saldo. Añade créditos en la consola.",
+      "AI_RATE_LIMITED": "La API de Anthropic pidió esperar un poco (límite de peticiones).",
+      "AI_UNAVAILABLE": "La API de Anthropic no responde. Inténtalo en un momento."
+    }
   },
   "servers": {
     "saved": "Servidor guardado.",

@@ -123,10 +123,15 @@ and tools.
   1. the tools assigned to the agent (Workflow page);
   2. per-area permissions for the whole assistant (Assistant → Settings → Permissions);
   3. per-app / per-server access for each agent: none, read or write.
-- **AI provider**: Anthropic's Claude. Agents run through Anthropic's Claude CLI (`claude`) installed on
-  the server, signed in with the user's Claude subscription (or a token pasted in
-  Settings → AI). Each agent only gets the MyHomeLab tools, exposed through a local MCP
-  bridge; nothing from the machine (shell, files, web) is available to it. Token usage is
+- **AI provider**: Anthropic's Claude, from one of two providers chosen per user in Settings → AI
+  (only one is in use):
+  - **Claude Code** — the Claude CLI (`claude`) installed on the server, signed in with the
+    user's Claude subscription (or a token pasted in Settings → AI). Each agent only gets the
+    MyHomeLab tools, exposed through a local MCP bridge; nothing from the machine (shell,
+    files, web) is available to it.
+  - **Claude API** — the Anthropic Messages API with the user's pay-as-you-go key. The backend
+    runs the tool loop itself with the same prompts and tools (system prompt cached).
+  Saving an API key does not switch a user who already has Claude Code working; they pick it. Token usage is
   recorded per agent and source, with an optional monthly budget alert.
 
 See [Agents and tools](./development/05-agents-and-tools.md) for the details.

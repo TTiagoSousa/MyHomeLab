@@ -153,12 +153,16 @@ there too.
 
 | Method | Path | Purpose |
 |---|---|---|
-| GET | `/ai/providers` | Configured AI provider and selected models |
+| GET | `/ai/providers` | Both AI providers (`claude-code`, `claude-api`): which is in use, key hint and models |
 | GET | `/ai/providers/claude-code/status` | Whether the Claude CLI is installed and signed in |
 | PUT | `/ai/providers/claude-code` | Save a subscription token (tested first) |
 | DELETE | `/ai/providers/claude-code` | Remove the token (falls back to the machine login) |
 | GET | `/ai/providers/claude-code/models` | Models available to the subscription |
 | PUT | `/ai/providers/claude-code/models` | Choose the main and agent models |
+| PUT | `/ai/providers/claude-api` | Save an Anthropic API key (tested first) |
+| DELETE | `/ai/providers/claude-api` | Remove the API key (back to Claude Code if it was in use) |
+| GET / PUT | `/ai/providers/claude-api/models` | Models for the API provider |
+| PUT | `/ai/providers/:provider/active` | Put `claude-code` or `claude-api` in use |
 | GET | `/ai/usage` | Token usage and estimated cost for a month, by agent, source and day |
 | PUT | `/ai/usage/budget` | Set or clear the monthly budget (alerts at 80% and 100%) |
 

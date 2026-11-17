@@ -9,10 +9,13 @@ export interface AiModels {
   agent: string;
 }
 
+export type AiProviderId = 'claude-code' | 'claude-api';
+
 export interface AiProviderEntry {
-  provider: string;
+  provider: AiProviderId;
   keyHint: string;
   usesMachineLogin: boolean;
+  configured: boolean;
   updatedAt: string | null;
   isActive: boolean;
   models: AiModels;
@@ -30,11 +33,10 @@ export interface ClaudeCodeStatus {
   error: string | null;
 }
 
-const PROVIDER = 'claude-code';
-
 export const aiErrorMessage = (error: any): string => {
   const code = error?.response?.data?.code;
-  if (code && i18n.exists(`settings:ai.errors.${code}`)) return i18n.t(`settings:ai.errors.${code}`);
+  const group = error?.response?.data?.provider === 'claude-api' ? 'apiErrors' : 'errors';
+  if (code && i18n.exists(`settings:ai.${group}.${code}`)) return i18n.t(`settings:ai.${group}.${code}`);
   return error?.response?.data?.message || error?.message || i18n.t('common:errors.generic');
 };
 
@@ -73,13 +75,13 @@ export const useAiProviders = () => {
     fetchProviders();
   }, []);
 
-  const saveKey = async (apiKey: string): Promise<string | null> => {
+  const saveKey = async (provider: AiProviderId, apiKey: string): Promise<string | null> => {
     setSaving(true);
     try {
-      await http.put(End_Points.Ai_Provider_Endpoint(PROVIDER), { apiKey }, { withCredentials: true });
+      await http.put(End_Points.Ai_Provider_Endpoint(provider), { apiKey }, { withCredentials: true });
       await fetchProviders();
-      await fetchStatus();
-      setAlert({ open: true, message: i18n.t('settings:ai.saved'), type: 'success' });
+      if (provider === 'claude-code') await fetchStatus();
+      setAlert({ open: true, message: i18n.t(provider === 'claude-api' ? 'settings:ai.api.saved' : 'settings:ai.saved'), type: 'success' });
       return null;
     } catch (error: any) {
       return aiErrorMessage(error);
@@ -88,20 +90,30 @@ export const useAiProviders = () => {
     }
   };
 
-  const removeKey = async () => {
+  const removeKey = async (provider: AiProviderId) => {
     try {
-      await http.delete(End_Points.Ai_Provider_Endpoint(PROVIDER), { withCredentials: true });
+      await http.delete(End_Points.Ai_Provider_Endpoint(provider), { withCredentials: true });
       await fetchProviders();
-      await fetchStatus();
-      setAlert({ open: true, message: i18n.t('settings:ai.removed'), type: 'success' });
+      if (provider === 'claude-code') await fetchStatus();
+      setAlert({ open: true, message: i18n.t(provider === 'claude-api' ? 'settings:ai.api.removed' : 'settings:ai.removed'), type: 'success' });
     } catch (error: any) {
       setAlert({ open: true, message: aiErrorMessage(error), type: 'error' });
     }
   };
 
-  const saveModels = async (models: AiModels) => {
+  const activate = async (provider: AiProviderId, name: string) => {
     try {
-      await http.put(End_Points.Ai_Provider_Models_Endpoint(PROVIDER), models, { withCredentials: true });
+      await http.put(End_Points.Ai_Provider_Active_Endpoint(provider), {}, { withCredentials: true });
+      await fetchProviders();
+      setAlert({ open: true, message: i18n.t('settings:ai.activated', { name }), type: 'success' });
+    } catch (error: any) {
+      setAlert({ open: true, message: aiErrorMessage(error), type: 'error' });
+    }
+  };
+
+  const saveModels = async (provider: AiProviderId, models: AiModels) => {
+    try {
+      await http.put(End_Points.Ai_Provider_Models_Endpoint(provider), models, { withCredentials: true });
       await fetchProviders();
       setAlert({ open: true, message: i18n.t('settings:ai.modelsSaved'), type: 'success' });
       return true;
@@ -111,5 +123,5 @@ export const useAiProviders = () => {
     }
   };
 
-  return { providers, status, loading, checking, saving, fetchProviders, fetchStatus, saveKey, removeKey, saveModels };
+  return { providers, status, loading, checking, saving, fetchProviders, fetchStatus, saveKey, removeKey, saveModels, activate };
 };

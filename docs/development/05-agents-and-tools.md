@@ -44,7 +44,11 @@ POST /assistant/chat
 
 - **Delegation is a tool.** `ask_<key>({ request })` runs the subordinate with the full
   request (prefixed with the current date and time) and returns its report. Max depth 5.
-- **The engine** is the Claude CLI (`claude -p`), run with a clean configuration: no user
+- **The engine** is the user's AI provider. With **Claude API** (`assistant/apiAgent.ts`) the
+  backend runs a streaming tool loop on the Messages API (cached system prompt, sequential tool
+  calls, failed tools returned as `is_error`); single-shot calls that force a tool are sent as
+  structured outputs (`ai-credential/claudeApiClient.ts`). With **Claude Code** it is the Claude
+  CLI (`claude -p`), run with a clean configuration: no user
   settings, plugins or built-in tools. The agent's tools are exposed through a local MCP
   bridge (`/internal/mcp/:id`, loopback only, per-run token). Tool errors return to the
   model as errors instead of failing the request.

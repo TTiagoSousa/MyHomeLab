@@ -35,6 +35,8 @@
     border: var(--card-border);
     border-radius: var(--ctrl-radius);
     background: var(--panel-background);
+
+    &.active{ border-color: var(--accent); }
   }
 
   .Settings_card_mark{
@@ -120,6 +122,7 @@
 
   .Settings_card_actions{
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
 
     button{
@@ -127,6 +130,8 @@
       height: 32px;
       padding: 0 12px;
       font-size: 12.5px;
+
+      &.primary{ @include Mixin.Solid_Button; height: 32px; padding: 0 12px; font-size: 12.5px; }
 
       &.danger:hover:not(:disabled),
       &.danger.confirm{

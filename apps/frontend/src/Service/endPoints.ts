@@ -65,6 +65,7 @@ export const End_Points = {
     Ai_Provider_Endpoint:          (provider: string) => `/ai/providers/${provider}`,
     Ai_Claude_Code_Status_Endpoint: () => '/ai/providers/claude-code/status',
     Ai_Provider_Models_Endpoint:   (provider: string) => `/ai/providers/${provider}/models`,
+    Ai_Provider_Active_Endpoint:   (provider: string) => `/ai/providers/${provider}/active`,
     Servers_Endpoint:              () => '/servers',
     Server_By_Id_Endpoint:         (id: string) => `/servers/${id}`,
     Server_Check_Endpoint:         (id: string) => `/servers/${id}/check`,

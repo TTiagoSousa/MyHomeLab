@@ -443,7 +443,8 @@ model AgentLog {
 
 /// A IA dos agentes: o Claude Code da máquina, com a subscrição do utilizador.
 enum AiProvider {
-  CLAUDE_CODE
+  CLAUDE_CODE // o Claude Code desta máquina, com a subscrição
+  CLAUDE_API // a API da Anthropic, com uma chave paga ao uso
 }
 
 // A chave de API de cada utilizador para cada fornecedor de IA. O assistente
@@ -453,7 +454,7 @@ model AiCredential {
   userId         String
   user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   provider       AiProvider
-  apiKey         String     @db.Text // o token da subscrição (claude setup-token), cifrado com TOKEN_ENCRYPTION_KEY; vazio = o login da máquina
+  apiKey         String     @db.Text // CLAUDE_CODE: o token da subscrição (claude setup-token), vazio = o login da máquina; CLAUDE_API: a chave da API. Cifrado com TOKEN_ENCRYPTION_KEY
   keyHint        String // os últimos 4 caracteres, para mostrar qual está guardado
   // O fornecedor que o assistente usa: só um por utilizador fica ativo.
   isActive       Boolean    @default(false)

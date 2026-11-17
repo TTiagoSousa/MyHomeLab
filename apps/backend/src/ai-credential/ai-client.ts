@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import type Anthropic from '@anthropic-ai/sdk';
 import type {
   ContentBlock,
   Message,
@@ -35,16 +36,21 @@ export const CLAUDE_CODE_MODELS = [
   'claude-fable-5-2',
 ];
 
+export type AiProviderKind = 'CLAUDE_CODE' | 'CLAUDE_API';
+
 /**
- * A IA de um utilizador: o Claude Code desta máquina, com a subscrição dele.
+ * A IA de um utilizador: o Claude Code desta máquina, com a subscrição dele, ou a API da
+ * Anthropic, com a chave dele.
  * Mantém a forma do cliente da Anthropic (`messages.create`) para as funções de
  * um pedido só (regras de email, refeições, análises); os agentes com
  * ferramentas correm pelo `runAgent`, que usa o `token` e os `models` daqui.
  */
 export interface AiClient {
-  provider: 'CLAUDE_CODE';
-  /** O token da subscrição (claude setup-token); null = o login da máquina. */
+  provider: AiProviderKind;
+  /** Claude Code: o token da subscrição (claude setup-token); null = o login da máquina. */
   token: string | null;
+  /** API: o cliente da Anthropic com a chave do utilizador. */
+  anthropic?: Anthropic;
   models: AiModels;
   pick: (model: string) => string;
   messages: {

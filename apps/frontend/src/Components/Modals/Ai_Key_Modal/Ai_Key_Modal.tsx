@@ -18,6 +18,7 @@ const Ai_Key_Modal = ({ provider, replacing, saving, onSave, onClose }: Ai_Key_M
   const [error, setError] = useState('');
 
   const canSave = apiKey.trim().length >= 10 && !saving;
+  const texts = provider.slug === 'claude-api' ? 'ai.api.modal' : 'ai.modal';
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -34,18 +35,18 @@ const Ai_Key_Modal = ({ provider, replacing, saving, onSave, onClose }: Ai_Key_M
           <span className='Ai_Key_Modal_Mark'>{provider.name.charAt(0)}</span>
           <div>
             <span className='Ai_Key_Modal_Title'>
-              {t(replacing ? 'ai.modal.replaceTitle' : 'ai.modal.title', { name: provider.name })}
+              {t(replacing ? `${texts}.replaceTitle` : `${texts}.title`, { name: provider.name })}
             </span>
             <span className='Ai_Key_Modal_Vendor'>{provider.vendor}</span>
           </div>
         </div>
 
         <p className='Ai_Key_Modal_Text'>
-          {t('ai.modal.where')} <code>claude setup-token</code>
+          {t(`${texts}.where`)} <code>{provider.slug === 'claude-api' ? 'console.anthropic.com' : 'claude setup-token'}</code>
         </p>
 
         <div className='Ai_Key_Modal_Field'>
-          <label htmlFor='ai-key-input'>{t('ai.modal.label')}</label>
+          <label htmlFor='ai-key-input'>{t(`${texts}.label`)}</label>
           <Global_Input
             id='ai-key-input'
             type='password'

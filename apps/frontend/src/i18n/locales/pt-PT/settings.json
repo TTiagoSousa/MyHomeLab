@@ -6,7 +6,7 @@
   },
   "ai": {
     "title": "IA",
-    "description": "O teu assistente corre no Claude Code desta máquina, com a tua subscrição do Claude. Sem chaves de API: os agentes gastam do limite da subscrição.",
+    "description": "O teu assistente corre no Claude Code desta máquina (com a tua subscrição do Claude) ou na Claude API (com uma chave paga ao uso). Só um está em uso; trocas quando quiseres.",
     "state": {
       "on": "Ligado",
       "off": "Sem sessão",
@@ -54,7 +54,34 @@
     "agentModelHint": "O dos agentes marcados como Sonnet e das tarefas simples (resumos, leitura de PDFs).",
     "defaultModel": "{{model}} (da app)",
     "saveModels": "Guardar modelos",
-    "modelsSaved": "Modelos guardados."
+    "modelsSaved": "Modelos guardados.",
+    "inUse": "Em uso",
+    "use": "Usar este",
+    "activated": "O assistente passa a usar {{name}}.",
+    "api": {
+      "ready": "Chave guardada",
+      "noKey": "Sem chave",
+      "cost": "Paga ao uso, à parte da subscrição: cada pedido gasta do saldo da tua conta na API da Anthropic.",
+      "addKey": "Pôr a chave",
+      "replaceKey": "Trocar a chave",
+      "removeKey": "Tirar a chave",
+      "saved": "Chave guardada.",
+      "removed": "Chave tirada.",
+      "modal": {
+        "title": "Usar a {{name}}",
+        "replaceTitle": "Trocar a chave da {{name}}",
+        "where": "Cria uma chave em Settings → API Keys, na consola da Anthropic, e cola-a aqui:",
+        "label": "Chave da API"
+      }
+    },
+    "apiErrors": {
+      "AI_KEY_INVALID": "A chave da API foi recusada. Confirma-a ou cria outra na consola da Anthropic.",
+      "AI_KEY_UNVERIFIED": "Não foi possível testar a chave agora. Tenta outra vez daqui a pouco.",
+      "AI_KEY_MISSING": "Guarda primeiro a chave da API em Definições → IA.",
+      "AI_NO_CREDIT": "A conta da API da Anthropic não tem saldo. Carrega créditos na consola.",
+      "AI_RATE_LIMITED": "A API da Anthropic pediu para esperar um pouco (limite de pedidos).",
+      "AI_UNAVAILABLE": "A API da Anthropic não está a responder. Tenta daqui a pouco."
+    }
   },
   "servers": {
     "saved": "Servidor guardado.",

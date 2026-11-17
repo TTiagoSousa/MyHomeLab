@@ -117,6 +117,9 @@ runuser -u myhomelab -- env HOME=/var/lib/myhomelab claude auth login
 or by creating a token on a machine with a browser (`claude setup-token`) and pasting it in
 **Settings → AI**. **Verify** there must show "Connected".
 
+Alternatively, each user can paste an Anthropic API key (pay as you go) in **Settings → AI**
+and choose **Claude API** — no CLI sign-in needed.
+
 ## 4. Updating
 
 ### From the app (admin)

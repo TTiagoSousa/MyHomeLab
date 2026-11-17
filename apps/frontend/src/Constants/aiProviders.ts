@@ -11,3 +11,10 @@ export const CLAUDE_CODE: AiProviderInfo = {
   vendor: 'Anthropic',
   keyPrefix: 'sk-ant-oat',
 };
+
+export const CLAUDE_API: AiProviderInfo = {
+  slug: 'claude-api',
+  name: 'Claude API',
+  vendor: 'Anthropic',
+  keyPrefix: 'sk-ant-api',
+};

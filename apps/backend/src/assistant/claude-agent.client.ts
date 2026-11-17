@@ -12,6 +12,7 @@ import {
   BRIDGE_SERVER,
   openBridge,
 } from 'src/claude-code/mcpBridge';
+import { runApiAgent } from './apiAgent';
 
 /**
  * Opus para quem decide e escreve (o Jarvis e os agentes "principais"); Sonnet
@@ -62,7 +63,8 @@ export interface RunAgentOptions {
  * Corre um agente no Claude Code (`claude -p`, com a subscrição): o prompt do
  * agente, a conversa e as ferramentas dele, servidas pela ponte MCP do
  * MyHomeLab (só estas, com as permissões já aplicadas). O ciclo das ferramentas
- * é o do Claude Code; aqui só se liga, se acompanha e se regista.
+ * é o do Claude Code; aqui só se liga, se acompanha e se regista. Com a API da
+ * Anthropic escolhida, o ciclo é o do `runApiAgent` (mesmo prompt e ferramentas).
  */
 export async function runAgent(
   client: AiClient,
@@ -71,6 +73,9 @@ export async function runAgent(
   messages: MessageParam[],
   options: RunAgentOptions = {},
 ): Promise<RunAgentResult> {
+  if (client.provider === 'CLAUDE_API') {
+    return runApiAgent(client, systemPrompt, tools, messages, options);
+  }
   const bridge = openBridge(tools);
   try {
     const result = await runClaudeCode({

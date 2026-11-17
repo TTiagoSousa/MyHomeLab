@@ -6,7 +6,7 @@
   },
   "ai": {
     "title": "AI",
-    "description": "Your assistant runs on this machine's Claude Code, with your Claude subscription. No API keys: the agents use your subscription limit.",
+    "description": "Your assistant runs on this machine's Claude Code (with your Claude subscription) or on the Claude API (with a pay-as-you-go key). Only one is in use; switch whenever you like.",
     "state": {
       "on": "Connected",
       "off": "Not signed in",
@@ -54,7 +54,34 @@
     "agentModelHint": "Used by agents marked as Sonnet and simple tasks (summaries, reading PDFs).",
     "defaultModel": "{{model}} (app default)",
     "saveModels": "Save models",
-    "modelsSaved": "Models saved."
+    "modelsSaved": "Models saved.",
+    "inUse": "In use",
+    "use": "Use this",
+    "activated": "The assistant now uses {{name}}.",
+    "api": {
+      "ready": "Key saved",
+      "noKey": "No key",
+      "cost": "Pay as you go, separate from the subscription: every request spends from your Anthropic API account balance.",
+      "addKey": "Add the key",
+      "replaceKey": "Replace the key",
+      "removeKey": "Remove the key",
+      "saved": "Key saved.",
+      "removed": "Key removed.",
+      "modal": {
+        "title": "Use the {{name}}",
+        "replaceTitle": "Replace the {{name}} key",
+        "where": "Create a key in Settings → API Keys, in the Anthropic console, and paste it here:",
+        "label": "API key"
+      }
+    },
+    "apiErrors": {
+      "AI_KEY_INVALID": "The API key was rejected. Check it or create another one in the Anthropic console.",
+      "AI_KEY_UNVERIFIED": "The key could not be tested right now. Try again in a moment.",
+      "AI_KEY_MISSING": "Save the API key first in Settings → AI.",
+      "AI_NO_CREDIT": "The Anthropic API account has no balance. Add credits in the console.",
+      "AI_RATE_LIMITED": "The Anthropic API asked to wait a little (rate limit).",
+      "AI_UNAVAILABLE": "The Anthropic API is not responding. Try again in a moment."
+    }
   },
   "servers": {
     "saved": "Server saved.",
