@@ -455,7 +455,9 @@
       "todo_create": "Criar tarefas",
       "todo_update": "Mudar tarefas",
       "todo_delete": "Apagar tarefas",
-      "todo_create_list": "Criar listas"
+      "todo_create_list": "Criar listas",
+      "docs_layout": "Ver como estão arrumados os documentos",
+      "docs_targets": "Ver a que se pode ligar um documento"
     }
   },
   "conversations": {

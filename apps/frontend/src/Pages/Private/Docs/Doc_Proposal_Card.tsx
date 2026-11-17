@@ -4,6 +4,7 @@ import Doc_Editor from '../../../Components/Doc_Editor/Doc_Editor';
 import { Doc_Link_Chip } from '../../../Components/Doc_Chips/Doc_Chips';
 import type { DocProposal } from '../../../Hooks/Docs/docTypes';
 import { formatRelativeTime } from '../Apps/relativeTime';
+import Doc_Proposal_Changes from './Doc_Proposal_Changes';
 
 interface Doc_Proposal_Card_Props {
   proposal: DocProposal;
@@ -21,6 +22,7 @@ const Doc_Proposal_Card = ({ proposal, busy, approveLabel, onApprove, onReject }
 
   const edited = editing && content !== proposal.content;
   const showCurrent = proposal.action === 'EDIT' && proposal.doc;
+  const textChanges = proposal.action !== 'ORGANIZE';
 
   const target = () => {
     if (proposal.action === 'CREATE') return t('proposals.newDoc', { title: proposal.title || t('proposals.untitled') });
@@ -66,13 +68,17 @@ const Doc_Proposal_Card = ({ proposal, busy, approveLabel, onApprove, onReject }
         </div>
       )}
 
+      {proposal.changes && <Doc_Proposal_Changes changes={proposal.changes} />}
+
       {proposal.replaces.length > 0 && <p className='Doc_Proposal_Replaces'>{t('proposals.replaces', { count: proposal.replaces.length })}</p>}
 
-      <button type='button' className='Doc_Proposal_Toggle' onClick={() => setOpen(!open)} aria-expanded={open || editing}>
-        {open || editing ? t('proposals.hideText') : t('proposals.showText')}
-      </button>
+      {textChanges && (
+        <button type='button' className='Doc_Proposal_Toggle' onClick={() => setOpen(!open)} aria-expanded={open || editing}>
+          {open || editing ? t('proposals.hideText') : t('proposals.showText')}
+        </button>
+      )}
 
-      {(open || editing) && (
+      {textChanges && (open || editing) && (
       <div className={`Doc_Proposal_Compare${showCurrent ? ' split' : ''}`}>
         {showCurrent && (
           <div className='Doc_Proposal_Pane'>
@@ -96,15 +102,16 @@ const Doc_Proposal_Card = ({ proposal, busy, approveLabel, onApprove, onReject }
           {t('proposals.reject')}
         </button>
         <div className='Doc_Proposal_Right'>
-          {editing ? (
-            <button type='button' className='Doc_Proposal_Ghost' onClick={discard} disabled={busy}>
-              {t('proposals.discardEdits')}
-            </button>
-          ) : (
-            <button type='button' className='Doc_Proposal_Ghost' onClick={() => setEditing(true)} disabled={busy}>
-              {t('proposals.editBefore')}
-            </button>
-          )}
+          {textChanges &&
+            (editing ? (
+              <button type='button' className='Doc_Proposal_Ghost' onClick={discard} disabled={busy}>
+                {t('proposals.discardEdits')}
+              </button>
+            ) : (
+              <button type='button' className='Doc_Proposal_Ghost' onClick={() => setEditing(true)} disabled={busy}>
+                {t('proposals.editBefore')}
+              </button>
+            ))}
           <button type='button' className='Doc_Proposal_Approve' onClick={() => onApprove(edited ? content : undefined)} disabled={busy}>
             {edited ? t('proposals.approveEdited') : (approveLabel ?? t('proposals.approve'))}
           </button>

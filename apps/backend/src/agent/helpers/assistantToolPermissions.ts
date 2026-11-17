@@ -52,6 +52,8 @@ const FIXED: Record<string, Requirement> = {
 
   docs_search: read('docs'),
   docs_projects: read('docs'),
+  docs_layout: read('docs'),
+  docs_targets: read('docs'),
   docs_read: read('docs'),
   docs_write: write('docs'),
   docs_log: write('docs'),

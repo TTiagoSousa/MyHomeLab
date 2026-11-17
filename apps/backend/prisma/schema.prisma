@@ -1705,6 +1705,7 @@ enum DocProposalAction {
   EDIT // trocar o conteúdo
   APPEND // acrescentar no fim (ex: uma aprendizagem)
   CREATE // um documento novo
+  ORGANIZE // só a arrumação: título, etiquetas, ligações e secção (o texto fica)
 }
 
 enum DocProposalStatus {
@@ -1731,6 +1732,9 @@ model DocProposal {
   tags       String[]          @default([])
   // CREATE: os documentos que o novo junta e substitui; aprovada, apagam-se
   replaces   String[]          @default([])
+  // A arrumação a aplicar ao aprovar (qualquer ação): { title?, tags?, links?, section? }.
+  // section: { id } (uma secção que existe), { name } (uma nova, criada ao aprovar) ou { id: null } (sem secção).
+  organize   Json?
   proposedBy String
   // A tarefa do quadro de onde veio: a decisão aparece lá.
   taskId     String?

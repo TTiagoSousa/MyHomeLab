@@ -39,6 +39,8 @@ const DOCS_READ = [
   'docs_search',
   'docs_read',
   'docs_projects',
+  'docs_layout',
+  'docs_targets',
   'docs_propose',
   'docs_write',
   'docs_log',

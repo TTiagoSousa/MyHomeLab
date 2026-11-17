@@ -179,7 +179,8 @@
     "action": {
       "EDIT": "Edit",
       "APPEND": "Append",
-      "CREATE": "Create"
+      "CREATE": "Create",
+      "ORGANIZE": "Organise"
     },
     "target": "In “{{title}}”",
     "newDoc": "New: “{{title}}”",
@@ -198,7 +199,15 @@
     "replaces_one": "Merges {{count}} document into one: approving removes it.",
     "replaces_other": "Merges {{count}} documents into one: approving removes them.",
     "showText": "Show the text",
-    "hideText": "Hide the text"
+    "hideText": "Hide the text",
+    "changes": {
+      "title": "Title",
+      "section": "Section",
+      "links": "Links",
+      "tags": "Tags",
+      "noSection": "no section",
+      "newSection": "(new)"
+    }
   },
   "editor": {
     "glyph": {

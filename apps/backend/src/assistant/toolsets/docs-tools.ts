@@ -7,6 +7,31 @@ import {
   DocProposalAction,
 } from 'src/generated/prisma/client/client';
 import { describeDoc } from 'src/docs/docs.service';
+import {
+  mergeLinks,
+  ProposalOrganize,
+} from 'src/docs/helpers/proposalOrganize';
+import { DOC_THING_LINK_TYPES, docAutoGroup } from '@myhomelab/shared';
+
+/** Onde o utilizador vê o documento na página Documentos (a mesma regra da página). */
+function placeOf(
+  doc: { tags: string[]; links: { type: DocLinkType; label: string }[] },
+  sectionName: string | null,
+): string {
+  if (sectionName) return `na secção "${sectionName}"`;
+  const group = docAutoGroup(doc);
+  if (group === 'things') {
+    const link = doc.links.find((item) =>
+      (DOC_THING_LINK_TYPES as readonly string[]).includes(item.type),
+    );
+    return `em "Servidores e apps" → ${link?.label ?? '?'}`;
+  }
+  if (group === 'projects') {
+    const link = doc.links.find((item) => item.type === DocLinkType.PROJECT);
+    return `em "Projetos" → ${link?.label ?? '?'}`;
+  }
+  return `em "Gerais" (${doc.tags.includes('processo') ? 'tem a etiqueta processo' : 'sem ligação a servidor, máquina, app, monitor ou projeto'})`;
+}
 
 const DOC = {
   type: 'string' as const,
@@ -75,8 +100,12 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
         const doc = await context.docs.findForAgent(context.userId, input.doc);
         if (typeof doc === 'string') return doc;
         context.docsUsed?.set(doc.id, doc.title);
+        const section = doc.sectionId
+          ? await context.docs.findSection(context.userId, doc.sectionId)
+          : null;
         return (
           `${describeDoc(doc)}\n` +
+          `Na página Documentos aparece ${placeOf(doc, section?.name ?? null)}.\n` +
           `Dono: ${doc.owner === DocOwner.USER ? 'o utilizador (não escreves; propões com docs_propose)' : 'os agentes (podes reescrever com docs_write)'}. ` +
           `Atualizado a ${doc.updatedAt.toISOString().slice(0, 16).replace('T', ' ')} por ${doc.updatedBy ?? '—'}.\n\n` +
           (doc.content.trim() || '(vazio)')
@@ -226,18 +255,145 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
       },
     },
     {
-      name: 'docs_propose',
+      name: 'docs_layout',
       description:
-        'Propõe ao utilizador uma versão nova de um documento dele; só vale depois de ele aprovar (na tarefa ou em Documentos), e a versão anterior fica guardada. edit (o texto completo novo) é o normal: uma regra ou um ponto que faltou vai para o documento da app, na secção certa ("Antes de instalar", "Depois de instalar", "Onde corre"…). append só para acrescentar uma secção no fim. create só quando não existe nenhum documento para aquilo (ex.: uma app nova); documentos de aprendizagens não se criam.',
+        'Mostra os documentos como ele os vê na página Documentos. Em cima ficam as secções dele (pastas que ele cria: "Viagens", "Casa", "Saúde"…), com os documentos de cada uma. Por baixo, os documentos que não estão numa secção, arrumados sozinhos em três grupos: "Servidores e apps" (ligados a um servidor, máquina, app ou monitor, junto dessa coisa), "Projetos" (ligados a um projeto) e "Gerais" (o resto, e sempre os da etiqueta processo, mesmo ligados). As etiquetas não criam grupos. Para tirar um documento de Gerais: põe-no numa secção, ou liga-o à app ou ao servidor certo (sem a etiqueta processo). Os registos (LOG) não aparecem aqui: ficam em Documentos → Registos. Usa isto antes de propor arrumações.',
+      inputSchema: { type: 'object', properties: {} },
+      handler: async () => {
+        const layout = await context.docs.layout(context.userId);
+        const { sections } = layout;
+        // Os registos ficam à parte (Documentos → Registos), como na página.
+        const docs = layout.docs.filter((doc) => doc.kind !== DocKind.LOG);
+        const childrenOf = new Map<string, typeof docs>();
+        for (const doc of docs) {
+          if (doc.parentId && docs.some((item) => item.id === doc.parentId)) {
+            childrenOf.set(doc.parentId, [
+              ...(childrenOf.get(doc.parentId) ?? []),
+              doc,
+            ]);
+          }
+        }
+        const topLevel = docs.filter(
+          (doc) =>
+            !doc.parentId || !docs.some((item) => item.id === doc.parentId),
+        );
+        const docLines = (items: typeof docs, indent: string): string[] =>
+          items.flatMap((doc) => [
+            `${indent}- [${doc.kind}] ${doc.title} (${doc.id})${doc.tags.length ? ` #${doc.tags.join(' #')}` : ''}`,
+            ...docLines(childrenOf.get(doc.id) ?? [], `${indent}    `),
+          ]);
+        const sectionLines = (
+          parentId: string | null,
+          indent: string,
+        ): string[] =>
+          sections
+            .filter((section) => section.parentId === parentId)
+            .flatMap((section) => {
+              const inside = topLevel.filter(
+                (doc) => doc.sectionId === section.id,
+              );
+              return [
+                `${indent}📁 ${section.name} (${section.id}) — ${inside.length} documentos`,
+                ...docLines(inside, `${indent}  `),
+                ...sectionLines(section.id, `${indent}  `),
+              ];
+            });
+
+        const automatic = topLevel.filter((doc) => !doc.sectionId);
+        const byFirstLink = (group: 'things' | 'projects', types: string[]) => {
+          const groups = new Map<string, typeof docs>();
+          for (const doc of automatic.filter(
+            (item) => item.autoGroup === group,
+          )) {
+            const link = doc.links.find((item) => types.includes(item.type));
+            const key = link?.label ?? '?';
+            groups.set(key, [...(groups.get(key) ?? []), doc]);
+          }
+          return [...groups.entries()]
+            .sort(([a], [b]) => a.localeCompare(b))
+            .flatMap(([label, items]) => [
+              `  ▸ ${label}`,
+              ...docLines(items, '    '),
+            ]);
+        };
+        const general = automatic.filter((doc) => doc.autoGroup === 'general');
+        const lines = [
+          `As tuas secções (${sections.length}):`,
+          ...(sections.length
+            ? sectionLines(null, '')
+            : [
+                '(nenhuma — ele cria-as em Documentos → "Nova secção", ou propões com docs_propose section)',
+              ]),
+          '',
+          'Automático — fora das secções:',
+          'Servidores e apps:',
+          ...byFirstLink('things', ['SERVER', 'GUEST', 'APP', 'MONITOR']),
+          'Projetos:',
+          ...byFirstLink('projects', ['PROJECT']),
+          `Gerais (${general.length}):`,
+          ...general.flatMap((doc) => [
+            ...docLines([doc], '  '),
+            `      porquê: ${doc.tags.includes('processo') ? 'tem a etiqueta processo' : 'não está ligado a servidor, máquina, app, monitor nem projeto'}`,
+          ]),
+        ];
+        return lines.join('\n');
+      },
+    },
+    {
+      name: 'docs_targets',
+      description:
+        'Tudo a que um documento se pode ligar, com o id a usar em links / add_links: servidores e as máquinas deles (GUEST "<servidor>:<vmid>"), apps ligadas (APP), serviços vigiados (MONITOR), agentes (AGENT, pela chave) e projetos (PROJECT). Filtra por tipo ou por nome.',
       inputSchema: {
         type: 'object',
         properties: {
-          action: { type: 'string', enum: ['edit', 'append', 'create'] },
+          type: {
+            type: 'string',
+            enum: ['SERVER', 'GUEST', 'APP', 'MONITOR', 'AGENT', 'PROJECT'],
+          },
+          query: {
+            type: 'string',
+            description: 'Parte do nome (ex.: "trek", "gmail").',
+          },
+        },
+      },
+      handler: async (input: { type?: DocLinkType; query?: string }) => {
+        const needle = input.query?.trim().toLowerCase();
+        const targets = (await context.docs.targets(context.userId)).filter(
+          (target) =>
+            target.type !== DocLinkType.DOC &&
+            (!input.type || target.type === input.type) &&
+            (!needle ||
+              `${target.label} ${target.group}`.toLowerCase().includes(needle)),
+        );
+        if (!targets.length) return 'Nada a que ligar com esse filtro.';
+        return targets
+          .map(
+            (target) =>
+              `- ${target.type} · ${target.label} → targetId "${target.targetId}"`,
+          )
+          .join('\n');
+      },
+    },
+    {
+      name: 'docs_propose',
+      description:
+        'Propõe ao utilizador uma mudança num documento dele; só vale depois de ele aprovar (na tarefa ou em Documentos), e a versão anterior fica guardada. edit (o texto completo novo) é o normal: uma regra ou um ponto que faltou vai para o documento da app, na secção certa. append só para acrescentar uma secção no fim. create só quando não existe nenhum documento para aquilo. organize muda só a arrumação, sem tocar no texto: title (outro nome), add_links / remove_links, tags / add_tags / remove_tags e section. A arrumação também pode ir junto com edit, append ou create. Os ids das ligações vêm do docs_targets; onde cada documento aparece vem do docs_layout.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          action: {
+            type: 'string',
+            enum: ['edit', 'append', 'create', 'organize'],
+          },
           doc: {
             type: 'string',
-            description: 'O documento (edit/append). Omite em create.',
+            description: 'O documento (edit/append/organize). Omite em create.',
           },
-          title: { type: 'string', description: 'create: o título.' },
+          title: {
+            type: 'string',
+            description:
+              'create: o título. edit/organize: um título novo (para mudar o nome).',
+          },
           kind: {
             type: 'string',
             enum: KINDS,
@@ -247,7 +403,7 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
           content: {
             type: 'string',
             description:
-              'edit: o texto completo novo. append: só o que se acrescenta. create: o texto todo.',
+              'edit: o texto completo novo. append: só o que se acrescenta. create: o texto todo. organize: não se usa.',
           },
           reason: {
             type: 'string',
@@ -259,12 +415,32 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
             description:
               'A tarefa do quadro que levou a esta proposta (ex.: ATU-24), se houver. Fica lá um comentário com o link e a tarefa espera pela decisão.',
           },
-          links: LINKS,
+          links: {
+            ...LINKS,
+            description: `create: as ligações do documento novo. ${LINKS.description}`,
+          },
+          add_links: {
+            ...LINKS,
+            description: `edit/append/organize: ligações a acrescentar (as que já tem ficam). ${LINKS.description}`,
+          },
+          remove_links: {
+            type: 'array',
+            items: { type: 'string' },
+            description:
+              'edit/append/organize: os targetId das ligações a tirar.',
+          },
           tags: {
             type: 'array',
             items: { type: 'string' },
             description:
-              'create: as etiquetas do documento novo (é por elas e pelas ligações que os agentes sabem quando o ler).',
+              'As etiquetas todas (substitui as que tem). Em create, as do documento novo. Minúsculas, sem acentos nem espaços (ex.: atualizacao, home-assistant).',
+          },
+          add_tags: { type: 'array', items: { type: 'string' } },
+          remove_tags: { type: 'array', items: { type: 'string' } },
+          section: {
+            type: 'string',
+            description:
+              'A secção dele onde o documento passa a estar: o nome ou o id de uma que existe, um nome novo (cria-se ao aprovar), ou "" para sair das secções (volta ao automático).',
           },
           replaces: {
             type: 'array',
@@ -273,20 +449,28 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
               'create: os ids dos documentos que o novo junta num só (ex.: o "estudar" e o "instalar" de uma app). Se ele aprovar, esses apagam-se: diz-lho no reason.',
           },
         },
-        required: ['action', 'content', 'reason'],
+        required: ['action', 'reason'],
       },
       handler: async (input: {
-        action: 'edit' | 'append' | 'create';
+        action: 'edit' | 'append' | 'create' | 'organize';
         doc?: string;
         title?: string;
         kind?: DocKind;
-        content: string;
+        content?: string;
         reason: string;
         task?: string;
         links?: LinkInput;
+        add_links?: LinkInput;
+        remove_links?: string[];
         tags?: string[];
+        add_tags?: string[];
+        remove_tags?: string[];
+        section?: string;
         replaces?: string[];
       }) => {
+        if (input.action !== 'organize' && !input.content?.trim()) {
+          return 'Falta o texto (content). Para mudar só o título, as ligações, as etiquetas ou a secção, usa action organize.';
+        }
         let task: { id: string; key: string } | undefined;
         if (input.task?.trim()) {
           const found = await context.board.findForAgent(
@@ -297,10 +481,25 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
           const { key } = await context.board.task(context.userId, found.id);
           task = { id: found.id, key };
         }
+
+        const organize: ProposalOrganize = {};
+        if (input.section !== undefined) {
+          const name = input.section.trim();
+          if (!name) {
+            organize.section = { id: null };
+          } else {
+            const existing = await context.docs.findSection(
+              context.userId,
+              name,
+            );
+            organize.section = existing ? { id: existing.id } : { name };
+          }
+        }
+
         let docId: string | undefined;
         let title = input.title?.trim() ?? '';
         if (input.action !== 'create') {
-          if (!input.doc) return 'Falta o documento (doc) para edit/append.';
+          if (!input.doc) return 'Falta o documento (doc).';
           const doc = await context.docs.findForAgent(
             context.userId,
             input.doc,
@@ -308,6 +507,34 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
           if (typeof doc === 'string') return doc;
           docId = doc.id;
           title = doc.title;
+          if (input.title?.trim() && input.title.trim() !== doc.title) {
+            organize.title = input.title.trim();
+          }
+          if (input.add_links?.length || input.remove_links?.length) {
+            organize.links = mergeLinks(
+              doc.links.map(({ type, targetId, label }) => ({
+                type,
+                targetId,
+                label,
+              })),
+              input.add_links,
+              input.remove_links,
+            );
+          }
+          if (
+            input.tags ||
+            input.add_tags?.length ||
+            input.remove_tags?.length
+          ) {
+            const base = input.tags ?? doc.tags;
+            const removed = new Set(input.remove_tags ?? []);
+            organize.tags = [
+              ...new Set([...base, ...(input.add_tags ?? [])]),
+            ].filter((tag) => !removed.has(tag));
+          }
+          if (input.action === 'organize' && !Object.keys(organize).length) {
+            return 'Não há nada a mudar: diz o title, add_links/remove_links, tags/add_tags/remove_tags ou section.';
+          }
         } else if (!input.title?.trim()) {
           return 'Para propor um documento novo falta o título.';
         } else {
@@ -318,7 +545,7 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
             input.title.trim(),
           );
           if (typeof same !== 'string') {
-            return `Já existe "${same.title}" (${same.id}). Não cries outro: lê-o com docs_read e, se faltar alguma coisa, propõe uma mudança nele (edit ou append).`;
+            return `Já existe "${same.title}" (${same.id}). Não cries outro: lê-o com docs_read e, se faltar alguma coisa, propõe uma mudança nele (edit, append ou organize).`;
           }
         }
         await context.docs.propose(context.userId, {
@@ -328,14 +555,17 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
               ? DocProposalAction.EDIT
               : input.action === 'append'
                 ? DocProposalAction.APPEND
-                : DocProposalAction.CREATE,
-          title: input.title,
+                : input.action === 'organize'
+                  ? DocProposalAction.ORGANIZE
+                  : DocProposalAction.CREATE,
+          title: input.action === 'create' ? input.title : undefined,
           kind: input.kind,
-          content: input.content,
+          content: input.content ?? '',
           reason: input.reason,
-          links: input.links,
-          tags: input.tags,
+          links: input.action === 'create' ? input.links : undefined,
+          tags: input.action === 'create' ? input.tags : undefined,
           replaces: input.replaces,
+          organize: Object.keys(organize).length ? organize : undefined,
           proposedBy: agentKey,
           task,
         });

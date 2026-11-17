@@ -144,7 +144,12 @@ Behaviour that should be configurable (what needs approval, which commands are
 destructive, how to update a given app) belongs in the user's **documents**, not in code
 or prompts. The documents linked to an agent and to what it is working on are listed at
 the end of the request, and the tools that change things wait until those are read with
-`docs_read`. Agents propose changes to user documents and the user approves them. The code
+`docs_read`. Agents propose changes to user documents and the user approves them — the text,
+or only the arrangement (`docs_propose` `organize`: title, links, tags, section, including a new
+section). `docs_layout` shows agents the Documents page exactly as the user sees it (the user's
+sections, then "Servers and apps", "Projects" and "General" — the rule lives in
+`docAutoGroup` in `@myhomelab/shared`, used by the page too), and `docs_targets` lists what a
+document can link to, with ids. The code
 measures, executes and records — the agents, following the rules, are the brakes.
 
 For example, server shell commands run as soon as an agent calls them; the code only

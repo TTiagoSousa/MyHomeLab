@@ -1,7 +1,7 @@
 export type DocKind = 'RULES' | 'MAP' | 'LOG';
 export type DocOwner = 'USER' | 'AGENT';
 export type DocLinkType = 'SERVER' | 'GUEST' | 'APP' | 'MONITOR' | 'AGENT' | 'PROJECT' | 'TASK' | 'DOC';
-export type DocProposalAction = 'EDIT' | 'APPEND' | 'CREATE';
+export type DocProposalAction = 'EDIT' | 'APPEND' | 'CREATE' | 'ORGANIZE';
 
 export const DOC_KINDS: DocKind[] = ['RULES', 'MAP', 'LOG'];
 export const LIBRARY_KINDS: DocKind[] = ['RULES', 'MAP'];
@@ -90,7 +90,6 @@ export interface DocSection {
 }
 
 export const MAP_TAG = 'mapa-auto';
-export const PROCESS_TAG = 'processo';
 
 export interface DocTemplateSet {
   id: string;
@@ -125,6 +124,16 @@ export interface DocProposal {
   status: string;
   createdAt: string;
   doc: { id: string; title: string; content: string } | null;
+  changes?: DocProposalChanges;
+}
+
+export interface DocProposalChanges {
+  title?: { from: string; to: string };
+  tagsAdded: string[];
+  tagsRemoved: string[];
+  linksAdded: { type: DocLinkType; label: string }[];
+  linksRemoved: { type: DocLinkType; label: string }[];
+  section?: { from: string | null; to: string | null; isNew: boolean };
 }
 
 export interface DocFilters {

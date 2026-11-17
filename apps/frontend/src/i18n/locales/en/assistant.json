@@ -455,7 +455,9 @@
       "todo_create": "Create tasks",
       "todo_update": "Change tasks",
       "todo_delete": "Delete tasks",
-      "todo_create_list": "Create lists"
+      "todo_create_list": "Create lists",
+      "docs_layout": "See how the documents are arranged",
+      "docs_targets": "See what a document can link to"
     }
   },
   "conversations": {

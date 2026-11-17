@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PROCESS_TAG, type DocKind, type DocLinkType, type DocSummary, type DocTarget } from '../../../Hooks/Docs/docTypes';
+import { docAutoGroup } from '@myhomelab/shared';
+import type { DocKind, DocLinkType, DocSummary, DocTarget } from '../../../Hooks/Docs/docTypes';
 import * as Icon from '../../../Imports/icons';
 import Doc_Tree_Item from './Doc_Tree_Item';
 
@@ -44,12 +45,9 @@ const mapFirst = (a: DocSummary, b: DocSummary) =>
 const Docs_Groups = ({ docs, childrenOf, targets, isOpen, onToggle, onSelect, onCreate }: Docs_Groups_Props) => {
   const { t } = useTranslation('docs');
 
-  const isProcess = (doc: DocSummary) => doc.tags.includes(PROCESS_TAG);
-  const hasLink = (doc: DocSummary, types: DocLinkType[]) => doc.links.some((link) => types.includes(link.type));
-  const linked = docs.filter((doc) => !isProcess(doc));
-  const things = groupBy(linked, THING_TYPES);
-  const projects = groupBy(linked.filter((doc) => !hasLink(doc, THING_TYPES)), ['PROJECT']);
-  const general = docs.filter((doc) => isProcess(doc) || (!hasLink(doc, THING_TYPES) && !hasLink(doc, ['PROJECT'])));
+  const things = groupBy(docs.filter((doc) => docAutoGroup(doc) === 'things'), THING_TYPES);
+  const projects = groupBy(docs.filter((doc) => docAutoGroup(doc) === 'projects'), ['PROJECT']);
+  const general = docs.filter((doc) => docAutoGroup(doc) === 'general');
 
   const renderDocs = (items: DocSummary[], groupKey?: string) =>
     [...items].sort(mapFirst).map((doc) => (

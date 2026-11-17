@@ -236,7 +236,7 @@ through nginx (`X-Forwarded-For` present).
 | GET | `/docs` | Document index with filters and search |
 | GET | `/docs/targets` | Things a document can be linked to |
 | GET | `/docs/linked` | Documents linked to a target (`?type=&targetId=`) |
-| GET | `/docs/proposals` | Pending agent proposals |
+| GET | `/docs/proposals` | Pending agent proposals, each with `changes` (title, section, links and tags it would change) |
 | POST | `/docs/proposals/:id/approve` | Approve a proposal (optionally edited) |
 | POST | `/docs/proposals/:id/reject` | Reject a proposal |
 | POST | `/docs/starter` | Create any missing starter documents (general rules, process docs, one rules doc per connected app) |

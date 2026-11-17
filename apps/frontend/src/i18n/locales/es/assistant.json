@@ -455,7 +455,9 @@
       "todo_create": "Crear tareas",
       "todo_update": "Cambiar tareas",
       "todo_delete": "Borrar tareas",
-      "todo_create_list": "Crear listas"
+      "todo_create_list": "Crear listas",
+      "docs_layout": "Ver cómo están ordenados los documentos",
+      "docs_targets": "Ver a qué se puede enlazar un documento"
     }
   },
   "conversations": {

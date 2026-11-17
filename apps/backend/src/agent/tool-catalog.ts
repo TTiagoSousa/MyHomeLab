@@ -633,6 +633,20 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
   tool('docs_search', 'docs', 'docs', 'read', 'a procurar nos documentos'),
   tool('docs_read', 'docs', 'docs', 'read', 'a ler um documento'),
   tool('docs_projects', 'docs', 'docs', 'read', 'a ver os projetos'),
+  tool(
+    'docs_layout',
+    'docs',
+    'docs',
+    'read',
+    'a ver como estão arrumados os documentos',
+  ),
+  tool(
+    'docs_targets',
+    'docs',
+    'docs',
+    'read',
+    'a ver a que se pode ligar um documento',
+  ),
   tool('docs_write', 'docs', 'docs', 'write', 'a escrever um documento'),
   tool('docs_log', 'docs', 'docs', 'write', 'a escrever no registo'),
   tool(

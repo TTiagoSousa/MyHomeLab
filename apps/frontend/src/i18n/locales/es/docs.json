@@ -179,7 +179,8 @@
     "action": {
       "EDIT": "Editar",
       "APPEND": "Añadir",
-      "CREATE": "Crear"
+      "CREATE": "Crear",
+      "ORGANIZE": "Ordenar"
     },
     "target": "En «{{title}}»",
     "newDoc": "Nuevo: «{{title}}»",
@@ -198,7 +199,15 @@
     "replaces_one": "Une {{count}} documento en uno: al aprobar, ese se borra.",
     "replaces_other": "Une {{count}} documentos en uno: al aprobar, esos se borran.",
     "showText": "Ver el texto",
-    "hideText": "Ocultar el texto"
+    "hideText": "Ocultar el texto",
+    "changes": {
+      "title": "Título",
+      "section": "Sección",
+      "links": "Enlaces",
+      "tags": "Etiquetas",
+      "noSection": "sin sección",
+      "newSection": "(nueva)"
+    }
   },
   "editor": {
     "glyph": {

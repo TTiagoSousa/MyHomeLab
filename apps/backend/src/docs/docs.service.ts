@@ -43,6 +43,12 @@ import {
 } from './helpers/proposalTodo';
 import { TodoService } from 'src/todo/todo.service';
 import { updatesAgentKey } from 'src/agent/helpers/updatesAgentKey';
+import { docAutoGroup } from '@myhomelab/shared';
+import {
+  ProposalOrganize,
+  proposalChanges,
+  readOrganize,
+} from './helpers/proposalOrganize';
 
 /** Quantas versões anteriores ficam de cada documento. */
 const KEEP_VERSIONS = 30;
@@ -436,12 +442,90 @@ export class DocsService {
 
   // ── Propostas dos agentes ───────────────────────────────────────────────
 
-  proposals(userId: string) {
-    return this.prisma.docProposal.findMany({
-      where: { userId, status: DocProposalStatus.PENDING },
-      include: { doc: { select: { id: true, title: true, content: true } } },
-      orderBy: { createdAt: 'desc' },
+  /** As propostas por decidir, cada uma com `changes`: o que muda além do texto. */
+  async proposals(userId: string) {
+    const [proposals, sections] = await Promise.all([
+      this.prisma.docProposal.findMany({
+        where: { userId, status: DocProposalStatus.PENDING },
+        include: {
+          doc: {
+            select: {
+              id: true,
+              title: true,
+              content: true,
+              tags: true,
+              sectionId: true,
+              links: { select: { type: true, targetId: true, label: true } },
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.docSection.findMany({
+        where: { userId },
+        select: { id: true, name: true },
+      }),
+    ]);
+    const sectionName = (id: string | null) =>
+      id ? (sections.find((section) => section.id === id)?.name ?? null) : null;
+    return proposals.map((proposal) => ({
+      ...proposal,
+      changes: proposalChanges(
+        this.organizeOf(proposal),
+        proposal.doc,
+        sectionName,
+      ),
+    }));
+  }
+
+  /**
+   * A arrumação de uma proposta. As antigas (antes do campo organize) traziam as
+   * ligações e as etiquetas soltas; numa edição também contam.
+   */
+  private organizeOf(proposal: {
+    action: DocProposalAction;
+    organize: Prisma.JsonValue;
+    links: Prisma.JsonValue;
+    tags: string[];
+  }): ProposalOrganize | null {
+    const organize = readOrganize(proposal.organize);
+    if (organize || proposal.action === DocProposalAction.CREATE)
+      return organize;
+    const links = proposal.links as unknown as ProposalOrganize['links'] | null;
+    if (!links && !proposal.tags.length) return null;
+    return {
+      ...(links ? { links } : {}),
+      ...(proposal.tags.length ? { tags: proposal.tags } : {}),
+    };
+  }
+
+  /** Uma secção pelo id ou pelo nome (sem ligar a maiúsculas nem acentos). */
+  async findSection(userId: string, value: string) {
+    const sections = await this.prisma.docSection.findMany({
+      where: { userId },
+      select: { id: true, name: true, parentId: true },
     });
+    const wanted = normalizeText(value.trim());
+    return (
+      sections.find((section) => section.id === value.trim()) ??
+      sections.find((section) => normalizeText(section.name) === wanted) ??
+      null
+    );
+  }
+
+  /** O sectionId a gravar: a secção pedida, ou uma nova (criada agora, no topo). */
+  private async sectionIdFor(
+    userId: string,
+    section: NonNullable<ProposalOrganize['section']>,
+  ): Promise<string | null> {
+    if (!('name' in section)) return section.id;
+    const existing = await this.findSection(userId, section.name);
+    if (existing) return existing.id;
+    const created = await this.prisma.docSection.create({
+      data: { userId, name: section.name.trim(), parentId: null },
+      select: { id: true },
+    });
+    return created.id;
   }
 
   async propose(
@@ -457,6 +541,8 @@ export class DocsService {
       tags?: string[];
       /** CREATE: os documentos que o novo junta; aprovada a proposta, apagam-se. */
       replaces?: string[];
+      /** A arrumação (título, etiquetas, ligações, secção) a aplicar ao aprovar. */
+      organize?: ProposalOrganize;
       proposedBy: string;
       /** A tarefa do quadro de onde veio: a proposta aparece lá, e o aviso "Aprovar: …" leva até ela. */
       task?: { id: string; key: string };
@@ -477,6 +563,9 @@ export class DocsService {
           : undefined,
         tags: cleanTags(input.tags) ?? [],
         replaces: input.replaces ?? [],
+        organize: input.organize
+          ? (input.organize as unknown as Prisma.InputJsonValue)
+          : undefined,
         proposedBy: input.proposedBy,
         taskId: input.task?.id ?? null,
       },
@@ -516,6 +605,7 @@ export class DocsService {
   async approve(userId: string, proposalId: string, content?: string) {
     const proposal = await this.findProposal(userId, proposalId);
     const text = content ?? proposal.content;
+    const organize = this.organizeOf(proposal);
     let doc: DocWithLinks;
     if (proposal.action === DocProposalAction.CREATE || !proposal.docId) {
       doc = await this.create(
@@ -541,12 +631,21 @@ export class DocsService {
         const old = await this.prisma.doc.findFirst({ where: { id, userId } });
         if (old && old.id !== doc.id) await this.remove(userId, old.id);
       }
+      if (organize?.section) {
+        doc = await this.update(
+          userId,
+          doc.id,
+          { sectionId: await this.sectionIdFor(userId, organize.section) },
+          { kind: 'user' },
+        );
+      }
     } else {
       const current = await this.findOwned(userId, proposal.docId);
       // Uma proposta que substitui tudo, feita sobre uma versão mais antiga, apagava o que
       // mudou depois: só se aprova com o texto revisto (ou rejeita-se).
+      const textChange = proposal.action !== DocProposalAction.ORGANIZE;
       if (
-        proposal.action !== DocProposalAction.APPEND &&
+        proposal.action === DocProposalAction.EDIT &&
         content === undefined &&
         current.updatedAt > proposal.createdAt
       ) {
@@ -558,10 +657,21 @@ export class DocsService {
         userId,
         current.id,
         {
-          content:
-            proposal.action === DocProposalAction.APPEND
-              ? `${current.content.trimEnd()}\n${text.trim()}\n`
-              : text,
+          ...(textChange
+            ? {
+                content:
+                  proposal.action === DocProposalAction.APPEND
+                    ? `${current.content.trimEnd()}\n${text.trim()}\n`
+                    : text,
+              }
+            : {}),
+          // A arrumação vai junto: antes ficava de fora e as ligações perdiam-se.
+          title: organize?.title,
+          tags: organize?.tags,
+          links: organize?.links,
+          ...(organize?.section
+            ? { sectionId: await this.sectionIdFor(userId, organize.section) }
+            : {}),
         },
         { kind: 'user' },
       );
@@ -589,6 +699,40 @@ export class DocsService {
       data: { status: DocProposalStatus.REJECTED, decidedAt: new Date() },
     });
     await this.closeProposalTodo(proposal.id, userId, 'Rejeitada.');
+  }
+
+  /**
+   * Os documentos como aparecem na página Documentos: as secções dele (em árvore) e,
+   * para os que não estão numa secção, os grupos automáticos (docAutoGroup).
+   */
+  async layout(userId: string) {
+    const [docs, sections] = await Promise.all([
+      this.prisma.doc.findMany({
+        where: { userId },
+        select: {
+          id: true,
+          title: true,
+          kind: true,
+          tags: true,
+          sectionId: true,
+          parentId: true,
+          links: { select: { type: true, targetId: true, label: true } },
+        },
+        orderBy: { title: 'asc' },
+      }),
+      this.prisma.docSection.findMany({
+        where: { userId },
+        select: { id: true, name: true, parentId: true },
+        orderBy: [{ position: 'asc' }, { name: 'asc' }],
+      }),
+    ]);
+    return {
+      sections,
+      docs: docs.map((doc) => ({
+        ...doc,
+        autoGroup: docAutoGroup(doc),
+      })),
+    };
   }
 
   // ── A que se pode ligar ─────────────────────────────────────────────────
