@@ -93,7 +93,7 @@ export function buildTodoTools(context: AgentContext): AgentTool[] {
 
 Toolsets: `email`, `server`, `serverControl`, `serverShell`, `health`, `forgejo`,
 `homeAssistant`, `adguard`, `nextcloud`, `docs`, `updates`, `schedules`, `board`, `todos`,
-`team` (plus `trek`, `opengym`, `gametracker` and others). `buildToolbox(names, context)` builds only the
+`team` (plus `trek`, `opengym`, `gametracker`, `immich` and others). `buildToolbox(names, context)` builds only the
 toolsets an agent uses.
 
 **TREK** reaches the agent one of two ways, by AI provider: with **Claude Code** the agent gets
@@ -112,6 +112,16 @@ watchlist; set or remove a game, follow a price) call its REST API with the acco
 (`gtv_…`) on either provider. The **Games Curator** template (`games`, under Jarvis) has them; add it in
 Workflow. `gametracker_set_game` merges with the current entry, because the API's `PUT` replaces the
 whole entry.
+
+**Immich** has no official MCP (only community servers), so the `immich_*` tools call its REST API
+with the account's API key (`x-api-key`) on either provider: overview, search (smart search by
+description, or by dates, place, people and favourites), albums, people, duplicates, job queues and
+server settings (read); save an album (create, rename, add or remove photos), name or hide a person,
+run, pause or resume a queue or start a manual job, and change settings (write). It never deletes
+photos or albums. `immich_set_settings` merges the patch into the current `/system-config` and, without
+`confirm`, only returns the before → after list. The **Photo Curator** template (`photos`, under
+Jarvis) has them; add it in Workflow. Settings, queues and backups need an admin's key with the
+`all` permission.
 
 ### Permissions (three layers)
 

@@ -77,6 +77,9 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Apps/GameTracker' element={ <Private_Page.GameTrackerAccounts /> } />
       <Route path='MyHomeLab/Apps/GameTracker/:accountId' element={ <Private_Page.GameTrackerAccount /> } />
       <Route path='MyHomeLab/Apps/GameTracker/:accountId/Connections' element={ <Private_Page.GameTrackerConnections /> } />
+      <Route path='MyHomeLab/Apps/Immich' element={ <Private_Page.ImmichAccounts /> } />
+      <Route path='MyHomeLab/Apps/Immich/:accountId' element={ <Private_Page.ImmichAccount /> } />
+      <Route path='MyHomeLab/Apps/Immich/:accountId/Connections' element={ <Private_Page.ImmichConnections /> } />
       <Route path='MyHomeLab/Apps/Nextcloud/:accountId/Connections' element={ <Private_Page.NextcloudConnections /> } />
       <Route path='MyHomeLab/Apps/Gmail' element={ <Private_Page.Email /> } />
       <Route path='MyHomeLab/Apps/Gmail/Rules' element={ <Private_Page.EmailRules /> } />

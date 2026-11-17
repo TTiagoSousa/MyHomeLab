@@ -29,6 +29,12 @@ export interface CreateGameTrackerAccountPayload extends AppLocationPayload {
   token: string;
 }
 
+export interface CreateImmichAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  apiKey: string;
+}
+
 export interface CreateTrekAccountPayload extends AppLocationPayload {
   displayName?: string;
   baseUrl: string;
@@ -120,6 +126,21 @@ export const useConnectedAccount = () => {
     try {
       await http.post(End_Points.Connected_Account_GameTracker_Endpoint(), data, { withCredentials: true });
       setAlert({ open: true, message: i18n.t('addons:alerts.gameTrackerConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createImmichAccount = async (data: CreateImmichAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Immich_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.immichConnected'), type: 'success' });
       return true;
     } catch (error: any) {
       const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
@@ -241,6 +262,7 @@ export const useConnectedAccount = () => {
     createForgejoAccount,
     createOpenGymAccount,
     createGameTrackerAccount,
+    createImmichAccount,
     createTrekAccount,
     createHomeAssistantAccount,
     createAdguardAccount,

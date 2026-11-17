@@ -216,6 +216,10 @@
           "name": "GamesTracker (jogos)",
           "description": "Ver a prateleira de jogos, as estatísticas, procurar no IGDB e os preços. Alterar é pôr e mudar jogos na prateleira, tirá-los (com confirmação) e seguir preços."
         },
+        "immich": {
+          "name": "Immich (fotos)",
+          "description": "Ver as fotos e os vídeos, procurar (também por descrição), os álbuns, as pessoas, os duplicados, as tarefas e as definições. Alterar é criar e arrumar álbuns, dar nome às pessoas, correr tarefas e mudar definições (mostra antes o que muda). Nunca apaga fotos."
+        },
         "trek": {
           "name": "TREK (viagens)",
           "description": "Ver as viagens e tudo o que está nelas pelo MCP do TREK. Alterar é criar, mudar e (com confirmação) apagar no TREK, dentro das permissões do cliente MCP."
@@ -279,6 +283,7 @@
       "nextcloud": "Nextcloud",
       "opengym": "openGym",
       "gametracker": "GamesTracker",
+      "immich": "Immich",
       "trek": "TREK"
     },
     "editor": {

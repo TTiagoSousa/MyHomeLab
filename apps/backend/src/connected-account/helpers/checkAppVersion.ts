@@ -18,6 +18,7 @@ import {
   GAMETRACKER_REPOSITORY,
   gameTrackerVersion,
 } from 'src/gametracker/gametracker.client';
+import { IMMICH_REPOSITORY, immichVersion } from 'src/immich/immich.client';
 import {
   createHomeAssistantClient,
   HOME_ASSISTANT_REPOSITORY,
@@ -73,6 +74,12 @@ export const VERSION_SOURCES: Partial<
     repository: { host: 'github', repo: GAMETRACKER_REPOSITORY },
     installed: (account) => gameTrackerVersion(account.baseUrl ?? ''),
     latest: () => latestGithubRelease(GAMETRACKER_REPOSITORY),
+  },
+  [ConnectionProvider.IMMICH]: {
+    appName: 'Immich',
+    repository: { host: 'github', repo: IMMICH_REPOSITORY },
+    installed: (account) => immichVersion(account.baseUrl ?? ''),
+    latest: () => latestGithubRelease(IMMICH_REPOSITORY),
   },
   [ConnectionProvider.HOME_ASSISTANT]: {
     appName: 'Home Assistant',

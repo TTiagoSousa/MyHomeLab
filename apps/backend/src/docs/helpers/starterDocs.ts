@@ -162,6 +162,23 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
       'Mudar ou perder a TOKEN_ENCRYPTION_KEY (sem ela as chaves guardadas não se leem).',
     ],
   },
+  [ConnectionProvider.IMMICH]: {
+    name: 'Immich',
+    before: [
+      '🤖 O backup do MyHomeLab do Immich (a base de dados) correu há pouco — prova: a hora do último bom',
+      '👤 As fotos (a pasta UPLOAD_LOCATION) têm cópia à parte — o backup do MyHomeLab só leva a base de dados',
+      '🤖 As notas da versão nova não pedem passos à mão (mudanças no docker-compose ou no .env) — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O /api/server/version responde com a versão nova — prova: a versão',
+      '🤖 As fotos e os álbuns estão lá, com os mesmos números (immich_overview) — prova: os números',
+      '🤖 As filas não ficaram com falhas novas (immich_queues) — prova: as falhadas',
+    ],
+    never: [
+      'Apagar fotos, álbuns, a pasta UPLOAD_LOCATION ou os backups em UPLOAD_LOCATION/backups.',
+      'Correr uma fila com force (refaz tudo) sem o sim dele.',
+    ],
+  },
   [ConnectionProvider.HOME_ASSISTANT]: {
     name: 'Home Assistant',
     before: [

@@ -35,6 +35,7 @@ export const ASSISTANT_PERMISSION_AREAS: readonly AssistantPermissionArea[] = [
   { key: 'opengym', group: 'health', access: ['read', 'write'] },
   { key: 'trek', group: 'organization', access: ['read', 'write'] },
   { key: 'gametracker', group: 'organization', access: ['read', 'write'] },
+  { key: 'immich', group: 'organization', access: ['read', 'write'] },
   { key: 'servers', group: 'servers', access: ['read', 'write'] },
   { key: 'backups', group: 'servers', access: ['read', 'write'] },
   { key: 'serverControl', group: 'servers', access: ['read', 'write'] },

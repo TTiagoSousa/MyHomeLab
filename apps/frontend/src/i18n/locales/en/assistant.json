@@ -216,6 +216,10 @@
           "name": "GamesTracker (games)",
           "description": "See the game shelf, the stats, search IGDB and the prices. Changing is adding and editing games on the shelf, removing them (with confirmation) and following prices."
         },
+        "immich": {
+          "name": "Immich (photos)",
+          "description": "See photos and videos, search (also by description), albums, people, duplicates, jobs and settings. Changing means creating and organising albums, naming people, running jobs and changing settings (it shows what changes first). It never deletes photos."
+        },
         "trek": {
           "name": "TREK (trips)",
           "description": "See the trips and everything in them through TREK MCP. Changing means creating, changing and (with confirmation) deleting in TREK, within the MCP client scopes."
@@ -279,6 +283,7 @@
       "nextcloud": "Nextcloud",
       "opengym": "openGym",
       "gametracker": "GamesTracker",
+      "immich": "Immich",
       "trek": "TREK"
     },
     "editor": {

@@ -23,6 +23,9 @@ import { CreateOpenGymAccountDto } from './dto/create-opengym-account.dto';
 import { createGameTrackerAccount } from './helpers/createGameTrackerAccount';
 import { refreshGameTrackerAccount } from './helpers/refreshGameTrackerAccount';
 import { CreateGameTrackerAccountDto } from './dto/create-gametracker-account.dto';
+import { createImmichAccount } from './helpers/createImmichAccount';
+import { refreshImmichAccount } from './helpers/refreshImmichAccount';
+import { CreateImmichAccountDto } from './dto/create-immich-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { setTrekMcp } from './helpers/setTrekMcp';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
@@ -360,6 +363,41 @@ export class ConnectedAccountService {
       planned: status.planned,
       hours: status.hours,
       rating: status.rating,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createImmich(dto: CreateImmichAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    const account = await this.afterConnect(
+      await createImmichAccount(dto, userId, this.connectedAccountRepository),
+      dto,
+    );
+    void this.checkVersion(account);
+    return account;
+  }
+
+  /** O estado do Immich (utilizador e permissões da chave, fotos, disco, filas) e a versão. */
+  async immichStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshImmichAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
       version: account.appVersion,
       latestVersion: account.appLatestVersion,
       latestUrl: account.appLatestUrl,

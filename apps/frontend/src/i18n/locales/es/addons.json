@@ -50,7 +50,8 @@
     "adguardConnected": "AdGuard conectado",
     "locationSaved": "Guardado dónde corre la app.",
     "openGymConnected": "openGym conectado",
-    "gameTrackerConnected": "GamesTracker conectado"
+    "gameTrackerConnected": "GamesTracker conectado",
+    "immichConnected": "Immich conectado"
   },
   "backups": {
     "title": "Copias de seguridad",
@@ -1370,6 +1371,137 @@
           "users": "Los usuarios de la instancia"
         }
       }
+    },
+    "immich": {
+      "title": "Immich",
+      "description": "Tus fotos y vídeos: el Curador de Fotos busca fotos, ordena álbumes, pone nombre a las personas y cuida los ajustes, las tareas y las copias.",
+      "connect": "Conectar Immich",
+      "agentsNote": "El Curador de Fotos usa Immich (añádelo en Asistente → Workflow). Para otro agente, elige sus herramientas en Workflow.",
+      "notFound": "Este Immich no existe o ya se desconectó.",
+      "accountDescription": "La conexión a Immich, con una clave de API. La clave actúa como el usuario que la creó y solo tiene los permisos elegidos: de un admin con \"all\", llega también a los ajustes, las tareas y las copias.",
+      "credentialsHint": "La dirección, el usuario y la clave de API. Para cambiar la clave, conecta otra vez con una nueva.",
+      "profile": "Usuario",
+      "library": "Fotos",
+      "photosValue_one": "{{count}} foto",
+      "photosValue_other": "{{count}} fotos",
+      "videosValue_one": "{{count}} vídeo",
+      "videosValue_other": "{{count}} vídeos",
+      "disk": "Disco",
+      "diskHint": "{{used}} de {{size}}",
+      "key": "Clave",
+      "keyAdmin": "De un admin",
+      "keyUser": "De un usuario",
+      "keyHint": "Los permisos de la clave están en Conexiones.",
+      "failedJobs_one": "{{count}} tarea fallida",
+      "failedJobs_other": "{{count}} tareas fallidas",
+      "notAdmin": "La clave no es de un admin: los ajustes, las tareas y las copias de Immich no funcionan con ella.",
+      "pausedQueues": "Colas en pausa: {{queues}}.",
+      "replaceKey": "Cambiar la clave",
+      "updateChip": "Nueva {{version}}",
+      "backup": {
+        "description": "Guarda la base de datos de Immich en un destino, con la frecuencia que elijas.",
+        "included": "Entra la copia de la base de datos que hace el propio Immich (pg_dump, gzip): los álbumes, las personas, los metadatos, los usuarios y los ajustes.",
+        "notIncluded": "Las fotos y los vídeos no entran (son la carpeta UPLOAD_LOCATION): haz una copia aparte. Necesita la clave de un admin.",
+        "restore": "Para recuperar: en Immich, Administración → Mantenimiento → restaurar una copia, o sigue la documentación de Immich (Backup and Restore)."
+      },
+      "connections": {
+        "title": "Conexiones",
+        "permissionsTitle": "Lo que permite la conexión",
+        "permissionsAdmin": "La clave actúa como el usuario que la creó, con su papel actual. Este es admin: llega también a los ajustes, las tareas y las copias, si la clave tiene esos permisos.",
+        "permissionsNotAdmin": "La clave actúa como el usuario que la creó, con su papel actual. Este no es admin: las llamadas de admin (ajustes, tareas, copias, estadísticas) no funcionan.",
+        "keyAll": "Permisos de la clave: todos (\"all\").",
+        "keySome_one": "Permisos de la clave ({{count}}): {{permissions}}. Las llamadas sin el permiso aparecen en rojo.",
+        "keySome_other": "Permisos de la clave ({{count}}): {{permissions}}. Las llamadas sin el permiso aparecen en rojo.",
+        "keyUnknown": "No se pudieron leer los permisos de la clave (falta apiKey.read): el estado de cada llamada solo mira el papel de admin.",
+        "callsTitle": "Llamadas a la API de Immich",
+        "callsSummary": "Lo que se puede pedir a Immich ({{base}}) y a su GitHub (las versiones): lo que MyHomeLab ya usa y lo que todavía no.",
+        "filterLabel": "Mostrar llamadas",
+        "filter": {
+          "all": "Todas ({{count}})",
+          "used": "Usadas ({{count}})",
+          "possible": "Posibles ({{count}})"
+        },
+        "table": {
+          "method": "Método",
+          "path": "Ruta",
+          "description": "Qué hace",
+          "usedBy": "Quién la usa",
+          "access": "Acceso",
+          "permission": "Permiso",
+          "status": "Estado",
+          "allows": "Qué permite",
+          "needed": "MyHomeLab usa",
+          "account": "Esta clave"
+        },
+        "access": {
+          "public": "Público",
+          "user": "Usuario (clave)",
+          "admin": "Administrador",
+          "github": "GitHub de Immich"
+        },
+        "allows": {
+          "public": "La versión instalada",
+          "user": "Las fotos, la búsqueda, los álbumes, las personas, los duplicados y el disco del usuario",
+          "admin": "Los ajustes, las colas de tareas, las estadísticas y las copias de la base de datos",
+          "github": "Las versiones publicadas, sin login"
+        },
+        "need": {
+          "read": "Lectura",
+          "write": "Lectura y escritura",
+          "none": "No usa"
+        },
+        "granted": "Lo tiene",
+        "notGranted": "No lo tiene",
+        "notUsed": "Aún no usada",
+        "available": "Disponible",
+        "needsAdmin": "Necesita admin",
+        "missingPermission": "Falta el permiso",
+        "usedBy": {
+          "connect": "Conectar",
+          "status": "Estado de la app",
+          "updates": "Actualizaciones",
+          "backups": "Copias",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "version": "Dice si es un Immich y la versión instalada",
+          "me": "De quién es la clave y si es admin",
+          "apiKey": "Los permisos de esta clave",
+          "myStatistics": "Cuántas fotos y vídeos tiene el usuario",
+          "storage": "El disco: usado, libre y el porcentaje",
+          "statistics": "Las fotos, los vídeos y el espacio de cada usuario",
+          "smartSearch": "Busca fotos por descripción (búsqueda inteligente)",
+          "metadataSearch": "Busca fotos por fechas, lugar, personas y favoritas",
+          "albums": "Los álbumes",
+          "album": "Un álbum y sus fotos",
+          "albumCreate": "Crea un álbum",
+          "albumUpdate": "Cambia el nombre o la descripción de un álbum",
+          "albumAdd": "Añade fotos a un álbum",
+          "albumRemove": "Quita fotos de un álbum (las fotos se quedan)",
+          "people": "Las personas reconocidas",
+          "personUpdate": "Pone nombre a una persona o la oculta",
+          "duplicates": "Los grupos de fotos duplicadas",
+          "queues": "Las colas de tareas: en curso, en espera y fallidas",
+          "queueUpdate": "Pausa o reanuda una cola",
+          "queueStart": "Ejecuta una cola (lo que falta o todo)",
+          "jobCreate": "Lanza una tarea manual (p. ej. copia de la base de datos)",
+          "config": "Los ajustes del servidor",
+          "configUpdate": "Cambia los ajustes del servidor",
+          "backups": "La lista de copias de la base de datos",
+          "backupDownload": "Descarga una copia de la base de datos",
+          "releases": "Las versiones publicadas, con las notas",
+          "about": "La versión y las bibliotecas del servidor",
+          "versionCheck": "Si hay una versión nueva (el aviso del propio Immich)",
+          "upload": "Sube fotos y vídeos",
+          "assetDelete": "Borra fotos y vídeos (a la papelera)",
+          "trashEmpty": "Vacía la papelera (borra para siempre)",
+          "memories": "Los recuerdos (\"tal día como hoy\")",
+          "sharedLinks": "Los enlaces compartidos",
+          "tags": "Las etiquetas",
+          "libraries": "Las bibliotecas externas",
+          "users": "Los usuarios de la instancia"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1440,6 +1572,16 @@
     "urlPlaceholder": "https://gametracker.ejemplo.com",
     "token": "Token de la API",
     "tokenHint": "En GamesTracker: Ajustes → API → Nuevo token. Para que los agentes cambien la estantería, no lo marques de solo lectura; para las copias, créalo con un admin. Se guarda cifrado en MyHomeLab.",
+    "connect": "Conectar"
+  },
+  "immichModal": {
+    "title": "Conectar Immich",
+    "name": "Nombre (opcional)",
+    "namePlaceholder": "P. ej.: Fotos",
+    "url": "Dirección",
+    "urlPlaceholder": "https://fotos.ejemplo.com",
+    "apiKey": "Clave de API",
+    "apiKeyHint": "En Immich: Cuenta (tu avatar) → Ajustes de la cuenta → Claves de API → Nueva clave. Para que los agentes cambien ajustes, tareas y copias, créala en una cuenta admin con el permiso \"all\". Se guarda cifrada en MyHomeLab.",
     "connect": "Conectar"
   }
 }

@@ -68,6 +68,7 @@ export const PROVIDER_NAMES: Record<ConnectionProvider, string> = {
   GOOGLE_TASKS: 'Google Tasks',
   OPENGYM: 'openGym',
   GAMETRACKER: 'GamesTracker',
+  IMMICH: 'Immich',
 };
 
 /** O nome de uma app ligada como aparece nas ligações: "Home Assistant · Casa" (sem repetir "Forgejo · Forgejo"). */

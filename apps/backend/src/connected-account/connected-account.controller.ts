@@ -23,6 +23,7 @@ import { CreateNextcloudAccountDto } from './dto/create-nextcloud-account.dto';
 import { CreateForgejoAccountDto } from './dto/create-forgejo-account.dto';
 import { CreateOpenGymAccountDto } from './dto/create-opengym-account.dto';
 import { CreateGameTrackerAccountDto } from './dto/create-gametracker-account.dto';
+import { CreateImmichAccountDto } from './dto/create-immich-account.dto';
 import { CreateTrekAccountDto } from './dto/create-trek-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
@@ -129,6 +130,25 @@ export class ConnectedAccountController {
     @Req() req: Request & { user: JwtPayload },
   ) {
     return this.connectedAccountService.gameTrackerStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('immich')
+  connectImmich(
+    @Body() dto: CreateImmichAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createImmich(dto, req.user.id);
+  }
+
+  /** O estado do Immich agora (utilizador e permissões da chave, fotos, disco, filas, versão). */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/immich-status')
+  immichStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.immichStatus(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

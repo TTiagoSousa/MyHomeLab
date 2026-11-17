@@ -85,6 +85,8 @@ there too.
 | PUT | `/connected-account/:id/opengym-mcp` | JWT | Set or clear the openGym MCP API token (`ogt_…`) |
 | POST | `/connected-account/gametracker` | JWT | Connect GamesTracker Vault with a personal API token (`gtv_…`) |
 | GET | `/connected-account/:id/gametracker-status` | JWT | GamesTracker user, shelf counts, hours, rating and version |
+| POST | `/connected-account/immich` | JWT | Connect Immich with an API key |
+| GET | `/connected-account/:id/immich-status` | JWT | Immich user, key permissions, photos, videos, disk, failed jobs, paused queues and version |
 | GET | `/connected-account/:id/trek-tools` | JWT | Tools exposed by TREK's MCP server |
 | POST | `/connected-account/home-assistant` | JWT | Connect Home Assistant (admin token) |
 | GET | `/connected-account/:id/home-assistant-status` | JWT | Entities, automations, pending updates and version |

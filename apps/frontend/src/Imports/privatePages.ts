@@ -17,6 +17,9 @@ export { default as OpenGymConnections } from '../Pages/Private/Apps/OpenGym_Con
 export { default as GameTrackerAccounts } from '../Pages/Private/Apps/GameTracker_Accounts';
 export { default as GameTrackerAccount } from '../Pages/Private/Apps/GameTracker_Account';
 export { default as GameTrackerConnections } from '../Pages/Private/Apps/GameTracker_Connections';
+export { default as ImmichAccounts } from '../Pages/Private/Apps/Immich_Accounts';
+export { default as ImmichAccount } from '../Pages/Private/Apps/Immich_Account';
+export { default as ImmichConnections } from '../Pages/Private/Apps/Immich_Connections';
 export { default as ForgejoAccounts } from '../Pages/Private/Apps/Forgejo_Accounts';
 export { default as ForgejoAccount } from '../Pages/Private/Apps/Forgejo_Account';
 export { default as ForgejoConnections } from '../Pages/Private/Apps/Forgejo_Connections';

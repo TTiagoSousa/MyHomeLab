@@ -216,6 +216,10 @@
           "name": "GamesTracker (juegos)",
           "description": "Ver la estantería de juegos, las estadísticas, buscar en IGDB y los precios. Cambiar es añadir y editar juegos en la estantería, quitarlos (con confirmación) y seguir precios."
         },
+        "immich": {
+          "name": "Immich (fotos)",
+          "description": "Ver las fotos y los vídeos, buscar (también por descripción), los álbumes, las personas, los duplicados, las tareas y los ajustes. Cambiar es crear y ordenar álbumes, poner nombre a las personas, ejecutar tareas y cambiar ajustes (antes muestra lo que cambia). Nunca borra fotos."
+        },
         "trek": {
           "name": "TREK (viajes)",
           "description": "Ver los viajes y todo lo que tienen por el MCP de TREK. Cambiar es crear, cambiar y (con confirmación) borrar en TREK, dentro de los permisos del cliente MCP."
@@ -279,6 +283,7 @@
       "nextcloud": "Nextcloud",
       "opengym": "openGym",
       "gametracker": "GamesTracker",
+      "immich": "Immich",
       "trek": "TREK"
     },
     "editor": {

@@ -10,6 +10,7 @@ import { adguardBackup } from './adguardBackup';
 import { nextcloudBackup } from './nextcloudBackup';
 import { openGymBackup } from './openGymBackup';
 import { gameTrackerBackup } from './gameTrackerBackup';
+import { immichBackup } from './immichBackup';
 
 /** O ficheiro que uma app entrega para guardar no destino. */
 export interface BackupFile {
@@ -76,5 +77,11 @@ export const BACKUP_SOURCES: Partial<Record<ConnectionProvider, BackupSource>> =
       extension: 'sql.gz',
       defaultFolder: 'GamesTracker',
       create: gameTrackerBackup,
+    },
+    [ConnectionProvider.IMMICH]: {
+      prefix: 'immich',
+      extension: 'sql.gz',
+      defaultFolder: 'Immich',
+      create: immichBackup,
     },
   };

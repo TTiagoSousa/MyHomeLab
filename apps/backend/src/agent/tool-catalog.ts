@@ -9,6 +9,7 @@ export type ToolSet =
   | 'nextcloud'
   | 'opengym'
   | 'gametracker'
+  | 'immich'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -31,6 +32,7 @@ export type ToolGroup =
   | 'nextcloud'
   | 'opengym'
   | 'gametracker'
+  | 'immich'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -542,6 +544,61 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'gametracker',
     'write',
     'a seguir o preço de um jogo',
+  ),
+
+  tool('immich_overview', 'immich', 'immich', 'read', 'a ver o Immich'),
+  tool('immich_search', 'immich', 'immich', 'read', 'a procurar fotos'),
+  tool('immich_albums', 'immich', 'immich', 'read', 'a ver os álbuns'),
+  tool('immich_album', 'immich', 'immich', 'read', 'a ver um álbum'),
+  tool(
+    'immich_people',
+    'immich',
+    'immich',
+    'read',
+    'a ver as pessoas das fotos',
+  ),
+  tool(
+    'immich_duplicates',
+    'immich',
+    'immich',
+    'read',
+    'a ver as fotos duplicadas',
+  ),
+  tool(
+    'immich_queues',
+    'immich',
+    'immich',
+    'read',
+    'a ver as tarefas do Immich',
+  ),
+  tool(
+    'immich_settings',
+    'immich',
+    'immich',
+    'read',
+    'a ver as definições do Immich',
+  ),
+  tool('immich_save_album', 'immich', 'immich', 'write', 'a arrumar um álbum'),
+  tool(
+    'immich_update_person',
+    'immich',
+    'immich',
+    'write',
+    'a dar nome a uma pessoa',
+  ),
+  tool(
+    'immich_run_job',
+    'immich',
+    'immich',
+    'write',
+    'a correr uma tarefa do Immich',
+  ),
+  tool(
+    'immich_set_settings',
+    'immich',
+    'immich',
+    'write',
+    'a mudar as definições do Immich',
   ),
 
   tool('adguard_overview', 'adguard', 'adguard', 'read', 'a ver o AdGuard'),

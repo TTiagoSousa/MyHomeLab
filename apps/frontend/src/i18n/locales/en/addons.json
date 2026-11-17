@@ -50,7 +50,8 @@
     "adguardConnected": "AdGuard connected",
     "locationSaved": "Saved where the app runs.",
     "openGymConnected": "openGym connected",
-    "gameTrackerConnected": "GamesTracker connected"
+    "gameTrackerConnected": "GamesTracker connected",
+    "immichConnected": "Immich connected"
   },
   "backups": {
     "title": "Backups",
@@ -1370,6 +1371,137 @@
           "users": "The instance's users"
         }
       }
+    },
+    "immich": {
+      "title": "Immich",
+      "description": "Your photos and videos: the Photo Curator finds photos, organises albums, names people and looks after settings, jobs and backups.",
+      "connect": "Connect Immich",
+      "agentsNote": "The Photo Curator uses Immich (add it in Assistant → Workflow). For another agent, choose its tools in Workflow.",
+      "notFound": "This Immich does not exist or was disconnected.",
+      "accountDescription": "The connection to Immich, with an API key. The key acts as the user who created it and only has the permissions chosen: from an admin with \"all\", it also reaches settings, jobs and backups.",
+      "credentialsHint": "The address, the user and the API key. To change the key, connect again with a new one.",
+      "profile": "User",
+      "library": "Photos",
+      "photosValue_one": "{{count}} photo",
+      "photosValue_other": "{{count}} photos",
+      "videosValue_one": "{{count}} video",
+      "videosValue_other": "{{count}} videos",
+      "disk": "Disk",
+      "diskHint": "{{used}} of {{size}}",
+      "key": "Key",
+      "keyAdmin": "An admin's",
+      "keyUser": "A user's",
+      "keyHint": "The key permissions are in Connections.",
+      "failedJobs_one": "{{count}} failed job",
+      "failedJobs_other": "{{count}} failed jobs",
+      "notAdmin": "The key is not an admin's: Immich settings, jobs and backups do not work with it.",
+      "pausedQueues": "Paused queues: {{queues}}.",
+      "replaceKey": "Replace key",
+      "updateChip": "New {{version}}",
+      "backup": {
+        "description": "Saves the Immich database to a destination, as often as you choose.",
+        "included": "The database backup Immich itself makes (pg_dump, gzip): albums, people, metadata, users and settings.",
+        "notIncluded": "Photos and videos are not included (they are the UPLOAD_LOCATION folder): back them up separately. Needs an admin's key.",
+        "restore": "To restore: in Immich, Administration → Maintenance → restore a backup, or follow the Immich docs (Backup and Restore)."
+      },
+      "connections": {
+        "title": "Connections",
+        "permissionsTitle": "What the connection allows",
+        "permissionsAdmin": "The key acts as the user who created it, with their current role. This one is an admin: it also reaches settings, jobs and backups, if the key has those permissions.",
+        "permissionsNotAdmin": "The key acts as the user who created it, with their current role. This one is not an admin: admin calls (settings, jobs, backups, statistics) do not work.",
+        "keyAll": "Key permissions: all (\"all\").",
+        "keySome_one": "Key permissions ({{count}}): {{permissions}}. Calls without the permission show in red.",
+        "keySome_other": "Key permissions ({{count}}): {{permissions}}. Calls without the permission show in red.",
+        "keyUnknown": "Could not read the key permissions (apiKey.read is missing): each call status only checks the admin role.",
+        "callsTitle": "Immich API calls",
+        "callsSummary": "What can be asked of Immich ({{base}}) and its GitHub (the versions): what MyHomeLab already uses and what it does not yet.",
+        "filterLabel": "Show calls",
+        "filter": {
+          "all": "All ({{count}})",
+          "used": "Used ({{count}})",
+          "possible": "Possible ({{count}})"
+        },
+        "table": {
+          "method": "Method",
+          "path": "Path",
+          "description": "What it does",
+          "usedBy": "Used by",
+          "access": "Access",
+          "permission": "Permission",
+          "status": "Status",
+          "allows": "What it allows",
+          "needed": "MyHomeLab uses",
+          "account": "This key"
+        },
+        "access": {
+          "public": "Public",
+          "user": "User (key)",
+          "admin": "Administrator",
+          "github": "Immich's GitHub"
+        },
+        "allows": {
+          "public": "The installed version",
+          "user": "The user's photos, search, albums, people, duplicates and disk",
+          "admin": "Settings, job queues, statistics and database backups",
+          "github": "The published versions, no login"
+        },
+        "need": {
+          "read": "Read",
+          "write": "Read and write",
+          "none": "Not used"
+        },
+        "granted": "Has it",
+        "notGranted": "Does not have it",
+        "notUsed": "Not used yet",
+        "available": "Available",
+        "needsAdmin": "Needs admin",
+        "missingPermission": "Missing permission",
+        "usedBy": {
+          "connect": "Connect",
+          "status": "App status",
+          "updates": "Updates",
+          "backups": "Backups",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "version": "Whether it is an Immich and the installed version",
+          "me": "Who the key belongs to and whether they are an admin",
+          "apiKey": "The permissions of this key",
+          "myStatistics": "How many photos and videos the user has",
+          "storage": "The disk: used, free and the percentage",
+          "statistics": "Photos, videos and space per user",
+          "smartSearch": "Finds photos by description (smart search)",
+          "metadataSearch": "Finds photos by dates, place, people and favourites",
+          "albums": "The albums",
+          "album": "An album and its photos",
+          "albumCreate": "Creates an album",
+          "albumUpdate": "Changes an album name or description",
+          "albumAdd": "Adds photos to an album",
+          "albumRemove": "Removes photos from an album (the photos stay)",
+          "people": "The recognised people",
+          "personUpdate": "Names or hides a person",
+          "duplicates": "The groups of duplicate photos",
+          "queues": "The job queues: running, waiting and failed",
+          "queueUpdate": "Pauses or resumes a queue",
+          "queueStart": "Runs a queue (what is missing or everything)",
+          "jobCreate": "Starts a manual job (e.g. a database backup)",
+          "config": "The server settings",
+          "configUpdate": "Changes the server settings",
+          "backups": "The list of database backups",
+          "backupDownload": "Downloads a database backup",
+          "releases": "The published versions, with notes",
+          "about": "The server version and libraries",
+          "versionCheck": "Whether there is a new version (Immich's own notice)",
+          "upload": "Uploads photos and videos",
+          "assetDelete": "Deletes photos and videos (to the trash)",
+          "trashEmpty": "Empties the trash (deletes for good)",
+          "memories": "The memories (\"on this day\")",
+          "sharedLinks": "The shared links",
+          "tags": "The tags",
+          "libraries": "The external libraries",
+          "users": "The instance users"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1440,6 +1572,16 @@
     "urlPlaceholder": "https://gametracker.example.com",
     "token": "API token",
     "tokenHint": "In GamesTracker: Settings → API → New token. For agents to change the shelf, do not make it read-only; for backups, create it as an admin. Stored encrypted in MyHomeLab.",
+    "connect": "Connect"
+  },
+  "immichModal": {
+    "title": "Connect Immich",
+    "name": "Name (optional)",
+    "namePlaceholder": "E.g. Photos",
+    "url": "Address",
+    "urlPlaceholder": "https://photos.example.com",
+    "apiKey": "API key",
+    "apiKeyHint": "In Immich: Account (your avatar) → Account settings → API keys → New API key. For agents to change settings, jobs and backups, create it in an admin account with the \"all\" permission. Stored encrypted in MyHomeLab.",
     "connect": "Connect"
   }
 }
