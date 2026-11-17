@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Global_Dropdown from '../../../Components/Inputs/Global_Dropdown/Global_Dropdown';
 import Global_Input from '../../../Components/Inputs/Global_Input/Global_Input';
@@ -11,9 +12,10 @@ interface Task_Properties_Props {
   project: BoardProject | undefined;
   agents: ScheduleAgent[];
   onSave: (payload: TaskPayload) => void;
+  footer?: ReactNode;
 }
 
-const Task_Properties = ({ task, project, agents, onSave }: Task_Properties_Props) => {
+const Task_Properties = ({ task, project, agents, onSave, footer }: Task_Properties_Props) => {
   const { t } = useTranslation('tasks');
   const modules = project?.modules ?? [];
   const selected = task.modules.map((module) => module.id);
@@ -91,6 +93,7 @@ const Task_Properties = ({ task, project, agents, onSave }: Task_Properties_Prop
         <span>{t('properties.created', { date: formatDateTime(task.createdAt), by: task.createdBy === 'user' ? t('assignee.user') : task.createdBy })}</span>
         <span>{t('properties.updated', { date: formatDateTime(task.updatedAt) })}</span>
       </div>
+      {footer}
     </aside>
   );
 };

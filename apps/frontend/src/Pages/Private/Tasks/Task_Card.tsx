@@ -35,7 +35,11 @@ const Task_Card = ({ task, assigneeName, onOpen, dragging, onDragStart, onDragEn
         onDragOverCard(e.clientY > box.top + box.height / 2);
       }}
       onClick={onOpen}
-      onKeyDown={(e) => e.key === 'Enter' && onOpen()}
+      onKeyDown={(e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        onOpen();
+      }}
     >
       <div className='Task_Card_Top'>
         <span className='Task_Card_Key'>{task.key}</span>

@@ -51,7 +51,10 @@ const Tasks_Table = ({ states, tasks, assigneeName, selected, onSelect, onOpen }
   const current = Math.min(page, pages - 1);
   const visible = sorted.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
 
-  const sortBy = (key: SortKey) => setSort((previous) => ({ key, desc: previous.key === key ? !previous.desc : false }));
+  const sortBy = (key: SortKey) => {
+    setSort((previous) => ({ key, desc: previous.key === key ? !previous.desc : false }));
+    setPage(0);
+  };
 
   return (
     <div className='Tasks_Table_Wrap'>

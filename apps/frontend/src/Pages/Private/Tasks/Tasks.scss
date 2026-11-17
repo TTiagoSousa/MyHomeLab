@@ -61,14 +61,6 @@
     }
   }
 
-  .Tasks_Intro{
-    margin: -4px 0 0;
-    max-width: 820px;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--text-soft);
-  }
-
   .Tasks_Note{
     margin: 0;
     font-size: 12.5px;
@@ -177,8 +169,23 @@
     .Tasks_Project_Settings{
       width: 34px;
       padding: 0;
-      margin-left: auto;
     }
+
+    .Tooltip_Anchor{ margin-left: auto; }
+  }
+
+  .Tasks_Project_Info{
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: 50%;
+    color: var(--text-soft);
+    font-size: 12px;
+    font-weight: 700;
+    font-style: italic;
+    cursor: help;
   }
 
   .Tasks_Column_Count{
@@ -203,21 +210,48 @@
   // ── Filtros ──
 
   .Tasks_Filters{
-    display: grid;
-    grid-template-columns: minmax(0, 2fr) repeat(5, minmax(0, 1fr)) auto;
+    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     align-items: center;
 
-    @media (max-width: 1200px){
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-
-      .Tasks_Search{ grid-column: 1 / -1; }
-    }
-
-    @media (max-width: 600px){ grid-template-columns: minmax(0, 1fr); }
+    .Tasks_Search{ flex: 1 1 260px; max-width: 520px; }
 
     .Dropdown_Field{ height: 36px; }
   }
+
+  .Tasks_Filters_Menu{ position: relative; }
+
+  .Tasks_Filters_Button{
+    @include Mixin.Ghost_Button;
+    height: 36px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+
+    &.active{
+      border-color: var(--accent);
+      color: var(--accent-bright);
+    }
+  }
+
+  .Tasks_Filters_Panel{
+    @include Mixin.Panel_Surface;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 20;
+    width: min(320px, calc(100vw - 32px));
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-sizing: border-box;
+  }
+
+  .Tasks_Filters_Tools{ margin-left: auto; }
 
   .Tasks_Search{
     @include Mixin.Control_Surface;
@@ -271,7 +305,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    min-width: 0;
   }
 
   .Tasks_Nav_Step{
@@ -289,59 +322,6 @@
     &.next svg{ transform: rotate(-90deg); }
 
     &:hover{ border-color: var(--accent); color: var(--accent-bright); }
-  }
-
-  .Tasks_Nav_Chips{
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    padding-bottom: 2px;
-  }
-
-  .Tasks_Nav_Group{
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-    padding-right: 8px;
-    border-right: 1px dashed var(--hud-line-strong);
-
-    &:last-child{ border-right: none; }
-  }
-
-  .Tasks_Nav_Phase{
-    display: grid;
-    place-items: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--accent-soft);
-    color: var(--accent-bright);
-    font-size: 11px;
-    font-weight: 700;
-  }
-
-  .Tasks_Nav_Chip{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 28px;
-    padding: 0 9px;
-    border: 1px solid var(--hud-line);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--text-soft);
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    cursor: pointer;
-
-    &:hover:not(:disabled){ border-color: var(--accent); color: var(--text-main); }
-    &.collapsed{ border-style: dashed; }
-    &.hidden{ opacity: .45; cursor: default; }
   }
 
   .Tasks_Nav_Toggle{
@@ -663,6 +643,10 @@
       align-items: center;
       padding: 6px 12px;
       border-bottom: 1px solid var(--hud-line);
+    }
+
+    &.empty > header .Tasks_List_Toggle{
+      opacity: 0.5;
     }
   }
 
@@ -1300,6 +1284,8 @@
     display: flex;
     justify-content: flex-end;
     gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--hud-line);
   }
 }
 

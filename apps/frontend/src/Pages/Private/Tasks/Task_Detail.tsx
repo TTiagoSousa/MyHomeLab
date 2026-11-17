@@ -77,7 +77,9 @@ const Task_Detail = () => {
   };
 
   const saveTitle = () => {
-    if (task && title.trim() && title.trim() !== task.title) void saveTask({ title: title.trim() });
+    if (!task) return;
+    if (!title.trim()) setTitle(task.title);
+    else if (title.trim() !== task.title) void saveTask({ title: title.trim() });
   };
 
   const saveText = async () => {
@@ -251,25 +253,32 @@ const Task_Detail = () => {
         </main>
 
         <div className='Task_Side'>
-          <Task_Properties task={task} project={project} agents={agents} onSave={(payload) => void saveTask(payload)} />
-          {!task.updateId && (
-            <div className='Task_Danger'>
-              {confirming ? (
-                <>
-                  <button type='button' className='Tasks_Ghost' onClick={() => setConfirming(false)}>
-                    {t('common:actions.cancel')}
-                  </button>
-                  <button type='button' className='Tasks_Ghost danger' onClick={() => void remove()}>
-                    {t('detail.confirmDelete')}
-                  </button>
-                </>
-              ) : (
-                <button type='button' className='Tasks_Ghost danger' onClick={() => setConfirming(true)}>
-                  {t('detail.delete')}
-                </button>
-              )}
-            </div>
-          )}
+          <Task_Properties
+            task={task}
+            project={project}
+            agents={agents}
+            onSave={(payload) => void saveTask(payload)}
+            footer={
+              !task.updateId && (
+                <div className='Task_Danger'>
+                  {confirming ? (
+                    <>
+                      <button type='button' className='Tasks_Ghost' onClick={() => setConfirming(false)}>
+                        {t('common:actions.cancel')}
+                      </button>
+                      <button type='button' className='Tasks_Ghost danger' onClick={() => void remove()}>
+                        {t('detail.confirmDelete')}
+                      </button>
+                    </>
+                  ) : (
+                    <button type='button' className='Tasks_Ghost danger' onClick={() => setConfirming(true)}>
+                      {t('detail.delete')}
+                    </button>
+                  )}
+                </div>
+              )
+            }
+          />
         </div>
       </div>
 

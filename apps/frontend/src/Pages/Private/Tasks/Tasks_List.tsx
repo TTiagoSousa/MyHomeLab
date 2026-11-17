@@ -16,7 +16,7 @@ interface Tasks_List_Props {
 
 const Tasks_List = ({ states, tasks, assigneeName, selected, onSelect, onOpen, onAdd }: Tasks_List_Props) => {
   const { t } = useTranslation('tasks');
-  const [closed, setClosed] = useState<string[]>([]);
+  const [closed, setClosed] = useState<string[]>(() => states.filter((state) => state.group === 'COMPLETED' || state.group === 'CANCELLED').map((state) => state.id));
 
   const toggle = (id: string) =>
     setClosed((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]));
@@ -27,7 +27,7 @@ const Tasks_List = ({ states, tasks, assigneeName, selected, onSelect, onOpen, o
         const items = tasks.filter((task) => task.stateId === state.id).sort((a, b) => a.position - b.position);
         const open = !closed.includes(state.id);
         return (
-          <section key={state.id} className='Tasks_List_Group'>
+          <section key={state.id} className={`Tasks_List_Group${items.length === 0 ? ' empty' : ''}`}>
             <header>
               <button type='button' className='Tasks_List_Toggle' onClick={() => toggle(state.id)} aria-expanded={open}>
                 <span className={`Tasks_Chevron${open ? ' open' : ''}`}>
@@ -75,7 +75,6 @@ const Tasks_List = ({ states, tasks, assigneeName, selected, onSelect, onOpen, o
                   </div>
                 );
               })}
-            {open && items.length === 0 && <p className='Tasks_Column_Empty'>{t('columns.empty')}</p>}
           </section>
         );
       })}

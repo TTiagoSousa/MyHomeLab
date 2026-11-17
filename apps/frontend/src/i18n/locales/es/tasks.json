@@ -46,10 +46,10 @@
     "expand": "Expandir {{name}}",
     "hideEmpty": "Ocultar vacías",
     "previous": "Columna anterior",
-    "next": "Columna siguiente",
-    "jump": "Ir a {{name}}"
+    "next": "Columna siguiente"
   },
   "filters": {
+    "button": "Filtros",
     "search": "Buscar (título, texto o ATU-12)",
     "allStates": "Todas las columnas",
     "allPriorities": "Todas las prioridades",

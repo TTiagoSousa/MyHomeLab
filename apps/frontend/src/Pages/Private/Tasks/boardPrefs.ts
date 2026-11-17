@@ -28,6 +28,6 @@ export const loadCollapsed = (projectId: string): string[] => {
 
 export const saveCollapsed = (projectId: string, ids: string[]) => writeItem(`${COLLAPSED_PREFIX}${projectId}`, JSON.stringify(ids));
 
-export const loadHideEmpty = () => readItem(HIDE_EMPTY_KEY) === '1';
+export const loadHideEmpty = () => readItem(HIDE_EMPTY_KEY) !== '0';
 
 export const saveHideEmpty = (hide: boolean) => writeItem(HIDE_EMPTY_KEY, hide ? '1' : '0');

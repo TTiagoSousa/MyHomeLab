@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBoardProjects } from '../../../Hooks/Board/useBoardProjects';
@@ -14,6 +14,9 @@ import Tasks_List from './Tasks_List';
 import Tasks_Table from './Tasks_Table';
 import Project_Settings from './Project_Settings';
 import Tasks_Bulk_Bar from './Tasks_Bulk_Bar';
+import Tasks_Columns_Nav from './Tasks_Columns_Nav';
+import { loadHideEmpty, saveHideEmpty } from './boardPrefs';
+import Tooltip from '../../../Components/Tooltip/Tooltip';
 import { statePhases } from './updatePhases';
 import * as Icon from '../../../Imports/icons';
 import '../../../Components/Linked_Docs/Linked_Docs.scss';
@@ -24,6 +27,7 @@ const BOARD_VIEWS: TasksView[] = ['columns', 'list', 'table'];
 const VIEWS: TasksView[] = [...BOARD_VIEWS, 'triggers'];
 const FILTER_KEYS: (keyof TaskFilters)[] = ['stateId', 'priority', 'assignee', 'label', 'moduleId', 'cycleId'];
 const SEARCH_DELAY_MS = 300;
+const COLUMN_STEP_PX = 292;
 
 const Tasks = () => {
   const { t } = useTranslation('tasks');
@@ -47,8 +51,22 @@ const Tasks = () => {
     cycleId: searchParams.get('cycleId') ?? '',
   };
   const [searchText, setSearchText] = useState(search);
+  const [urlSearch, setUrlSearch] = useState(search);
+  if (search !== urlSearch) {
+    setUrlSearch(search);
+    if (search !== searchText.trim()) setSearchText(search);
+  }
   const { tasks, loading: loadingTasks, error: tasksError, createTask, moveTask, bulkUpdate } = useBoardTasks(project?.id, filters);
   const [selected, setSelected] = useState<string[]>([]);
+  const boardRef = useRef<HTMLDivElement>(null);
+  const [hideEmpty, setHideEmpty] = useState(loadHideEmpty);
+
+  const changeHideEmpty = (hide: boolean) => {
+    setHideEmpty(hide);
+    saveHideEmpty(hide);
+  };
+
+  const stepColumns = (direction: 1 | -1) => boardRef.current?.scrollBy({ left: direction * COLUMN_STEP_PX, behavior: 'smooth' });
 
   const [creatingIn, setCreatingIn] = useState<string | null | undefined>(undefined);
   const [editingProject, setEditingProject] = useState<'new' | 'edit' | null>(null);
@@ -93,7 +111,8 @@ const Tasks = () => {
     if (key === 'user') return t('assignee.user');
     return agents.find((agent) => agent.key === key)?.name ?? key;
   };
-  const labels = [...new Set(tasks.flatMap((task) => task.labels))].sort();
+  const labels = [...new Set([...tasks.flatMap((task) => task.labels), ...(filters.label ? [filters.label] : [])])].sort();
+  const visibleSelected = selected.filter((id) => tasks.some((task) => task.id === id));
   const openTask = (task: BoardTask) => navigate(`/MyHomeLab/Projects/${task.id}`);
 
   const renderBoard = () => {
@@ -104,6 +123,8 @@ const Tasks = () => {
       return (
         <Tasks_Columns
           key={project.id}
+          boardRef={boardRef}
+          hideEmpty={hideEmpty}
           projectId={project.id}
           states={project.states}
           tasks={tasks}
@@ -118,6 +139,7 @@ const Tasks = () => {
     if (view === 'list') {
       return (
         <Tasks_List
+          key={project.id}
           states={project.states}
           tasks={tasks}
           assigneeName={assigneeName}
@@ -192,6 +214,11 @@ const Tasks = () => {
                 <Icon.Plus />
                 <span>{t('actions.newProject')}</span>
               </button>
+              {project?.description && (
+                <Tooltip text={project.description}>
+                  <span className='Tasks_Project_Info'>i</span>
+                </Tooltip>
+              )}
               {project && (
                 <button type='button' className='Tasks_Project_Settings' onClick={() => setShowSettings(true)} aria-label={t('actions.projectSettings')} title={t('actions.projectSettings')}>
                   <Icon.Settings />
@@ -200,8 +227,6 @@ const Tasks = () => {
             </div>
           )}
 
-          {project && project.description && <p className='Tasks_Intro'>{project.description}</p>}
-
           {project && (
             <Tasks_Filters
               search={searchText}
@@ -209,19 +234,20 @@ const Tasks = () => {
               project={project}
               agents={agents}
               labels={labels}
+              tools={view === 'columns' && <Tasks_Columns_Nav hideEmpty={hideEmpty} onStep={stepColumns} onHideEmpty={changeHideEmpty} />}
               onSearch={setSearchText}
               onFilter={(name, value) => setParam(name, value)}
               onClear={clearFilters}
             />
           )}
 
-          {view !== 'columns' && selected.length > 0 && (
+          {view !== 'columns' && project && visibleSelected.length > 0 && (
             <Tasks_Bulk_Bar
-              count={selected.length}
-              project={project!}
+              count={visibleSelected.length}
+              project={project}
               agents={agents}
               onApply={async (payload) => {
-                if (await bulkUpdate(selected, payload)) setSelected([]);
+                if (await bulkUpdate(visibleSelected, payload)) setSelected([]);
               }}
               onClear={() => setSelected([])}
             />

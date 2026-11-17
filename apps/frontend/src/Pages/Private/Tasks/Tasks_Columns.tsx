@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState, type DragEvent, type WheelEvent } from 'react';
+import { useEffect, useState, type DragEvent, type RefObject, type WheelEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { BoardState, BoardTask } from '../../../Hooks/Board/boardTypes';
 import Task_Card from './Task_Card';
-import Tasks_Columns_Nav from './Tasks_Columns_Nav';
-import { loadCollapsed, loadHideEmpty, saveCollapsed, saveHideEmpty } from './boardPrefs';
+import { loadCollapsed, saveCollapsed } from './boardPrefs';
 import type { Process_Phase } from './updatePhases';
 import Tooltip from '../../../Components/Tooltip/Tooltip';
 import * as Icon from '../../../Imports/icons';
 
 const EDGE_PX = 70;
 const EDGE_STEP_PX = 22;
-const COLUMN_STEP_PX = 292;
 const MIN_BOARD_PX = 360;
 const BOTTOM_GAP_PX = 24;
 
 interface Tasks_Columns_Props {
+  boardRef: RefObject<HTMLDivElement | null>;
+  hideEmpty: boolean;
   projectId: string;
   states: BoardState[];
   tasks: BoardTask[];
@@ -30,13 +30,11 @@ interface Drop_Target {
   beforeId: string | null;
 }
 
-const Tasks_Columns = ({ projectId, states, tasks, assigneeName, onOpen, onMove, onAdd, phases }: Tasks_Columns_Props) => {
+const Tasks_Columns = ({ boardRef, hideEmpty, projectId, states, tasks, assigneeName, onOpen, onMove, onAdd, phases }: Tasks_Columns_Props) => {
   const { t } = useTranslation('tasks');
-  const boardRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<BoardTask | null>(null);
   const [target, setTarget] = useState<Drop_Target | null>(null);
   const [collapsed, setCollapsed] = useState<string[]>(() => loadCollapsed(projectId));
-  const [hideEmpty, setHideEmpty] = useState(loadHideEmpty);
 
   useEffect(() => {
     const fitToScreen = () => {
@@ -48,7 +46,7 @@ const Tasks_Columns = ({ projectId, states, tasks, assigneeName, onOpen, onMove,
     fitToScreen();
     window.addEventListener('resize', fitToScreen);
     return () => window.removeEventListener('resize', fitToScreen);
-  }, []);
+  }, [boardRef]);
 
   const columnTasks = (stateId: string) =>
     tasks.filter((task) => task.stateId === stateId).sort((a, b) => a.position - b.position);
@@ -59,11 +57,6 @@ const Tasks_Columns = ({ projectId, states, tasks, assigneeName, onOpen, onMove,
     const next = collapsed.includes(stateId) ? collapsed.filter((id) => id !== stateId) : [...collapsed, stateId];
     setCollapsed(next);
     saveCollapsed(projectId, next);
-  };
-
-  const changeHideEmpty = (hide: boolean) => {
-    setHideEmpty(hide);
-    saveHideEmpty(hide);
   };
 
   const finishDrag = () => {
@@ -97,13 +90,6 @@ const Tasks_Columns = ({ projectId, states, tasks, assigneeName, onOpen, onMove,
   const scrollSideways = (event: WheelEvent) => {
     if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) boardRef.current?.scrollBy({ left: event.deltaY });
   };
-
-  const jumpTo = (state: BoardState) => {
-    if (collapsed.includes(state.id)) toggleCollapsed(state.id);
-    boardRef.current?.querySelector(`[data-state="${state.id}"]`)?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-  };
-
-  const step = (direction: 1 | -1) => boardRef.current?.scrollBy({ left: direction * COLUMN_STEP_PX, behavior: 'smooth' });
 
   const dropHandlers = (stateId: string) => ({
     onDragOver: (event: DragEvent) => {
@@ -170,21 +156,9 @@ const Tasks_Columns = ({ projectId, states, tasks, assigneeName, onOpen, onMove,
     );
   };
 
-  const groups = phases ? phases.map((phase) => phase.states) : [states];
-
   return (
     <div className='Tasks_Board'>
-      <Tasks_Columns_Nav
-        groups={groups}
-        count={(stateId) => columnTasks(stateId).length}
-        hidden={isHidden}
-        collapsed={collapsed}
-        hideEmpty={hideEmpty}
-        onJump={jumpTo}
-        onStep={step}
-        onHideEmpty={changeHideEmpty}
-        onWheel={scrollSideways}
-      />
+      {hideEmpty && !dragging && tasks.length === 0 && <p className='Tasks_Column_Empty'>{t('list.noResults')}</p>}
 
       <div ref={boardRef} className={`Tasks_Columns${phases ? ' Tasks_Process' : ''}`} onDragOver={scrollNearEdges}>
         {!phases && states.map(column)}

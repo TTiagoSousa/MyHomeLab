@@ -46,10 +46,10 @@
     "expand": "Expand {{name}}",
     "hideEmpty": "Hide empty",
     "previous": "Previous column",
-    "next": "Next column",
-    "jump": "Go to {{name}}"
+    "next": "Next column"
   },
   "filters": {
+    "button": "Filters",
     "search": "Search (title, text or ATU-12)",
     "allStates": "All columns",
     "allPriorities": "All priorities",
