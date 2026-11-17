@@ -36,7 +36,7 @@ const usesDocs = (agent: Agent) =>
  * delas, o agente tem de ter lido (docs_read) os documentos do que o pedido toca.
  */
 const ACTS =
-  /^(server_run_command|pve_(guest_power|create_snapshot|rollback_snapshot|delete_snapshot|backup_now|set_resources)|run_backup|update_(save_study|prepare|run|verify)|adguard_(set|manage|refresh)_\w+|ha_(call_service|save_config|delete_config|update_entity)|forgejo_(create|comment|set)_\w+|opengym_(create|delete|update|schedule)_\w+|gametracker_(set_game|remove_game|watch_price)|immich_(save_album|update_person|run_job|set_settings)|trek_write|(create|update|delete)_email_rule|implement_email_proposal|modify_email|trash_email|send_email_draft)$/;
+  /^(server_run_command|pve_(guest_power|create_snapshot|rollback_snapshot|delete_snapshot|backup_now|set_resources)|run_backup|update_(save_study|prepare|run|verify)|adguard_(set|manage|refresh)_\w+|ha_(call_service|save_config|delete_config|update_entity)|forgejo_(create|comment|set)_\w+|opengym_(create|delete|update|schedule)_\w+|gametracker_(set_game|remove_game|watch_price)|immich_(save_album|update_person|run_job|set_settings)|paperless_(update_document|bulk_edit|save_object|set_settings)|trek_write|(create|update|delete)_email_rule|implement_email_proposal|modify_email|trash_email|send_email_draft)$/;
 
 /**
  * Os documentos que o pedido toca (DocsService.docsFor) vão no fim do último pedido

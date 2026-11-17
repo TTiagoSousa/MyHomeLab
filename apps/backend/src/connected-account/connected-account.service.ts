@@ -26,6 +26,9 @@ import { CreateGameTrackerAccountDto } from './dto/create-gametracker-account.dt
 import { createImmichAccount } from './helpers/createImmichAccount';
 import { refreshImmichAccount } from './helpers/refreshImmichAccount';
 import { CreateImmichAccountDto } from './dto/create-immich-account.dto';
+import { createPaperlessAccount } from './helpers/createPaperlessAccount';
+import { refreshPaperlessAccount } from './helpers/refreshPaperlessAccount';
+import { CreatePaperlessAccountDto } from './dto/create-paperless-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { setTrekMcp } from './helpers/setTrekMcp';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
@@ -381,6 +384,45 @@ export class ConnectedAccountService {
     );
     void this.checkVersion(account);
     return account;
+  }
+
+  async createPaperless(dto: CreatePaperlessAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    const account = await this.afterConnect(
+      await createPaperlessAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+    void this.checkVersion(account);
+    return account;
+  }
+
+  /** O estado do Paperless (utilizador do token, documentos, caixa de entrada, saúde) e a versão. */
+  async paperlessStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshPaperlessAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
   }
 
   /** O estado do Immich (utilizador e permissões da chave, fotos, disco, filas) e a versão. */

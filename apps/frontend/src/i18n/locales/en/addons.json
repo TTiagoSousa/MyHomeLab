@@ -51,7 +51,8 @@
     "locationSaved": "Saved where the app runs.",
     "openGymConnected": "openGym connected",
     "gameTrackerConnected": "GamesTracker connected",
-    "immichConnected": "Immich connected"
+    "immichConnected": "Immich connected",
+    "paperlessConnected": "Paperless connected"
   },
   "backups": {
     "title": "Backups",
@@ -1502,6 +1503,132 @@
           "users": "The instance users"
         }
       }
+    },
+    "paperless": {
+      "title": "Paperless",
+      "description": "Your scanned documents: the Archivist finds and reads invoices, contracts and receipts, files them and looks after Paperless settings and tasks.",
+      "connect": "Connect Paperless",
+      "agentsNote": "The Archivist uses Paperless (add it in Assistant → Workflow). For another agent, choose its tools in Workflow.",
+      "notFound": "This Paperless does not exist or was disconnected.",
+      "accountDescription": "The connection to Paperless-ngx, with the API token. The token acts as its user, with their permissions: from a superuser, it also reaches the configuration and the system status.",
+      "credentialsHint": "The address, the user and the token. To change the token, connect again with a new one.",
+      "profile": "User",
+      "library": "Documents",
+      "documentsValue_one": "{{count}} document",
+      "documentsValue_other": "{{count}} documents",
+      "inboxHint_one": "{{count}} in the inbox",
+      "inboxHint_other": "{{count}} in the inbox",
+      "disk": "Disk",
+      "diskHint": "{{free}} GB free of {{size}} GB",
+      "diskNeedsAdmin": "Only with a superuser's token",
+      "key": "Token",
+      "keyAdmin": "A superuser's",
+      "keyUser": "A user's",
+      "keyHint": "The user's permissions are in Connections.",
+      "failedTasks_one": "{{count}} failed task to review",
+      "failedTasks_other": "{{count}} failed tasks to review",
+      "notAdmin": "The token is not a superuser's: Paperless configuration and health cannot be seen or changed with it.",
+      "problems": "Paperless is not healthy in: {{parts}}.",
+      "replaceToken": "Replace token",
+      "updateChip": "New {{version}}",
+      "backup": {
+        "description": "Saves the Paperless organisation and configuration to a destination, as often as you choose.",
+        "included": "A JSON with tags, correspondents, types, storage paths, custom fields, saved views, workflows, mail rules and accounts (without passwords) and the application configuration.",
+        "notIncluded": "The documents (PDFs and the database) are not included: save them on the server with Paperless's document_exporter.",
+        "restore": "To restore documents: document_importer on the export folder. The JSON organisation is recreated by hand or through the API."
+      },
+      "connections": {
+        "title": "Connections",
+        "permissionsTitle": "What the connection allows",
+        "permissionsAdmin": "The token acts as its user, with their current permissions. This one is a superuser: it can do everything, including the configuration and the system status.",
+        "permissionsNotAdmin": "The token acts as its user, with their current permissions. This one is not a superuser: configuration and system status do not work, and the rest depends on their permissions.",
+        "keyAll": "Permissions: all (superuser).",
+        "keySome_one": "The user has {{count}} permission. Calls without the permission show in red.",
+        "keySome_other": "The user has {{count}} permissions. Calls without the permission show in red.",
+        "keyUnknown": "Could not read the user's permissions yet.",
+        "callsTitle": "Paperless API calls",
+        "callsSummary": "What can be asked of Paperless ({{base}}) and its GitHub (the versions): what MyHomeLab already uses and what it does not yet.",
+        "filterLabel": "Show calls",
+        "filter": {
+          "all": "All ({{count}})",
+          "used": "Used ({{count}})",
+          "possible": "Possible ({{count}})"
+        },
+        "table": {
+          "method": "Method",
+          "path": "Path",
+          "description": "What it does",
+          "usedBy": "Used by",
+          "access": "Access",
+          "permission": "Permission",
+          "status": "Status",
+          "allows": "What it allows",
+          "needed": "MyHomeLab uses",
+          "account": "This token"
+        },
+        "access": {
+          "user": "User (token)",
+          "admin": "Superuser",
+          "github": "Paperless's GitHub"
+        },
+        "allows": {
+          "user": "Documents, search, tags, correspondents, types, notes and tasks, as permissions allow",
+          "admin": "The application configuration and the system status (disk, database, index)",
+          "github": "The published versions, no login"
+        },
+        "need": {
+          "read": "Read",
+          "write": "Read and write",
+          "none": "Not used"
+        },
+        "granted": "Has it",
+        "notGranted": "Does not have it",
+        "notUsed": "Not used yet",
+        "available": "Available",
+        "needsAdmin": "Needs superuser",
+        "missingPermission": "Missing permission",
+        "usedBy": {
+          "connect": "Connect",
+          "status": "App status",
+          "updates": "Updates",
+          "backups": "Backups",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "uiSettings": "Who the token is (user, superuser, permissions) and the version (X-Version header)",
+          "statistics": "How many documents, how many in the inbox and the counts",
+          "status": "Health: disk, database, Redis, Celery, index, classifier",
+          "tasks": "Recent tasks and the failed ones",
+          "documents": "Searches documents (full text and filters)",
+          "document": "A document, with the OCR text and notes",
+          "documentUpdate": "Changes title, tags, correspondent, type, path, date or ASN",
+          "noteAdd": "Adds a note to a document",
+          "bulkEdit": "The same change on several documents",
+          "tags": "The tags",
+          "tagSave": "Creates or changes a tag",
+          "correspondents": "The correspondents",
+          "correspondentSave": "Creates or changes a correspondent",
+          "documentTypes": "The document types",
+          "storagePaths": "The storage paths",
+          "customFields": "The custom fields",
+          "savedViews": "The saved views",
+          "workflows": "The workflows",
+          "mailRules": "The mail rules",
+          "mailAccounts": "The mail accounts (passwords hidden)",
+          "config": "The application configuration (OCR, barcodes, AI…)",
+          "configUpdate": "Changes the application configuration",
+          "releases": "The published versions, with notes",
+          "upload": "Uploads a new document",
+          "download": "Downloads a document's file",
+          "documentDelete": "Deletes a document (to the trash)",
+          "globalSearch": "The global search (documents and metadata)",
+          "trash": "The trash",
+          "shareLinks": "The share links",
+          "remoteVersion": "The latest version (Paperless's own notice)",
+          "users": "The users",
+          "logs": "The server logs"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1582,6 +1709,16 @@
     "urlPlaceholder": "https://photos.example.com",
     "apiKey": "API key",
     "apiKeyHint": "In Immich: Account (your avatar) → Account settings → API keys → New API key. For agents to change settings, jobs and backups, create it in an admin account with the \"all\" permission. Stored encrypted in MyHomeLab.",
+    "connect": "Connect"
+  },
+  "paperlessModal": {
+    "title": "Connect Paperless",
+    "name": "Name (optional)",
+    "namePlaceholder": "E.g. Documents",
+    "url": "Address",
+    "urlPlaceholder": "https://paperless.example.com",
+    "token": "API token",
+    "tokenHint": "In Paperless: your profile (top right) → My Profile → API Auth Token → generate. For agents to change the configuration, use a superuser's. Stored encrypted in MyHomeLab.",
     "connect": "Connect"
   }
 }

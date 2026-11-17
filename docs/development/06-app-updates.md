@@ -1,7 +1,7 @@
 # App updates
 
 MyHomeLab tracks new versions of the connected apps (Forgejo, Nextcloud and its apps,
-Home Assistant and its components, AdGuard Home, TREK, openGym, GamesTracker Vault, Immich…) and of the Proxmox VE
+Home Assistant and its components, AdGuard Home, TREK, openGym, GamesTracker Vault, Immich, Paperless-ngx…) and of the Proxmox VE
 hosts (including pending Debian packages), and handles each one as a task worked on by the
 agents. The code lives in `apps/backend/src/app-update/` and the agent tools in
 `apps/backend/src/assistant/toolsets/updates-tools.ts`.

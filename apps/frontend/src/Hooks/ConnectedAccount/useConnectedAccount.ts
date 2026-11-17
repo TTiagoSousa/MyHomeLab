@@ -35,6 +35,12 @@ export interface CreateImmichAccountPayload extends AppLocationPayload {
   apiKey: string;
 }
 
+export interface CreatePaperlessAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  token: string;
+}
+
 export interface CreateTrekAccountPayload extends AppLocationPayload {
   displayName?: string;
   baseUrl: string;
@@ -141,6 +147,21 @@ export const useConnectedAccount = () => {
     try {
       await http.post(End_Points.Connected_Account_Immich_Endpoint(), data, { withCredentials: true });
       setAlert({ open: true, message: i18n.t('addons:alerts.immichConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createPaperlessAccount = async (data: CreatePaperlessAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Paperless_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.paperlessConnected'), type: 'success' });
       return true;
     } catch (error: any) {
       const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
@@ -263,6 +284,7 @@ export const useConnectedAccount = () => {
     createOpenGymAccount,
     createGameTrackerAccount,
     createImmichAccount,
+    createPaperlessAccount,
     createTrekAccount,
     createHomeAssistantAccount,
     createAdguardAccount,

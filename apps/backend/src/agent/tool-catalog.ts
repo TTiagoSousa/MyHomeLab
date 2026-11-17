@@ -10,6 +10,7 @@ export type ToolSet =
   | 'opengym'
   | 'gametracker'
   | 'immich'
+  | 'paperless'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -33,6 +34,7 @@ export type ToolGroup =
   | 'opengym'
   | 'gametracker'
   | 'immich'
+  | 'paperless'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -599,6 +601,84 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'immich',
     'write',
     'a mudar as definições do Immich',
+  ),
+
+  tool(
+    'paperless_overview',
+    'paperless',
+    'paperless',
+    'read',
+    'a ver o Paperless',
+  ),
+  tool(
+    'paperless_search',
+    'paperless',
+    'paperless',
+    'read',
+    'a procurar documentos no Paperless',
+  ),
+  tool(
+    'paperless_document',
+    'paperless',
+    'paperless',
+    'read',
+    'a ler um documento do Paperless',
+  ),
+  tool(
+    'paperless_metadata',
+    'paperless',
+    'paperless',
+    'read',
+    'a ver as etiquetas do Paperless',
+  ),
+  tool(
+    'paperless_tasks',
+    'paperless',
+    'paperless',
+    'read',
+    'a ver as tarefas do Paperless',
+  ),
+  tool(
+    'paperless_automations',
+    'paperless',
+    'paperless',
+    'read',
+    'a ver os fluxos do Paperless',
+  ),
+  tool(
+    'paperless_settings',
+    'paperless',
+    'paperless',
+    'read',
+    'a ver a configuração do Paperless',
+  ),
+  tool(
+    'paperless_update_document',
+    'paperless',
+    'paperless',
+    'write',
+    'a arrumar um documento do Paperless',
+  ),
+  tool(
+    'paperless_bulk_edit',
+    'paperless',
+    'paperless',
+    'write',
+    'a arrumar vários documentos do Paperless',
+  ),
+  tool(
+    'paperless_save_object',
+    'paperless',
+    'paperless',
+    'write',
+    'a criar uma etiqueta no Paperless',
+  ),
+  tool(
+    'paperless_set_settings',
+    'paperless',
+    'paperless',
+    'write',
+    'a mudar a configuração do Paperless',
   ),
 
   tool('adguard_overview', 'adguard', 'adguard', 'read', 'a ver o AdGuard'),

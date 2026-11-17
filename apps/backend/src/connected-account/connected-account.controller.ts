@@ -24,6 +24,7 @@ import { CreateForgejoAccountDto } from './dto/create-forgejo-account.dto';
 import { CreateOpenGymAccountDto } from './dto/create-opengym-account.dto';
 import { CreateGameTrackerAccountDto } from './dto/create-gametracker-account.dto';
 import { CreateImmichAccountDto } from './dto/create-immich-account.dto';
+import { CreatePaperlessAccountDto } from './dto/create-paperless-account.dto';
 import { CreateTrekAccountDto } from './dto/create-trek-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
@@ -149,6 +150,25 @@ export class ConnectedAccountController {
     @Req() req: Request & { user: JwtPayload },
   ) {
     return this.connectedAccountService.immichStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('paperless')
+  connectPaperless(
+    @Body() dto: CreatePaperlessAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createPaperless(dto, req.user.id);
+  }
+
+  /** O estado do Paperless agora (utilizador do token, documentos, caixa de entrada, saúde, versão). */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/paperless-status')
+  paperlessStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.paperlessStatus(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

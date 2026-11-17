@@ -220,6 +220,10 @@
           "name": "Immich (fotos)",
           "description": "Ver las fotos y los vídeos, buscar (también por descripción), los álbumes, las personas, los duplicados, las tareas y los ajustes. Cambiar es crear y ordenar álbumes, poner nombre a las personas, ejecutar tareas y cambiar ajustes (antes muestra lo que cambia). Nunca borra fotos."
         },
+        "paperless": {
+          "name": "Paperless (documentos)",
+          "description": "Ver y leer los documentos (el texto del OCR), buscar, las etiquetas, los remitentes, los tipos, las tareas, los flujos y la configuración. Cambiar es ordenar documentos (uno o varios), añadir notas, crear etiquetas, remitentes y tipos, y cambiar la configuración (antes muestra lo que cambia). Nunca borra documentos."
+        },
         "trek": {
           "name": "TREK (viajes)",
           "description": "Ver los viajes y todo lo que tienen por el MCP de TREK. Cambiar es crear, cambiar y (con confirmación) borrar en TREK, dentro de los permisos del cliente MCP."
@@ -284,6 +288,7 @@
       "opengym": "openGym",
       "gametracker": "GamesTracker",
       "immich": "Immich",
+      "paperless": "Paperless",
       "trek": "TREK"
     },
     "editor": {

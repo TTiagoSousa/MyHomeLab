@@ -9,4 +9,5 @@ export const APP_PAGES: Record<string, string> = {
   OPENGYM: '/MyHomeLab/Apps/OpenGym',
   GAMETRACKER: '/MyHomeLab/Apps/GameTracker',
   IMMICH: '/MyHomeLab/Apps/Immich',
+  PAPERLESS: '/MyHomeLab/Apps/Paperless',
 };

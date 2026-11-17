@@ -28,6 +28,7 @@ export const SET_TARGET: Partial<
   opengym: ConnectionProvider.OPENGYM,
   gametracker: ConnectionProvider.GAMETRACKER,
   immich: ConnectionProvider.IMMICH,
+  paperless: ConnectionProvider.PAPERLESS,
   trek: ConnectionProvider.TREK,
   server: 'PROXMOX',
   serverControl: 'PROXMOX',

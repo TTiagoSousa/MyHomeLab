@@ -179,6 +179,22 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
       'Correr uma fila com force (refaz tudo) sem o sim dele.',
     ],
   },
+  [ConnectionProvider.PAPERLESS]: {
+    name: 'Paperless',
+    before: [
+      '👤 Há um export recente dos documentos no servidor (document_exporter) — o backup do MyHomeLab só leva a arrumação e a configuração',
+      '🤖 As notas da versão nova não pedem passos à mão (mudanças no docker-compose ou no ambiente) — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O Paperless responde com a versão nova (paperless_overview) — prova: a versão',
+      '🤖 Os documentos estão lá, com o mesmo número, e a saúde está OK (paperless_overview) — prova: os números',
+      '🤖 Não ficaram tarefas falhadas novas (paperless_tasks) — prova: a lista',
+    ],
+    never: [
+      'Apagar documentos, a pasta media/ ou a base de dados do Paperless.',
+      'Mudar a PAPERLESS_SECRET_KEY (desliga as sessões) sem o sim dele.',
+    ],
+  },
   [ConnectionProvider.HOME_ASSISTANT]: {
     name: 'Home Assistant',
     before: [

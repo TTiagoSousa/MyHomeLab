@@ -11,6 +11,7 @@ import { nextcloudBackup } from './nextcloudBackup';
 import { openGymBackup } from './openGymBackup';
 import { gameTrackerBackup } from './gameTrackerBackup';
 import { immichBackup } from './immichBackup';
+import { paperlessBackup } from './paperlessBackup';
 
 /** O ficheiro que uma app entrega para guardar no destino. */
 export interface BackupFile {
@@ -83,5 +84,11 @@ export const BACKUP_SOURCES: Partial<Record<ConnectionProvider, BackupSource>> =
       extension: 'sql.gz',
       defaultFolder: 'Immich',
       create: immichBackup,
+    },
+    [ConnectionProvider.PAPERLESS]: {
+      prefix: 'paperless',
+      extension: 'json',
+      defaultFolder: 'Paperless',
+      create: paperlessBackup,
     },
   };

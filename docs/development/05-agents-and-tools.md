@@ -93,7 +93,7 @@ export function buildTodoTools(context: AgentContext): AgentTool[] {
 
 Toolsets: `email`, `server`, `serverControl`, `serverShell`, `health`, `forgejo`,
 `homeAssistant`, `adguard`, `nextcloud`, `docs`, `updates`, `schedules`, `board`, `todos`,
-`team` (plus `trek`, `opengym`, `gametracker`, `immich` and others). `buildToolbox(names, context)` builds only the
+`team` (plus `trek`, `opengym`, `gametracker`, `immich`, `paperless` and others). `buildToolbox(names, context)` builds only the
 toolsets an agent uses.
 
 **TREK** reaches the agent one of two ways, by AI provider: with **Claude Code** the agent gets
@@ -122,6 +122,16 @@ photos or albums. `immich_set_settings` merges the patch into the current `/syst
 `confirm`, only returns the before → after list. The **Photo Curator** template (`photos`, under
 Jarvis) has them; add it in Workflow. Settings, queues and backups need an admin's key with the
 `all` permission.
+
+**Paperless-ngx** has no official MCP either: the `paperless_*` tools call its REST API with the
+account's API token (`Authorization: Token …`): overview, search (full text and filters), read a
+document (OCR text, notes, custom fields), tags/correspondents/types/storage paths/custom fields,
+tasks, workflows and mail rules, and the application configuration (read); file a document (title,
+tags, correspondent, type, path, date, ASN, note), the same change on many documents (`bulk_edit`,
+needs `confirm`), create or change a tag/correspondent/type/path with its auto-matching, and change the
+configuration (needs `confirm`, secrets are never shown or changed). It never deletes documents. Names
+are resolved to ids. The **Archivist** template (`archivist`, under Jarvis) has them. Configuration
+and system status need a superuser's token.
 
 ### Permissions (three layers)
 

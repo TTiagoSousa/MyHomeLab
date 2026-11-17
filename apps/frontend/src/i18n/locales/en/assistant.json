@@ -220,6 +220,10 @@
           "name": "Immich (photos)",
           "description": "See photos and videos, search (also by description), albums, people, duplicates, jobs and settings. Changing means creating and organising albums, naming people, running jobs and changing settings (it shows what changes first). It never deletes photos."
         },
+        "paperless": {
+          "name": "Paperless (documents)",
+          "description": "See and read documents (the OCR text), search, tags, correspondents, types, tasks, workflows and configuration. Changing means filing documents (one or many), adding notes, creating tags, correspondents and types, and changing the configuration (it shows what changes first). It never deletes documents."
+        },
         "trek": {
           "name": "TREK (trips)",
           "description": "See the trips and everything in them through TREK MCP. Changing means creating, changing and (with confirmation) deleting in TREK, within the MCP client scopes."
@@ -284,6 +288,7 @@
       "opengym": "openGym",
       "gametracker": "GamesTracker",
       "immich": "Immich",
+      "paperless": "Paperless",
       "trek": "TREK"
     },
     "editor": {

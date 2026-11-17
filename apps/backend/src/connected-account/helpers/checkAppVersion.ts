@@ -20,6 +20,10 @@ import {
 } from 'src/gametracker/gametracker.client';
 import { IMMICH_REPOSITORY, immichVersion } from 'src/immich/immich.client';
 import {
+  PAPERLESS_REPOSITORY,
+  paperlessVersion,
+} from 'src/paperless/paperless.client';
+import {
   createHomeAssistantClient,
   HOME_ASSISTANT_REPOSITORY,
 } from 'src/home-assistant/home-assistant.client';
@@ -80,6 +84,13 @@ export const VERSION_SOURCES: Partial<
     repository: { host: 'github', repo: IMMICH_REPOSITORY },
     installed: (account) => immichVersion(account.baseUrl ?? ''),
     latest: () => latestGithubRelease(IMMICH_REPOSITORY),
+  },
+  [ConnectionProvider.PAPERLESS]: {
+    appName: 'Paperless-ngx',
+    repository: { host: 'github', repo: PAPERLESS_REPOSITORY },
+    installed: (account) =>
+      paperlessVersion(account.baseUrl ?? '', account.accessToken ?? ''),
+    latest: () => latestGithubRelease(PAPERLESS_REPOSITORY),
   },
   [ConnectionProvider.HOME_ASSISTANT]: {
     appName: 'Home Assistant',

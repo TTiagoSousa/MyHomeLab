@@ -12,6 +12,7 @@ import { buildNextcloudTools } from './nextcloud-tools';
 import { buildOpenGymTools } from './opengym-tools';
 import { buildGameTrackerTools } from './gametracker-tools';
 import { buildImmichTools } from './immich-tools';
+import { buildPaperlessTools } from './paperless-tools';
 import { buildTrekTools } from './trek-tools';
 import { buildDocsTools } from './docs-tools';
 import { buildUpdatesTools } from './updates-tools';
@@ -37,6 +38,7 @@ const TOOL_SETS: Record<
   opengym: buildOpenGymTools,
   gametracker: buildGameTrackerTools,
   immich: buildImmichTools,
+  paperless: buildPaperlessTools,
   trek: buildTrekTools,
   docs: buildDocsTools,
   updates: buildUpdatesTools,

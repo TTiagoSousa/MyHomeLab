@@ -43,7 +43,7 @@ Docker) e atualiza-se a partir da própria app, com rollback automático.
 | **Projetos e tarefas** | Um quadro de projetos (colunas, comentários, disparos para os agentes) e uma lista de tarefas pessoal. |
 | **Servidores** | Nós Proxmox, armazenamentos e todas as VMs/containers; saúde SMART dos discos com alertas; comandos por SSH com snapshot antes de tudo o que muda a máquina. |
 | **Serviços vigiados** | Verificações HTTP(S) ou TCP de N em N minutos. O alerta abre quando algo vai abaixo e fecha quando volta. |
-| **Integrações** | Home Assistant, AdGuard Home, Nextcloud, Forgejo, TREK, openGym, GamesTracker Vault e Immich — cada uma com uma página de ligações com as permissões do token e as chamadas que o MyHomeLab faz. |
+| **Integrações** | Home Assistant, AdGuard Home, Nextcloud, Forgejo, TREK, openGym, GamesTracker Vault, Immich e Paperless-ngx — cada uma com uma página de ligações com as permissões do token e as chamadas que o MyHomeLab faz. |
 | **Email** | Contas Gmail, Outlook e IMAP. Regras do Gmail por remetente, assunto, palavras ou tipo de email, etiquetas em hierarquia e regras propostas pela IA a partir da tua caixa. |
 | **Sincronizar tarefas** | Listas de tarefas do Nextcloud (CalDAV) para o Google Tasks. |
 | **Backups** | Backups agendados das tuas apps e do próprio MyHomeLab, com retenção. |

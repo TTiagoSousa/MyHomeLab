@@ -20,6 +20,9 @@ export { default as GameTrackerConnections } from '../Pages/Private/Apps/GameTra
 export { default as ImmichAccounts } from '../Pages/Private/Apps/Immich_Accounts';
 export { default as ImmichAccount } from '../Pages/Private/Apps/Immich_Account';
 export { default as ImmichConnections } from '../Pages/Private/Apps/Immich_Connections';
+export { default as PaperlessAccounts } from '../Pages/Private/Apps/Paperless_Accounts';
+export { default as PaperlessAccount } from '../Pages/Private/Apps/Paperless_Account';
+export { default as PaperlessConnections } from '../Pages/Private/Apps/Paperless_Connections';
 export { default as ForgejoAccounts } from '../Pages/Private/Apps/Forgejo_Accounts';
 export { default as ForgejoAccount } from '../Pages/Private/Apps/Forgejo_Account';
 export { default as ForgejoConnections } from '../Pages/Private/Apps/Forgejo_Connections';

@@ -80,6 +80,9 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Apps/Immich' element={ <Private_Page.ImmichAccounts /> } />
       <Route path='MyHomeLab/Apps/Immich/:accountId' element={ <Private_Page.ImmichAccount /> } />
       <Route path='MyHomeLab/Apps/Immich/:accountId/Connections' element={ <Private_Page.ImmichConnections /> } />
+      <Route path='MyHomeLab/Apps/Paperless' element={ <Private_Page.PaperlessAccounts /> } />
+      <Route path='MyHomeLab/Apps/Paperless/:accountId' element={ <Private_Page.PaperlessAccount /> } />
+      <Route path='MyHomeLab/Apps/Paperless/:accountId/Connections' element={ <Private_Page.PaperlessConnections /> } />
       <Route path='MyHomeLab/Apps/Nextcloud/:accountId/Connections' element={ <Private_Page.NextcloudConnections /> } />
       <Route path='MyHomeLab/Apps/Gmail' element={ <Private_Page.Email /> } />
       <Route path='MyHomeLab/Apps/Gmail/Rules' element={ <Private_Page.EmailRules /> } />

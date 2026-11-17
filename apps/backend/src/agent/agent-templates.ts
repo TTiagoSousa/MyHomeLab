@@ -8,6 +8,7 @@ import { TRAINER_PROMPT } from 'src/assistant/agents/prompts/trainer.prompt';
 import { TRAVEL_PROMPT } from 'src/assistant/agents/prompts/travel.prompt';
 import { GAMES_PROMPT } from 'src/assistant/agents/prompts/games.prompt';
 import { PHOTOS_PROMPT } from 'src/assistant/agents/prompts/photos.prompt';
+import { ARCHIVIST_PROMPT } from 'src/assistant/agents/prompts/archivist.prompt';
 import { SMARTHOME_PROMPT } from 'src/assistant/agents/prompts/smarthome.prompt';
 import { PROXMOX_OPERATOR_PROMPT } from 'src/assistant/agents/prompts/proxmox-operator.prompt';
 import { TOOL_CATALOG, ToolGroup } from './tool-catalog';
@@ -221,7 +222,20 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     effort: 'LOW',
     tools: [...toolsOf('immich'), ...DOCS_READ],
     reportsTo: 'ceo',
-    color: 9,
+    color: 6,
+    legacyKeys: [],
+  },
+  {
+    key: 'archivist',
+    name: 'Arquivista',
+    description:
+      'Os documentos digitalizados no Paperless: encontrar e ler faturas, contratos e recibos, arrumá-los (etiquetas, correspondentes, tipos) e cuidar da configuração e das tarefas do servidor.',
+    prompt: ARCHIVIST_PROMPT,
+    model: 'SONNET',
+    effort: 'LOW',
+    tools: [...toolsOf('paperless'), ...DOCS_READ],
+    reportsTo: 'ceo',
+    color: 2,
     legacyKeys: [],
   },
 ];

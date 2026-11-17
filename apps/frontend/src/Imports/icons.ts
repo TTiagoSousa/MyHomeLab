@@ -36,5 +36,6 @@ export { default as Nextcloud } from '../Assets/Icons/Nextcloud/Nextcloud';
 export { default as OpenGym } from '../Assets/Icons/OpenGym/OpenGym';
 export { default as GameTracker } from '../Assets/Icons/GameTracker/GameTracker';
 export { default as Immich } from '../Assets/Icons/Immich/Immich';
+export { default as Paperless } from '../Assets/Icons/Paperless/Paperless';
 export { default as Trek } from '../Assets/Icons/Trek/Trek';
 export { default as Adguard } from '../Assets/Icons/Adguard/Adguard';

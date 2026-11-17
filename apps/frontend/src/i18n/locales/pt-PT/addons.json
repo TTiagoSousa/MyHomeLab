@@ -51,7 +51,8 @@
     "locationSaved": "Guardado onde a app corre.",
     "openGymConnected": "openGym ligado",
     "gameTrackerConnected": "GamesTracker ligado",
-    "immichConnected": "Immich ligado"
+    "immichConnected": "Immich ligado",
+    "paperlessConnected": "Paperless ligado"
   },
   "backups": {
     "title": "Backups",
@@ -1502,6 +1503,132 @@
           "users": "Os utilizadores da instância"
         }
       }
+    },
+    "paperless": {
+      "title": "Paperless",
+      "description": "Os documentos digitalizados: o Arquivista procura e lê faturas, contratos e recibos, arruma-os e cuida da configuração e das tarefas do Paperless.",
+      "connect": "Ligar Paperless",
+      "agentsNote": "O Arquivista usa o Paperless (acrescenta-o em Assistente → Workflow). Para outro agente, escolhe as ferramentas dele no Workflow.",
+      "notFound": "Este Paperless não existe ou já foi desligado.",
+      "accountDescription": "A ligação ao Paperless-ngx, com o token da API. O token age como o utilizador que o tem, com as permissões dele: de um superutilizador, chega também à configuração e ao estado do sistema.",
+      "credentialsHint": "O endereço, o utilizador e o token. Para trocar o token, liga outra vez com um novo.",
+      "profile": "Utilizador",
+      "library": "Documentos",
+      "documentsValue_one": "{{count}} documento",
+      "documentsValue_other": "{{count}} documentos",
+      "inboxHint_one": "{{count}} na caixa de entrada",
+      "inboxHint_other": "{{count}} na caixa de entrada",
+      "disk": "Disco",
+      "diskHint": "{{free}} GB livres de {{size}} GB",
+      "diskNeedsAdmin": "Só com o token de um superutilizador",
+      "key": "Token",
+      "keyAdmin": "De um superutilizador",
+      "keyUser": "De um utilizador",
+      "keyHint": "As permissões do utilizador estão em Ligações.",
+      "failedTasks_one": "{{count}} tarefa falhada por ver",
+      "failedTasks_other": "{{count}} tarefas falhadas por ver",
+      "notAdmin": "O token não é de um superutilizador: a configuração e a saúde do Paperless não se veem nem mudam com ele.",
+      "problems": "O Paperless não está bem em: {{parts}}.",
+      "replaceToken": "Trocar o token",
+      "updateChip": "Nova {{version}}",
+      "backup": {
+        "description": "Guarda a arrumação e a configuração do Paperless num destino, com a frequência que escolheres.",
+        "included": "Entra um JSON com as etiquetas, os correspondentes, os tipos, os caminhos, os campos, as vistas guardadas, os fluxos, as regras e as contas do correio (sem as palavras-passe) e a configuração da aplicação.",
+        "notIncluded": "Os documentos (os PDFs e a base de dados) não entram: guarda-os no servidor com o document_exporter do Paperless.",
+        "restore": "Para recuperar os documentos: document_importer na pasta do export. A arrumação do JSON volta a criar-se à mão ou pela API."
+      },
+      "connections": {
+        "title": "Ligações",
+        "permissionsTitle": "O que a ligação deixa fazer",
+        "permissionsAdmin": "O token age como o utilizador que o tem, com as permissões de agora. Este é superutilizador: pode tudo, também a configuração e o estado do sistema.",
+        "permissionsNotAdmin": "O token age como o utilizador que o tem, com as permissões de agora. Este não é superutilizador: a configuração e o estado do sistema não funcionam, e o resto depende das permissões dele.",
+        "keyAll": "Permissões: todas (superutilizador).",
+        "keySome_one": "O utilizador tem {{count}} permissão. As chamadas sem a permissão aparecem a vermelho.",
+        "keySome_other": "O utilizador tem {{count}} permissões. As chamadas sem a permissão aparecem a vermelho.",
+        "keyUnknown": "Ainda não deu para ler as permissões do utilizador.",
+        "callsTitle": "Chamadas à API do Paperless",
+        "callsSummary": "O que dá para pedir ao Paperless ({{base}}) e ao GitHub dele (as versões): o que o MyHomeLab já usa e o que ainda não usa.",
+        "filterLabel": "Mostrar chamadas",
+        "filter": {
+          "all": "Todas ({{count}})",
+          "used": "Usadas ({{count}})",
+          "possible": "Possíveis ({{count}})"
+        },
+        "table": {
+          "method": "Método",
+          "path": "Caminho",
+          "description": "O que faz",
+          "usedBy": "Quem usa",
+          "access": "Acesso",
+          "permission": "Permissão",
+          "status": "Estado",
+          "allows": "O que deixa fazer",
+          "needed": "O MyHomeLab usa",
+          "account": "Este token"
+        },
+        "access": {
+          "user": "Utilizador (token)",
+          "admin": "Superutilizador",
+          "github": "GitHub do Paperless"
+        },
+        "allows": {
+          "user": "Os documentos, a pesquisa, as etiquetas, os correspondentes, os tipos, as notas e as tarefas, conforme as permissões",
+          "admin": "A configuração da aplicação e o estado do sistema (disco, base de dados, índice)",
+          "github": "As versões publicadas, sem login"
+        },
+        "need": {
+          "read": "Leitura",
+          "write": "Leitura e escrita",
+          "none": "Não usa"
+        },
+        "granted": "Tem",
+        "notGranted": "Não tem",
+        "notUsed": "Ainda não usada",
+        "available": "Disponível",
+        "needsAdmin": "Precisa de superutilizador",
+        "missingPermission": "Falta a permissão",
+        "usedBy": {
+          "connect": "Ligar",
+          "status": "Estado da app",
+          "updates": "Atualizações",
+          "backups": "Backups",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "uiSettings": "Quem é o token (utilizador, superutilizador, permissões) e a versão (cabeçalho X-Version)",
+          "statistics": "Quantos documentos, quantos na caixa de entrada e as contagens",
+          "status": "A saúde: disco, base de dados, Redis, Celery, índice, classificador",
+          "tasks": "As tarefas recentes e as que falharam",
+          "documents": "Procura documentos (texto todo e filtros)",
+          "document": "Um documento, com o texto do OCR e as notas",
+          "documentUpdate": "Muda o título, as etiquetas, o correspondente, o tipo, o caminho, a data ou o ASN",
+          "noteAdd": "Acrescenta uma nota a um documento",
+          "bulkEdit": "O mesmo arranjo em vários documentos",
+          "tags": "As etiquetas",
+          "tagSave": "Cria ou muda uma etiqueta",
+          "correspondents": "Os correspondentes",
+          "correspondentSave": "Cria ou muda um correspondente",
+          "documentTypes": "Os tipos de documento",
+          "storagePaths": "Os caminhos de armazenamento",
+          "customFields": "Os campos personalizados",
+          "savedViews": "As vistas guardadas",
+          "workflows": "Os fluxos de trabalho",
+          "mailRules": "As regras do correio",
+          "mailAccounts": "As contas do correio (palavras-passe escondidas)",
+          "config": "A configuração da aplicação (OCR, códigos de barras, IA…)",
+          "configUpdate": "Muda a configuração da aplicação",
+          "releases": "As versões publicadas, com as notas",
+          "upload": "Envia um documento novo",
+          "download": "Descarrega o ficheiro de um documento",
+          "documentDelete": "Apaga um documento (vai para o lixo)",
+          "globalSearch": "A pesquisa global (documentos e metadados)",
+          "trash": "O lixo",
+          "shareLinks": "Os links de partilha",
+          "remoteVersion": "A versão mais recente (o aviso do próprio Paperless)",
+          "users": "Os utilizadores",
+          "logs": "Os registos do servidor"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1582,6 +1709,16 @@
     "urlPlaceholder": "https://fotos.exemplo.com",
     "apiKey": "Chave de API",
     "apiKeyHint": "No Immich: Conta (o teu avatar) → Definições da conta → Chaves de API → Nova chave. Para os agentes mexerem nas definições, nas tarefas e nos backups, cria-a numa conta admin com a permissão \"all\". Fica cifrada no MyHomeLab.",
+    "connect": "Ligar"
+  },
+  "paperlessModal": {
+    "title": "Ligar Paperless",
+    "name": "Nome (opcional)",
+    "namePlaceholder": "Ex: Documentos",
+    "url": "Endereço",
+    "urlPlaceholder": "https://paperless.exemplo.com",
+    "token": "Token da API",
+    "tokenHint": "No Paperless: o teu perfil (canto superior direito) → Perfil → Token de autenticação da API → gerar. Para os agentes mexerem na configuração, usa o de um superutilizador. Fica cifrado no MyHomeLab.",
     "connect": "Ligar"
   }
 }
