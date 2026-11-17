@@ -17,15 +17,20 @@ import Doc_List_Item from './Doc_List_Item';
 import Doc_Detail from './Doc_Detail';
 import Doc_Form from './Doc_Form';
 import Doc_Proposals from './Doc_Proposals';
-import Docs_Groups from './Docs_Groups';
+import Docs_Tree from './Docs_Tree';
+import Docs_Menu from './Docs_Menu';
+import Docs_Kinds_Intro from './Docs_Kinds_Intro';
+import { useDocSections } from '../../../Hooks/Docs/useDocSections';
 import Docs_Starter_Modal from './Docs_Starter_Modal';
 import { useDocTemplates } from '../../../Hooks/Docs/useDocTemplates';
-import { draftToPayload, emptyDraft, kindFromQuery, linkFromQuery, type DocDraft } from './docDraft';
+import { draftToPayload, emptyDraft, kindFromQuery, linkFromQuery, placeFromQuery, type DocDraft } from './docDraft';
 import './Docs.scss';
+import './Docs_Tree.scss';
 
 const SEARCH_DELAY_MS = 300;
 const DOCS_PATH = '/MyHomeLab/Docs';
-const NEW_DOC_PARAMS = ['linkType', 'targetId', 'label', 'newKind'];
+const NEW_DOC_PARAMS = ['linkType', 'targetId', 'label', 'newKind', 'sectionId', 'parentId'];
+const ALL_DOCS = { search: '', kind: '', linkType: '' } as const;
 const HISTORY_DAYS = 90;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const FILTER_PARAMS = ['q', 'kind', 'link', 'target', 'targetLabel', 'author', 'sort'];
@@ -49,6 +54,7 @@ const Docs = () => {
   const sort = (searchParams.get('sort') === 'title' ? 'title' : 'recent') as DocsFilterValues['sort'];
   const [searchText, setSearchText] = useState(search);
   const [creatingDoc, setCreatingDoc] = useState(false);
+  const [addingSection, setAddingSection] = useState(false);
 
   const setFilter = (name: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -106,8 +112,15 @@ const Docs = () => {
   }, [searchText]);
 
   const docKind = (history ? (kind === ATTEMPT_KIND ? '' : 'LOG') : kind) as DocKind | '';
-  const { docs, loading, error, creatingStarter, fetchDocs, createDoc, createStarterDocs, createFromTemplate } = useDocs({ search, kind: docKind, linkType, targetId, owner: author, sort });
+  const { docs, loading, error, creatingStarter, refreshingMaps, fetchDocs, createDoc, createStarterDocs, createFromTemplate, refreshMaps } = useDocs({ search, kind: docKind, linkType, targetId, owner: author, sort });
   const { targets } = useDocTargets();
+  const { docs: allDocs, fetchDocs: fetchAllDocs } = useDocs(ALL_DOCS);
+  const { sections, createSection, updateSection, deleteSection } = useDocSections();
+  const libraryAll = allDocs.filter((doc) => doc.kind !== 'LOG');
+
+  const refreshLists = async () => {
+    await Promise.all([fetchDocs(), fetchAllDocs()]);
+  };
   const { sets, loading: loadingSets, fetchSets } = useDocTemplates();
 
   const openStarter = () => {
@@ -141,6 +154,7 @@ const Docs = () => {
   const creating = !docId && searchParams.get('new') === '1';
   const onPage = Boolean(docId || attemptId) || creating;
   const filtering = Boolean(search || kind || linkType || author || history);
+  const narrowing = Boolean(search || kind || linkType || author);
   const isEmpty = !loading && !error && docs.length === 0 && attempts.length === 0 && !filtering;
 
   const openDoc = (id: string) => navigate(`${DOCS_PATH}/${id}${filterQuery()}`);
@@ -157,6 +171,33 @@ const Docs = () => {
     navigate(`${DOCS_PATH}?${params.toString()}`);
   };
 
+  const openNewKind = (newKind: DocKind) => {
+    const params = new URLSearchParams({ new: '1', newKind });
+    if (linkType && targetId) {
+      params.set('linkType', linkType);
+      params.set('targetId', targetId);
+      params.set('label', targetLabel || targetId);
+    }
+    navigate(`${DOCS_PATH}?${params.toString()}`);
+  };
+
+  const openNewIn = (sectionId: string, newKind: DocKind) => {
+    navigate(`${DOCS_PATH}?${new URLSearchParams({ new: '1', newKind, sectionId }).toString()}`);
+  };
+
+  const openNewChild = (parentId: string) => {
+    navigate(`${DOCS_PATH}?${new URLSearchParams({ new: '1', parentId }).toString()}`);
+  };
+
+  const sectionActions = {
+    createSection: (name: string, parentId: string | null) => createSection(name, parentId),
+    renameSection: (id: string, name: string) => updateSection(id, { name }),
+    deleteSection: async (id: string) => {
+      if (await deleteSection(id)) await refreshLists();
+    },
+    newDocIn: openNewIn,
+  };
+
   const openNewFor = (target: DocTarget, newKind: DocKind) => {
     const params = new URLSearchParams({ new: '1', linkType: target.type, targetId: target.targetId, label: target.label, newKind });
     navigate(`${DOCS_PATH}?${params.toString()}`);
@@ -171,6 +212,7 @@ const Docs = () => {
     setCreatingDoc(true);
     const doc = await createDoc(draftToPayload(draft));
     setCreatingDoc(false);
+    void fetchAllDocs();
     if (doc) navigate(`${DOCS_PATH}/${doc.id}`, { replace: true });
   };
 
@@ -183,7 +225,7 @@ const Docs = () => {
   };
 
   const handleDeleted = async () => {
-    await fetchDocs();
+    await refreshLists();
     backToList();
   };
 
@@ -193,7 +235,9 @@ const Docs = () => {
         <Doc_Form
           key={NEW_DOC_PARAMS.map((name) => searchParams.get(name) ?? '').join('|')}
           heading={t('form.newTitle')}
-          initial={emptyDraft(linkFromQuery(searchParams), kindFromQuery(searchParams))}
+          initial={emptyDraft(linkFromQuery(searchParams), kindFromQuery(searchParams), placeFromQuery(searchParams))}
+          sections={sections}
+          docs={libraryAll}
           saving={creatingDoc}
           onSave={create}
           onCancel={cancelCreate}
@@ -201,7 +245,19 @@ const Docs = () => {
       );
     }
     if (attemptId) return <Attempt_Detail key={attemptId} attemptId={attemptId} />;
-    return <Doc_Detail key={docId} docId={docId!} docState={docState} onChanged={fetchDocs} onDeleted={handleDeleted} />;
+    return (
+      <Doc_Detail
+        key={docId}
+        docId={docId!}
+        docState={docState}
+        sections={sections}
+        docs={libraryAll}
+        onChanged={() => void refreshLists()}
+        onDeleted={handleDeleted}
+        onOpen={openDoc}
+        onNewChild={openNewChild}
+      />
+    );
   };
 
   const shownCount = history ? allItems.length : libraryDocs.length;
@@ -210,8 +266,22 @@ const Docs = () => {
     if (loading) return <p className='Docs_list_note'>{t('list.loading')}</p>;
     if (error) return <p className='Docs_list_note error'>{error}</p>;
     if (shownCount === 0) return <p className='Docs_list_note'>{t(history ? 'list.noHistory' : 'list.noResults')}</p>;
+    if (!history && narrowing) {
+      return libraryDocs.map((doc) => <Doc_List_Item key={doc.id} doc={doc} onSelect={() => openDoc(doc.id)} />);
+    }
     if (!history) {
-      return <Docs_Groups docs={libraryDocs} targets={targets} showMissing={!search && !kind && !linkType && !author} onSelect={openDoc} onCreate={openNewFor} />;
+      return (
+        <Docs_Tree
+          docs={libraryDocs}
+          sections={sections}
+          targets={targets}
+          actions={sectionActions}
+          addingSection={addingSection}
+          onAddingSection={setAddingSection}
+          onSelect={openDoc}
+          onCreate={openNewFor}
+        />
+      );
     }
     const rows = items.map((item) =>
       item.attempt ? (
@@ -256,13 +326,51 @@ const Docs = () => {
           <Page_Help topic='docs' />
         </div>
         <div className='Left_Side'>
-          <button type='button' className='Docs_starter' onClick={openStarter} disabled={creatingStarter}>
-            {creatingStarter ? t('actions.starterBusy') : t('actions.starter')}
-          </button>
-          <button type='button' className='Docs_new' onClick={openNew}>
-            <Icon.Plus />
-            <span>{targetId ? t('actions.newLinked', { label: targetLabel || targetId }) : t('actions.new')}</span>
-          </button>
+          <Docs_Menu
+            className='Docs_more'
+            label={t('actions.more')}
+            trigger={<span className='Docs_Dots' aria-hidden='true' />}
+            items={[
+              {
+                id: 'maps',
+                label: refreshingMaps ? t('actions.refreshingMaps') : t('actions.refreshMaps'),
+                hint: t('actions.refreshMapsHint'),
+                disabled: refreshingMaps,
+                onSelect: () => void refreshMaps().then(() => fetchAllDocs()),
+              },
+              {
+                id: 'starter',
+                label: creatingStarter ? t('actions.starterBusy') : t('actions.starter'),
+                hint: t('actions.starterHint'),
+                disabled: creatingStarter,
+                onSelect: openStarter,
+              },
+            ]}
+          />
+          <Docs_Menu
+            className='Docs_new_menu'
+            label={targetId ? t('actions.newLinked', { label: targetLabel || targetId }) : t('actions.new')}
+            trigger={
+              <>
+                <Icon.Plus />
+                <span>{targetId ? t('actions.newLinked', { label: targetLabel || targetId }) : t('actions.new')}</span>
+              </>
+            }
+            items={[
+              { id: 'rules', label: t('kinds.RULES'), hint: t('newMenu.RULES'), onSelect: () => openNewKind('RULES') },
+              { id: 'map', label: t('kinds.MAP'), hint: t('newMenu.MAP'), onSelect: () => openNewKind('MAP') },
+              {
+                id: 'section',
+                label: t('tree.newSection'),
+                hint: t('newMenu.section'),
+                onSelect: () => {
+                  setView('');
+                  clearFilters();
+                  setAddingSection(true);
+                },
+              },
+            ]}
+          />
         </div>
       </header>
 
@@ -283,6 +391,7 @@ const Docs = () => {
         <Docs_Empty creatingStarter={creatingStarter} onStarter={openStarter} onNew={openNew} />
       ) : (
         <>
+          {!history && <Docs_Kinds_Intro />}
           <Docs_Filters
             values={{ search: searchText, kind, linkType, targetId, author, sort }}
             history={history}

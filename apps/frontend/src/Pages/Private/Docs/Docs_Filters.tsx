@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Global_Dropdown from '../../../Components/Inputs/Global_Dropdown/Global_Dropdown';
 import { ATTEMPT_KIND, DOC_LINK_TYPES, LIBRARY_KINDS, type DocLinkType, type DocTarget } from '../../../Hooks/Docs/docTypes';
@@ -56,6 +57,9 @@ const Docs_Filters = ({ values, history, targets, onSearch, onChange, onTarget, 
   ];
 
   const active = Boolean(values.search || values.kind || values.linkType || values.author || values.sort !== 'recent');
+  const extraActive = Boolean(values.linkType || values.author || values.sort !== 'recent');
+  const [moreOpen, setMoreOpen] = useState(extraActive);
+  const showMore = moreOpen || extraActive;
 
   return (
     <section className='Docs_filters'>
@@ -75,33 +79,48 @@ const Docs_Filters = ({ values, history, targets, onSearch, onChange, onTarget, 
         <Global_Dropdown value={values.kind} options={kindOptions} onChange={(value) => onChange('kind', value)} searchable={false} />
       </div>
 
-      <div className='Docs_filter_field'>
-        <span>{t('filters.linkLabel')}</span>
-        <Global_Dropdown value={values.linkType} options={linkOptions} onChange={(value) => onChange('link', value)} maxVisibleOptions={9} />
-      </div>
+      <button
+        type='button'
+        className={`Docs_filter_more${showMore ? ' open' : ''}`}
+        aria-expanded={showMore}
+        onClick={() => setMoreOpen(!showMore)}
+        disabled={extraActive}
+      >
+        <span>{t(showMore ? 'filters.fewer' : 'filters.more')}</span>
+        <Icon.Chevron />
+      </button>
 
-      {values.linkType && (
-        <div className='Docs_filter_field'>
-          <span>{t(`linkFilter.${values.linkType}`)}</span>
-          <Global_Dropdown
-            value={values.targetId}
-            options={targetOptions}
-            onChange={(value) => onTarget(ofType.find((target) => target.targetId === value) ?? null)}
-            maxVisibleOptions={9}
-            searchable={ofType.length > 8}
-          />
-        </div>
+      {showMore && (
+        <>
+          <div className='Docs_filter_field'>
+            <span>{t('filters.linkLabel')}</span>
+            <Global_Dropdown value={values.linkType} options={linkOptions} onChange={(value) => onChange('link', value)} maxVisibleOptions={9} />
+          </div>
+
+          {values.linkType && (
+            <div className='Docs_filter_field'>
+              <span>{t(`linkFilter.${values.linkType}`)}</span>
+              <Global_Dropdown
+                value={values.targetId}
+                options={targetOptions}
+                onChange={(value) => onTarget(ofType.find((target) => target.targetId === value) ?? null)}
+                maxVisibleOptions={9}
+                searchable={ofType.length > 8}
+              />
+            </div>
+          )}
+
+          <div className='Docs_filter_field'>
+            <span>{t('filters.authorLabel')}</span>
+            <Global_Dropdown value={values.author} options={authorOptions} onChange={(value) => onChange('author', value)} searchable={false} />
+          </div>
+
+          <div className='Docs_filter_field'>
+            <span>{t('filters.sortLabel')}</span>
+            <Global_Dropdown value={values.sort} options={sortOptions} onChange={(value) => onChange('sort', value)} searchable={false} />
+          </div>
+        </>
       )}
-
-      <div className='Docs_filter_field'>
-        <span>{t('filters.authorLabel')}</span>
-        <Global_Dropdown value={values.author} options={authorOptions} onChange={(value) => onChange('author', value)} searchable={false} />
-      </div>
-
-      <div className='Docs_filter_field'>
-        <span>{t('filters.sortLabel')}</span>
-        <Global_Dropdown value={values.sort} options={sortOptions} onChange={(value) => onChange('sort', value)} searchable={false} />
-      </div>
 
       {active && (
         <button type='button' className='Docs_filter_clear' onClick={onClear}>

@@ -11,7 +11,7 @@ PostgreSQL, accessed through **Prisma 7**. The schema is the single source of tr
 | Users and catalogue | `User`, `Category`, `Service` |
 | Connected apps and email | `ConnectedAccount`, `EmailRule`, `EmailRuleProposal` |
 | Assistant | `Agent`, `AgentLog`, `Conversation`, `ChatMessage`, `AiCredential`, `AiUsage`, `AssistantPermissionSetting`, `AgentAppAccess` |
-| Documents | `Doc` (`kind`: `RULES`, `MAP` or `LOG`), `DocLink`, `DocVersion`, `DocProposal` |
+| Documents | `Doc` (`kind`: `RULES`, `MAP` or `LOG`; `sectionId` and `parentId` place it in the tree), `DocSection` (the user's sections, nested by `parentId`), `DocLink`, `DocVersion`, `DocProposal` |
 | Updates | `AppUpdate`, `UpdateAttempt`, `UpdateAttemptCheck`, `UpdateWorkflowSetting` |
 | Board and triggers | `Project`, `BoardState`, `BoardModule`, `BoardCycle`, `BoardTask` (+ comments, links, relations, attachments, activity), `AgentSchedule`, `AgentScheduleRun` |
 | Personal tasks | `TodoList`, `Todo`, `TodoSyncSetting`, `TodoSyncGroup`, `TodoSyncLink`, `TodoSyncItem` |

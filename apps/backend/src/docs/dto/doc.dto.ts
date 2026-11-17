@@ -64,6 +64,18 @@ export class CreateDocDto {
   @ValidateNested({ each: true })
   @Type(() => DocLinkDto)
   links?: DocLinkDto[];
+
+  /** A secção do utilizador onde fica (null = nas automáticas). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  sectionId?: string | null;
+
+  /** O documento-pai: fica por baixo dele, na secção dele (null = sem pai). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  parentId?: string | null;
 }
 
 export class UpdateDocDto {
@@ -100,6 +112,18 @@ export class UpdateDocDto {
   @ValidateNested({ each: true })
   @Type(() => DocLinkDto)
   links?: DocLinkDto[];
+
+  /** A secção do utilizador onde fica (null = nas automáticas). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  sectionId?: string | null;
+
+  /** O documento-pai: fica por baixo dele, na secção dele (null = sem pai). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  parentId?: string | null;
 }
 
 export class ListDocsQueryDto {
@@ -136,4 +160,29 @@ export class ApproveDocProposalDto {
   @IsString()
   @MaxLength(200_000)
   content?: string;
+}
+
+export class CreateDocSectionDto {
+  @IsString()
+  @MinLength(1)
+  @MaxLength(80)
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  parentId?: string | null;
+}
+
+export class UpdateDocSectionDto {
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(80)
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  parentId?: string | null;
 }

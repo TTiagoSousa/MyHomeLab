@@ -75,6 +75,19 @@ export const appLabel = (account: {
     : app;
 };
 
+/**
+ * O nome de uma conta nas ligações e nos grupos dos Documentos. Sem nome próprio, o
+ * email distingue as contas da mesma app (vários Gmail): "Gmail · eu@gmail.com".
+ */
+export const accountLinkLabel = (account: {
+  provider: ConnectionProvider;
+  displayName: string | null;
+  emailAddress: string | null;
+}) =>
+  !account.displayName?.trim() && account.emailAddress
+    ? `${PROVIDER_NAMES[account.provider]} · ${account.emailAddress}`
+    : appLabel(account);
+
 /** O id de uma máquina nas ligações: o servidor e o vmid. */
 export const guestTargetId = (serverId: string, vmid: number) =>
   `${serverId}:${vmid}`;
@@ -208,6 +221,8 @@ export class DocsService {
       tags: doc.tags,
       summary: doc.summary,
       links: doc.links,
+      sectionId: doc.sectionId,
+      parentId: doc.parentId,
       snippet: snippet(doc.content, words),
       updatedBy: doc.updatedBy,
       updatedAt: doc.updatedAt,
@@ -245,9 +260,11 @@ export class DocsService {
   // ── Escrever ────────────────────────────────────────────────────────────
 
   async create(userId: string, input: CreateDocDto, author: DocAuthor) {
+    const place = await this.placement(userId, input);
     return this.prisma.doc.create({
       data: {
         userId,
+        ...place,
         title: input.title.trim(),
         kind: input.kind ?? DocKind.RULES,
         owner: author.kind === 'user' ? DocOwner.USER : DocOwner.AGENT,
@@ -277,6 +294,7 @@ export class DocsService {
         `"${doc.title}" é um documento do utilizador: propõe a mudança com docs_propose.`,
       );
     }
+    const place = await this.placement(userId, input, doc.id);
     const title = input.title?.trim() ?? doc.title;
     const content = input.content ?? doc.content;
     const textChanged = title !== doc.title || content !== doc.content;
@@ -295,6 +313,7 @@ export class DocsService {
             : input.summary?.trim() || null,
         tags: cleanTags(input.tags),
         updatedBy: authorName(author),
+        ...place,
         ...(input.links
           ? {
               links: {
@@ -309,7 +328,81 @@ export class DocsService {
     if (textChanged || input.links || input.kind !== undefined) {
       this.changed(userId, saved);
     }
+    if (place.sectionId !== undefined && place.sectionId !== doc.sectionId) {
+      await this.moveDescendants(id, place.sectionId);
+    }
     return saved;
+  }
+
+  /**
+   * Onde fica um documento na árvore. Com pai, vai para a secção do pai (os filhos
+   * seguem sempre o pai); um pai não pode ser o próprio nem um descendente dele.
+   * Os campos que não vieram ficam como estão (undefined).
+   */
+  private async placement(
+    userId: string,
+    input: { sectionId?: string | null; parentId?: string | null },
+    selfId?: string,
+  ): Promise<{ sectionId?: string | null; parentId?: string | null }> {
+    const place: { sectionId?: string | null; parentId?: string | null } = {};
+    if (input.parentId !== undefined) {
+      const parentId = input.parentId || null;
+      if (parentId) {
+        const parent = await this.findOwned(userId, parentId);
+        if (selfId && (await this.isDescendant(parentId, selfId))) {
+          throw new BadRequestException(
+            'Um documento não pode ficar por baixo dele próprio nem de um subdocumento dele.',
+          );
+        }
+        place.parentId = parentId;
+        place.sectionId = parent.sectionId;
+        return place;
+      }
+      place.parentId = null;
+    }
+    if (input.sectionId !== undefined) {
+      const sectionId = input.sectionId || null;
+      if (sectionId) {
+        const section = await this.prisma.docSection.findFirst({
+          where: { id: sectionId, userId },
+        });
+        if (!section) throw new NotFoundException('Secção não encontrada');
+      }
+      place.sectionId = sectionId;
+    }
+    return place;
+  }
+
+  /** Se `candidate` é o próprio `ancestor` ou está por baixo dele. */
+  private async isDescendant(candidate: string, ancestor: string) {
+    let current: string | null = candidate;
+    for (let depth = 0; current && depth < 50; depth += 1) {
+      if (current === ancestor) return true;
+      const doc: { parentId: string | null } | null =
+        await this.prisma.doc.findUnique({
+          where: { id: current },
+          select: { parentId: true },
+        });
+      current = doc?.parentId ?? null;
+    }
+    return false;
+  }
+
+  /** Os subdocumentos (e os deles) mudam de secção com o pai. */
+  private async moveDescendants(id: string, sectionId: string | null) {
+    let parents = [id];
+    for (let depth = 0; parents.length && depth < 20; depth += 1) {
+      const children = await this.prisma.doc.findMany({
+        where: { parentId: { in: parents } },
+        select: { id: true },
+      });
+      if (!children.length) return;
+      await this.prisma.doc.updateMany({
+        where: { id: { in: children.map((child) => child.id) } },
+        data: { sectionId },
+      });
+      parents = children.map((child) => child.id);
+    }
   }
 
   async remove(userId: string, id: string): Promise<void> {
@@ -559,11 +652,7 @@ export class DocsService {
       targets.push({
         type: DocLinkType.APP,
         targetId: account.id,
-        // Com várias contas da mesma app (vários Gmail), o email distingue-as.
-        label:
-          !account.displayName?.trim() && account.emailAddress
-            ? `${PROVIDER_NAMES[account.provider]} · ${account.emailAddress}`
-            : appLabel(account),
+        label: accountLinkLabel(account),
         group: PROVIDER_NAMES[account.provider],
         provider: account.provider,
       });
@@ -879,7 +968,7 @@ ${entry}`,
       accounts.map((account) => ({
         id: account.id,
         provider: account.provider,
-        label: appLabel(account),
+        label: accountLinkLabel(account),
       })),
     )) {
       if (existing.has(normalizeText(starter.title))) continue;
@@ -927,7 +1016,7 @@ ${entry}`,
         ...apps.map((account) => ({
           type: DocLinkType.APP,
           targetId: account.id,
-          label: appLabel(account),
+          label: accountLinkLabel(account),
         })),
         ...(template.server && server
           ? [

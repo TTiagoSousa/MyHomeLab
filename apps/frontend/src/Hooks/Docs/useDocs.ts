@@ -10,6 +10,7 @@ export const useDocs = (filters: DocFilters) => {
   const [docs, setDocs] = useState<DocSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [creatingStarter, setCreatingStarter] = useState(false);
+  const [refreshingMaps, setRefreshingMaps] = useState(false);
   const [error, setError] = useState('');
   const { setAlert } = useAlert();
 
@@ -68,6 +69,19 @@ export const useDocs = (filters: DocFilters) => {
     }
   };
 
+  const refreshMaps = async () => {
+    setRefreshingMaps(true);
+    try {
+      const response = await http.post(End_Points.Docs_Maps_Refresh_Endpoint(), {}, { withCredentials: true });
+      await fetchDocs();
+      setAlert({ open: true, message: i18n.t('docs:alerts.mapsRefreshed', { count: response.data.written }), type: 'success' });
+    } catch (error) {
+      setAlert({ open: true, message: docErrorMessage(error), type: 'error' });
+    } finally {
+      setRefreshingMaps(false);
+    }
+  };
+
   const createFromTemplate = async (id: string) => {
     setCreatingStarter(true);
     try {
@@ -85,5 +99,5 @@ export const useDocs = (filters: DocFilters) => {
     }
   };
 
-  return { docs, loading, error, creatingStarter, fetchDocs, createDoc, createStarterDocs, createFromTemplate };
+  return { docs, loading, error, creatingStarter, refreshingMaps, fetchDocs, createDoc, createStarterDocs, createFromTemplate, refreshMaps };
 };

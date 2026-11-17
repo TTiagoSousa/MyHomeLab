@@ -3,6 +3,7 @@ import { Doc_Link_Chip, Doc_Meta_Chips } from '../../../Components/Doc_Chips/Doc
 import type { DocSummary } from '../../../Hooks/Docs/docTypes';
 import { formatRelativeTime } from '../Apps/relativeTime';
 import { authorLabel } from './docFormat';
+import { plainText } from './docTree';
 
 const LINKS_SHOWN = 3;
 
@@ -14,7 +15,8 @@ interface Doc_List_Item_Props {
 
 const Doc_List_Item = ({ doc, hiddenLink, onSelect }: Doc_List_Item_Props) => {
   const { t } = useTranslation('docs');
-  const links = doc.links.filter((link) => `${link.type}:${link.targetId}` !== hiddenLink);
+  const links = doc.links.filter((link) => link.type !== 'DOC' && `${link.type}:${link.targetId}` !== hiddenLink);
+  const preview = doc.summary || plainText(doc.snippet);
   const hiddenLinks = links.length - LINKS_SHOWN;
 
   return (
@@ -27,7 +29,7 @@ const Doc_List_Item = ({ doc, hiddenLink, onSelect }: Doc_List_Item_Props) => {
         ))}
         {hiddenLinks > 0 && <span className='Doc_Chip'>+{hiddenLinks}</span>}
       </span>
-      {(doc.summary || doc.snippet) && <span className='Doc_List_Item_Snippet'>{doc.summary || doc.snippet}</span>}
+      {preview && <span className='Doc_List_Item_Snippet'>{preview}</span>}
       <span className='Doc_List_Item_Meta'>
         {t('list.updated', { time: formatRelativeTime(doc.updatedAt, t), by: authorLabel(doc.updatedBy, t) })}
       </span>

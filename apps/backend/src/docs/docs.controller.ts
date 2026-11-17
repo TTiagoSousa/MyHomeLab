@@ -18,12 +18,16 @@ import { JwtPayload } from 'src/auth/jwt-payload.interface';
 import { DocLinkType } from 'src/generated/prisma/client/client';
 import { DocConflictsService } from './doc-conflicts.service';
 import { DocsService } from './docs.service';
+import { DocMapsService } from './maps/doc-maps.service';
 import {
   ApproveDocProposalDto,
   CreateDocDto,
+  CreateDocSectionDto,
   ListDocsQueryDto,
   UpdateDocDto,
+  UpdateDocSectionDto,
 } from './dto/doc.dto';
+import { DocSectionsService } from './doc-sections.service';
 
 type AuthedRequest = Request & { user: JwtPayload };
 
@@ -34,6 +38,8 @@ export class DocsController {
   constructor(
     private readonly docs: DocsService,
     private readonly conflicts: DocConflictsService,
+    private readonly maps: DocMapsService,
+    private readonly sections: DocSectionsService,
   ) {}
 
   @Get()
@@ -88,6 +94,38 @@ export class DocsController {
   @Post(':id/check-conflicts')
   checkConflicts(@Param('id') id: string, @Req() req: AuthedRequest) {
     return this.conflicts.check(req.user.id, id);
+  }
+
+  /** As secções do utilizador (a árvore dos Documentos). */
+  @Get('sections')
+  listSections(@Req() req: AuthedRequest) {
+    return this.sections.list(req.user.id);
+  }
+
+  @Post('sections')
+  createSection(@Body() dto: CreateDocSectionDto, @Req() req: AuthedRequest) {
+    return this.sections.create(req.user.id, dto);
+  }
+
+  @Patch('sections/:id')
+  updateSection(
+    @Param('id') id: string,
+    @Body() dto: UpdateDocSectionDto,
+    @Req() req: AuthedRequest,
+  ) {
+    return this.sections.update(req.user.id, id, dto);
+  }
+
+  /** Apaga a secção; os documentos e as subsecções dela sobem um nível. */
+  @Delete('sections/:id')
+  removeSection(@Param('id') id: string, @Req() req: AuthedRequest) {
+    return this.sections.remove(req.user.id, id);
+  }
+
+  /** Refaz já os mapas automáticos (servidores e apps ligadas). */
+  @Post('maps/refresh')
+  async refreshMaps(@Req() req: AuthedRequest) {
+    return { written: await this.maps.refreshUser(req.user.id) };
   }
 
   @Get('templates')

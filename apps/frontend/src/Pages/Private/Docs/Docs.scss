@@ -227,13 +227,6 @@
     color: var(--text-main);
   }
 
-  .Docs_Group_Target.missing .Docs_Group_Target_Name{ color: var(--text-soft); }
-
-  .Docs_Group_Missing{
-    font-size: 11.5px;
-    color: var(--text-faint);
-  }
-
   .Docs_Group_Add{
     @include Mixin.Ghost_Button;
     height: 26px;

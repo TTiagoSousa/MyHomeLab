@@ -68,6 +68,7 @@ const Doc_View = ({ doc, onEdit, versionsOpen, onToggleVersions, checking, onChe
         </div>
       )}
 
+      {doc.tags.includes('mapa-auto') && <p className='Doc_View_Generated'>{t('detail.generatedMap')}</p>}
       {doc.summary && <p className='Doc_View_Summary'>{doc.summary}</p>}
 
       <dl className='Doc_View_Facts'>

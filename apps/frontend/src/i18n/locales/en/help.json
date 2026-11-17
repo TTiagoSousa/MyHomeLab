@@ -228,19 +228,19 @@
     },
     "docs": {
       "title": "Documents",
-      "summary": "Your rules and the map of your servers and apps, linked to what they are about. The agents follow the rules and only propose changes to you; what they did goes to History.",
+      "summary": "Your rules and the maps of what exists, organised in a tree of your own. Agents follow the rules and only propose changes; what they did goes to History.",
       "steps": [
-        "In Documents, press \"Create suggested documents\": you get the general documents (how the team works, updates, a service down…) and a rules document for each connected app.",
-        "Open a document and write freely: headings, lists, checkboxes, tables and diagrams.",
-        "Link it to what matters (a server, a CT or VM even without integration, an app, a monitored service, an agent or another document).",
-        "Give clear titles and tags and link each rule to what it is about (the app, the server, the machine): that is how the agents know which documents to read."
+        "Create your sections with + New → Section (e.g. Home, Finance, Health). In each section's ⋯ menu you add subsections, rename or delete; deleting a section never deletes documents.",
+        "Create a document with + New → Rules or Map and pick its Section. In Inside, you can put it under another document: it becomes a sub-document.",
+        "Write freely: headings, lists, checkboxes, tables and diagrams. Link it to what it is about (a server, a CT or VM, an app, a watched service, an agent).",
+        "Give clear titles and tags and link each rule to what it is about: that is how agents know which documents to read."
       ],
       "notes": [
-        "The agents get the index of the documents and the list of those the request touches (by titles, tags and links). They must read those before changing anything — the tools that change things only answer afterwards.",
-        "The agents don't write in your documents: they propose changes, which you approve or reject in Documents. What they learn reaches you that way, as a change to a rule.",
-        "Each document keeps its previous versions; you can restore any of them.",
-        "Each server's and app's map is also a document: the agent writes it when studying and keeps it up to date.",
-        "Update attempts also show up here (type \"Update attempt\"): when you open one, you see the rule points as \"to validate\", \"validated\" or \"not validated\", with the proof of each."
+        "Every server and connected app has a \"Map – …\" made by MyHomeLab and rebuilt every day (or now, in ⋯ → Refresh maps). Write only in the Notes section at the end: the rest is rewritten.",
+        "Anything you do not put in a section of yours stays in Automatic, grouped by what it is linked to (Servers and apps, Projects, General).",
+        "Agents get the index of documents and the list of those a request touches (by titles, tags and links). They must read those before changing anything.",
+        "Agents do not write in your documents: they propose changes, which you approve or reject in Documents.",
+        "Every document keeps its previous versions; you can restore any of them. ⋯ → Create suggested documents gives you ready-made ones to start with."
       ],
       "goTo": "Go to Documents"
     },

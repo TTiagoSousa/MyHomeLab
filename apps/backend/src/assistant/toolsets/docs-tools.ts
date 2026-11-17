@@ -103,7 +103,7 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
     {
       name: 'docs_write',
       description:
-        'Cria um documento teu (dos agentes) ou reescreve um que seja dos agentes — quase sempre o mapa (MAP) de um servidor ou de uma app: o que lá existe (versões, máquinas, portas, add-ons). Regras não se escrevem aqui: propõem-se com docs_propose.',
+        'Cria um documento teu (dos agentes) ou reescreve um que seja dos agentes — quase sempre o mapa (MAP) de um servidor ou de uma app: o que lá existe (versões, máquinas, portas, add-ons). Cada servidor e cada app ligada já tem um "Mapa – …" gerado pelo MyHomeLab (etiqueta mapa-auto) e refeito todos os dias: nesse, mantém tudo e escreve só na secção "## Notas" do fim (o resto é reescrito). Regras não se escrevem aqui: propõem-se com docs_propose.',
       inputSchema: {
         type: 'object',
         properties: {

@@ -228,19 +228,19 @@
     },
     "docs": {
       "title": "Documentos",
-      "summary": "As tuas regras e o mapa dos servidores e das apps, ligados ao que dizem respeito. Os agentes seguem as regras e só te propõem mudanças; o que fizeram fica no Histórico.",
+      "summary": "As tuas regras e os mapas do que existe, arrumados numa árvore tua. Os agentes seguem as regras e só te propõem mudanças; o que fizeram fica no Histórico.",
       "steps": [
-        "Em Documentos, carrega em \"Criar documentos sugeridos\": ficam os documentos gerais (como a equipa trabalha, as atualizações, um serviço em baixo…) e um documento de regras por cada app ligada.",
-        "Abre um documento e escreve à vontade: títulos, listas, caixas de verificação, tabelas e diagramas.",
-        "Liga-o ao que interessa (um servidor, um CT ou VM mesmo sem integração, uma app, um serviço vigiado, um agente ou outro documento).",
-        "Dá títulos e etiquetas claras e liga cada regra ao que diz respeito (a app, o servidor, a máquina): é por aí que os agentes sabem que documentos ler."
+        "Cria as tuas secções com + Novo → Secção (ex: Casa, Finanças, Saúde). No menu ⋯ de cada secção crias subsecções, mudas o nome ou apagas; apagar uma secção nunca apaga documentos.",
+        "Cria um documento com + Novo → Regras ou Mapa e escolhe a Secção. Em Dentro de, podes pô-lo por baixo de outro documento: fica um subdocumento.",
+        "Escreve à vontade: títulos, listas, caixas de verificação, tabelas e diagramas. Liga-o ao que interessa (um servidor, um CT ou VM, uma app, um serviço vigiado, um agente).",
+        "Dá títulos e etiquetas claras e liga cada regra ao que diz respeito: é por aí que os agentes sabem que documentos ler."
       ],
       "notes": [
-        "Os agentes recebem o índice dos documentos e a lista dos que o pedido toca (pelos títulos, etiquetas e ligações). Têm de ler esses antes de mexer em alguma coisa — as ferramentas que mudam coisas só respondem depois.",
-        "Nos teus documentos os agentes não escrevem: propõem mudanças, que aprovas ou recusas em Documentos. O que aprendem chega-te assim, como uma mudança a uma regra.",
-        "Cada documento guarda as versões anteriores; podes repor qualquer uma.",
-        "O mapa de cada servidor e de cada app também é um documento: escreve-o o agente quando estuda, e mantém-no em dia.",
-        "As tentativas de atualização também aparecem aqui (tipo \"Tentativa de atualização\"): ao abrir, vês os pontos das regras com \"por validar\", \"validada\" ou \"não validada\" e a prova de cada um."
+        "Cada servidor e cada app ligada tem um \"Mapa – …\" feito pelo MyHomeLab e refeito todos os dias (ou já, em ⋯ → Atualizar mapas). Escreve só na secção Notas do fim: o resto é reescrito.",
+        "O que não puseres numa secção tua fica nas Automáticas, arrumado pelo que está ligado (Servidores e apps, Projetos, Gerais).",
+        "Os agentes recebem o índice dos documentos e a lista dos que o pedido toca (pelos títulos, etiquetas e ligações). Têm de ler esses antes de mexer em alguma coisa.",
+        "Nos teus documentos os agentes não escrevem: propõem mudanças, que aprovas ou recusas em Documentos.",
+        "Cada documento guarda as versões anteriores; podes repor qualquer uma. Em ⋯ → Criar documentos sugeridos tens documentos prontos para começar."
       ],
       "goTo": "Ir para Documentos"
     },

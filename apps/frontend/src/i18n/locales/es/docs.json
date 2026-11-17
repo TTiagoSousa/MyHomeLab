@@ -14,7 +14,12 @@
     "confirmDeleteYes": "Sí, eliminar",
     "confirmDeleteNo": "No",
     "back": "Documentos",
-    "newLinked": "Nuevo vinculado a {{label}}"
+    "newLinked": "Nuevo vinculado a {{label}}",
+    "refreshMaps": "Actualizar mapas",
+    "refreshingMaps": "Actualizando…",
+    "refreshMapsHint": "Rehace ahora los mapas de los servidores y de las apps conectadas (solos, se rehacen cada día).",
+    "more": "Más acciones",
+    "starterHint": "Añadir documentos listos: los básicos, el ejemplo o los de la comunidad."
   },
   "sections": {
     "library": "Documentos",
@@ -37,7 +42,9 @@
     "sortRecent": "Más recientes",
     "sortTitle": "Título (A–Z)",
     "clear": "Limpiar filtros",
-    "allHistory": "Todo"
+    "allHistory": "Todo",
+    "more": "Más filtros",
+    "fewer": "Menos filtros"
   },
   "kinds": {
     "RULES": "Reglas",
@@ -47,7 +54,7 @@
   },
   "kindHints": {
     "RULES": "Lo que se puede hacer y cómo se hace. Es tuyo: los agentes lo siguen y proponen cambios.",
-    "MAP": "Lo que existe en un servidor o una app (máquinas, versiones, puertos). Los agentes lo mantienen al día.",
+    "MAP": "Lo que existe en un servidor o en una app (máquinas, versiones, puertos). Cada servidor y app conectada ya tiene uno, generado por MyHomeLab; escribe uno tuyo para el resto (un proyecto, la red, la casa).",
     "LOG": "Lo que se hizo. Normalmente lo escriben los agentes; queda en el Historial."
   },
   "linkTypes": {
@@ -99,8 +106,7 @@
     "things": "Servidores y apps",
     "projects": "Proyectos",
     "addRules": "Reglas",
-    "addMap": "Mapa",
-    "missing": "Todavía sin documentos"
+    "addMap": "Mapa"
   },
   "empty": {
     "title": "Aún no hay documentos",
@@ -116,7 +122,8 @@
     "noLinks": "Sin vínculos — se aplica a todo.",
     "links": "Vinculado a",
     "tags": "Etiquetas",
-    "agentDoc": "Mantenido por los agentes — también puedes editarlo."
+    "agentDoc": "Mantenido por los agentes — también puedes editarlo.",
+    "generatedMap": "Mapa generado por MyHomeLab con lo que sabe y rehecho cada día. Escribe solo en la sección Notas, al final: el resto se reescribe."
   },
   "form": {
     "newTitle": "Nuevo documento",
@@ -257,7 +264,9 @@
     "starterCreated_other": "{{count}} documentos sugeridos creados.",
     "starterNone": "Ya tienes todos los documentos sugeridos.",
     "proposalApproved": "Propuesta aprobada.",
-    "proposalRejected": "Propuesta rechazada."
+    "proposalRejected": "Propuesta rechazada.",
+    "mapsRefreshed_one": "{{count}} mapa actualizado.",
+    "mapsRefreshed_other": "{{count}} mapas actualizados."
   },
   "linked": {
     "title": "Documentos",
@@ -383,5 +392,56 @@
     "noCommunity": "Todavía no hay conjuntos de la comunidad. Cualquiera puede añadir uno en GitHub (templates/docs).",
     "meta": "{{count}} documentos · {{author}}",
     "close": "Cerrar"
+  },
+  "tree": {
+    "collapse": "Cerrar {{name}}",
+    "expand": "Abrir {{name}}",
+    "collapseDoc_one": "Ocultar el subdocumento",
+    "collapseDoc_other": "Ocultar los {{count}} subdocumentos",
+    "expandDoc_one": "Mostrar el subdocumento",
+    "expandDoc_other": "Mostrar los {{count}} subdocumentos",
+    "subdocs_one": "{{count}} subdocumento",
+    "subdocs_other": "{{count}} subdocumentos",
+    "newRulesHere": "Nuevas reglas aquí",
+    "newMapHere": "Nuevo mapa aquí",
+    "newSubsection": "Nueva subsección",
+    "rename": "Cambiar el nombre",
+    "deleteSection": "Borrar la sección",
+    "sectionActions": "Acciones de {{name}}",
+    "sectionName": "Nombre de la sección (ej: Casa)",
+    "subsectionName": "Nombre de la subsección",
+    "confirmDelete": "¿Borrar la sección «{{name}}»? Sus documentos y subsecciones suben un nivel; no se borra ningún documento.",
+    "emptySection": "Aún sin documentos.",
+    "addDoc": "Documento",
+    "newSection": "Sección",
+    "sectionsHint": "Ordena los documentos a tu manera: crea secciones (ej: Casa, Finanzas, Salud) y subsecciones, y elige la sección de cada documento al crearlo o en Editar. Un documento puede tener subdocumentos. Lo que no esté en una sección tuya queda en las automáticas.",
+    "automatic": "Automáticas",
+    "automaticHint": "Los documentos fuera de tus secciones, ordenados por lo que tienen enlazado.",
+    "subdocsTitle_one": "Subdocumentos · {{count}}",
+    "subdocsTitle_other": "Subdocumentos · {{count}}",
+    "addSubdoc": "Subdocumento",
+    "noSubdocs": "Sin subdocumentos. Un subdocumento queda debajo de este, en la misma sección."
+  },
+  "intro": {
+    "title": "Tres tipos de documentos",
+    "close": "Cerrar",
+    "RULES": "Cómo se hace y qué se puede hacer. Son tuyas: los agentes las siguen y proponen cambios.",
+    "MAP": "Lo que existe y dónde: máquinas, versiones, cuentas. Cada servidor y app conectada tiene uno generado solo.",
+    "LOG": "Lo que se hizo. Escrito por los agentes; queda en la pestaña Historial."
+  },
+  "place": {
+    "section": "Sección",
+    "automatic": "En las automáticas",
+    "where": "Dónde está",
+    "sectionHint": "Dónde aparece en la lista. Sin sección, queda en las automáticas, por lo que tiene enlazado.",
+    "parent": "Dentro de",
+    "noParent": "Ninguno (arriba del todo)",
+    "parentHint": "Para que sea un subdocumento de otro.",
+    "followsParent": "Queda donde está el documento padre: {{section}}"
+  },
+  "newMenu": {
+    "RULES": "Cómo se hace y qué se puede hacer.",
+    "MAP": "Lo que existe y dónde.",
+    "section": "Una sección tuya para ordenar documentos."
   }
 }

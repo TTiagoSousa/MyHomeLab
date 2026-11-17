@@ -29,6 +29,8 @@ export interface DocSummary {
   tags: string[];
   summary: string | null;
   links: DocLink[];
+  sectionId: string | null;
+  parentId: string | null;
   snippet: string;
   updatedBy: string;
   updatedAt: string;
@@ -51,6 +53,8 @@ export interface Doc {
   tags: string[];
   updatedBy: string;
   links: DocLink[];
+  sectionId: string | null;
+  parentId: string | null;
   createdAt: string;
   updatedAt: string;
   versions?: DocVersionSummary[];
@@ -74,7 +78,19 @@ export interface DocPayload {
   summary?: string;
   tags?: string[];
   links?: DocLinkInput[];
+  sectionId?: string | null;
+  parentId?: string | null;
 }
+
+export interface DocSection {
+  id: string;
+  name: string;
+  parentId: string | null;
+  position: number;
+}
+
+export const MAP_TAG = 'mapa-auto';
+export const PROCESS_TAG = 'processo';
 
 export interface DocTemplateSet {
   id: string;

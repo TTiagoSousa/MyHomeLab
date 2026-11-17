@@ -132,6 +132,7 @@ model User {
   contactLensCycles   ContactLensCycle[]
   healthReminders     HealthReminderSent[]
   docs                Doc[]
+  docSections         DocSection[]
   todoLists           TodoList[]
   todos               Todo[]
   todoSyncSetting     TodoSyncSetting?
@@ -1628,9 +1629,36 @@ model Doc {
   conflicts          Json?
   conflictsCheckedAt DateTime?
 
+  // A árvore: a secção do utilizador onde está (sem ela, fica nas automáticas) e o
+  // documento-pai (um subdocumento mostra-se por baixo dele). A ordem entre irmãos.
+  sectionId String?
+  section   DocSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  parentId  String?
+  parent    Doc?        @relation("DocTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Doc[]       @relation("DocTree")
+  position  Int         @default(0)
+
   links     DocLink[]
   versions  DocVersion[]
   proposals DocProposal[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// As secções que o utilizador cria nos Documentos ("Casa", "Casa/Rede"…), em árvore.
+model DocSection {
+  id       String       @id @default(uuid())
+  userId   String
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name     String
+  parentId String?
+  parent   DocSection?  @relation("DocSectionTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children DocSection[] @relation("DocSectionTree")
+  position Int          @default(0)
+  docs     Doc[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

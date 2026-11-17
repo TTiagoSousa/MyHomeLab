@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import Doc_Editor from '../../../Components/Doc_Editor/Doc_Editor';
 import Global_Dropdown from '../../../Components/Inputs/Global_Dropdown/Global_Dropdown';
 import Global_Input from '../../../Components/Inputs/Global_Input/Global_Input';
-import { DOC_KINDS, type DocKind } from '../../../Hooks/Docs/docTypes';
+import { DOC_KINDS, type DocKind, type DocSection, type DocSummary } from '../../../Hooks/Docs/docTypes';
+import Doc_Place_Fields from './Doc_Place_Fields';
 import Doc_Links_Editor from './Doc_Links_Editor';
 import Doc_Tags_Input from './Doc_Tags_Input';
 import type { DocDraft } from './docDraft';
@@ -14,13 +15,15 @@ interface Doc_Form_Props {
   initial: DocDraft;
   docId?: string;
   notice?: string;
+  sections: DocSection[];
+  docs: DocSummary[];
   saving: boolean;
   onSave: (draft: DocDraft) => void;
   onCancel: () => void;
   onDelete?: () => void;
 }
 
-const Doc_Form = ({ heading, initial, docId, notice, saving, onSave, onCancel, onDelete }: Doc_Form_Props) => {
+const Doc_Form = ({ heading, initial, docId, notice, sections, docs, saving, onSave, onCancel, onDelete }: Doc_Form_Props) => {
   const { t } = useTranslation('docs');
   const [draft, setDraft] = useState<DocDraft>(initial);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -71,6 +74,14 @@ const Doc_Form = ({ heading, initial, docId, notice, saving, onSave, onCancel, o
           <span className='Doc_Form_Hint'>{t(`kindHints.${draft.kind}`)}</span>
         </div>
       </div>
+
+      <Doc_Place_Fields
+        value={{ sectionId: draft.sectionId, parentId: draft.parentId }}
+        docId={docId}
+        sections={sections}
+        docs={docs}
+        onChange={(place) => update(place)}
+      />
 
       <div className='Doc_Form_Field'>
         <label htmlFor='doc-summary'>{t('form.summary')}</label>

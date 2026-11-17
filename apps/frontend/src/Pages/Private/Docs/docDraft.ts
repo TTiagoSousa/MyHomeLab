@@ -7,15 +7,27 @@ export interface DocDraft {
   summary: string;
   tags: string[];
   links: DocLinkInput[];
+  sectionId: string | null;
+  parentId: string | null;
 }
 
-export const emptyDraft = (links: DocLinkInput[] = [], kind: DocKind = 'RULES'): DocDraft => ({
+export interface DocPlace {
+  sectionId: string | null;
+  parentId: string | null;
+}
+
+export const emptyDraft = (
+  links: DocLinkInput[] = [],
+  kind: DocKind = 'RULES',
+  place: DocPlace = { sectionId: null, parentId: null },
+): DocDraft => ({
   title: '',
   kind,
   content: '',
   summary: '',
   tags: [],
   links,
+  ...place,
 });
 
 export const draftFromDoc = (doc: Doc): DocDraft => ({
@@ -25,6 +37,8 @@ export const draftFromDoc = (doc: Doc): DocDraft => ({
   summary: doc.summary ?? '',
   tags: doc.tags,
   links: doc.links.map(({ type, targetId, label }) => ({ type, targetId, label })),
+  sectionId: doc.sectionId,
+  parentId: doc.parentId,
 });
 
 export const draftToPayload = (draft: DocDraft): DocPayload => ({
@@ -34,6 +48,8 @@ export const draftToPayload = (draft: DocDraft): DocPayload => ({
   summary: draft.summary.trim(),
   tags: draft.tags,
   links: draft.links,
+  sectionId: draft.sectionId,
+  parentId: draft.parentId,
 });
 
 export const linkFromQuery = (params: URLSearchParams): DocLinkInput[] => {
@@ -43,6 +59,11 @@ export const linkFromQuery = (params: URLSearchParams): DocLinkInput[] => {
   if (!match || !targetId) return [];
   return [{ type: match, targetId, label: params.get('label') || targetId }];
 };
+
+export const placeFromQuery = (params: URLSearchParams): DocPlace => ({
+  sectionId: params.get('sectionId') || null,
+  parentId: params.get('parentId') || null,
+});
 
 export const kindFromQuery = (params: URLSearchParams): DocKind =>
   DOC_KINDS.find((kind) => kind === params.get('newKind')) ?? 'RULES';

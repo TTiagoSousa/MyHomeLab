@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { useDoc } from '../../../Hooks/Docs/useDoc';
-import type { DocVersion } from '../../../Hooks/Docs/docTypes';
+import type { DocSection, DocSummary, DocVersion } from '../../../Hooks/Docs/docTypes';
+import { Doc_Breadcrumb, Doc_Subdocs } from './Doc_Tree_Context';
 import Doc_Form from './Doc_Form';
 import Doc_Version_Modal from './Doc_Version_Modal';
 import Doc_Versions from './Doc_Versions';
@@ -12,11 +13,15 @@ import './Doc_Versions.scss';
 interface Doc_Detail_Props {
   docId: string;
   docState: ReturnType<typeof useDoc>;
+  sections: DocSection[];
+  docs: DocSummary[];
   onChanged: () => void;
   onDeleted: () => void;
+  onOpen: (id: string) => void;
+  onNewChild: (parentId: string) => void;
 }
 
-const Doc_Detail = ({ docId, docState, onChanged, onDeleted }: Doc_Detail_Props) => {
+const Doc_Detail = ({ docId, docState, sections, docs, onChanged, onDeleted, onOpen, onNewChild }: Doc_Detail_Props) => {
   const { t } = useTranslation('docs');
   const { doc: loadedDoc, loading, saving, error, saveDoc, deleteDoc, fetchVersion, restoreVersion, checking, checkConflicts } = docState;
   const doc = loadedDoc?.id === docId ? loadedDoc : null;
@@ -63,6 +68,8 @@ const Doc_Detail = ({ docId, docState, onChanged, onDeleted }: Doc_Detail_Props)
         initial={draftFromDoc(doc)}
         docId={doc.id}
         notice={doc.owner === 'AGENT' ? t('detail.agentDoc') : undefined}
+        sections={sections}
+        docs={docs}
         saving={saving}
         onSave={save}
         onCancel={() => setEditing(false)}
@@ -73,6 +80,7 @@ const Doc_Detail = ({ docId, docState, onChanged, onDeleted }: Doc_Detail_Props)
 
   return (
     <>
+      <Doc_Breadcrumb doc={doc} sections={sections} docs={docs} onOpen={onOpen} />
       <Doc_View
         doc={doc}
         onEdit={() => setEditing(true)}
@@ -83,6 +91,7 @@ const Doc_Detail = ({ docId, docState, onChanged, onDeleted }: Doc_Detail_Props)
       >
         {versionsOpen && <Doc_Versions versions={doc.versions ?? []} onView={openVersion} />}
       </Doc_View>
+      {doc.kind !== 'LOG' && <Doc_Subdocs doc={doc} docs={docs} onOpen={onOpen} onNewChild={() => onNewChild(doc.id)} />}
       {versionOpen && (
         <Doc_Version_Modal version={version} restoring={saving} onRestore={restore} onClose={() => setVersionOpen(false)} />
       )}

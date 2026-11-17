@@ -228,6 +228,11 @@ through nginx (`X-Forwarded-For` present).
 | POST | `/docs/proposals/:id/approve` | Approve a proposal (optionally edited) |
 | POST | `/docs/proposals/:id/reject` | Reject a proposal |
 | POST | `/docs/starter` | Create any missing starter documents (general rules, process docs, one rules doc per connected app) |
+| GET | `/docs/sections` | The user's sections (`{ id, name, parentId, position }`) |
+| POST | `/docs/sections` | Create a section (`{ name, parentId? }`) |
+| PATCH | `/docs/sections/:id` | Rename or move a section (no cycles) |
+| DELETE | `/docs/sections/:id` | Delete a section; its documents and subsections move up one level |
+| POST | `/docs/maps/refresh` | Rebuild the generated maps of the user's servers and connected apps now (`{ written }`) |
 | GET | `/docs/templates` | Template sets (installed and from the repository's `main`) |
 | POST | `/docs/templates/:id` | Create the documents of a template set (skips existing titles) |
 | POST | `/docs/:id/check-conflicts` | Compare a rules document with the other rules |

@@ -1,0 +1,533 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Docs {
+  .Docs_Menu{
+    position: relative;
+    display: inline-flex;
+  }
+
+  .Docs_Menu_Trigger{
+    @include Mixin.Ghost_Button;
+    height: 36px;
+    min-width: 36px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    svg{ width: 14px; height: 14px; }
+  }
+
+  .Docs_new_menu .Docs_Menu_Trigger{
+    @include Mixin.Solid_Button;
+    height: 36px;
+    padding: 0 14px;
+  }
+
+  .Docs_Section_Head .Docs_Menu_Trigger,
+  .Docs_Group_Target_Head .Docs_Menu_Trigger{
+    height: 26px;
+    min-width: 26px;
+    padding: 0 6px;
+    opacity: .7;
+
+    &:hover, &.active{ opacity: 1; }
+  }
+
+  .Docs_Menu_Panel{
+    @include Mixin.Modal_Panel;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 30;
+    width: 280px;
+    max-width: calc(100vw - 32px);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px;
+    box-sizing: border-box;
+
+    button{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      padding: 8px 10px;
+      border: 1px solid transparent;
+      border-radius: var(--ctrl-radius);
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      font-family: Font.$font_family_sans;
+      color: var(--text-main);
+
+      &:hover:not(:disabled){
+        border-color: var(--hud-line);
+        background: var(--card-hover-background);
+      }
+
+      &:disabled{ opacity: .55; cursor: default; }
+
+      &.danger .Docs_Menu_Label{ color: var(--stat-danger, #e5484d); }
+    }
+  }
+
+  .Docs_Menu_Label{
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .Docs_Menu_Hint{
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--text-faint);
+  }
+
+  .Docs_Dots{
+    display: inline-block;
+    width: 16px;
+    height: 4px;
+    background:
+      radial-gradient(circle, currentColor 1.6px, transparent 1.8px) 0 50% / 6px 4px repeat-x;
+  }
+
+  .Docs_Name_Input{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 260px;
+
+    input{
+      @include Mixin.Control_Surface;
+      flex: 1 1 180px;
+      min-width: 0;
+      height: 32px;
+      padding: 0 10px;
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    button{ height: 32px; padding: 0 12px; }
+  }
+
+  .Docs_Tree{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .Docs_Tree_Caret,
+  .Docs_Tree_Caret_Space{
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .Docs_Tree_Caret{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+
+    svg{
+      width: 14px;
+      height: 14px;
+      transform: rotate(-90deg);
+      transition: transform .15s ease;
+    }
+
+    &.open svg{ transform: rotate(0deg); }
+
+    &:hover{ color: var(--text-main); background: var(--card-hover-background); }
+  }
+
+  .Docs_Section_Node{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .Docs_Section_Head,
+  .Docs_Group_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .Docs_Section_Name{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 4px 6px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    font-family: Font.$font_family_sans;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    text-align: left;
+
+    svg{ flex: 0 0 15px; width: 15px; height: 15px; color: var(--accent-bright); }
+
+    span:first-of-type{ overflow-wrap: anywhere; }
+
+    &:hover{ background: var(--card-hover-background); }
+  }
+
+  .Docs_Section_Count{
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--card-global-header-background);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-faint);
+  }
+
+  .Docs_Section_Body,
+  .Doc_Tree_Children,
+  .Docs_Group_Body{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-left: 11px;
+    padding-left: 12px;
+    border-left: 2px solid var(--hud-line);
+  }
+
+  .Docs_Section_Empty{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 2px;
+    font-size: 12.5px;
+    color: var(--text-faint);
+  }
+
+  .Docs_Section_Confirm{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 28px;
+      padding: 0 10px;
+
+      &.danger{ color: var(--stat-danger, #e5484d); }
+    }
+  }
+
+  .Doc_Tree_Item{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .Doc_Tree_Row{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+
+    > .Doc_List_Item{ flex: 1 1 auto; min-width: 0; }
+  }
+
+  .Doc_Tree_Count{
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .Docs_Tree_Add{
+    @include Mixin.Ghost_Button;
+    align-self: flex-start;
+    height: 30px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    svg{ width: 12px; height: 12px; }
+  }
+
+  .Docs_Tree_Hint{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px dashed var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-soft);
+
+    span{ flex: 1; }
+
+    button{
+      flex: 0 0 22px;
+      width: 22px;
+      height: 22px;
+      padding: 4px;
+      border: none;
+      background: transparent;
+      color: var(--text-faint);
+      cursor: pointer;
+
+      svg{ width: 100%; height: 100%; }
+    }
+  }
+
+  .Docs_Tree_Divider{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin-top: 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--hud-line);
+
+    > span:first-child{
+      @include Mixin.Hud_Label(10px);
+      color: var(--accent-bright);
+    }
+  }
+
+  .Docs_Tree_Divider_Hint{
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .Docs_Group_Title{
+    border-bottom: none;
+    padding: 2px 4px;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+
+    &:hover{ background: var(--card-hover-background); }
+  }
+
+  .Docs_Group_Target{
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .Docs_Group_Target_Name{
+    padding: 2px 4px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    font-family: Font.$font_family_sans;
+    text-align: left;
+
+    &:hover{ background: var(--card-hover-background); }
+  }
+
+  .Docs_filter_more{
+    @include Mixin.Ghost_Button;
+    align-self: flex-end;
+    height: 36px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    svg{ width: 13px; height: 13px; transition: transform .15s ease; }
+
+    &.open svg{ transform: rotate(180deg); }
+
+    &:disabled{ opacity: .6; cursor: default; }
+  }
+
+  .Docs_Kinds_Intro{
+    @include Mixin.Panel_Surface;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  .Docs_Kinds_Intro_Head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .Docs_Kinds_Intro_Title{
+    @include Mixin.Hud_Label(10px);
+    color: var(--accent-bright);
+  }
+
+  .Docs_Kinds_Intro_Close{
+    width: 24px;
+    height: 24px;
+    padding: 5px;
+    border: none;
+    background: transparent;
+    color: var(--text-faint);
+    cursor: pointer;
+
+    svg{ width: 100%; height: 100%; }
+
+    &:hover{ color: var(--text-main); }
+  }
+
+  .Docs_Kinds_Intro_Grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+  }
+
+  .Docs_Kinds_Intro_Card{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Docs_Kinds_Intro_Name{
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .Docs_Kinds_Intro_Text{
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  .Doc_Breadcrumb{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+    font-size: 12.5px;
+    color: var(--text-faint);
+
+    svg{ width: 14px; height: 14px; color: var(--accent-bright); }
+  }
+
+  .Doc_Breadcrumb_Part{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-family: Font.$font_family_sans;
+    font-size: 12.5px;
+    color: var(--text-soft);
+
+    & + .Doc_Breadcrumb_Part::before{
+      content: '›';
+      color: var(--text-faint);
+    }
+
+    &.link{
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+
+      &:hover{ color: var(--text-main); }
+    }
+  }
+
+  .Doc_Subdocs{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hud-line);
+  }
+
+  .Doc_Subdocs_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .Doc_Subdocs_Title{
+    @include Mixin.Hud_Label(10px);
+    color: var(--accent-bright);
+  }
+
+  .Doc_Subdocs_Empty{
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-faint);
+  }
+
+  .Doc_Subdocs_Item{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 9px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-family: Font.$font_family_sans;
+
+    &:hover{ border-color: var(--accent); background: var(--card-hover-background); }
+  }
+
+  .Doc_Subdocs_Name{
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .Doc_Subdocs_Text{
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-soft);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .Doc_Form_Static{
+    display: flex;
+    align-items: center;
+    min-height: 38px;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+}
