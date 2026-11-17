@@ -13,6 +13,7 @@ KEEP_DAYS="${KEEP_DAYS:-14}"
 mkdir -p "$BACKUP_DIR"
 chmod 700 "$BACKUP_DIR"
 
+ensure_postgres
 file="$BACKUP_DIR/myhomelab-$(date +%Y%m%d-%H%M).sql.gz"
 runuser -u postgres -- pg_dump --clean --if-exists myhomelab | gzip > "$file.tmp"
 mv "$file.tmp" "$file"

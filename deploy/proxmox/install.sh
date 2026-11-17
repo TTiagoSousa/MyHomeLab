@@ -102,6 +102,7 @@ chown -R "$APP_USER:$APP_USER" "$APP_HOME" "$APP_DIR"
 
 msg "Setting up PostgreSQL…"
 systemctl enable --now postgresql >/dev/null
+configure_postgres
 
 mkdir -p /etc/myhomelab
 chmod 750 /etc/myhomelab

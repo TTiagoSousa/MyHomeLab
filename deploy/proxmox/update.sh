@@ -166,7 +166,7 @@ step dump "Saving the database";                      dump_db
 MIGRATED=1
 step migrate "Applying database migrations";          migrate_db
 step publish "Publishing the frontend";                publish_frontend
-step configure "Updating services and nginx";         configure_service; configure_updater; install_commands; install_claude_code
+step configure "Updating services and nginx";         configure_postgres; configure_service; configure_updater; install_commands; install_claude_code
 step restart "Restarting the backend";                 restart_backend
 configure_nginx
 

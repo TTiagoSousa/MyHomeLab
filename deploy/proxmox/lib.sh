@@ -58,6 +58,7 @@ build_app() {
 # rollback do código não os traz de volta). Fica em $BACKUP_DIR com os dumps do cron,
 # e é apagado com eles ao fim de 14 dias. Deixa o caminho em DB_DUMP.
 dump_db() {
+  ensure_postgres
   mkdir -p "$BACKUP_DIR"
   chmod 700 "$BACKUP_DIR"
   DB_DUMP="$BACKUP_DIR/$DB_NAME-$(date +%Y%m%d-%H%M)-before-update.sql.gz"
@@ -65,6 +66,37 @@ dump_db() {
   runuser -u postgres -- pg_dump --clean --if-exists "$DB_NAME" | gzip > "$DB_DUMP.tmp"
   mv "$DB_DUMP.tmp" "$DB_DUMP"
   chmod 600 "$DB_DUMP"
+}
+
+# Garante que o PostgreSQL aceita ligações. Se o OOM killer o matou, o cluster fica
+# parado (o postgresql.service continua "active (exited)"): arranca os clusters e espera.
+ensure_postgres() {
+  local cluster
+  runuser -u postgres -- pg_isready -q 2>/dev/null && return 0
+  warn "PostgreSQL is not accepting connections — starting it…"
+  for cluster in $(pg_lsclusters -h 2>/dev/null | awk '{print $1 "-" $2}'); do
+    systemctl start "postgresql@${cluster}" || true
+  done
+  for _ in $(seq 1 30); do
+    runuser -u postgres -- pg_isready -q 2>/dev/null && return 0
+    sleep 1
+  done
+  warn "PostgreSQL did not start. Logs: journalctl -u 'postgresql@*' -n 50"
+  return 1
+}
+
+# Sem memória, o kernel deve matar o backend (ou o Claude Code que ele lança) e não o
+# PostgreSQL; e se mesmo assim o matar, o systemd volta a arrancá-lo. Sem isto ficava
+# parado até alguém reparar, e os dumps do cron e das atualizações falhavam.
+configure_postgres() {
+  mkdir -p /etc/systemd/system/postgresql@.service.d
+  cat > /etc/systemd/system/postgresql@.service.d/myhomelab.conf <<'EOF'
+[Service]
+OOMScoreAdjust=-900
+Restart=on-failure
+RestartSec=5
+EOF
+  systemctl daemon-reload
 }
 
 # Repõe a base de dados de um dump: recria-a vazia (assim também saem as tabelas que
@@ -147,6 +179,8 @@ Environment=HOME=${APP_HOME}
 ExecStart=/usr/local/bin/node dist/src/main.js
 Restart=on-failure
 RestartSec=5
+# O primeiro a sair quando falta memória (volta em 5 s); o PostgreSQL fica (configure_postgres).
+OOMScoreAdjust=500
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full

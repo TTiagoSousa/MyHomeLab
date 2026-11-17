@@ -145,6 +145,12 @@ How it works:
 The updater is protected against the OOM killer so that, under memory pressure, the kernel
 kills the backend (restarted by the rollback) rather than the update itself.
 
+PostgreSQL is protected too: a systemd drop-in (`postgresql@.service.d/myhomelab.conf`)
+sets `OOMScoreAdjust=-900` and `Restart=on-failure`, and the backend unit has
+`OOMScoreAdjust=500`, so the backend (and the Claude Code processes it starts) goes first
+and comes back in 5 s. The pre-update dump and the daily backup start a stopped cluster
+before dumping instead of failing.
+
 Logs: `journalctl -u myhomelab-updater`.
 
 ### From the console (inside the CT)
