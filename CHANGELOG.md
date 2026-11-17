@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.5.0] — 2026-11-17
+
+### Features
+- **docs**: agents see the Documents page as the user does and propose its arrangement; approving applies links, tags, title and section
+
+
 ## [1.4.0] — 2026-11-17
 
 ### Features
@@ -73,3 +79,4 @@ First public release of MyHomeLab.
 [1.2.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.2.0
 [1.3.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.3.0
 [1.4.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.4.0
+[1.5.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.5.0
