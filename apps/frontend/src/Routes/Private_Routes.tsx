@@ -85,9 +85,9 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Apps/Paperless' element={ <Private_Page.PaperlessAccounts /> } />
       <Route path='MyHomeLab/Apps/Paperless/:accountId' element={ <Private_Page.PaperlessAccount /> } />
       <Route path='MyHomeLab/Apps/Paperless/:accountId/Connections' element={ <Private_Page.PaperlessConnections /> } />
-      <Route path='MyHomeLab/Apps/Paperless' element={ <Private_Page.SolidtimeAccounts /> } />
-      <Route path='MyHomeLab/Apps/Paperless/:accountId' element={ <Private_Page.SolidtimeAccount /> } />
-      <Route path='MyHomeLab/Apps/Paperless/:accountId/Connections' element={ <Private_Page.SolidtimeConnections /> } />
+      <Route path='MyHomeLab/Apps/Solidtime' element={ <Private_Page.SolidtimeAccounts /> } />
+      <Route path='MyHomeLab/Apps/Solidtime/:accountId' element={ <Private_Page.SolidtimeAccount /> } />
+      <Route path='MyHomeLab/Apps/Solidtime/:accountId/Connections' element={ <Private_Page.SolidtimeConnections /> } />
       <Route path='MyHomeLab/Apps/Nextcloud/:accountId/Connections' element={ <Private_Page.NextcloudConnections /> } />
       <Route path='MyHomeLab/Apps/Gmail' element={ <Private_Page.Email /> } />
       <Route path='MyHomeLab/Apps/Gmail/Rules' element={ <Private_Page.EmailRules /> } />
