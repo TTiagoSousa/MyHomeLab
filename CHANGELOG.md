@@ -7,6 +7,17 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.8.0] — 2026-11-18
+
+### Features
+- **stirling**: connect Stirling-PDF with an API key, run any of its operations on Paperless and Nextcloud files, change its settings, back them up, check versions and use its MCP when enabled
+- **disk-alert**: Proxmox disk almost full alert as a server cron job, with board tasks, notifications and an agent that studies and fixes within the user's limits
+- **cron-job**: app cron jobs run in code without AI, with a Cron jobs page per account and AdGuard jobs to refresh the blocklists and allowlists
+
+### Fixes
+- **solidtime**: route the solidtime pages to their own paths instead of the Paperless ones
+
+
 ## [1.7.0] — 2026-11-18
 
 ### Features
@@ -106,3 +117,4 @@ First public release of MyHomeLab.
 [1.6.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.6.0
 [1.6.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.6.1
 [1.7.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.7.0
+[1.8.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.8.0

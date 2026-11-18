@@ -1,0 +1,9 @@
+v1.8.0 — Cron jobs, disk alerts and Stirling-PDF
+
+### Features
+- **Cron jobs**: a new Cron jobs button next to Settings on app and server pages lists fixed tasks MyHomeLab runs on its own, in code and without AI, at the interval you choose (or off), with the last and next run and Run now. AdGuard has two: refresh the blocklists and refresh the allowlists; turning one on sets AdGuard's own refresh interval to "never" so the lists are not fetched twice.
+- **Disk almost full alert (Proxmox)**: a server cron job that checks the disk of each CT and, through the QEMU guest agent, each VM partition (VMs without the agent are listed with the steps to enable it). You choose everything: the limit, the interval (down to every minute), which machines, whether it goes to Notifications and whether an agent handles it. Each alert becomes a task on the server board: the agent studies what is using the space and, within your limits, cleans what is safe or grows a CT disk; anything else (and any VM) goes to Waiting for reply. Reply "yes" on the task or move it to In progress to approve. MyHomeLab measures again before closing, and the task closes by itself when the disk drops below the limit.
+- **Stirling-PDF**: connect it with an API key. The Archivist can run any operation your server has (compress, OCR, merge, split, rotate, convert, watermark, protect, sign, redact…) on documents from Paperless or files from Nextcloud, chain them, and save the result as a new Paperless document or Nextcloud file — the original is never replaced. With an admin key it also reads and changes the server settings (showing the before and after first). If your Stirling has its MCP enabled, Claude Code connects to it too. Version checks, settings backups and a connections page are included.
+
+### Fixes
+- **solidtime**: opening solidtime in the app no longer sends you back to the home page.

@@ -1,0 +1,9 @@
+v1.8.0 — Cron jobs, avisos de disco e Stirling-PDF
+
+### Novidades
+- **Cron jobs**: um botão novo, Cron jobs, ao lado de Definições nas páginas das apps e dos servidores, com as tarefas fixas que o MyHomeLab corre sozinho, em código e sem IA, ao intervalo que escolheres (ou desligadas), com a última e a próxima vez e Correr agora. O AdGuard tem dois: atualizar as listas de bloqueio e as de permissão; ao ligar um, o intervalo próprio do AdGuard passa a "nunca", para as listas não descarregarem a dobrar.
+- **Aviso de disco quase cheio (Proxmox)**: um cron job do servidor que vê o disco de cada CT e, pelo QEMU guest agent, cada partição das VMs (as VMs sem o agente aparecem com os passos para o ligar). És tu que escolhes tudo: o limite, o intervalo (até de minuto a minuto), que máquinas, se avisa nas Notificações e se um agente trata disso. Cada aviso vira uma tarefa no quadro do servidor: o agente estuda o que ocupa o espaço e, dentro dos teus limites, limpa o que é seguro ou aumenta o disco de um CT; o resto (e qualquer VM) fica em Waiting for reply. Responde "sim" na tarefa ou passa-a para In progress para aprovar. O MyHomeLab volta a medir antes de fechar, e a tarefa fecha-se sozinha quando o disco baixa do limite.
+- **Stirling-PDF**: liga-o com a chave de API. O Arquivista corre qualquer operação que o teu servidor tenha (comprimir, OCR, juntar, dividir, rodar, converter, marca de água, proteger, assinar, redigir…) em documentos do Paperless ou ficheiros do Nextcloud, encadeia-as e guarda o resultado como documento novo no Paperless ou ficheiro novo no Nextcloud — o original nunca é substituído. Com uma chave de administrador lê e muda também as definições do servidor (mostra primeiro o antes e o depois). Se o teu Stirling tiver o MCP ligado, o Claude Code liga-se também a ele. Tem verificação de versão, backup das definições e página de ligações.
+
+### Correções
+- **solidtime**: abrir o solidtime na app já não te manda para o início.
