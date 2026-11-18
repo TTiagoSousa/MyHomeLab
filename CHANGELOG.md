@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.8.1] — 2026-11-18
+
+### Fixes
+- **service-monitor**: move a service failure task to Verifying when the service is back and close it once stable, and open no task while that app is being updated
+
+
 ## [1.8.0] — 2026-11-18
 
 ### Features
@@ -118,3 +124,4 @@ First public release of MyHomeLab.
 [1.6.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.6.1
 [1.7.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.7.0
 [1.8.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.8.0
+[1.8.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.8.1
