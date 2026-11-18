@@ -4,6 +4,16 @@ import { mkdir, mkdtemp, rm, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
+/**
+ * Quando falta memória, o kernel mata primeiro este processo do Claude Code em vez
+ * do backend: falha só esse pedido (com o erro gravado) e o resto do site continua.
+ * Subir o próprio valor não precisa de privilégios; fora do Linux não faz nada.
+ */
+function firstToGo(pid: number | undefined) {
+  if (!pid || process.platform !== 'linux') return;
+  writeFile(`/proc/${pid}/oom_score_adj`, '1000').catch(() => undefined);
+}
+
 /** Os tokens de uma resposta do modelo, como o Claude Code os conta. */
 export interface ClaudeCodeUsage {
   model: string;
@@ -242,6 +252,7 @@ export async function runClaudeCode(
         env: cleanEnv(options.token),
         windowsHide: true,
       });
+      firstToGo(child.pid);
       const usage: ClaudeCodeUsage[] = [];
       // O stream repete a mesma mensagem (uma vez por bloco): conta-se uma vez.
       const counted = new Set<string>();

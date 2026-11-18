@@ -151,8 +151,12 @@ kills the backend (restarted by the rollback) rather than the update itself.
 
 PostgreSQL is protected too: a systemd drop-in (`postgresql@.service.d/myhomelab.conf`)
 sets `OOMScoreAdjust=-900` and `Restart=on-failure`, and the backend unit has
-`OOMScoreAdjust=500`, so the backend (and the Claude Code processes it starts) goes first
-and comes back in 5 s. The pre-update dump and the daily backup start a stopped cluster
+`OOMScoreAdjust=500` and `OOMPolicy=continue`. Each Claude Code process the backend starts
+raises its own score to 1000, so under memory pressure the kernel kills one agent run (that
+request fails with an error) instead of the whole backend. An update study interrupted by a
+restart counts as a failed attempt and is retried once, 3 hours later, so a study that
+exhausts memory cannot put the backend in a restart loop. With several agents at once, 2 GB
+is tight: 4 GB of RAM is recommended. The pre-update dump and the daily backup start a stopped cluster
 before dumping instead of failing.
 
 Logs: `journalctl -u myhomelab-updater`.

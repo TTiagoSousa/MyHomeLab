@@ -187,11 +187,14 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
       const interrupted = await this.prisma.appUpdate.findMany({
         where: { status: AppUpdateStatus.STUDYING, studiedAt: null },
       });
+      // Conta como tentativa falhada (volta daqui a 3 horas, e só uma vez): se o
+      // próprio estudo é o que esgota a memória, repô-lo logo fazia um ciclo de
+      // reinícios sem fim.
       for (const update of interrupted) {
-        await this.record.save(
-          update,
-          { status: AppUpdateStatus.STUDY, studyStartedAt: null },
-          'O MyHomeLab reiniciou a meio do estudo: volta à espera de estudo.',
+        await this.markStudy(
+          update.id,
+          false,
+          'O MyHomeLab reiniciou a meio do estudo (pode ter faltado memória)',
         );
       }
       // Uma instalação a meio quando o MyHomeLab reiniciou já não volta: fica em

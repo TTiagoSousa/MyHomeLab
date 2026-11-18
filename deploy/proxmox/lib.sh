@@ -181,7 +181,10 @@ ExecStart=/usr/local/bin/node dist/src/main.js
 Restart=on-failure
 RestartSec=5
 # O primeiro a sair quando falta memória (volta em 5 s); o PostgreSQL fica (configure_postgres).
+# Os processos do Claude Code sobem para 1000 (claudeCode.runner) e saem antes do backend;
+# OOMPolicy=continue evita que um deles morto pare o serviço inteiro.
 OOMScoreAdjust=500
+OOMPolicy=continue
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
