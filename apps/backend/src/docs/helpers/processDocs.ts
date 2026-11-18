@@ -121,6 +121,8 @@ Quando uma verificação falha, o MyHomeLab abre o alerta, cria a tarefa e pede 
 
 ## No fim
 - Dizer a causa, o que se fez e se voltou. O alerta fecha sozinho quando o serviço responde.
+- A tarefa: quando o serviço volta, o MyHomeLab passa-a a Verifying e, estável 10 minutos, fecha-a (Done). Se precisas de uma resposta dele, deixa-a em Waiting for reply: aí não lhe toca.
+- Durante uma atualização dessa app (ou do Proxmox) não se abre tarefa: a falha fica dita na tarefa da atualização.
 - Deixar registo e, se aprendeste algo, propor a regra.
 `,
 };

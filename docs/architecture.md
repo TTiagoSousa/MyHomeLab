@@ -243,6 +243,12 @@ clears (a service comes back, a backup succeeds); agent notices close with "Seen
 proposals, questions on tasks). A daily summary at 21:00 lists what the agents did on
 their own in the last 24 hours and what the AI cost that day.
 
+A service that goes down also opens a task on its server board ("Service X failed", in Todo) and the
+server agent is asked to study it. When it comes back the task moves to Verifying, and once it has been
+stable for 10 minutes MyHomeLab closes it as Done — unless someone moved it (for example to Waiting for
+reply). A failure during an update of that app (or of the server's Proxmox) opens no task: it is noted on
+the update's task instead.
+
 ## Internationalisation
 
 - The interface is available in **pt-PT** (source language), **en** and **es**, with

@@ -692,6 +692,8 @@ model ServiceMonitor {
   account            ConnectedAccount? @relation(fields: [accountId], references: [id], onDelete: Cascade)
   // A tarefa aberta em Projetos da última falha (para não a repetir e comentar quando volta).
   downTaskId         String?
+  // Quando voltou a responder depois da falha: estável 10 min, a tarefa fecha-se sozinha.
+  recoveredAt        DateTime?
 
   notifications Notification[]
 
