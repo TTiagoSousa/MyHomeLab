@@ -7,6 +7,15 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.7.0] — 2026-11-18
+
+### Features
+- **ai**: mixed mode that picks Claude Code or the Claude API per kind of work, with subagents on the delegation provider and a per-user limit of Claude Code jobs at once
+
+### Fixes
+- **agents**: count a study interrupted by a restart as a failed attempt, let the kernel kill a Claude Code process before the backend, and keep the service up when one is OOM-killed
+
+
 ## [1.6.1] — 2026-11-18
 
 ### Fixes
@@ -96,3 +105,4 @@ First public release of MyHomeLab.
 [1.5.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.5.0
 [1.6.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.6.0
 [1.6.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.6.1
+[1.7.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.7.0
