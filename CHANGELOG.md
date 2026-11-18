@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.6.1] — 2026-11-18
+
+### Fixes
+- **assistant**: save the question as soon as it arrives, record failed replies, and wait for the reply when a proxy cuts a long request; help topics for the new apps and the MyHomeLab backup
+
+
 ## [1.6.0] — 2026-11-17
 
 ### Features
@@ -89,3 +95,4 @@ First public release of MyHomeLab.
 [1.4.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.4.0
 [1.5.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.5.0
 [1.6.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.6.0
+[1.6.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.6.1
