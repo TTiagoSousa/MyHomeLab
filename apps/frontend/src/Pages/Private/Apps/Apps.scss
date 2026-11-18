@@ -21,6 +21,13 @@
       gap: 10px;
     }
 
+    .Apps_header_actions{
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
     .Apps_add{
       @include Mixin.Solid_Button;
       height: 42px;

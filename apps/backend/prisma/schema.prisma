@@ -97,6 +97,7 @@ model User {
   agentAppAccess      AgentAppAccess[]
   aiCredentials       AiCredential[]
   aiRouting           AiRouting?
+  cronJobs            CronJob[]
   serverConnections   ServerConnection[]
   serverCommands      ServerCommand[]
   serviceMonitors     ServiceMonitor[]
@@ -260,6 +261,7 @@ model ConnectedAccount {
 
   emailRuleProposals EmailRuleProposal[]
   backupJobs         BackupJob[]         @relation("AccountBackups")
+  cronJobs           CronJob[]
   // A Saúde a ler os treinos por esta app (o openGym ligado), sem emparelhamento próprio.
   openGymHealth      OpenGymConnection?
   backupDestinations BackupDestination[] @relation("DestinationAccount")
@@ -488,6 +490,33 @@ model AiRouting {
   maxClaudeCodeRuns Int     @default(2)
 
   updatedAt DateTime @updatedAt
+}
+
+// Os cron jobs das apps: tarefas fixas, escritas em código (cron-job.registry.ts), que o
+// MyHomeLab corre sozinho sem IA. Cada conta tem uma linha por tarefa que já foi mexida;
+// as outras valem o que está no registo (desligadas).
+model CronJob {
+  id              String           @id @default(uuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId       String
+  account         ConnectedAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  /// A tarefa no registo, ex.: "adguard.refresh_blocklists".
+  key             String
+  /// De quantos em quantos minutos corre (0 = desligada).
+  intervalMinutes Int              @default(0)
+  nextRunAt       DateTime?
+  lastRunAt       DateTime?
+  lastOk          Boolean?
+  /// O número que a tarefa devolve (ex.: quantas listas mudaram).
+  lastCount       Int?
+  lastError       String?          @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([accountId, key])
+  @@index([nextRunAt])
 }
 
 enum ServerKind {

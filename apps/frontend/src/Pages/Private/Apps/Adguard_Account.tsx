@@ -9,6 +9,7 @@ import App_Account from './App_Account';
 import App_Location from './App_Location';
 import App_Updates from './App_Updates';
 import App_Settings_Menu from './App_Settings_Menu';
+import App_Cron_Button from './App_Cron_Button';
 import App_Backups from './App_Backups';
 import Adguard_Settings from './Adguard_Settings';
 import { appSettingsItems } from './appSettingsItems';
@@ -43,9 +44,12 @@ const Adguard_Account = () => {
         title={name}
         actions={
           account && (
-            <App_Settings_Menu
-              items={appSettingsItems(['account', 'location', 'updates', 'backups', 'agents', 'docs', 'schedules'], t, t('apps.adguard.credentialsHint'))}
-            />
+            <div className='Apps_header_actions'>
+              <App_Cron_Button to={`/MyHomeLab/Apps/AdGuard/${account.id}/Cron`} />
+              <App_Settings_Menu
+                items={appSettingsItems(['account', 'location', 'updates', 'backups', 'agents', 'docs', 'schedules'], t, t('apps.adguard.credentialsHint'))}
+              />
+            </div>
           )
         }
       />

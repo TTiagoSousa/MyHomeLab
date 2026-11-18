@@ -39,6 +39,7 @@ export { default as HomeAssistantAccount } from '../Pages/Private/Apps/Home_Assi
 export { default as HomeAssistantConnections } from '../Pages/Private/Apps/Home_Assistant_Connections';
 export { default as AdguardAccounts } from '../Pages/Private/Apps/Adguard_Accounts';
 export { default as AdguardAccount } from '../Pages/Private/Apps/Adguard_Account';
+export { default as AdguardCronJobs } from '../Pages/Private/Apps/Adguard_Cron_Jobs';
 export { default as ProxmoxServers } from '../Pages/Private/Apps/Proxmox_Servers';
 export { default as ProxmoxServer } from '../Pages/Private/Apps/Proxmox_Server';
 export { default as ProxmoxConnections } from '../Pages/Private/Apps/Proxmox_Connections';

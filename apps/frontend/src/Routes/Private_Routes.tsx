@@ -67,6 +67,7 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Apps/HomeAssistant/:accountId/Connections' element={ <Private_Page.HomeAssistantConnections /> } />
       <Route path='MyHomeLab/Apps/AdGuard' element={ <Private_Page.AdguardAccounts /> } />
       <Route path='MyHomeLab/Apps/AdGuard/:accountId' element={ <Private_Page.AdguardAccount /> } />
+      <Route path='MyHomeLab/Apps/AdGuard/:accountId/Cron' element={ <Private_Page.AdguardCronJobs /> } />
       <Route path='MyHomeLab/Apps/Proxmox' element={ <Private_Page.ProxmoxServers /> } />
       <Route path='MyHomeLab/Apps/Proxmox/:serverId' element={ <Private_Page.ProxmoxServer /> } />
       <Route path='MyHomeLab/Apps/Proxmox/:serverId/Connections' element={ <Private_Page.ProxmoxConnections /> } />

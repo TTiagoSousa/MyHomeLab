@@ -226,7 +226,8 @@
         "Ask, for example: \"Why doesn't site X open?\", \"Unblock domain Y\", \"Pause AdGuard for 10 minutes\", \"Create nas.home pointing to 192.168.1.10\".",
         "To unblock, the agent adds an allow rule just for that domain instead of turning off a whole list. When changing rules, it keeps the previous ones so they can be undone.",
         "What Jarvis may do is chosen in Assistant → Settings → Permissions → AdGuard.",
-        "The backup is a JSON with the settings; certificates, the password and the query history are left out."
+        "The backup is a JSON with the settings; certificates, the password and the query history are left out.",
+        "Cron jobs (in the account header, next to Settings): MyHomeLab refreshes the blocklists and allowlists on its own at the interval you choose, without AI. Turning one on sets AdGuard's own interval to \"never\"."
       ],
       "goTo": "Go to Connected apps"
     },

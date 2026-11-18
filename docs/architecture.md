@@ -139,6 +139,11 @@ and tools.
   Claude Code. A subagent runs on the delegation provider whatever its lead uses. Apps with an
   MCP server (TREK, openGym) use it in both: Claude Code connects to it directly, and with the
   API the backend is the MCP client.
+- **Cron jobs**: fixed tasks written in code (`cron-job/cron-job.registry.ts`) that MyHomeLab runs
+  on its own, without AI, at the interval each user picks on the app's Cron jobs page (off, hourly,
+  every 6 or 12 hours, daily, weekly). A scheduler checks every minute and runs the due ones one at
+  a time, recording the result. AdGuard has two: refresh the blocklists and refresh the allowlists;
+  turning one on sets AdGuard's own refresh interval to "never" so lists are not fetched twice.
 - **Claude Code turns**: every Claude Code run starts `claude` processes (hundreds of MB each),
   so each user runs at most N jobs at once in Claude Code (Settings → AI, 1–6, default 2) and
   the rest wait their turn. Only the top of a chain takes a turn (or the first Claude Code run

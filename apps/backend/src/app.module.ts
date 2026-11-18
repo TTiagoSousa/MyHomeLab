@@ -23,6 +23,7 @@ import { DiskHealthModule } from './disk-health/disk-health.module';
 import { EmailRuleProposalModule } from './email-rule-proposal/email-rule-proposal.module';
 import { HealthModule } from './health/health.module';
 import { BackupModule } from './backup/backup.module';
+import { CronJobModule } from './cron-job/cron-job.module';
 import { DocsModule } from './docs/docs.module';
 import { TodoModule } from './todo/todo.module';
 import { TodoSyncModule } from './todo-sync/todo-sync.module';
@@ -57,6 +58,7 @@ import { AgentScheduleRunnerModule } from './agent-schedule/agent-schedule-runne
     EmailRuleProposalModule,
     HealthModule,
     BackupModule,
+    CronJobModule,
     DocsModule,
     TodoModule,
     TodoSyncModule,

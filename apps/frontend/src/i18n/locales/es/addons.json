@@ -1846,5 +1846,45 @@
     "organizationPlaceholder": "P. ej.: Mi empresa",
     "organizationHint": "Solo si estás en más de una: el nombre de la que quieres conectar. Para otra, conecta otra vez.",
     "connect": "Conectar"
+  },
+  "cronJobs": {
+    "button": "Cron jobs",
+    "title": "Cron jobs",
+    "description": "Tareas que MyHomeLab ejecuta solo, en código y sin IA, al intervalo que elijas.",
+    "adguardNote": "Al activar una de estas, el intervalo propio de AdGuard para las listas pasa a \"nunca\", para que no se actualicen dos veces.",
+    "empty": "Esta app aún no tiene cron jobs.",
+    "repeat": "Repetir",
+    "intervals": {
+      "0": "Desactivado",
+      "60": "Cada hora",
+      "360": "Cada 6 horas",
+      "720": "Cada 12 horas",
+      "1440": "Todos los días",
+      "10080": "Todas las semanas"
+    },
+    "neverRan": "Aún no se ha ejecutado.",
+    "lastOk": "Última vez: {{date}} · {{result}}",
+    "lastFailed": "Última vez: {{date}} · falló: {{error}}",
+    "next": "Próxima: {{date}}",
+    "runNow": "Ejecutar ahora",
+    "running": "Ejecutando…",
+    "save": "Guardar",
+    "saved": "Cron job guardado.",
+    "failed": "No se ejecutó.",
+    "jobs": {
+      "adguard_refresh_blocklists": {
+        "title": "Actualizar las listas de bloqueo",
+        "description": "Descarga las listas de DNS bloqueados de AdGuard y dice cuántas cambiaron.",
+        "result_one": "{{count}} lista actualizada",
+        "result_other": "{{count}} listas actualizadas"
+      },
+      "adguard_refresh_allowlists": {
+        "title": "Actualizar las listas de permitidos",
+        "description": "Descarga las listas de dominios permitidos de AdGuard y dice cuántas cambiaron.",
+        "result_one": "{{count}} lista actualizada",
+        "result_other": "{{count}} listas actualizadas"
+      }
+    },
+    "offShort": "Desactivado"
   }
 }

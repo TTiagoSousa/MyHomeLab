@@ -226,7 +226,8 @@
         "Pide, por ejemplo: \"¿Por qué no abre el sitio X?\", \"Desbloquea el dominio Y\", \"Pausa AdGuard 10 minutos\", \"Crea nas.casa apuntando a 192.168.1.10\".",
         "Para desbloquear, el agente añade una regla de permitido solo para ese dominio en vez de desactivar una lista entera. Al cambiar reglas, guarda las anteriores para poder deshacer.",
         "Lo que Jarvis puede hacer se elige en Asistente → Ajustes → Permisos → AdGuard.",
-        "La copia es un JSON con los ajustes; los certificados, la contraseña y el historial de consultas quedan fuera."
+        "La copia es un JSON con los ajustes; los certificados, la contraseña y el historial de consultas quedan fuera.",
+        "Cron jobs (en la cabecera de la cuenta, junto a Ajustes): MyHomeLab actualiza solo las listas de bloqueo y de permitidos al intervalo que elijas, sin IA. Al activar uno, el intervalo propio de AdGuard pasa a \"nunca\"."
       ],
       "goTo": "Ir a Apps conectadas"
     },

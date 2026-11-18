@@ -1,0 +1,114 @@
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.App_Cron_Jobs_list{
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.App_Cron_Job{
+  @include Mixin.Frame_Corners;
+  box-sizing: border-box;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 240px) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-box-shadow);
+  background-color: var(--cards-background);
+  border: var(--card-border);
+
+  .App_Cron_Job_icon{
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    border: 1px solid var(--hud-line);
+    color: var(--text-faint);
+
+    svg{ width: 15px; height: 15px; }
+  }
+
+  &.on .App_Cron_Job_icon{
+    color: var(--stat-positive);
+    border-color: var(--stat-positive);
+  }
+
+  .App_Cron_Job_main,
+  .App_Cron_Job_times{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .App_Cron_Job_title{
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .App_Cron_Job_text,
+  .App_Cron_Job_times span{
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--text-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .App_Cron_Job_times span{
+    font-size: 11px;
+    color: var(--text-faint);
+
+    &.error{ color: var(--danger-color); }
+  }
+
+  .App_Cron_Job_controls{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .Dropdown_Field{ width: 170px; height: 32px; }
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12px;
+      white-space: nowrap;
+
+      &.active{ @include Mixin.Solid_Button; height: 32px; padding: 0 12px; font-size: 12px; }
+    }
+  }
+
+  @container (max-width: 860px){
+    grid-template-columns: auto minmax(0, 1fr);
+
+    .App_Cron_Job_times,
+    .App_Cron_Job_controls{ grid-column: 2; }
+
+    .App_Cron_Job_text{ white-space: normal; }
+  }
+
+  @container (max-width: 480px){
+    grid-template-columns: minmax(0, 1fr);
+
+    .App_Cron_Job_icon{ display: none; }
+
+    .App_Cron_Job_times,
+    .App_Cron_Job_controls{ grid-column: 1; }
+
+    .App_Cron_Job_controls{
+      flex-wrap: wrap;
+
+      .Dropdown_Field{ flex: 1 1 140px; width: auto; }
+    }
+  }
+}

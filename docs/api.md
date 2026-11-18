@@ -98,6 +98,9 @@ there too.
 | GET | `/connected-account/:id/adguard-status` | JWT | Protection, stats, filters and version |
 | PUT | `/connected-account/:id/adguard-settings` | JWT | Set the filter refresh interval |
 | POST | `/connected-account/:id/adguard-refresh-filters` | JWT | Refresh blocklists now |
+| GET | `/connected-account/:id/cron-jobs` | JWT | The app's cron jobs (fixed tasks in code, no AI) with interval, last and next run |
+| PUT | `/connected-account/:id/cron-jobs/:key` | JWT | `{ intervalMinutes }` (0 = off, 60, 360, 720, 1440, 10080) |
+| POST | `/connected-account/:id/cron-jobs/:key/run` | JWT | Run a cron job now |
 | GET | `/connected-account/:id/gmail-stats` | JWT | Inbox counts (threads) |
 | GET | `/connected-account/:id/updates` | JWT | All tracked new versions of this app |
 | PATCH | `/connected-account/:id` | JWT | Run frequency, proposal settings, where the app runs (server / guest) |

@@ -13,7 +13,7 @@ const AREAS: Record<string, string[]> = {
   ],
   disparos: ['AgentSchedule', 'AgentScheduleRun'],
   assistente: ['Conversation', 'ChatMessage'],
-  ia: ['AiCredential', 'AiUsage'],
+  ia: ['AiCredential', 'AiUsage', 'AiRouting'],
   documentos: [
     'Doc',
     'DocSection',
@@ -43,7 +43,12 @@ const AREAS: Record<string, string[]> = {
     'TodoSyncLink',
     'TodoSyncItem',
   ],
-  'apps-ligadas': ['ConnectedAccount', 'OpenGymConnection', 'OpenGymExercise'],
+  'apps-ligadas': [
+    'ConnectedAccount',
+    'OpenGymConnection',
+    'OpenGymExercise',
+    'CronJob',
+  ],
   atualizacoes: [
     'AppUpdate',
     'UpdateWorkflowSetting',
