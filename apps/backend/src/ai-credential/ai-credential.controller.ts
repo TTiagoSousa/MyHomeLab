@@ -20,6 +20,7 @@ import {
 } from './ai-credential.service';
 import { SaveAiCredentialDto } from './dto/save-ai-credential.dto';
 import { SaveAiModelsDto } from './dto/save-ai-models.dto';
+import { SaveAiRoutingDto } from './dto/save-ai-routing.dto';
 
 type AuthedRequest = Request & { user: JwtPayload };
 
@@ -40,6 +41,17 @@ export class AiCredentialController {
   @Get()
   list(@Req() req: AuthedRequest) {
     return this.service.list(req.user.id);
+  }
+
+  /** O modo Misto: o fornecedor de cada tipo de trabalho e o limite do Claude Code. */
+  @Get('routing')
+  routing(@Req() req: AuthedRequest) {
+    return this.service.routing(req.user.id);
+  }
+
+  @Put('routing')
+  saveRouting(@Body() dto: SaveAiRoutingDto, @Req() req: AuthedRequest) {
+    return this.service.saveRouting(req.user.id, dto);
   }
 
   /** Se o Claude Code está instalado e com sessão. */

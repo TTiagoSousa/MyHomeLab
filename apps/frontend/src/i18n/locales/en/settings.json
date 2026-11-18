@@ -143,5 +143,40 @@
       "check": "Rule conflicts",
       "install": "Install"
     }
+  },
+  "routing": {
+    "title": "Mixed mode",
+    "description": "Each kind of work with its own engine: light work through the API (pay as you go, almost no memory on the server), long work in Claude Code (with the subscription). Apps with an MCP use it in both.",
+    "turnOn": "Turn on Mixed mode",
+    "turnOff": "Turn off Mixed mode",
+    "needsKey": "Mixed mode needs the Anthropic API key: save it first.",
+    "works": {
+      "chat": {
+        "name": "Chat with Jarvis",
+        "hint": "Questions on the site and in the app, and one-off requests (meals, email rules, lab results)."
+      },
+      "study": {
+        "name": "Update studies",
+        "hint": "Reading the notes of a new version and preparing the update."
+      },
+      "install": {
+        "name": "Installs and checks",
+        "hint": "Installing an approved update and confirming it went well."
+      },
+      "schedule": {
+        "name": "Scheduled runs",
+        "hint": "What runs on its own at set times."
+      },
+      "delegation": {
+        "name": "Subagents (delegation)",
+        "hint": "The agents a lead hands work to."
+      }
+    },
+    "maxRuns": "Jobs at once in Claude Code",
+    "maxRunsHint": "Each one starts processes that use hundreds of MB; the others wait their turn. Applies outside Mixed mode too.",
+    "now": "Now: {{running}} running, {{waiting}} waiting.",
+    "defaults": "Restore recommended",
+    "save": "Save",
+    "saved": "Mixed mode saved."
   }
 }

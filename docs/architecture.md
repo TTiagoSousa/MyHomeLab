@@ -133,6 +133,17 @@ and tools.
     runs the tool loop itself with the same prompts and tools (system prompt cached).
   Saving an API key does not switch a user who already has Claude Code working; they pick it. Token usage is
   recorded per agent and source, with an optional monthly budget alert.
+- **Mixed mode** (Settings → AI, needs the API key): each kind of work picks its own provider —
+  chat (and one-off requests), update studies, installs and checks, scheduled runs, and
+  subagents. By default light work (chat, studies) goes through the API and long work stays in
+  Claude Code. A subagent runs on the delegation provider whatever its lead uses. Apps with an
+  MCP server (TREK, openGym) use it in both: Claude Code connects to it directly, and with the
+  API the backend is the MCP client.
+- **Claude Code turns**: every Claude Code run starts `claude` processes (hundreds of MB each),
+  so each user runs at most N jobs at once in Claude Code (Settings → AI, 1–6, default 2) and
+  the rest wait their turn. Only the top of a chain takes a turn (or the first Claude Code run
+  under an API lead); its subagents run inside it, so a lead waiting for a subagent never
+  blocks the queue.
 
 See [Agents and tools](./development/05-agents-and-tools.md) for the details.
 

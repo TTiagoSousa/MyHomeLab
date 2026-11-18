@@ -30,7 +30,10 @@
       "notes": [
         "Os agentes gastam do mesmo limite que usas no claude.ai e no Claude Code (a janela de 5 horas e o semanal). Vês quanto em claude.ai → Definições → Uso.",
         "Se a subscrição chegar ao limite, o Jarvis avisa e volta a funcionar quando o limite renovar.",
-        "Cada corrida é limpa: o Claude Code só tem as ferramentas do MyHomeLab, sem terminal, ficheiros ou skills, e nunca vê as chaves do servidor."
+        "Cada corrida é limpa: o Claude Code só tem as ferramentas do MyHomeLab, sem terminal, ficheiros ou skills, e nunca vê as chaves do servidor.",
+        "A API da Anthropic também serve: cola a chave em Definições → IA. Paga-se ao uso, mas quase não gasta memória no servidor.",
+        "Modo Misto (precisa da chave da API): escolhes o motor de cada tipo de trabalho — por omissão, a conversa e os estudos das atualizações vão pela API e as instalações, os disparos e os subagentes ficam no Claude Code.",
+        "Cada trabalho no Claude Code lança processos que gastam centenas de MB. Em Definições → IA escolhes quantos correm ao mesmo tempo (por omissão 2); os outros esperam pela vez."
       ],
       "goTo": "Ir para Definições"
     },

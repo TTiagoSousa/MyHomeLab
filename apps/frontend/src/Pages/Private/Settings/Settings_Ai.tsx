@@ -7,6 +7,8 @@ import Ai_Key_Modal from '../../../Components/Modals/Ai_Key_Modal/Ai_Key_Modal';
 import Settings_Ai_Models from './Settings_Ai_Models';
 import { dateLocale } from '../../../i18n';
 import Settings_Ai_Usage from './Settings_Ai_Usage';
+import Settings_Ai_Routing from './Settings_Ai_Routing';
+import { useAiRouting } from '../../../Hooks/Ai/useAiRouting';
 
 const INFO = { 'claude-code': CLAUDE_CODE, 'claude-api': CLAUDE_API };
 
@@ -16,13 +18,19 @@ const Settings_Ai = () => {
   const [editing, setEditing] = useState<AiProviderId | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<AiProviderId | null>(null);
   const [choosingModels, setChoosingModels] = useState<AiProviderId | null>(null);
+  const code = providers.find((entry) => entry.provider === 'claude-code');
+  const api = providers.find((entry) => entry.provider === 'claude-api');
+  const { routing, saving: savingRouting, fetchRouting, saveRouting } = useAiRouting();
+  const mixed = Boolean(routing?.mixed);
 
   useEffect(() => {
     void fetchStatus();
   }, []);
 
-  const code = providers.find((entry) => entry.provider === 'claude-code');
-  const api = providers.find((entry) => entry.provider === 'claude-api');
+  useEffect(() => {
+    void fetchRouting();
+  }, [api?.configured]);
+
   const editingEntry = providers.find((entry) => entry.provider === editing);
   const codeState = !status ? 'unknown' : !status.installed ? 'missing' : status.loggedIn ? 'on' : 'off';
 
@@ -62,7 +70,7 @@ const Settings_Ai = () => {
               <span className='Settings_card_name'>
                 {CLAUDE_CODE.name}
                 <span className={`Settings_card_tag${codeState === 'on' ? ' on' : ''}`}>{t(`ai.state.${codeState}`)}</span>
-                {code.isActive && <span className='Settings_card_tag on'>{t('ai.inUse')}</span>}
+                {code.isActive && !mixed && <span className='Settings_card_tag on'>{t('ai.inUse')}</span>}
               </span>
               {status?.installed && (
                 <span className='Settings_card_detail'>
@@ -80,7 +88,7 @@ const Settings_Ai = () => {
             </div>
 
             <div className='Settings_card_actions'>
-              {!code.isActive && activateButton('claude-code')}
+              {!code.isActive && !mixed && activateButton('claude-code')}
               <button type='button' onClick={() => void fetchStatus()} disabled={checking}>
                 {checking ? t('ai.checking') : t('ai.check')}
               </button>
@@ -115,7 +123,7 @@ const Settings_Ai = () => {
               <span className='Settings_card_name'>
                 {CLAUDE_API.name}
                 <span className={`Settings_card_tag${api.configured ? ' on' : ''}`}>{t(api.configured ? 'ai.api.ready' : 'ai.api.noKey')}</span>
-                {api.isActive && <span className='Settings_card_tag on'>{t('ai.inUse')}</span>}
+                {api.isActive && !mixed && <span className='Settings_card_tag on'>{t('ai.inUse')}</span>}
               </span>
               <span className='Settings_card_detail'>{t('ai.api.cost')}</span>
               {api.configured && <span className='Settings_card_key'>{`${CLAUDE_API.keyPrefix}••••${api.keyHint}`}</span>}
@@ -123,7 +131,7 @@ const Settings_Ai = () => {
             </div>
 
             <div className='Settings_card_actions'>
-              {!api.isActive && api.configured && activateButton('claude-api')}
+              {!api.isActive && api.configured && !mixed && activateButton('claude-api')}
               <button type='button' onClick={() => setChoosingModels(choosingModels === 'claude-api' ? null : 'claude-api')}>
                 {t('ai.models')}
               </button>
@@ -147,6 +155,15 @@ const Settings_Ai = () => {
           </div>
         )}
       </div>
+
+      {routing && (
+        <Settings_Ai_Routing
+          key={JSON.stringify([routing.routes, routing.maxClaudeCodeRuns])}
+          routing={routing}
+          saving={savingRouting}
+          onSave={saveRouting}
+        />
+      )}
 
       <Settings_Ai_Usage />
 

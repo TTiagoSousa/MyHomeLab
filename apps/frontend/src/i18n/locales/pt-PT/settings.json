@@ -143,5 +143,40 @@
       "check": "Conflitos de regras",
       "install": "Instalação"
     }
+  },
+  "routing": {
+    "title": "Modo Misto",
+    "description": "Cada tipo de trabalho com o seu motor: o que é leve pela API (paga ao uso, quase sem memória no servidor), o que é longo no Claude Code (com a subscrição). As apps com MCP usam-no nos dois.",
+    "turnOn": "Ligar o modo Misto",
+    "turnOff": "Desligar o modo Misto",
+    "needsKey": "Para o modo Misto, guarda primeiro a chave da API da Anthropic.",
+    "works": {
+      "chat": {
+        "name": "Conversa com o Jarvis",
+        "hint": "As perguntas no site e na app, e os pedidos de uma vez só (refeições, regras de email, análises)."
+      },
+      "study": {
+        "name": "Estudos de atualizações",
+        "hint": "Ler as notas de uma versão nova e preparar a atualização."
+      },
+      "install": {
+        "name": "Instalações e verificações",
+        "hint": "Instalar uma atualização aprovada e confirmar que ficou bem."
+      },
+      "schedule": {
+        "name": "Disparos agendados",
+        "hint": "O que corre sozinho a horas marcadas."
+      },
+      "delegation": {
+        "name": "Subagentes (delegação)",
+        "hint": "Os agentes a quem um chefe passa trabalho."
+      }
+    },
+    "maxRuns": "Trabalhos ao mesmo tempo no Claude Code",
+    "maxRunsHint": "Cada um lança processos que gastam centenas de MB; os outros esperam pela vez. Vale também fora do modo Misto.",
+    "now": "Agora: {{running}} a correr, {{waiting}} à espera.",
+    "defaults": "Repor o recomendado",
+    "save": "Guardar",
+    "saved": "Modo Misto guardado."
   }
 }

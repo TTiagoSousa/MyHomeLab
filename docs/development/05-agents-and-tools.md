@@ -44,7 +44,10 @@ POST /assistant/chat
 
 - **Delegation is a tool.** `ask_<key>({ request })` runs the subordinate with the full
   request (prefixed with the current date and time) and returns its report. Max depth 5.
-- **The engine** is the user's AI provider. With **Claude API** (`assistant/apiAgent.ts`) the
+- **The engine** is the user's AI provider — per kind of work in Mixed mode
+  (`AiCredentialService.getClient(userId, work)`, works `chat | study | install | schedule |
+  delegation`; subagents use `AiClient.delegate`). Claude Code runs wait for a turn in
+  `claude-code/claudeCodeQueue.ts` (`inTurn`, per user, `AiRouting.maxClaudeCodeRuns`). With **Claude API** (`assistant/apiAgent.ts`) the
   backend runs a streaming tool loop on the Messages API (cached system prompt, sequential tool
   calls, failed tools returned as `is_error`); single-shot calls that force a tool are sent as
   structured outputs (`ai-credential/claudeApiClient.ts`). With **Claude Code** it is the Claude

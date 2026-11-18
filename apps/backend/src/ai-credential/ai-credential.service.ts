@@ -3,13 +3,18 @@ import { execFile } from 'child_process';
 import { promisify } from 'util';
 import Anthropic from '@anthropic-ai/sdk';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AiCredential, AiProvider } from 'src/generated/prisma/client/client';
+import {
+  AiCredential,
+  AiProvider,
+  AiRouting,
+} from 'src/generated/prisma/client/client';
 import { encryptToken, decryptToken } from 'src/utils/crypto/token-cipher';
 import {
   ClaudeCodeError,
   claudeBin,
   runClaudeCode,
 } from 'src/claude-code/claudeCode.runner';
+import { turnState } from 'src/claude-code/claudeCodeQueue';
 import { AI_ERRORS } from './ai-providers';
 import {
   AiClient,
@@ -47,6 +52,58 @@ export interface ClaudeCodeStatus {
   usesToken: boolean;
   error: string | null;
 }
+
+/**
+ * Os tipos de trabalho do modo Misto: a conversa (e os pedidos de uma vez só, como as
+ * refeições e as regras de email), os estudos das atualizações, as instalações e
+ * verificações, os disparos agendados e os subagentes a quem um chefe delega.
+ */
+export const AI_WORKS = [
+  'chat',
+  'study',
+  'install',
+  'schedule',
+  'delegation',
+] as const;
+export type AiWork = (typeof AI_WORKS)[number];
+
+export type AiRoutes = Record<AiWork, AiProviderId>;
+
+/** O que é leve vai pela API; o que é longo fica no Claude Code (com a subscrição). */
+export const DEFAULT_ROUTES: AiRoutes = {
+  chat: 'claude-api',
+  study: 'claude-api',
+  install: 'claude-code',
+  schedule: 'claude-code',
+  delegation: 'claude-code',
+};
+
+export const DEFAULT_MAX_CLAUDE_CODE_RUNS = 2;
+export const MAX_CLAUDE_CODE_RUNS = 6;
+
+export interface AiRoutingView {
+  /** Modo Misto ligado (só conta com a chave da API guardada). */
+  mixed: boolean;
+  /** Se o modo Misto pode ser usado: precisa da chave da API. */
+  available: boolean;
+  routes: AiRoutes;
+  defaultRoutes: AiRoutes;
+  maxClaudeCodeRuns: number;
+  /** Agora, no Claude Code: os trabalhos a correr e os à espera de vez. */
+  claudeCode: { running: number; waiting: number };
+}
+
+const routesOf = (row: AiRouting | null): AiRoutes => {
+  const saved = (row?.routes ?? {}) as Partial<Record<string, unknown>>;
+  return Object.fromEntries(
+    AI_WORKS.map((work) => [
+      work,
+      saved[work] === 'claude-code' || saved[work] === 'claude-api'
+        ? saved[work]
+        : DEFAULT_ROUTES[work],
+    ]),
+  ) as AiRoutes;
+};
 
 export const PROVIDER_OF: Record<AiProviderId, AiProvider> = {
   'claude-code': AiProvider.CLAUDE_CODE,
@@ -118,15 +175,96 @@ export class AiCredentialService {
     ];
   }
 
-  /** A IA em uso do utilizador, com a chave e os modelos escolhidos. Há sempre uma. */
-  async getClient(userId: string): Promise<AiClient> {
-    const { code, api } = await this.rows(userId);
-    if (usesApi(api)) return createApiClient(tokenOf(api)!, modelsOf(api));
-    return createAiClient(tokenOf(code), modelsOf(code));
+  /**
+   * A IA de um trabalho do utilizador, com a chave e os modelos escolhidos. Há sempre uma.
+   * Fora do modo Misto é a ativa; no modo Misto, a do trabalho (e os subagentes levam a
+   * da delegação). O Claude Code leva a vez na fila (claudeCodeQueue).
+   */
+  async getClient(userId: string, work: AiWork = 'chat'): Promise<AiClient> {
+    const [{ code, api }, routing] = await Promise.all([
+      this.rows(userId),
+      this.routingRow(userId),
+    ]);
+    const turn = {
+      key: userId,
+      max: routing?.maxClaudeCodeRuns ?? DEFAULT_MAX_CLAUDE_CODE_RUNS,
+    };
+    const build = (provider: AiProviderId): AiClient =>
+      provider === 'claude-api' && api?.apiKey
+        ? createApiClient(tokenOf(api)!, modelsOf(api))
+        : createAiClient(tokenOf(code), modelsOf(code), turn);
+    if (!routing?.mixed || !api?.apiKey) {
+      return build(usesApi(api) ? 'claude-api' : 'claude-code');
+    }
+    const routes = routesOf(routing);
+    const client = build(routes[work]);
+    if (work !== 'delegation' && routes.delegation !== routes[work]) {
+      client.delegate = build(routes.delegation);
+    }
+    return client;
   }
 
-  async requireClient(userId: string): Promise<AiClient> {
-    return this.getClient(userId);
+  async requireClient(
+    userId: string,
+    work: AiWork = 'chat',
+  ): Promise<AiClient> {
+    return this.getClient(userId, work);
+  }
+
+  private routingRow(userId: string) {
+    return this.prisma.aiRouting.findUnique({ where: { userId } });
+  }
+
+  async routing(userId: string): Promise<AiRoutingView> {
+    const [routing, api] = await Promise.all([
+      this.routingRow(userId),
+      this.row(userId, AiProvider.CLAUDE_API),
+    ]);
+    const available = Boolean(api?.apiKey);
+    return {
+      mixed: Boolean(routing?.mixed) && available,
+      available,
+      routes: routesOf(routing),
+      defaultRoutes: DEFAULT_ROUTES,
+      maxClaudeCodeRuns:
+        routing?.maxClaudeCodeRuns ?? DEFAULT_MAX_CLAUDE_CODE_RUNS,
+      claudeCode: turnState(userId),
+    };
+  }
+
+  /** Liga/desliga o modo Misto, muda as rotas e o limite do Claude Code. */
+  async saveRouting(
+    userId: string,
+    input: {
+      mixed?: boolean;
+      routes?: Partial<AiRoutes>;
+      maxClaudeCodeRuns?: number;
+    },
+  ): Promise<AiRoutingView> {
+    if (input.mixed) {
+      const api = await this.row(userId, AiProvider.CLAUDE_API);
+      if (!api?.apiKey) {
+        throw new BadRequestException({
+          code: AI_ERRORS.KEY_MISSING,
+          message: 'O modo Misto precisa da chave da API da Anthropic.',
+        });
+      }
+    }
+    const current = await this.routingRow(userId);
+    const routes = { ...routesOf(current), ...input.routes };
+    const data = {
+      ...(input.mixed === undefined ? {} : { mixed: input.mixed }),
+      routes,
+      ...(input.maxClaudeCodeRuns === undefined
+        ? {}
+        : { maxClaudeCodeRuns: input.maxClaudeCodeRuns }),
+    };
+    await this.prisma.aiRouting.upsert({
+      where: { userId },
+      create: { userId, ...data },
+      update: data,
+    });
+    return this.routing(userId);
   }
 
   /**

@@ -143,5 +143,40 @@
       "check": "Conflictos de reglas",
       "install": "Instalación"
     }
+  },
+  "routing": {
+    "title": "Modo Mixto",
+    "description": "Cada tipo de trabajo con su motor: lo ligero por la API (pago por uso, casi sin memoria en el servidor), lo largo en Claude Code (con la suscripción). Las apps con MCP lo usan en los dos.",
+    "turnOn": "Activar el modo Mixto",
+    "turnOff": "Desactivar el modo Mixto",
+    "needsKey": "Para el modo Mixto, guarda primero la clave de la API de Anthropic.",
+    "works": {
+      "chat": {
+        "name": "Conversación con Jarvis",
+        "hint": "Las preguntas en el sitio y en la app, y las peticiones de una sola vez (comidas, reglas de correo, análisis)."
+      },
+      "study": {
+        "name": "Estudios de actualizaciones",
+        "hint": "Leer las notas de una versión nueva y preparar la actualización."
+      },
+      "install": {
+        "name": "Instalaciones y verificaciones",
+        "hint": "Instalar una actualización aprobada y confirmar que quedó bien."
+      },
+      "schedule": {
+        "name": "Ejecuciones programadas",
+        "hint": "Lo que se ejecuta solo a horas fijas."
+      },
+      "delegation": {
+        "name": "Subagentes (delegación)",
+        "hint": "Los agentes a los que un jefe pasa trabajo."
+      }
+    },
+    "maxRuns": "Trabajos a la vez en Claude Code",
+    "maxRunsHint": "Cada uno lanza procesos que gastan cientos de MB; los demás esperan su turno. Vale también fuera del modo Mixto.",
+    "now": "Ahora: {{running}} en marcha, {{waiting}} esperando.",
+    "defaults": "Restablecer lo recomendado",
+    "save": "Guardar",
+    "saved": "Modo Mixto guardado."
   }
 }

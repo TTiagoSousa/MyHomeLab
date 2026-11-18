@@ -38,6 +38,12 @@ export const CLAUDE_CODE_MODELS = [
 
 export type AiProviderKind = 'CLAUDE_CODE' | 'CLAUDE_API';
 
+/** A vez no Claude Code: por utilizador, no máximo `max` trabalhos ao mesmo tempo. */
+export interface ClaudeCodeTurn {
+  key: string;
+  max: number;
+}
+
 /**
  * A IA de um utilizador: o Claude Code desta máquina, com a subscrição dele, ou a API da
  * Anthropic, com a chave dele.
@@ -53,6 +59,10 @@ export interface AiClient {
   anthropic?: Anthropic;
   models: AiModels;
   pick: (model: string) => string;
+  /** Claude Code: a fila dos trabalhos deste utilizador (claudeCodeQueue). */
+  turn?: ClaudeCodeTurn;
+  /** Modo Misto: a IA dos subagentes, quando é outra (sem ele, a mesma). */
+  delegate?: AiClient;
   messages: {
     create(params: MessageCreateParamsNonStreaming): Promise<Message>;
   };
@@ -161,6 +171,7 @@ export function usageTotal(usage: ClaudeCodeUsage[]) {
 export function createAiClient(
   token: string | null,
   models: AiModels,
+  turn?: ClaudeCodeTurn,
 ): AiClient {
   const pick = (model: string) =>
     model === AGENT_MODEL
@@ -174,6 +185,7 @@ export function createAiClient(
     token,
     models,
     pick,
+    turn,
     messages: {
       async create(params) {
         const choice = params.tool_choice;

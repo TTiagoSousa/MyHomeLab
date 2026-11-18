@@ -7,6 +7,7 @@ import {
 } from 'src/ai-credential/ai-client';
 import type { ModelUsage } from 'src/ai-credential/ai-usage.service';
 import { runClaudeCode } from 'src/claude-code/claudeCode.runner';
+import { inTurn } from 'src/claude-code/claudeCodeQueue';
 import {
   BRIDGE_PREFIX,
   BRIDGE_SERVER,
@@ -57,6 +58,12 @@ export interface RunAgentOptions {
    */
   mcpServers?: Record<string, unknown>;
   allowedTools?: string[];
+
+  /**
+   * No Claude Code, espera pela vez na fila do utilizador (claudeCodeQueue). Só o
+   * trabalho de topo: um subagente de um trabalho no Claude Code corre na vez do chefe.
+   */
+  queued?: boolean;
 }
 
 /**
@@ -75,6 +82,15 @@ export async function runAgent(
 ): Promise<RunAgentResult> {
   if (client.provider === 'CLAUDE_API') {
     return runApiAgent(client, systemPrompt, tools, messages, options);
+  }
+  if (options.queued && client.turn) {
+    const { key, max } = client.turn;
+    return inTurn(key, max, () =>
+      runAgent(client, systemPrompt, tools, messages, {
+        ...options,
+        queued: false,
+      }),
+    );
   }
   const bridge = openBridge(tools);
   try {

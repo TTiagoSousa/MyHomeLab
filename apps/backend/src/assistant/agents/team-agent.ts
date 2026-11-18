@@ -133,7 +133,18 @@ export async function runTeamAgent(
   // cada um ligado diretamente ao agente (mcp__trek__*, mcp__opengym__*); na API, as
   // ferramentas trek_* e opengym_* do MyHomeLab, que falam com eles a partir do backend
   // (a API não chega às apps da rede de casa).
-  const claudeCode = context.ai.provider === 'CLAUDE_CODE';
+  // No modo Misto os subagentes podem ir noutro fornecedor (context.ai.delegate). Entra
+  // na fila do Claude Code o primeiro no Claude Code de cada cadeia: o de topo, ou um
+  // subagente cujo chefe está na API.
+  const ai = depth > 0 ? (context.ai.delegate ?? context.ai) : context.ai;
+  const parent =
+    depth === 0
+      ? null
+      : depth === 1
+        ? context.ai
+        : (context.ai.delegate ?? context.ai);
+  const claudeCode = ai.provider === 'CLAUDE_CODE';
+  const queued = claudeCode && parent?.provider !== 'CLAUDE_CODE';
   const [trek, openGym] = claudeCode
     ? await Promise.all([
         trekDirect(agent.tools, context, agent.key),
@@ -160,7 +171,7 @@ export async function runTeamAgent(
     : null;
 
   return runAgent(
-    context.ai,
+    ai,
     composeAgentPrompt(agent, context.team, docs) +
       (trek
         ? `
@@ -219,6 +230,7 @@ O openGym: as ferramentas do próprio openGym estão ligadas diretamente (mcp__$
         context.onUsage?.(usage);
         context.recordUsage?.(agent.key, usage);
       },
+      queued,
       model: agent.model === 'OPUS' ? AGENT_MODEL : SUBAGENT_MODEL,
       effort:
         agent.effort === 'HIGH'

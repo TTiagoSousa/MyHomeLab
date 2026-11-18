@@ -96,6 +96,7 @@ model User {
   assistantPermission AssistantPermissionSetting?
   agentAppAccess      AgentAppAccess[]
   aiCredentials       AiCredential[]
+  aiRouting           AiRouting?
   serverConnections   ServerConnection[]
   serverCommands      ServerCommand[]
   serviceMonitors     ServiceMonitor[]
@@ -473,6 +474,20 @@ model AiCredential {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, provider])
+}
+
+// O modo Misto: cada tipo de trabalho com o seu fornecedor (precisa da chave da API).
+// Fora do modo Misto vale o fornecedor ativo do AiCredential, como antes.
+model AiRouting {
+  userId            String  @id
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mixed             Boolean @default(false)
+  /// { chat, study, install, schedule, delegation }: "CLAUDE_CODE" ou "CLAUDE_API"; o que falta é o da app.
+  routes            Json?
+  /// Quantos trabalhos podem correr ao mesmo tempo no Claude Code (cada um lança processos `claude`).
+  maxClaudeCodeRuns Int     @default(2)
+
+  updatedAt DateTime @updatedAt
 }
 
 enum ServerKind {

@@ -30,7 +30,10 @@
       "notes": [
         "The agents use the same limit you use on claude.ai and in Claude Code (the 5-hour window and the weekly one). See it at claude.ai → Settings → Usage.",
         "If the subscription hits its limit, Jarvis says so and works again when the limit resets.",
-        "Each run is clean: Claude Code only has the MyHomeLab tools, no terminal, files or skills, and never sees the server keys."
+        "Each run is clean: Claude Code only has the MyHomeLab tools, no terminal, files or skills, and never sees the server keys.",
+        "The Anthropic API works too: paste the key in Settings → AI. It is pay as you go, but uses almost no memory on the server.",
+        "Mixed mode (needs the API key): you pick the engine for each kind of work — by default chat and update studies go through the API, and installs, scheduled runs and subagents stay in Claude Code.",
+        "Each Claude Code job starts processes that use hundreds of MB. In Settings → AI you choose how many run at once (2 by default); the others wait their turn."
       ],
       "goTo": "Go to Settings"
     },

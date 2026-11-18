@@ -683,7 +683,7 @@ export class AssistantService {
       where: { id: userId },
       select: { id: true, username: true, role: true },
     });
-    const ai = await this.aiCredentials.requireClient(userId);
+    const ai = await this.aiCredentials.requireClient(userId, 'install');
     const team = await this.team(userId);
     const agent = team.find(
       (member) => member.isActive && member.tools.includes('update_verify'),
@@ -746,7 +746,7 @@ export class AssistantService {
         where: { id: userId },
         select: { id: true, username: true, role: true },
       });
-      const ai = await this.aiCredentials.requireClient(userId);
+      const ai = await this.aiCredentials.requireClient(userId, 'install');
       const team = await this.team(userId);
       const agent = team.find(
         (member) => member.isActive && member.tools.includes('update_run'),
@@ -810,7 +810,12 @@ export class AssistantService {
       where: { id: userId },
       select: { id: true, username: true, role: true },
     });
-    const ai = await this.aiCredentials.requireClient(userId);
+    const ai = await this.aiCredentials.requireClient(
+      userId,
+      schedule.updateId && schedule.title.startsWith('Estudar')
+        ? 'study'
+        : 'schedule',
+    );
     const team = await this.team(userId);
     const usage = { input: 0, output: 0 };
     const context: AgentContext = {

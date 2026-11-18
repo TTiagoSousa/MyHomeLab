@@ -1,0 +1,55 @@
+.Ai_Routing{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--hud-line);
+
+  .Ai_Routing_Head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+
+    .Settings_section_title{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .Ai_Routing_Table{
+    display: flex;
+    flex-direction: column;
+
+    &.off{ opacity: .55; }
+  }
+
+  .Ai_Routing_Row{
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 200px;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--hud-line);
+
+    @media (max-width: 600px){ grid-template-columns: minmax(0, 1fr); }
+  }
+
+  .Ai_Routing_Actions{ justify-content: flex-end; }
+
+  .Ai_Routing_Work{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    > span:first-child{
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+  }
+}
