@@ -23,26 +23,57 @@ export class CronJobController {
   constructor(private readonly service: CronJobService) {}
 
   @Get()
-  list(@Param('accountId') accountId: string, @Req() req: AuthedRequest) {
-    return this.service.list(req.user.id, accountId);
+  list(@Param('accountId') id: string, @Req() req: AuthedRequest) {
+    return this.service.list(req.user.id, { kind: 'account', id });
   }
 
   @Put(':key')
   save(
-    @Param('accountId') accountId: string,
+    @Param('accountId') id: string,
     @Param('key') key: string,
     @Body() dto: SaveCronJobDto,
     @Req() req: AuthedRequest,
   ) {
-    return this.service.save(req.user.id, accountId, key, dto.intervalMinutes);
+    return this.service.save(req.user.id, { kind: 'account', id }, key, dto);
   }
 
   @Post(':key/run')
   run(
-    @Param('accountId') accountId: string,
+    @Param('accountId') id: string,
     @Param('key') key: string,
     @Req() req: AuthedRequest,
   ) {
-    return this.service.runNow(req.user.id, accountId, key);
+    return this.service.runNow(req.user.id, { kind: 'account', id }, key);
+  }
+}
+
+/** Os cron jobs de um servidor Proxmox (ex.: o aviso de disco quase cheio). */
+@Controller('servers/:serverId/cron-jobs')
+@UseGuards(JwtAuthGuard)
+export class ServerCronJobController {
+  constructor(private readonly service: CronJobService) {}
+
+  @Get()
+  list(@Param('serverId') id: string, @Req() req: AuthedRequest) {
+    return this.service.list(req.user.id, { kind: 'server', id });
+  }
+
+  @Put(':key')
+  save(
+    @Param('serverId') id: string,
+    @Param('key') key: string,
+    @Body() dto: SaveCronJobDto,
+    @Req() req: AuthedRequest,
+  ) {
+    return this.service.save(req.user.id, { kind: 'server', id }, key, dto);
+  }
+
+  @Post(':key/run')
+  run(
+    @Param('serverId') id: string,
+    @Param('key') key: string,
+    @Req() req: AuthedRequest,
+  ) {
+    return this.service.runNow(req.user.id, { kind: 'server', id }, key);
   }
 }

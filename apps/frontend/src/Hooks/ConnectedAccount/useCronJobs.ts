@@ -8,6 +8,8 @@ export interface CronJob {
   key: string;
   intervalMinutes: number;
   intervals: number[];
+  options: Record<string, unknown> | null;
+  lastDetail: Record<string, unknown> | null;
   nextRunAt: string | null;
   lastRunAt: string | null;
   lastOk: boolean | null;
@@ -16,6 +18,21 @@ export interface CronJob {
   running: boolean;
 }
 
+export type CronScope = { kind: 'account' | 'server'; id: string | undefined };
+
+const endpoints = (scope: CronScope, id: string) =>
+  scope.kind === 'server'
+    ? {
+        list: End_Points.Server_Cron_Jobs_Endpoint(id),
+        job: (key: string) => End_Points.Server_Cron_Job_Endpoint(id, key),
+        run: (key: string) => End_Points.Server_Cron_Job_Run_Endpoint(id, key),
+      }
+    : {
+        list: End_Points.Cron_Jobs_Endpoint(id),
+        job: (key: string) => End_Points.Cron_Job_Endpoint(id, key),
+        run: (key: string) => End_Points.Cron_Job_Run_Endpoint(id, key),
+      };
+
 export const cronJobLabelKey = (key: string) => key.replace(/\./g, '_');
 
 const errorMessage = (error: unknown) => {
@@ -23,7 +40,8 @@ const errorMessage = (error: unknown) => {
   return failure.response?.data?.message || failure.message || i18n.t('common:errors.generic');
 };
 
-export const useCronJobs = (accountId: string | undefined) => {
+export const useCronJobs = (scope: CronScope) => {
+  const accountId = scope.id;
   const [jobs, setJobs] = useState<CronJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
@@ -34,7 +52,7 @@ export const useCronJobs = (accountId: string | undefined) => {
   const fetchJobs = async () => {
     if (!accountId) return;
     try {
-      const response = await http.get<CronJob[]>(End_Points.Cron_Jobs_Endpoint(accountId), { withCredentials: true });
+      const response = await http.get<CronJob[]>(endpoints(scope, accountId).list, { withCredentials: true });
       setJobs(response.data);
     } catch (error) {
       setAlert({ open: true, message: errorMessage(error), type: 'error' });
@@ -43,11 +61,11 @@ export const useCronJobs = (accountId: string | undefined) => {
     }
   };
 
-  const saveInterval = async (key: string, intervalMinutes: number) => {
+  const saveInterval = async (key: string, intervalMinutes: number, options?: Record<string, unknown>) => {
     if (!accountId) return false;
     setBusy(key);
     try {
-      const response = await http.put<CronJob>(End_Points.Cron_Job_Endpoint(accountId, key), { intervalMinutes }, { withCredentials: true });
+      const response = await http.put<CronJob>(endpoints(scope, accountId).job(key), options ? { intervalMinutes, options } : { intervalMinutes }, { withCredentials: true });
       replace(response.data);
       setAlert({ open: true, message: i18n.t('addons:cronJobs.saved'), type: 'success' });
       return true;
@@ -63,7 +81,7 @@ export const useCronJobs = (accountId: string | undefined) => {
     if (!accountId) return;
     setBusy(key);
     try {
-      const response = await http.post<CronJob>(End_Points.Cron_Job_Run_Endpoint(accountId, key), {}, { withCredentials: true });
+      const response = await http.post<CronJob>(endpoints(scope, accountId).run(key), {}, { withCredentials: true });
       replace(response.data);
       const job = response.data;
       setAlert({

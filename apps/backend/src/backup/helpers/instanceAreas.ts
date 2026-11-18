@@ -55,7 +55,7 @@ const AREAS: Record<string, string[]> = {
     'UpdateAttempt',
     'UpdateAttemptCheck',
   ],
-  servidores: ['ServerConnection', 'ServerCommand', 'DiskReading'],
+  servidores: ['ServerConnection', 'ServerCommand', 'DiskReading', 'DiskAlert'],
   servicos: ['Category', 'Service', 'ServiceMonitor'],
   email: ['EmailRule', 'EmailRuleLabelPath', 'EmailRuleProposal'],
   backups: [
@@ -128,7 +128,8 @@ export const AREA_DESCRIPTIONS: Record<string, string> = {
   'apps-ligadas':
     'as apps ligadas, com os logins e tokens (cifrados com a chave que vai em _restauro/)',
   atualizacoes: 'as atualizações das apps, os estudos e as tentativas',
-  servidores: 'os servidores, os comandos e as leituras dos discos',
+  servidores:
+    'os servidores, os comandos, as leituras dos discos e os avisos de disco',
   servicos: 'os serviços, as categorias e os monitores',
   email: 'as regras do email e as propostas',
   backups: 'os destinos e os backups automáticos',

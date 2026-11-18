@@ -49,6 +49,11 @@ const FIXED: Record<string, Requirement> = {
   pve_delete_snapshot: write('serverControl'),
   pve_backup_now: write('serverControl'),
   pve_set_resources: write('serverControl'),
+  disk_alert_get: read('serverControl'),
+  disk_alert_save_study: write('serverControl'),
+  disk_alert_grow: write('serverControl'),
+  disk_alert_ask: write('serverControl'),
+  disk_alert_done: write('serverControl'),
 
   docs_search: read('docs'),
   docs_projects: read('docs'),

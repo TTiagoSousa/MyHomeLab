@@ -20,6 +20,7 @@ export type ToolSet =
   | 'todos'
   | 'serverControl'
   | 'serverShell'
+  | 'diskAlerts'
   | 'team';
 
 export type ToolGroup =
@@ -282,6 +283,41 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'serverControl',
     'write',
     'a mudar os recursos de uma máquina',
+  ),
+  tool(
+    'disk_alert_get',
+    'diskAlerts',
+    'serverControl',
+    'read',
+    'a ver um aviso de disco',
+  ),
+  tool(
+    'disk_alert_save_study',
+    'diskAlerts',
+    'serverControl',
+    'write',
+    'a gravar o estudo do disco',
+  ),
+  tool(
+    'disk_alert_grow',
+    'diskAlerts',
+    'serverControl',
+    'write',
+    'a aumentar um disco',
+  ),
+  tool(
+    'disk_alert_ask',
+    'diskAlerts',
+    'serverControl',
+    'write',
+    'a perguntar sobre um disco',
+  ),
+  tool(
+    'disk_alert_done',
+    'diskAlerts',
+    'serverControl',
+    'write',
+    'a fechar um aviso de disco',
   ),
   tool(
     'server_inventory',

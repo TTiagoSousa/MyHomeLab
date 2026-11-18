@@ -24,6 +24,7 @@ import {
   buildServerControlTools,
   buildServerShellTools,
 } from './server-control-tools';
+import { buildDiskAlertTools } from './disk-alert-tools';
 
 const TOOL_SETS: Record<
   ToolSet,
@@ -49,6 +50,7 @@ const TOOL_SETS: Record<
   todos: buildTodoTools,
   serverControl: buildServerControlTools,
   serverShell: buildServerShellTools,
+  diskAlerts: buildDiskAlertTools,
   server: async (context) =>
     buildServerTools(
       await context.serverConnections.connectionsFor(context.userId),

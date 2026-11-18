@@ -9,6 +9,7 @@ import { ServerConnectionService } from 'src/server-connection/server-connection
 import { ServerCommandService } from 'src/server-connection/server-command.service';
 import { ServiceMonitorService } from 'src/service-monitor/service-monitor.service';
 import { DiskHealthService } from 'src/disk-health/disk-health.service';
+import { DiskAlertService } from 'src/disk-alert/disk-alert.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { BackupService } from 'src/backup/backup.service';
 import { HealthServices } from '../tools/healthTools';
@@ -61,6 +62,8 @@ export interface AgentContext {
   serviceMonitors: ServiceMonitorService;
   /** A saúde dos discos dos servidores Proxmox. */
   diskHealth: DiskHealthService;
+  /** Os avisos de disco quase cheio dos CTs e VMs (cron job do servidor). */
+  diskAlerts: DiskAlertService;
   notifications: NotificationService;
   /** Os backups automáticos das apps ligadas e os destinos. */
   backups: BackupService;

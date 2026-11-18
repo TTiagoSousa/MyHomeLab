@@ -104,7 +104,8 @@
         "Disk health (Servers → Disks) reads SMART through Proxmox and needs the Sys.Audit permission on the node — root@pam and the PVEAuditor role already have it. Disks behind RAID controllers or in USB enclosures may show \"No SMART\".",
         "For agents to work on the machines (start, shut down, snapshots, backups, resources), the token needs the PVEVMAdmin role in Datacenter → Permissions (or a root@pam token without Privilege Separation). With PVEAuditor they only read.",
         "Commands: on the server page, under Commands (SSH) → Enable commands, MyHomeLab generates a key and shows the line to paste in the Proxmox shell. Commands run straight away and are logged; what the agent can do (and what it never does without your yes) is in the server rules, in Documents.",
-        "Server map: a document linked to the server with what is on it (machines, disks, network). Ask Jarvis to study the server and write the map — it keeps it up to date."
+        "Server map: a document linked to the server with what is on it (machines, disks, network). Ask Jarvis to study the server and write the map — it keeps it up to date.",
+        "Cron jobs (in the server header): the Disk almost full alert checks the disk of each CT and VM (VMs need the QEMU guest agent). You choose the limit, the interval (down to real time), which machines, whether it goes to Notifications and whether the agent handles it: each alert becomes a task on the server board, the agent studies it and, within the limits you set, cleans what is safe or grows a CT disk; otherwise it goes to Waiting for reply. Answer \"yes\" on the task or move it to In progress to approve."
       ],
       "goTo": "Go to Settings"
     },

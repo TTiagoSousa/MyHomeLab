@@ -1856,6 +1856,10 @@
     "repeat": "Repetir",
     "intervals": {
       "0": "Desligado",
+      "1": "Tempo real (cada minuto)",
+      "5": "De 5 em 5 minutos",
+      "15": "De 15 em 15 minutos",
+      "30": "De 30 em 30 minutos",
       "60": "De hora a hora",
       "360": "De 6 em 6 horas",
       "720": "De 12 em 12 horas",
@@ -1883,8 +1887,32 @@
         "description": "Descarrega as listas de domínios permitidos do AdGuard e diz quantas mudaram.",
         "result_one": "{{count}} lista atualizada",
         "result_other": "{{count}} listas atualizadas"
+      },
+      "proxmox_disk_alert": {
+        "title": "Aviso de disco quase cheio",
+        "description": "Vê o disco de cada CT e VM; acima do limite avisa e, se quiseres, o agente trata disso no quadro.",
+        "result_one": "{{count}} disco acima do limite",
+        "result_other": "{{count}} discos acima do limite"
       }
     },
-    "offShort": "Desligado"
+    "offShort": "Desligado",
+    "options": "Opções",
+    "proxmoxNote": "O agente só entra quando um aviso o pede.",
+    "diskAlert": {
+      "threshold": "Avisar quando passar de (%)",
+      "guests": "Que CTs e VMs",
+      "allGuests": "Todos",
+      "someGuests": "Só estes",
+      "notify": "Mandar para as Notificações",
+      "agent": "O agente pega na situação, estuda e corrige",
+      "agentHint": "Cada aviso vira uma tarefa no quadro do servidor (Projetos): o agente estuda o que ocupa o espaço e, dentro dos limites abaixo, limpa o que é seguro ou aumenta o disco de um CT; no resto pergunta-te (Waiting for reply).",
+      "agentKey": "Agente",
+      "agentAuto": "Automático (o primeiro com as ferramentas)",
+      "maxDiskGb": "Máximo do disco sem perguntar (GB)",
+      "stepGb": "Aumentar de cada vez (GB)",
+      "minStorageFreeGb": "Mínimo livre no storage (GB)",
+      "limitsNote": "Numa VM o agente pergunta sempre antes de aumentar. O mínimo livre no storage vale sempre, mesmo quando aprovas.",
+      "noAgent": "Sem QEMU guest agent, não se sabe o disco por dentro de: {{guests}}. Instala o qemu-guest-agent na VM e liga-o em Options → QEMU Guest Agent."
+    }
   }
 }

@@ -1,9 +1,14 @@
-import { IsIn, IsInt } from 'class-validator';
-import { CRON_INTERVALS } from '../cron-job.registry';
+import { IsInt, IsObject, IsOptional, Max, Min } from 'class-validator';
 
 export class SaveCronJobDto {
-  /** De quantos em quantos minutos (0 = desligada). */
+  /** De quantos em quantos minutos (0 = desligada); o registo diz os que a tarefa aceita. */
   @IsInt()
-  @IsIn([...CRON_INTERVALS])
+  @Min(0)
+  @Max(10080)
   intervalMinutes!: number;
+
+  /** As opções da tarefa (ex.: o limite do aviso de disco), validadas pelo registo. */
+  @IsOptional()
+  @IsObject()
+  options?: Record<string, unknown>;
 }

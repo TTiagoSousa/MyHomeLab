@@ -1,27 +1,60 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaConnectedAccountRepository } from 'src/connected-account/repositories/prisma/prisma-connected-account-repository';
 import { findConnectedAccount } from 'src/connected-account/helpers/findConnectedAccount';
 import { toHttpError } from 'src/integrations/app-integration.error';
-import { CronJob } from 'src/generated/prisma/client/client';
-import { CRON_INTERVALS, cronJob, cronJobsOf } from './cron-job.registry';
+import { CronJob, Prisma } from 'src/generated/prisma/client/client';
+import { DiskAlertService } from 'src/disk-alert/disk-alert.service';
+import {
+  CronJobContext,
+  CronJobDefinition,
+  CronJobTarget,
+  cronJob,
+  cronJobsFor,
+  intervalsOf,
+} from './cron-job.registry';
 import { runCronJob } from './helpers/runCronJob';
 
 export interface CronJobView {
   key: string;
   intervalMinutes: number;
   intervals: readonly number[];
+  options: unknown;
   nextRunAt: Date | null;
   lastRunAt: Date | null;
   lastOk: boolean | null;
   lastCount: number | null;
+  lastDetail: unknown;
   lastError: string | null;
   running: boolean;
 }
 
+/** De quem é a tarefa: uma app ligada ou um servidor. */
+export type CronScope =
+  { kind: 'account'; id: string } | { kind: 'server'; id: string };
+
+const where = (scope: CronScope) =>
+  scope.kind === 'account'
+    ? { accountId: scope.id }
+    : { serverConnectionId: scope.id };
+
+const uniqueOf = (scope: CronScope, key: string) =>
+  scope.kind === 'account'
+    ? { accountId_key: { accountId: scope.id, key } }
+    : { serverConnectionId_key: { serverConnectionId: scope.id, key } };
+
+const idOf = (row: CronJob) =>
+  `${row.accountId ?? row.serverConnectionId}:${row.key}`;
+
 /**
- * Os cron jobs das apps: as tarefas fixas do registo (cron-job.registry.ts) de cada conta,
- * com o intervalo escolhido. O scheduler corre as que chegaram à hora, uma de cada vez.
+ * Os cron jobs das apps e dos servidores: as tarefas fixas do registo (cron-job.registry.ts)
+ * de cada conta ou servidor, com o intervalo e as opções escolhidas. O scheduler corre as
+ * que chegaram à hora, uma de cada vez.
  */
 @Injectable()
 export class CronJobService {
@@ -31,67 +64,101 @@ export class CronJobService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly accounts: PrismaConnectedAccountRepository,
+    private readonly diskAlerts: DiskAlertService,
   ) {}
 
-  private view(key: string, accountId: string, row?: CronJob): CronJobView {
+  private view(definition: CronJobDefinition, row?: CronJob): CronJobView {
     return {
-      key,
+      key: definition.key,
       intervalMinutes: row?.intervalMinutes ?? 0,
-      intervals: CRON_INTERVALS,
+      intervals: intervalsOf(definition),
+      options: definition.options
+        ? definition.options(row?.options, false)
+        : null,
       nextRunAt: row?.nextRunAt ?? null,
       lastRunAt: row?.lastRunAt ?? null,
       lastOk: row?.lastOk ?? null,
       lastCount: row?.lastCount ?? null,
+      lastDetail: row?.lastDetail ?? null,
       lastError: row?.lastError ?? null,
-      running: this.running.has(`${accountId}:${key}`),
+      running: row ? this.running.has(idOf(row)) : false,
     };
   }
 
-  async list(userId: string, accountId: string): Promise<CronJobView[]> {
-    const account = await findConnectedAccount(
-      accountId,
-      userId,
-      this.accounts,
-    );
-    const rows = await this.prisma.cronJob.findMany({ where: { accountId } });
-    return cronJobsOf(account.provider).map((job) =>
+  /** O alvo do registo para este âmbito, depois de confirmar que é do utilizador. */
+  private async targetOf(
+    userId: string,
+    scope: CronScope,
+  ): Promise<CronJobTarget> {
+    if (scope.kind === 'account') {
+      const account = await findConnectedAccount(
+        scope.id,
+        userId,
+        this.accounts,
+      );
+      return { kind: 'account', provider: account.provider };
+    }
+    const server = await this.prisma.serverConnection.findFirst({
+      where: { id: scope.id, userId },
+      select: { id: true },
+    });
+    if (!server) throw new NotFoundException('Esse servidor já não existe.');
+    return { kind: 'server' };
+  }
+
+  async list(userId: string, scope: CronScope): Promise<CronJobView[]> {
+    const target = await this.targetOf(userId, scope);
+    const rows = await this.prisma.cronJob.findMany({ where: where(scope) });
+    return cronJobsFor(target).map((job) =>
       this.view(
-        job.key,
-        accountId,
+        job,
         rows.find((row) => row.key === job.key),
       ),
     );
   }
 
-  private async rowFor(userId: string, accountId: string, key: string) {
-    const account = await findConnectedAccount(
-      accountId,
-      userId,
-      this.accounts,
-    );
+  private async rowFor(userId: string, scope: CronScope, key: string) {
+    const target = await this.targetOf(userId, scope);
     const definition = cronJob(key);
-    if (!definition || definition.provider !== account.provider) {
-      throw new BadRequestException('Esta app não tem essa tarefa.');
+    if (!definition || !cronJobsFor(target).includes(definition)) {
+      throw new BadRequestException('Aqui não há essa tarefa.');
     }
     const row = await this.prisma.cronJob.upsert({
-      where: { accountId_key: { accountId, key } },
-      create: { userId, accountId, key },
+      where: uniqueOf(scope, key),
+      create: { userId, key, ...where(scope) },
       update: {},
     });
     return { definition, row };
   }
 
-  /** Muda o intervalo; ao ligar, a primeira vez é já no próximo minuto. */
+  private context(row: CronJob): Omit<CronJobContext, 'options'> {
+    return {
+      userId: row.userId,
+      accountId: row.accountId,
+      serverConnectionId: row.serverConnectionId,
+      accounts: this.accounts,
+      diskAlerts: this.diskAlerts,
+    };
+  }
+
+  /** Muda o intervalo (e as opções); ao ligar, a primeira vez é já no próximo minuto. */
   async save(
     userId: string,
-    accountId: string,
+    scope: CronScope,
     key: string,
-    intervalMinutes: number,
+    input: { intervalMinutes: number; options?: Record<string, unknown> },
   ): Promise<CronJobView> {
-    const { definition, row } = await this.rowFor(userId, accountId, key);
-    if (!row.intervalMinutes && intervalMinutes && definition.onEnable) {
+    const { definition, row } = await this.rowFor(userId, scope, key);
+    if (!intervalsOf(definition).includes(input.intervalMinutes)) {
+      throw new BadRequestException('Esse intervalo não existe nesta tarefa.');
+    }
+    const enabling = input.intervalMinutes > 0;
+    const options = definition.options
+      ? definition.options(input.options ?? row.options, enabling)
+      : null;
+    if (!row.intervalMinutes && enabling && definition.onEnable) {
       await definition
-        .onEnable({ accountId, userId, accounts: this.accounts })
+        .onEnable({ ...this.context(row), options })
         .catch((error: unknown) => {
           throw toHttpError(error);
         });
@@ -99,50 +166,48 @@ export class CronJobService {
     const saved = await this.prisma.cronJob.update({
       where: { id: row.id },
       data: {
-        intervalMinutes,
-        nextRunAt: intervalMinutes ? new Date() : null,
+        intervalMinutes: input.intervalMinutes,
+        options:
+          options === null ? Prisma.DbNull : (options as Prisma.InputJsonValue),
+        nextRunAt: enabling ? new Date() : null,
       },
     });
-    return this.view(key, accountId, saved);
+    return this.view(definition, saved);
   }
 
   /** Corre já (fora do intervalo); a próxima vez passa a contar a partir de agora. */
   async runNow(
     userId: string,
-    accountId: string,
+    scope: CronScope,
     key: string,
   ): Promise<CronJobView> {
-    const { row } = await this.rowFor(userId, accountId, key);
+    const { definition, row } = await this.rowFor(userId, scope, key);
+    if (definition.options) definition.options(row.options, true);
     const done = await this.runGuarded(row);
-    return this.view(key, accountId, done ?? row);
+    return this.view(definition, done ?? row);
   }
 
   private async runGuarded(row: CronJob): Promise<CronJob | null> {
-    const id = `${row.accountId}:${row.key}`;
+    const id = idOf(row);
     if (this.running.has(id)) return null;
     this.running.add(id);
     try {
-      return await runCronJob(
-        row,
-        {
-          accountId: row.accountId,
-          userId: row.userId,
-          accounts: this.accounts,
-        },
-        this.prisma,
-      );
+      return await runCronJob(row, this.context(row), this.prisma);
     } finally {
       this.running.delete(id);
     }
   }
 
-  /** As que chegaram à hora (contas ligadas e ativas), uma de cada vez. */
+  /** As que chegaram à hora (contas ligadas e ativas, ou servidores), uma de cada vez. */
   async runDue(): Promise<void> {
     const due = await this.prisma.cronJob.findMany({
       where: {
         intervalMinutes: { gt: 0 },
         nextRunAt: { lte: new Date() },
-        account: { disconnectedAt: null, isActive: true },
+        OR: [
+          { account: { disconnectedAt: null, isActive: true } },
+          { serverConnectionId: { not: null } },
+        ],
       },
       orderBy: { nextRunAt: 'asc' },
     });
@@ -150,7 +215,7 @@ export class CronJobService {
       const done = await this.runGuarded(row);
       if (done && !done.lastOk) {
         this.logger.warn(
-          `Cron job ${row.key} (${row.accountId}): ${done.lastError}`,
+          `Cron job ${row.key} (${idOf(row)}): ${done.lastError}`,
         );
       }
     }

@@ -98,6 +98,7 @@ model User {
   aiCredentials       AiCredential[]
   aiRouting           AiRouting?
   cronJobs            CronJob[]
+  diskAlerts          DiskAlert[]
   serverConnections   ServerConnection[]
   serverCommands      ServerCommand[]
   serviceMonitors     ServiceMonitor[]
@@ -492,31 +493,88 @@ model AiRouting {
   updatedAt DateTime @updatedAt
 }
 
-// Os cron jobs das apps: tarefas fixas, escritas em código (cron-job.registry.ts), que o
-// MyHomeLab corre sozinho sem IA. Cada conta tem uma linha por tarefa que já foi mexida;
-// as outras valem o que está no registo (desligadas).
+// Os cron jobs das apps e dos servidores: tarefas fixas, escritas em código
+// (cron-job.registry.ts), que o MyHomeLab corre sozinho sem IA. Cada conta (ou servidor) tem
+// uma linha por tarefa que já foi mexida; as outras valem o que está no registo (desligadas).
 model CronJob {
-  id              String           @id @default(uuid())
-  userId          String
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accountId       String
-  account         ConnectedAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  id                 String            @id @default(uuid())
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// O alvo: uma app ligada (accountId) ou um servidor (serverConnectionId).
+  accountId          String?
+  account            ConnectedAccount? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  serverConnectionId String?
+  serverConnection   ServerConnection? @relation(fields: [serverConnectionId], references: [id], onDelete: Cascade)
+  /// As opções da tarefa (ex.: o limite do aviso de disco), validadas pelo registo.
+  options            Json?
+  /// O pormenor da última vez (ex.: as VMs sem guest agent).
+  lastDetail         Json?
   /// A tarefa no registo, ex.: "adguard.refresh_blocklists".
-  key             String
+  key                String
   /// De quantos em quantos minutos corre (0 = desligada).
-  intervalMinutes Int              @default(0)
-  nextRunAt       DateTime?
-  lastRunAt       DateTime?
-  lastOk          Boolean?
+  intervalMinutes    Int               @default(0)
+  nextRunAt          DateTime?
+  lastRunAt          DateTime?
+  lastOk             Boolean?
   /// O número que a tarefa devolve (ex.: quantas listas mudaram).
-  lastCount       Int?
-  lastError       String?          @db.Text
+  lastCount          Int?
+  lastError          String?           @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([accountId, key])
+  @@unique([serverConnectionId, key])
   @@index([nextRunAt])
+}
+
+enum DiskAlertStatus {
+  OPEN // passou o limite; sem agente fica só o registo (Todo)
+  STUDY // o agente está a estudar (Study)
+  WAITING // precisa de uma resposta dele (Waiting for reply)
+  FIXING // o agente está a corrigir (In progress)
+  VERIFYING // o agente acabou; o MyHomeLab volta a medir (Verifying)
+  DONE
+  CANCELLED
+}
+
+// Um disco de um CT ou VM acima do limite do cron job "Aviso de disco quase cheio": uma
+// por disco enquanto está aberta, com a tarefa no quadro do servidor. O caminho (as colunas)
+// é do código; o agente estuda e corrige pelas ferramentas disk_alert_*.
+model DiskAlert {
+  id                 String           @id @default(uuid())
+  userId             String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serverConnectionId String
+  serverConnection   ServerConnection @relation(fields: [serverConnectionId], references: [id], onDelete: Cascade)
+  node               String
+  /// "lxc" ou "qemu".
+  guestKind          String
+  vmid               Int
+  guestName          String
+  /// O disco: "rootfs" num CT, o ponto de montagem numa VM ("/", "/var"…).
+  target             String
+  status             DiskAlertStatus  @default(OPEN)
+  usedBytes          Float
+  totalBytes         Float
+  /// A percentagem quando abriu (para o "antes" da verificação).
+  firstPercent       Float
+  percent            Float
+  boardTaskId        String?
+  agentKey           String?
+  study              String?          @db.Text
+  question           String?          @db.Text
+  /// Quando passou a esperar por ele: um "sim" depois disto aprova o que o agente pediu.
+  askedAt            DateTime?
+  /// Ele aprovou (mudou para In progress ou respondeu "sim"): o agente pode ir além dos limites automáticos.
+  approved           Boolean          @default(false)
+  measuredAt         DateTime
+  closedAt           DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serverConnectionId, status])
 }
 
 enum ServerKind {
@@ -550,6 +608,8 @@ model ServerConnection {
   accounts        ConnectedAccount[] @relation("AccountServer")
   hostUpdates     AppUpdate[]        @relation("HostUpdates")
   hostAttempts    UpdateAttempt[]    @relation("HostUpdateAttempts")
+  cronJobs        CronJob[]
+  diskAlerts      DiskAlert[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

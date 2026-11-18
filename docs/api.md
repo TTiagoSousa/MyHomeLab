@@ -101,6 +101,9 @@ there too.
 | GET | `/connected-account/:id/cron-jobs` | JWT | The app's cron jobs (fixed tasks in code, no AI) with interval, last and next run |
 | PUT | `/connected-account/:id/cron-jobs/:key` | JWT | `{ intervalMinutes }` (0 = off, 60, 360, 720, 1440, 10080) |
 | POST | `/connected-account/:id/cron-jobs/:key/run` | JWT | Run a cron job now |
+| GET | `/servers/:id/cron-jobs` | JWT | A Proxmox server's cron jobs (the disk almost full alert) |
+| PUT | `/servers/:id/cron-jobs/:key` | JWT | `{ intervalMinutes, options? }` — the disk alert takes 0, 1, 5, 15, 30, 60 or 1440 minutes and its options |
+| POST | `/servers/:id/cron-jobs/:key/run` | JWT | Run a server cron job now |
 | GET | `/connected-account/:id/gmail-stats` | JWT | Inbox counts (threads) |
 | GET | `/connected-account/:id/updates` | JWT | All tracked new versions of this app |
 | PATCH | `/connected-account/:id` | JWT | Run frequency, proposal settings, where the app runs (server / guest) |

@@ -1,29 +1,48 @@
 import { ConnectionProvider } from 'src/generated/prisma/client/client';
 import { PrismaConnectedAccountRepository } from 'src/connected-account/repositories/prisma/prisma-connected-account-repository';
 import { adguardClientFor } from 'src/connected-account/helpers/adguardClientFor';
+import {
+  DISK_ALERT_JOB,
+  DiskAlertService,
+} from 'src/disk-alert/disk-alert.service';
+import { diskAlertOptions } from 'src/disk-alert/disk-alert.options';
 
 /** Os intervalos que se podem escolher, em minutos (0 = desligada). */
 export const CRON_INTERVALS = [0, 60, 360, 720, 1440, 10080] as const;
 
+/** O alvo de uma tarefa: uma app ligada (pelo fornecedor) ou um servidor Proxmox. */
+export type CronJobTarget =
+  { kind: 'account'; provider: ConnectionProvider } | { kind: 'server' };
+
 export interface CronJobContext {
-  accountId: string;
   userId: string;
+  accountId: string | null;
+  serverConnectionId: string | null;
+  /** As opções já validadas pelo `options` da tarefa (ou vazias). */
+  options: unknown;
   accounts: PrismaConnectedAccountRepository;
+  diskAlerts: DiskAlertService;
 }
 
 export interface CronJobResult {
   /** O número que a página mostra (ex.: quantas listas mudaram). */
   count?: number;
+  /** O pormenor que a página pode mostrar (ex.: as VMs sem guest agent). */
+  detail?: unknown;
 }
 
 /**
- * Uma tarefa fixa de uma app, escrita aqui em código: o MyHomeLab corre-a sozinho, sem
- * IA, ao intervalo que o utilizador escolhe na página Cron jobs da conta. O título e a
+ * Uma tarefa fixa de uma app ou de um servidor, escrita aqui em código: o MyHomeLab corre-a
+ * sozinho, sem IA, ao intervalo que o utilizador escolhe na página Cron jobs. O título e a
  * explicação estão nas traduções do frontend (`addons:cronJobs.jobs.<chave>`).
  */
 export interface CronJobDefinition {
   key: string;
-  provider: ConnectionProvider;
+  target: CronJobTarget;
+  /** Os intervalos desta tarefa (sem isto, os CRON_INTERVALS). */
+  intervals?: readonly number[];
+  /** Valida as opções; `enabling` = vai ficar ligada (pode exigir campos). */
+  options?: (raw: unknown, enabling: boolean) => unknown;
   run: (context: CronJobContext) => Promise<CronJobResult>;
   /** Ao ligar (de desligada para um intervalo): ex.: desligar o intervalo próprio da app. */
   onEnable?: (context: CronJobContext) => Promise<void>;
@@ -35,7 +54,7 @@ export interface CronJobDefinition {
  */
 async function stopAdguardOwnInterval(context: CronJobContext) {
   const { client } = await adguardClientFor(
-    context.accountId,
+    context.accountId!,
     context.userId,
     context.accounts,
   );
@@ -46,7 +65,7 @@ async function stopAdguardOwnInterval(context: CronJobContext) {
 function adguardRefresh(allowlist: boolean) {
   return async (context: CronJobContext): Promise<CronJobResult> => {
     const { client } = await adguardClientFor(
-      context.accountId,
+      context.accountId!,
       context.userId,
       context.accounts,
     );
@@ -55,23 +74,49 @@ function adguardRefresh(allowlist: boolean) {
   };
 }
 
+const ADGUARD = {
+  kind: 'account',
+  provider: ConnectionProvider.ADGUARD,
+} as const;
+
 export const CRON_JOBS: CronJobDefinition[] = [
   {
     key: 'adguard.refresh_blocklists',
-    provider: ConnectionProvider.ADGUARD,
+    target: ADGUARD,
     run: adguardRefresh(false),
     onEnable: stopAdguardOwnInterval,
   },
   {
     key: 'adguard.refresh_allowlists',
-    provider: ConnectionProvider.ADGUARD,
+    target: ADGUARD,
     run: adguardRefresh(true),
     onEnable: stopAdguardOwnInterval,
   },
+  {
+    key: DISK_ALERT_JOB,
+    target: { kind: 'server' },
+    // 1 = "tempo real": o Proxmox não avisa sozinho, por isso pergunta-se de minuto a minuto.
+    intervals: [0, 1, 5, 15, 30, 60, 1440],
+    options: diskAlertOptions,
+    run: (context) =>
+      context.diskAlerts.check(
+        context.userId,
+        context.serverConnectionId!,
+        diskAlertOptions(context.options, true),
+      ),
+  },
 ];
 
-export const cronJobsOf = (provider: ConnectionProvider) =>
-  CRON_JOBS.filter((job) => job.provider === provider);
+export const cronJobsFor = (target: CronJobTarget) =>
+  CRON_JOBS.filter((job) =>
+    target.kind === 'server'
+      ? job.target.kind === 'server'
+      : job.target.kind === 'account' &&
+        job.target.provider === target.provider,
+  );
 
 export const cronJob = (key: string) =>
   CRON_JOBS.find((job) => job.key === key);
+
+export const intervalsOf = (job: CronJobDefinition) =>
+  job.intervals ?? CRON_INTERVALS;

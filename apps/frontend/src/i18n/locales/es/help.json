@@ -104,7 +104,8 @@
         "La salud de los discos (Servidores → Discos) lee el SMART a través de Proxmox y necesita el permiso Sys.Audit en el nodo — root@pam y el rol PVEAuditor ya lo tienen. Los discos detrás de controladoras RAID o en cajas USB pueden aparecer \"Sin SMART\".",
         "Para que los agentes trabajen en las máquinas (encender, apagar, snapshots, copias, recursos), el token necesita el rol PVEVMAdmin en Datacenter → Permissions (o un token de root@pam sin Privilege Separation). Con PVEAuditor solo leen.",
         "Comandos: en la página del servidor, en Comandos (SSH) → Activar comandos, MyHomeLab genera una clave y muestra la línea para pegar en la shell de Proxmox. Los comandos se ejecutan enseguida y quedan registrados; lo que el agente puede hacer (y lo que nunca hace sin tu sí) está en las reglas del servidor, en Documentos.",
-        "Mapa del servidor: es un documento vinculado al servidor con lo que hay en él (máquinas, discos, red). Pide a Jarvis que estudie el servidor y escriba el mapa — lo mantiene al día."
+        "Mapa del servidor: es un documento vinculado al servidor con lo que hay en él (máquinas, discos, red). Pide a Jarvis que estudie el servidor y escriba el mapa — lo mantiene al día.",
+        "Cron jobs (en la cabecera del servidor): el Aviso de disco casi lleno mira el disco de cada CT y VM (en las VMs necesita el QEMU guest agent). Eliges el límite, el intervalo (hasta tiempo real), qué máquinas, si avisa en Notificaciones y si el agente se encarga: cada aviso se convierte en una tarea en el tablero del servidor, el agente lo estudia y, dentro de los límites que pongas, limpia lo seguro o amplía el disco de un CT; en lo demás queda en Waiting for reply. Responde \"sí\" en la tarea o pásala a In progress para aprobar."
       ],
       "goTo": "Ir a Ajustes"
     },

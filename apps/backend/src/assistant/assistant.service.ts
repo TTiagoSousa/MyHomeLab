@@ -18,6 +18,7 @@ import { ServerCommandService } from 'src/server-connection/server-command.servi
 import { ServiceMonitorService } from 'src/service-monitor/service-monitor.service';
 import { BackupService } from 'src/backup/backup.service';
 import { DiskHealthService } from 'src/disk-health/disk-health.service';
+import { DiskAlertService } from 'src/disk-alert/disk-alert.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { AgentContext } from './agents/agent-context';
 import { ChatRole } from 'src/generated/prisma/client/client';
@@ -180,6 +181,7 @@ export class AssistantService {
     private readonly serverCommands: ServerCommandService,
     private readonly serviceMonitors: ServiceMonitorService,
     private readonly diskHealth: DiskHealthService,
+    private readonly diskAlerts: DiskAlertService,
     private readonly notifications: NotificationService,
     private readonly backups: BackupService,
     private readonly aiCredentials: AiCredentialService,
@@ -242,6 +244,7 @@ export class AssistantService {
       serverCommands: this.serverCommands,
       serviceMonitors: this.serviceMonitors,
       diskHealth: this.diskHealth,
+      diskAlerts: this.diskAlerts,
       notifications: this.notifications,
       backups: this.backups,
       docs: this.docs,

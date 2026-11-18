@@ -11,6 +11,7 @@ import { Apps_Detail_Header } from './appsShared';
 import App_Account from './App_Account';
 import App_Updates_Panel from './App_Updates_Panel';
 import App_Settings_Menu from './App_Settings_Menu';
+import App_Cron_Button from './App_Cron_Button';
 import App_Modal from './App_Modal';
 import Proxmox_Server_Commands from './Proxmox_Server_Commands';
 import Proxmox_Server_Packages from './Proxmox_Server_Packages';
@@ -85,6 +86,7 @@ const Proxmox_Server = () => {
               <button type='button' className='Apps_header_button compact' onClick={() => navigate(`/MyHomeLab/Apps/Proxmox/${serverId}/Connections`)}>
                 {t('apps.proxmox.connections.title')}
               </button>
+              <App_Cron_Button to={`/MyHomeLab/Apps/Proxmox/${serverId}/Cron`} />
               <App_Settings_Menu items={settingsItems} />
             </>
           )

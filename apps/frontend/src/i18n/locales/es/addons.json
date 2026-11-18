@@ -1856,6 +1856,10 @@
     "repeat": "Repetir",
     "intervals": {
       "0": "Desactivado",
+      "1": "Tiempo real (cada minuto)",
+      "5": "Cada 5 minutos",
+      "15": "Cada 15 minutos",
+      "30": "Cada 30 minutos",
       "60": "Cada hora",
       "360": "Cada 6 horas",
       "720": "Cada 12 horas",
@@ -1883,8 +1887,32 @@
         "description": "Descarga las listas de dominios permitidos de AdGuard y dice cuántas cambiaron.",
         "result_one": "{{count}} lista actualizada",
         "result_other": "{{count}} listas actualizadas"
+      },
+      "proxmox_disk_alert": {
+        "title": "Aviso de disco casi lleno",
+        "description": "Mira el disco de cada CT y VM; por encima del límite avisa y, si quieres, el agente se encarga en el tablero.",
+        "result_one": "{{count}} disco por encima del límite",
+        "result_other": "{{count}} discos por encima del límite"
       }
     },
-    "offShort": "Desactivado"
+    "offShort": "Desactivado",
+    "options": "Opciones",
+    "proxmoxNote": "El agente solo entra cuando un aviso lo pide.",
+    "diskAlert": {
+      "threshold": "Avisar cuando pase de (%)",
+      "guests": "Qué CTs y VMs",
+      "allGuests": "Todos",
+      "someGuests": "Solo estos",
+      "notify": "Enviar a Notificaciones",
+      "agent": "El agente se encarga, estudia y lo corrige",
+      "agentHint": "Cada aviso se convierte en una tarea en el tablero del servidor (Proyectos): el agente estudia qué ocupa el espacio y, dentro de los límites de abajo, limpia lo seguro o amplía el disco de un CT; en lo demás te pregunta (Waiting for reply).",
+      "agentKey": "Agente",
+      "agentAuto": "Automático (el primero con las herramientas)",
+      "maxDiskGb": "Máximo del disco sin preguntar (GB)",
+      "stepGb": "Ampliar cada vez (GB)",
+      "minStorageFreeGb": "Mínimo libre en el storage (GB)",
+      "limitsNote": "En una VM el agente siempre pregunta antes de ampliar. El mínimo libre en el storage vale siempre, incluso cuando lo apruebas.",
+      "noAgent": "Sin QEMU guest agent, no se sabe el disco por dentro de: {{guests}}. Instala qemu-guest-agent en la VM y actívalo en Options → QEMU Guest Agent."
+    }
   }
 }

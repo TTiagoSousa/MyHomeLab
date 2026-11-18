@@ -22,7 +22,13 @@ const prismaMock = () => {
   };
 };
 
-const context = { accountId: 'acc-1', userId: 'user-1', accounts: {} as never };
+const context = {
+  accountId: 'acc-1',
+  serverConnectionId: null,
+  userId: 'user-1',
+  accounts: {} as never,
+  diskAlerts: {} as never,
+};
 
 describe('runCronJob', () => {
   const job = CRON_JOBS[0];

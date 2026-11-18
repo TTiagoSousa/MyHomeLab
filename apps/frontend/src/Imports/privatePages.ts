@@ -42,6 +42,7 @@ export { default as AdguardAccount } from '../Pages/Private/Apps/Adguard_Account
 export { default as AdguardCronJobs } from '../Pages/Private/Apps/Adguard_Cron_Jobs';
 export { default as ProxmoxServers } from '../Pages/Private/Apps/Proxmox_Servers';
 export { default as ProxmoxServer } from '../Pages/Private/Apps/Proxmox_Server';
+export { default as ProxmoxCronJobs } from '../Pages/Private/Apps/Proxmox_Cron_Jobs';
 export { default as ProxmoxConnections } from '../Pages/Private/Apps/Proxmox_Connections';
 export { default as LegacyEmailRedirect } from '../Pages/Private/Email/Legacy_Email_Redirect';
 export { default as EmailRules } from '../Pages/Private/Email/EmailRules/EmailRules';

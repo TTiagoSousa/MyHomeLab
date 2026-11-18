@@ -144,6 +144,16 @@ and tools.
   every 6 or 12 hours, daily, weekly). A scheduler checks every minute and runs the due ones one at
   a time, recording the result. AdGuard has two: refresh the blocklists and refresh the allowlists;
   turning one on sets AdGuard's own refresh interval to "never" so lists are not fetched twice.
+  Proxmox servers have the **disk almost full alert**: it reads each running CT's root disk and,
+  through the QEMU guest agent, each VM's filesystems (VMs without the agent are listed as
+  unknown). Everything is the user's choice: limit, interval (down to every minute), which
+  machines, Notifications, and whether an agent handles it. Each alert is a task on the server's
+  board, and the path is code (`disk-alert/`): Todo → Study (the agent investigates and saves a
+  plan with `disk_alert_save_study`) → In progress when the plan fits the user's limits (safe
+  cleanup, or growing a CT disk up to a maximum, a step at a time, never leaving the storage below
+  a minimum free) or Waiting for reply otherwise (always for VMs) → Verifying (MyHomeLab measures
+  again) → Done. A "yes" on the task or moving it to In progress approves; an alert closes by itself
+  when the disk drops below the limit.
 - **Claude Code turns**: every Claude Code run starts `claude` processes (hundreds of MB each),
   so each user runs at most N jobs at once in Claude Code (Settings → AI, 1–6, default 2) and
   the rest wait their turn. Only the top of a chain takes a turn (or the first Claude Code run

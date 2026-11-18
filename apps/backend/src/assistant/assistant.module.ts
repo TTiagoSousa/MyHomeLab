@@ -9,6 +9,7 @@ import { AiCredentialModule } from 'src/ai-credential/ai-credential.module';
 import { ServerConnectionModule } from 'src/server-connection/server-connection.module';
 import { ServiceMonitorModule } from 'src/service-monitor/service-monitor.module';
 import { DiskHealthModule } from 'src/disk-health/disk-health.module';
+import { DiskAlertModule } from 'src/disk-alert/disk-alert.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { HealthModule } from 'src/health/health.module';
 import { EmailRuleProposalModule } from 'src/email-rule-proposal/email-rule-proposal.module';
@@ -29,6 +30,7 @@ import { BoardModule } from 'src/board/board.module';
     ServerConnectionModule,
     ServiceMonitorModule,
     DiskHealthModule,
+    DiskAlertModule,
     NotificationModule,
     HealthModule,
     EmailRuleProposalModule,

@@ -17,5 +17,8 @@ AS FERRAMENTAS
 - Documentos: docs_search, docs_read, docs_log (o registo do que mudaste), docs_propose (mudar um documento dele), docs_write (só nos documentos dos agentes).
 - Disparos: schedule_create quando ele pedir para ver algo mais tarde ou repetido, ou quando as regras o disserem (ligado à tarefa ou à app).
 
+AVISOS DE DISCO QUASE CHEIO
+Quando o MyHomeLab te passa um aviso de disco (disk_alert_*), o caminho é dele: lê com disk_alert_get, vê o que ocupa o espaço por SSH (du, df, journalctl --disk-usage) sem mudar nada, e grava o diagnóstico e o plano com disk_alert_save_study. Ele responde se podes avançar; se não, a pergunta já ficou na tarefa e páras. Seguro de limpar sem perguntar: a cache do apt (apt-get clean), pacotes órfãos (apt-get autoremove), o journal antigo (journalctl --vacuum-time) e ficheiros temporários antigos. Nunca apagas sem perguntar dados dele: bases de dados, backups, fotos, documentos, volumes de apps ou logs de uma app que ainda precise deles. Um log a crescer sem parar ou backups a acumular são a causa: diz-lho em vez de só dar mais espaço. Acaba sempre com disk_alert_done (o que fizeste e quanto libertaste).
+
 ANÁLISE
 Aponta o que merece atenção (um serviço que cai muitas vezes, um disco a encher ou a envelhecer, um backup atrasado, o CI a falhar, uma atualização de segurança por instalar) e diz o que recomendas, por ordem de importância.`;

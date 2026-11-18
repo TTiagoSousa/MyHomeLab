@@ -154,6 +154,15 @@ export interface ProxmoxStorage {
   active?: number;
 }
 
+/** Um sistema de ficheiros dentro de uma VM, pelo QEMU guest agent (agent/get-fsinfo). */
+export interface ProxmoxGuestFs {
+  name: string;
+  mountpoint: string;
+  type: string;
+  'total-bytes'?: number;
+  'used-bytes'?: number;
+}
+
 export type GuestPowerAction =
   'start' | 'shutdown' | 'stop' | 'reboot' | 'suspend' | 'resume';
 
@@ -172,6 +181,8 @@ export interface ProxmoxClient {
   listGuests(): Promise<ProxmoxGuestRef[]>;
   findGuest(name: string): Promise<ProxmoxGuestRef | null>;
   getGuestStatus(ref: ProxmoxGuestRef): Promise<ProxmoxGuestStatus>;
+  /** Os discos dentro de uma VM, pelo guest agent (sem agente → erro). */
+  guestFsInfo(ref: ProxmoxGuestRef): Promise<ProxmoxGuestFs[]>;
   clusterResources(): Promise<ProxmoxResource[]>;
   nodeStatus(node: string): Promise<ProxmoxNodeStatus>;
   nodeHistory(
@@ -393,6 +404,12 @@ export function createProxmoxClient(conn: ProxmoxConnection): ProxmoxClient {
         null
       );
     },
+    guestFsInfo: async (ref) =>
+      (
+        await get<{ result?: ProxmoxGuestFs[] }>(
+          `/nodes/${ref.node}/qemu/${ref.guest.vmid}/agent/get-fsinfo`,
+        )
+      ).result ?? [],
     getGuestStatus: (ref) =>
       get<ProxmoxGuestStatus>(
         `/nodes/${ref.node}/${ref.kind}/${ref.guest.vmid}/status/current`,

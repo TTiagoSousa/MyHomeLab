@@ -1856,6 +1856,10 @@
     "repeat": "Repeat",
     "intervals": {
       "0": "Off",
+      "1": "Real time (every minute)",
+      "5": "Every 5 minutes",
+      "15": "Every 15 minutes",
+      "30": "Every 30 minutes",
       "60": "Every hour",
       "360": "Every 6 hours",
       "720": "Every 12 hours",
@@ -1883,8 +1887,32 @@
         "description": "Downloads AdGuard's allowed domain lists and says how many changed.",
         "result_one": "{{count}} list updated",
         "result_other": "{{count}} lists updated"
+      },
+      "proxmox_disk_alert": {
+        "title": "Disk almost full alert",
+        "description": "Checks the disk of each CT and VM; above the limit it alerts and, if you want, the agent handles it on the board.",
+        "result_one": "{{count}} disk above the limit",
+        "result_other": "{{count}} disks above the limit"
       }
     },
-    "offShort": "Off"
+    "offShort": "Off",
+    "options": "Options",
+    "proxmoxNote": "The agent only steps in when an alert asks for it.",
+    "diskAlert": {
+      "threshold": "Alert when above (%)",
+      "guests": "Which CTs and VMs",
+      "allGuests": "All",
+      "someGuests": "Only these",
+      "notify": "Send to Notifications",
+      "agent": "The agent picks it up, studies and fixes it",
+      "agentHint": "Each alert becomes a task on the server board (Projects): the agent studies what uses the space and, within the limits below, cleans what is safe or grows a CT disk; for anything else it asks you (Waiting for reply).",
+      "agentKey": "Agent",
+      "agentAuto": "Automatic (the first with the tools)",
+      "maxDiskGb": "Disk maximum without asking (GB)",
+      "stepGb": "Grow each time (GB)",
+      "minStorageFreeGb": "Minimum free on the storage (GB)",
+      "limitsNote": "On a VM the agent always asks before growing. The storage free minimum always applies, even when you approve.",
+      "noAgent": "Without the QEMU guest agent, the disk inside is unknown for: {{guests}}. Install qemu-guest-agent in the VM and enable it in Options → QEMU Guest Agent."
+    }
   }
 }

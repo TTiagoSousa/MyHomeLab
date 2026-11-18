@@ -11,7 +11,7 @@ const Adguard_Cron_Jobs = () => {
 
   return (
     <App_Cron_Jobs
-      accountId={accountId}
+      scope={{ kind: 'account', id: accountId }}
       backTo={`/MyHomeLab/Apps/AdGuard/${accountId}`}
       backLabel={account?.displayName ?? account?.appHost ?? 'AdGuard'}
       note={t('cronJobs.adguardNote')}
