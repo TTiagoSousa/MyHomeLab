@@ -29,6 +29,9 @@ import { CreateImmichAccountDto } from './dto/create-immich-account.dto';
 import { createPaperlessAccount } from './helpers/createPaperlessAccount';
 import { refreshPaperlessAccount } from './helpers/refreshPaperlessAccount';
 import { CreatePaperlessAccountDto } from './dto/create-paperless-account.dto';
+import { CreateStirlingAccountDto } from './dto/create-stirling-account.dto';
+import { createStirlingAccount } from './helpers/createStirlingAccount';
+import { refreshStirlingAccount } from './helpers/refreshStirlingAccount';
 import { createSolidtimeAccount } from './helpers/createSolidtimeAccount';
 import { refreshSolidtimeAccount } from './helpers/refreshSolidtimeAccount';
 import { CreateSolidtimeAccountDto } from './dto/create-solidtime-account.dto';
@@ -405,6 +408,41 @@ export class ConnectedAccountService {
     );
     void this.checkVersion(account);
     return account;
+  }
+
+  async createStirling(dto: CreateStirlingAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    const account = await this.afterConnect(
+      await createStirlingAccount(dto, userId, this.connectedAccountRepository),
+      dto,
+    );
+    void this.checkVersion(account);
+    return account;
+  }
+
+  /** O estado do Stirling-PDF (versão, operações, administrador, MCP) e a versão nova. */
+  async stirlingStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshStirlingAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
   }
 
   async createSolidtime(dto: CreateSolidtimeAccountDto, userId: string) {

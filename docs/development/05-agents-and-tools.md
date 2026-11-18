@@ -96,7 +96,7 @@ export function buildTodoTools(context: AgentContext): AgentTool[] {
 
 Toolsets: `email`, `server`, `serverControl`, `serverShell`, `health`, `forgejo`,
 `homeAssistant`, `adguard`, `nextcloud`, `docs`, `updates`, `schedules`, `board`, `todos`,
-`team` (plus `trek`, `opengym`, `gametracker`, `immich`, `paperless`, `solidtime` and others). `buildToolbox(names, context)` builds only the
+`team` (plus `trek`, `opengym`, `gametracker`, `immich`, `paperless`, `solidtime`, `stirling` and others). `buildToolbox(names, context)` builds only the
 toolsets an agent uses.
 
 **TREK** reaches the agent one of two ways, by AI provider: with **Claude Code** the agent gets
@@ -143,6 +143,15 @@ task/tag…) and the catalogue (read); start and stop the timer, log or change a
 change a project, client, task or tag (write). It never deletes. Times are taken and shown in the
 user's time zone (from `/users/me`) and sent in UTC. The **Timekeeper** template (`timekeeper`) has
 them. solidtime does not report its installed version, so it has no new-version alerts.
+
+**Stirling-PDF** has an official MCP (`/mcp`, `X-API-KEY`), but it is in the paid (proprietary) part and
+only answers when the server has `mcp.enabled`. So the base is its REST API: the `stirling_*` tools
+read the operations from Stirling's own OpenAPI (`/v1/api-docs`), run any of them as multipart with
+files taken from Paperless (`paperless_id`), Nextcloud (`nextcloud_path`) or an earlier result (kept 2
+hours, for chaining), and save the output as a new Paperless document or Nextcloud file — never over the
+original. Admin keys also read and change the server settings (`/api/v1/admin/settings`, preview first,
+secrets refused). On Claude Code, when the MCP answers, it is also connected directly
+(`stirlingDirect`, `mcp__stirling__*`, read-only tools only outside chat or with read access).
 
 ### Permissions (three layers)
 

@@ -309,6 +309,22 @@
       ],
       "goTo": "Go to Connected apps"
     },
+    "stirling": {
+      "title": "Stirling-PDF",
+      "summary": "The PDF tools: the Archivist compresses, OCRs, merges, splits, rotates, converts, protects and signs PDFs from Paperless and Nextcloud, and looks after the Stirling settings.",
+      "steps": [
+        "In Stirling-PDF (with login on), open Account settings → API key → show or generate. Use an admin's for the agents to see and change the server settings.",
+        "In MyHomeLab, go to Connected apps → Stirling-PDF → Connect Stirling-PDF and enter the address and the key.",
+        "The Archivist already gets the Stirling-PDF tools. For another agent, pick them in Assistant → Workflow."
+      ],
+      "notes": [
+        "Ask, for example: \"Compress invoice 123 from Paperless\", \"Merge the PDFs in the Contracts folder on Nextcloud into one\", \"OCR document 45 and save it to Paperless\".",
+        "The result always goes as a new file (in Paperless or a Nextcloud folder); the original is never replaced or deleted. You can chain operations: each result is kept for 2 hours.",
+        "The operations come from Stirling-PDF itself (about 60: compress, OCR, merge, split, convert, watermark, protect, sign, redact…). Those disabled on the server do not show up.",
+        "If Stirling has the MCP on (mcp.enabled, part of the paid edition), Claude Code also connects to it directly. Changing server settings: the agent shows the before and after first, and changes apply after a restart."
+      ],
+      "goTo": "Go to Connected apps"
+    },
     "instanceBackup": {
       "title": "MyHomeLab backup",
       "summary": "Everything in MyHomeLab in a password-protected zip: documents, agents, conversations, connected apps and logins. To keep, move to another server or restore.",
@@ -418,7 +434,7 @@
     },
     "apps": {
       "title": "Connected apps",
-      "summary": "The accounts MyHomeLab and Jarvis use: Gmail, Google Tasks, Proxmox, Nextcloud, Forgejo, Home Assistant, AdGuard, TREK, openGym, GamesTracker, Immich, Paperless and solidtime.",
+      "summary": "The accounts MyHomeLab and Jarvis use: Gmail, Google Tasks, Proxmox, Nextcloud, Forgejo, Home Assistant, AdGuard, TREK, openGym, GamesTracker, Immich, Paperless and solidtime, Stirling-PDF.",
       "steps": [
         "Pick the app and click Connect. Each one asks for the address and a key or app password.",
         "Open the account to see the summary: status, version and what changed.",

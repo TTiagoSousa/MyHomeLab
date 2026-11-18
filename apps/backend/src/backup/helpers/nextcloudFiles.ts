@@ -327,9 +327,34 @@ export function createNextcloudFiles(
       .filter((file) => file.name);
   }
 
+  /** O conteúdo de um ficheiro. */
+  async function download(userId: string, path: string) {
+    const response = await request<ArrayBuffer>({
+      method: 'GET',
+      url: davPath(userId, path),
+      responseType: 'arraybuffer',
+      timeout: PUT_TIMEOUT_MS,
+    });
+    return {
+      data: Buffer.from(response.data),
+      contentType: String(
+        response.headers['content-type'] ?? 'application/octet-stream',
+      ).split(';')[0],
+    };
+  }
+
   async function remove(userId: string, path: string) {
     await request({ method: 'DELETE', url: davPath(userId, path) }, [404]);
   }
 
-  return { account, ensureFolder, isFolder, upload, list, remove, webdavUrl };
+  return {
+    account,
+    ensureFolder,
+    isFolder,
+    upload,
+    download,
+    list,
+    remove,
+    webdavUrl,
+  };
 }

@@ -25,6 +25,7 @@ import { CreateOpenGymAccountDto } from './dto/create-opengym-account.dto';
 import { CreateGameTrackerAccountDto } from './dto/create-gametracker-account.dto';
 import { CreateImmichAccountDto } from './dto/create-immich-account.dto';
 import { CreatePaperlessAccountDto } from './dto/create-paperless-account.dto';
+import { CreateStirlingAccountDto } from './dto/create-stirling-account.dto';
 import { CreateSolidtimeAccountDto } from './dto/create-solidtime-account.dto';
 import { CreateTrekAccountDto } from './dto/create-trek-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
@@ -170,6 +171,25 @@ export class ConnectedAccountController {
     @Req() req: Request & { user: JwtPayload },
   ) {
     return this.connectedAccountService.paperlessStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('stirling')
+  connectStirling(
+    @Body() dto: CreateStirlingAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createStirling(dto, req.user.id);
+  }
+
+  /** O estado do Stirling-PDF agora (versão, operações, administrador, MCP). */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/stirling-status')
+  stirlingStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.stirlingStatus(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -12,5 +12,8 @@ paperless_update_document arruma um documento (título, etiquetas, correspondent
 O SERVIDOR
 paperless_tasks mostra o que falhou ao processar e porquê. paperless_settings lê a configuração (OCR, língua, código de barras…); paperless_set_settings muda-a: primeiro sem confirm, mostra-lhe o antes → depois e só com o sim dele chama com confirm: true. Os fluxos de trabalho e as regras do correio (paperless_automations) só os mostras.
 
+O STIRLING-PDF (SE ESTIVER LIGADO)
+As ferramentas de PDF: comprimir, OCR, juntar, dividir, rodar, converter, marca de água, proteger, assinar, redigir e o resto que o servidor tiver. stirling_operations encontra a operação, stirling_describe dá os parâmetros e stirling_run corre-a com os ficheiros do Paperless (paperless_id), do Nextcloud (nextcloud_path) ou um resultado anterior (result, para encadear). O resultado vai como ficheiro novo (save: paperless ou nextcloud); o original nunca se substitui nem se apaga. stirling_settings lê as definições do servidor; stirling_set_settings muda-as primeiro sem confirm e só com o sim dele com confirm: true.
+
 NO FIM
 Diz o que mudaste, documento a documento (com o antes), e o que ele tem de decidir.`;

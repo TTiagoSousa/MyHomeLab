@@ -53,7 +53,8 @@
     "gameTrackerConnected": "GamesTracker conectado",
     "immichConnected": "Immich conectado",
     "paperlessConnected": "Paperless conectado",
-    "solidtimeConnected": "solidtime conectado"
+    "solidtimeConnected": "solidtime conectado",
+    "stirlingConnected": "Stirling-PDF conectado"
   },
   "backups": {
     "title": "Copias de seguridad",
@@ -1742,6 +1743,109 @@
           "import": "Importa datos de otro servicio (Toggl, Clockify…)"
         }
       }
+    },
+    "stirling": {
+      "title": "Stirling-PDF",
+      "description": "Las herramientas de PDF: el Archivista comprime, hace OCR, une, divide, gira, convierte, protege y firma los PDFs de Paperless y Nextcloud, y cuida los ajustes de Stirling.",
+      "connect": "Conectar Stirling-PDF",
+      "agentsNote": "El Archivista usa Stirling-PDF (añádelo en Asistente → Workflow). Para otro agente, elige sus herramientas en el Workflow.",
+      "notFound": "Este Stirling-PDF no existe o ya se desconectó.",
+      "accountDescription": "La conexión a Stirling-PDF, con la clave de API. La clave actúa como la cuenta que la tiene: la de un administrador llega también a los ajustes del servidor. Si el servidor tiene el MCP activado, Claude Code también se conecta a él.",
+      "credentialsHint": "La dirección y la clave de API. Para cambiar la clave, conecta otra vez con una nueva.",
+      "tools": "Operaciones",
+      "operationsValue_one": "{{count}} operación",
+      "operationsValue_other": "{{count}} operaciones",
+      "disabledHint_one": "{{count}} desactivada en el servidor",
+      "disabledHint_other": "{{count}} desactivadas en el servidor",
+      "mcp": "MCP",
+      "mcpOn": "Activado",
+      "mcpOff": "Desactivado",
+      "mcpHint_one": "{{count}} herramienta; Claude Code se conecta a él",
+      "mcpHint_other": "{{count}} herramientas; Claude Code se conecta a él",
+      "mcpOffHint": "Se activa en el servidor (mcp.enabled); es de la parte de pago de Stirling",
+      "key": "Clave",
+      "keyAdmin": "De un administrador",
+      "keyUser": "De un usuario",
+      "keyHint": "Lo que permite cada acceso está en Conexiones.",
+      "notAdmin": "La clave no es de un administrador: los ajustes de Stirling-PDF no se ven ni se cambian con ella (las operaciones funcionan).",
+      "replaceKey": "Cambiar la clave",
+      "updateChip": "Nueva {{version}}",
+      "backup": {
+        "description": "Guarda los ajustes de Stirling-PDF en un destino, con la frecuencia que elijas.",
+        "included": "Entra un JSON con los ajustes del servidor (los secretos ocultos por el propio Stirling) y las operaciones desactivadas. Necesita la clave de un administrador.",
+        "notIncluded": "Stirling-PDF no guarda documentos: los PDFs tratados quedan donde se guardaron (Paperless o Nextcloud).",
+        "restore": "Para recuperar: vuelve a poner los ajustes en los ajustes del servidor, o por Jarvis (stirling_set_settings)."
+      },
+      "connections": {
+        "title": "Conexiones",
+        "permissionsTitle": "Lo que permite la conexión",
+        "permissionsAdmin": "La clave actúa como la cuenta que la tiene. Esta es de administrador: ejecuta todas las operaciones y lee y cambia los ajustes del servidor.",
+        "permissionsNotAdmin": "La clave actúa como la cuenta que la tiene. Esta no es de administrador: las operaciones funcionan, los ajustes del servidor no.",
+        "mcpOn_one": "MCP: activado, con {{count}} herramienta.",
+        "mcpOn_other": "MCP: activado, con {{count}} herramientas.",
+        "mcpOff": "MCP: no está activado en este servidor.",
+        "callsTitle": "Llamadas a la API de Stirling-PDF",
+        "callsSummary": "Lo que se puede pedir a Stirling-PDF ({{base}}) y a su GitHub (las versiones): lo que MyHomeLab ya usa y lo que aún no.",
+        "filterLabel": "Mostrar llamadas",
+        "filter": {
+          "all": "Todas ({{count}})",
+          "used": "Usadas ({{count}})",
+          "possible": "Posibles ({{count}})"
+        },
+        "table": {
+          "method": "Método",
+          "path": "Ruta",
+          "description": "Qué hace",
+          "usedBy": "Quién la usa",
+          "access": "Acceso",
+          "status": "Estado",
+          "allows": "Qué permite",
+          "needed": "MyHomeLab usa",
+          "account": "Esta clave"
+        },
+        "access": {
+          "user": "Cuenta (clave de API)",
+          "admin": "Administrador",
+          "github": "GitHub de Stirling-PDF"
+        },
+        "allows": {
+          "user": "Todas las operaciones de PDF, su lista y el MCP",
+          "admin": "Los ajustes del servidor (sistema, interfaz, seguridad, operaciones activadas)",
+          "github": "Las versiones publicadas, sin login"
+        },
+        "need": {
+          "read": "Lectura",
+          "write": "Lectura y escritura",
+          "none": "No usa"
+        },
+        "granted": "La tiene",
+        "notGranted": "No la tiene",
+        "notUsed": "Aún no usada",
+        "available": "Disponible",
+        "needsAdmin": "Necesita administrador",
+        "usedBy": {
+          "connect": "Conectar",
+          "status": "Estado de la app",
+          "updates": "Actualizaciones",
+          "backups": "Backups",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "status": "El estado y la versión",
+          "apiDocs": "Todas las operaciones y sus parámetros (OpenAPI)",
+          "endpoints": "Las operaciones desactivadas en el servidor",
+          "operation": "Ejecuta una operación (comprimir, OCR, unir, dividir, convertir…) con los ficheros",
+          "settings": "Los ajustes del servidor (secretos ocultos)",
+          "settingsDelta": "Los cambios que esperan un reinicio",
+          "settingsUpdate": "Cambia ajustes del servidor (valen después de reiniciar)",
+          "mcp": "El MCP de Stirling (cuando está activado)",
+          "releases": "Las versiones publicadas, con las notas",
+          "pipeline": "Ejecuta varias operaciones seguidas (pipeline)",
+          "restart": "Reinicia Stirling-PDF",
+          "users": "Las cuentas de Stirling",
+          "audit": "El registro de auditoría"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1914,5 +2018,15 @@
       "limitsNote": "En una VM el agente siempre pregunta antes de ampliar. El mínimo libre en el storage vale siempre, incluso cuando lo apruebas.",
       "noAgent": "Sin QEMU guest agent, no se sabe el disco por dentro de: {{guests}}. Instala qemu-guest-agent en la VM y actívalo en Options → QEMU Guest Agent."
     }
+  },
+  "stirlingModal": {
+    "title": "Conectar Stirling-PDF",
+    "name": "Nombre (opcional)",
+    "namePlaceholder": "Ej: PDFs",
+    "url": "Dirección",
+    "urlPlaceholder": "https://pdf.ejemplo.com",
+    "apiKey": "Clave de API",
+    "apiKeyHint": "En Stirling-PDF: Ajustes de la cuenta → Clave de API → mostrar o generar (necesita el login activado). Para que los agentes cambien los ajustes, usa la de un administrador. Se guarda cifrada en MyHomeLab.",
+    "connect": "Conectar"
   }
 }

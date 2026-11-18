@@ -4,7 +4,7 @@ import http from "../../Service/httpService";
 import i18n from "../../i18n";
 import type { RunFrequency } from "@myhomelab/shared";
 
-export type ConnectionProvider = 'GMAIL' | 'OUTLOOK' | 'IMAP' | 'NEXTCLOUD' | 'FORGEJO' | 'TREK' | 'HOME_ASSISTANT' | 'ADGUARD' | 'GOOGLE_TASKS' | 'OPENGYM' | 'GAMETRACKER' | 'IMMICH' | 'PAPERLESS' | 'SOLIDTIME';
+export type ConnectionProvider = 'GMAIL' | 'OUTLOOK' | 'IMAP' | 'NEXTCLOUD' | 'FORGEJO' | 'TREK' | 'HOME_ASSISTANT' | 'ADGUARD' | 'GOOGLE_TASKS' | 'OPENGYM' | 'GAMETRACKER' | 'IMMICH' | 'PAPERLESS' | 'SOLIDTIME' | 'STIRLING_PDF';
 export type { RunFrequency } from "@myhomelab/shared";
 
 export interface ConnectedAccount {

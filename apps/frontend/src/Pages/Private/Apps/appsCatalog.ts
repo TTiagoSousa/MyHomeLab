@@ -23,6 +23,7 @@ export const APP_KINDS: Record<App_Kind, App_Kind_Info> = {
   IMMICH: { icon: Icon.Immich, titleKey: 'apps.immich.title', listPath: '/MyHomeLab/Apps/Immich', hosting: 'selfHosted' },
   PAPERLESS: { icon: Icon.Paperless, titleKey: 'apps.paperless.title', listPath: '/MyHomeLab/Apps/Paperless', hosting: 'selfHosted' },
   SOLIDTIME: { icon: Icon.Solidtime, titleKey: 'apps.solidtime.title', listPath: '/MyHomeLab/Apps/Solidtime', hosting: 'selfHosted' },
+  STIRLING_PDF: { icon: Icon.StirlingPdf, titleKey: 'apps.stirling.title', listPath: '/MyHomeLab/Apps/StirlingPDF', hosting: 'selfHosted' },
   GOOGLE_TASKS: { icon: Icon.GoogleTasks, titleKey: 'apps.googleTasks.title', listPath: '/MyHomeLab/Apps/GoogleTasks', hosting: 'cloud' },
   GMAIL: { icon: Icon.Gmail, titleKey: 'apps.gmail.title', listPath: '/MyHomeLab/Apps/Gmail', hosting: 'cloud' },
   OUTLOOK: { icon: Icon.Mail, titleKey: 'apps.types.OUTLOOK', hosting: 'cloud' },

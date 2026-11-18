@@ -231,6 +231,10 @@
         "trek": {
           "name": "TREK (trips)",
           "description": "See the trips and everything in them through TREK MCP. Changing means creating, changing and (with confirmation) deleting in TREK, within the MCP client scopes."
+        },
+        "stirling": {
+          "name": "Stirling-PDF (PDFs)",
+          "description": "See the operations, their parameters and the server settings. Changing means running operations (compress, OCR, merge, split, convert, protect…) on files from Paperless or Nextcloud and saving the result as a new file, and changing the settings (it shows what changes first). It never replaces or deletes the original."
         }
       },
       "layers": "There are three places, from the widest to the finest: each agent's tools (Workflow), these areas (for every agent) and each connected app or server (on its page → Agents, per agent). An agent only does what all three allow."
@@ -294,7 +298,8 @@
       "immich": "Immich",
       "paperless": "Paperless",
       "solidtime": "solidtime",
-      "trek": "TREK"
+      "trek": "TREK",
+      "stirling": "Stirling-PDF"
     },
     "editor": {
       "name": "Name",

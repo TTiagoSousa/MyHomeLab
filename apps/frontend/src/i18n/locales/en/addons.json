@@ -53,7 +53,8 @@
     "gameTrackerConnected": "GamesTracker connected",
     "immichConnected": "Immich connected",
     "paperlessConnected": "Paperless connected",
-    "solidtimeConnected": "solidtime connected"
+    "solidtimeConnected": "solidtime connected",
+    "stirlingConnected": "Stirling-PDF connected"
   },
   "backups": {
     "title": "Backups",
@@ -1742,6 +1743,109 @@
           "import": "Imports data from another service (Toggl, Clockify…)"
         }
       }
+    },
+    "stirling": {
+      "title": "Stirling-PDF",
+      "description": "The PDF tools: the Archivist compresses, OCRs, merges, splits, rotates, converts, protects and signs PDFs from Paperless and Nextcloud, and looks after the Stirling settings.",
+      "connect": "Connect Stirling-PDF",
+      "agentsNote": "The Archivist uses Stirling-PDF (add it in Assistant → Workflow). For another agent, pick its tools in the Workflow.",
+      "notFound": "This Stirling-PDF does not exist or was disconnected.",
+      "accountDescription": "The connection to Stirling-PDF, with the API key. The key acts as the account that owns it: an admin key also reaches the server settings. If the server has the MCP on, Claude Code connects to it too.",
+      "credentialsHint": "The address and the API key. To change the key, connect again with a new one.",
+      "tools": "Operations",
+      "operationsValue_one": "{{count}} operation",
+      "operationsValue_other": "{{count}} operations",
+      "disabledHint_one": "{{count}} disabled on the server",
+      "disabledHint_other": "{{count}} disabled on the server",
+      "mcp": "MCP",
+      "mcpOn": "On",
+      "mcpOff": "Off",
+      "mcpHint_one": "{{count}} tool; Claude Code connects to it",
+      "mcpHint_other": "{{count}} tools; Claude Code connects to it",
+      "mcpOffHint": "Turned on on the server (mcp.enabled); part of the paid Stirling",
+      "key": "Key",
+      "keyAdmin": "An admin's",
+      "keyUser": "A user's",
+      "keyHint": "What each access allows is in Connections.",
+      "notAdmin": "The key is not an admin's: the Stirling-PDF settings cannot be read or changed with it (operations work).",
+      "replaceKey": "Replace the key",
+      "updateChip": "New {{version}}",
+      "backup": {
+        "description": "Saves the Stirling-PDF settings to a destination, as often as you choose.",
+        "included": "A JSON with the server settings (secrets hidden by Stirling itself) and the disabled operations. Needs an admin key.",
+        "notIncluded": "Stirling-PDF stores no documents: processed PDFs stay where they were saved (Paperless or Nextcloud).",
+        "restore": "To restore: put the settings back in the server settings, or through Jarvis (stirling_set_settings)."
+      },
+      "connections": {
+        "title": "Connections",
+        "permissionsTitle": "What the connection allows",
+        "permissionsAdmin": "The key acts as the account that owns it. This one is an admin's: it runs every operation and reads and changes the server settings.",
+        "permissionsNotAdmin": "The key acts as the account that owns it. This one is not an admin's: operations work, the server settings do not.",
+        "mcpOn_one": "MCP: on, with {{count}} tool.",
+        "mcpOn_other": "MCP: on, with {{count}} tools.",
+        "mcpOff": "MCP: not on on this server.",
+        "callsTitle": "Stirling-PDF API calls",
+        "callsSummary": "What can be asked of Stirling-PDF ({{base}}) and its GitHub (the versions): what MyHomeLab already uses and what it does not yet.",
+        "filterLabel": "Show calls",
+        "filter": {
+          "all": "All ({{count}})",
+          "used": "Used ({{count}})",
+          "possible": "Possible ({{count}})"
+        },
+        "table": {
+          "method": "Method",
+          "path": "Path",
+          "description": "What it does",
+          "usedBy": "Used by",
+          "access": "Access",
+          "status": "Status",
+          "allows": "What it allows",
+          "needed": "MyHomeLab uses",
+          "account": "This key"
+        },
+        "access": {
+          "user": "Account (API key)",
+          "admin": "Admin",
+          "github": "Stirling-PDF's GitHub"
+        },
+        "allows": {
+          "user": "Every PDF operation, their list and the MCP",
+          "admin": "The server settings (system, UI, security, enabled operations)",
+          "github": "The published versions, no login"
+        },
+        "need": {
+          "read": "Read",
+          "write": "Read and write",
+          "none": "Not used"
+        },
+        "granted": "Has it",
+        "notGranted": "Does not have it",
+        "notUsed": "Not used yet",
+        "available": "Available",
+        "needsAdmin": "Needs admin",
+        "usedBy": {
+          "connect": "Connect",
+          "status": "App status",
+          "updates": "Updates",
+          "backups": "Backups",
+          "assistant": "Jarvis"
+        },
+        "calls": {
+          "status": "The status and the version",
+          "apiDocs": "Every operation and its parameters (OpenAPI)",
+          "endpoints": "The operations disabled on the server",
+          "operation": "Runs an operation (compress, OCR, merge, split, convert…) with the files",
+          "settings": "The server settings (secrets hidden)",
+          "settingsDelta": "The changes waiting for a restart",
+          "settingsUpdate": "Changes server settings (they apply after a restart)",
+          "mcp": "The Stirling MCP (when it is on)",
+          "releases": "The published versions, with the notes",
+          "pipeline": "Runs several operations in a row (pipeline)",
+          "restart": "Restarts Stirling-PDF",
+          "users": "The Stirling accounts",
+          "audit": "The audit log"
+        }
+      }
     }
   },
   "forgejoModal": {
@@ -1914,5 +2018,15 @@
       "limitsNote": "On a VM the agent always asks before growing. The storage free minimum always applies, even when you approve.",
       "noAgent": "Without the QEMU guest agent, the disk inside is unknown for: {{guests}}. Install qemu-guest-agent in the VM and enable it in Options → QEMU Guest Agent."
     }
+  },
+  "stirlingModal": {
+    "title": "Connect Stirling-PDF",
+    "name": "Name (optional)",
+    "namePlaceholder": "E.g. PDFs",
+    "url": "Address",
+    "urlPlaceholder": "https://pdf.example.com",
+    "apiKey": "API key",
+    "apiKeyHint": "In Stirling-PDF: Account settings → API key → show or generate (login must be on). For the agents to change the settings, use an admin's. It is stored encrypted in MyHomeLab.",
+    "connect": "Connect"
   }
 }

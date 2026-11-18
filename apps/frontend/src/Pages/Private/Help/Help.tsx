@@ -31,6 +31,7 @@ const TOPICS: Help_Topic[] = [
   { id: 'immich', page: '/MyHomeLab/Apps/Immich' },
   { id: 'paperless', page: '/MyHomeLab/Apps/Paperless' },
   { id: 'solidtime', page: '/MyHomeLab/Apps/Solidtime' },
+  { id: 'stirling', page: '/MyHomeLab/Apps/StirlingPDF' },
   { id: 'docs', page: '/MyHomeLab/Docs' },
   { id: 'todos', page: '/MyHomeLab/Tasks' },
   { id: 'tasks', page: '/MyHomeLab/Projects' },

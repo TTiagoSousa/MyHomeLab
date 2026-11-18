@@ -30,6 +30,7 @@ export const SET_TARGET: Partial<
   immich: ConnectionProvider.IMMICH,
   paperless: ConnectionProvider.PAPERLESS,
   solidtime: ConnectionProvider.SOLIDTIME,
+  stirling: ConnectionProvider.STIRLING_PDF,
   trek: ConnectionProvider.TREK,
   server: 'PROXMOX',
   serverControl: 'PROXMOX',

@@ -210,6 +210,21 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
       'Mudar a APP_KEY ou as chaves do Passport (deixam de valer os tokens e as sessões).',
     ],
   },
+  [ConnectionProvider.STIRLING_PDF]: {
+    name: 'Stirling-PDF',
+    before: [
+      '🤖 O backup do MyHomeLab do Stirling-PDF (as definições) correu há pouco — prova: a hora do último bom',
+      '🤖 As notas da versão nova não pedem passos à mão (mudanças no docker-compose, no ambiente ou nas definições) — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O Stirling-PDF responde com a versão nova (stirling_overview) — prova: a versão',
+      '🤖 As operações continuam lá, com o mesmo número, e uma corre bem (stirling_run numa operação simples, ex.: misc/compress-pdf) — prova: o resultado',
+    ],
+    never: [
+      'Substituir ou apagar o documento original no Paperless ou no Nextcloud: o resultado vai sempre como ficheiro novo.',
+      'Mudar segredos ou o login do Stirling-PDF (chaves de API, palavras-passe, OAuth).',
+    ],
+  },
   [ConnectionProvider.HOME_ASSISTANT]: {
     name: 'Home Assistant',
     before: [

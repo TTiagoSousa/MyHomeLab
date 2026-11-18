@@ -20,6 +20,10 @@ import {
 } from 'src/gametracker/gametracker.client';
 import { IMMICH_REPOSITORY, immichVersion } from 'src/immich/immich.client';
 import {
+  STIRLING_REPOSITORY,
+  stirlingVersion,
+} from 'src/stirling/stirling.client';
+import {
   PAPERLESS_REPOSITORY,
   paperlessVersion,
 } from 'src/paperless/paperless.client';
@@ -91,6 +95,13 @@ export const VERSION_SOURCES: Partial<
     installed: (account) =>
       paperlessVersion(account.baseUrl ?? '', account.accessToken ?? ''),
     latest: () => latestGithubRelease(PAPERLESS_REPOSITORY),
+  },
+  [ConnectionProvider.STIRLING_PDF]: {
+    appName: 'Stirling-PDF',
+    repository: { host: 'github', repo: STIRLING_REPOSITORY },
+    installed: (account) =>
+      stirlingVersion(account.baseUrl ?? '', account.accessToken ?? ''),
+    latest: () => latestGithubRelease(STIRLING_REPOSITORY),
   },
   [ConnectionProvider.HOME_ASSISTANT]: {
     appName: 'Home Assistant',

@@ -24,6 +24,7 @@ const CATALOG: { kind: App_Kind; descriptionKey: string }[] = [
   { kind: 'IMMICH', descriptionKey: 'apps.immich.description' },
   { kind: 'PAPERLESS', descriptionKey: 'apps.paperless.description' },
   { kind: 'SOLIDTIME', descriptionKey: 'apps.solidtime.description' },
+  { kind: 'STIRLING_PDF', descriptionKey: 'apps.stirling.description' },
   { kind: 'PROXMOX', descriptionKey: 'apps.proxmox.description' },
 ];
 

@@ -231,6 +231,10 @@
         "trek": {
           "name": "TREK (viajes)",
           "description": "Ver los viajes y todo lo que tienen por el MCP de TREK. Cambiar es crear, cambiar y (con confirmación) borrar en TREK, dentro de los permisos del cliente MCP."
+        },
+        "stirling": {
+          "name": "Stirling-PDF (PDFs)",
+          "description": "Ver las operaciones, sus parámetros y los ajustes del servidor. Cambiar es ejecutar operaciones (comprimir, OCR, unir, dividir, convertir, proteger…) con ficheros de Paperless o Nextcloud y guardar el resultado como fichero nuevo, y cambiar los ajustes (muestra antes lo que cambia). Nunca sustituye ni borra el original."
         }
       },
       "layers": "Hay tres sitios, del más amplio al más fino: las herramientas de cada agente (Workflow), estas áreas (para todos los agentes) y cada app conectada o servidor (en su página → Agentes, por agente). Un agente solo hace lo que los tres permiten."
@@ -294,7 +298,8 @@
       "immich": "Immich",
       "paperless": "Paperless",
       "solidtime": "solidtime",
-      "trek": "TREK"
+      "trek": "TREK",
+      "stirling": "Stirling-PDF"
     },
     "editor": {
       "name": "Nombre",

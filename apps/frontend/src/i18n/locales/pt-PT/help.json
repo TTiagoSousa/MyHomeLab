@@ -309,6 +309,22 @@
       ],
       "goTo": "Ir para Apps ligadas"
     },
+    "stirling": {
+      "title": "Stirling-PDF",
+      "summary": "As ferramentas de PDF: o Arquivista comprime, faz OCR, junta, divide, roda, converte, protege e assina os PDFs do Paperless e do Nextcloud, e cuida das definições do Stirling.",
+      "steps": [
+        "No Stirling-PDF (com o login ligado), abre Definições da conta → Chave de API → mostrar ou gerar. Usa a de um administrador para os agentes verem e mudarem as definições do servidor.",
+        "No MyHomeLab, em Apps ligadas → Stirling-PDF → Ligar Stirling-PDF, põe o endereço e a chave.",
+        "O Arquivista já recebe as ferramentas do Stirling-PDF. Para outro agente, escolhe-as em Assistente → Workflow."
+      ],
+      "notes": [
+        "Pede, por exemplo: \"Comprime a fatura 123 do Paperless\", \"Junta os PDFs da pasta Contratos do Nextcloud num só\", \"Faz OCR ao documento 45 e guarda-o no Paperless\".",
+        "O resultado vai sempre como ficheiro novo (no Paperless ou numa pasta do Nextcloud); o original nunca é substituído nem apagado. Podes encadear operações: cada resultado fica guardado 2 horas.",
+        "As operações vêm do próprio Stirling-PDF (umas 60: comprimir, OCR, juntar, dividir, converter, marca de água, proteger, assinar, redigir…). As que o servidor tiver desligadas não aparecem.",
+        "Se o Stirling tiver o MCP ligado (mcp.enabled, da parte paga), o Claude Code liga-se também diretamente a ele. Mudar definições do servidor: o agente mostra primeiro o antes e o depois, e as mudanças valem depois de reiniciar."
+      ],
+      "goTo": "Ir para Apps ligadas"
+    },
     "instanceBackup": {
       "title": "Backup do MyHomeLab",
       "summary": "Tudo o que está no MyHomeLab num zip com password: documentos, agentes, conversas, apps ligadas e logins. Para guardar, levar para outro servidor ou repor.",
@@ -418,7 +434,7 @@
     },
     "apps": {
       "title": "Apps ligadas",
-      "summary": "As contas que o MyHomeLab e o Jarvis usam: Gmail, Google Tasks, Proxmox, Nextcloud, Forgejo, Home Assistant, AdGuard, TREK, openGym, GamesTracker, Immich, Paperless e solidtime.",
+      "summary": "As contas que o MyHomeLab e o Jarvis usam: Gmail, Google Tasks, Proxmox, Nextcloud, Forgejo, Home Assistant, AdGuard, TREK, openGym, GamesTracker, Immich, Paperless e solidtime, Stirling-PDF.",
       "steps": [
         "Escolhe a app e carrega em Ligar. Cada uma pede o endereço e uma chave ou password de app.",
         "Abre a conta para ver o resumo: estado, versão e o que mudou.",

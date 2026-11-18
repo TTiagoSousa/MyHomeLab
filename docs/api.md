@@ -91,6 +91,8 @@ there too.
 | GET | `/connected-account/:id/paperless-status` | JWT | Paperless user and permissions, documents, inbox, disk, health problems, failed tasks and version |
 | POST | `/connected-account/solidtime` | JWT | Connect solidtime with a personal API token (one organisation per connection) |
 | GET | `/connected-account/:id/solidtime-status` | JWT | solidtime user, organisation and role, running timer, last 7 days, projects and clients |
+| POST | `/connected-account/stirling` | JWT | Connect Stirling-PDF with an API key |
+| GET | `/connected-account/:id/stirling-status` | JWT | Stirling-PDF operations (and how many are disabled), admin key, MCP tools and version |
 | GET | `/connected-account/:id/trek-tools` | JWT | Tools exposed by TREK's MCP server |
 | POST | `/connected-account/home-assistant` | JWT | Connect Home Assistant (admin token) |
 | GET | `/connected-account/:id/home-assistant-status` | JWT | Entities, automations, pending updates and version |

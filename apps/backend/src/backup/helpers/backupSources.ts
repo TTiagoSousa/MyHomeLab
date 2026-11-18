@@ -13,6 +13,7 @@ import { gameTrackerBackup } from './gameTrackerBackup';
 import { immichBackup } from './immichBackup';
 import { paperlessBackup } from './paperlessBackup';
 import { solidtimeBackup } from './solidtimeBackup';
+import { stirlingBackup } from './stirlingBackup';
 
 /** O ficheiro que uma app entrega para guardar no destino. */
 export interface BackupFile {
@@ -97,5 +98,11 @@ export const BACKUP_SOURCES: Partial<Record<ConnectionProvider, BackupSource>> =
       extension: 'zip',
       defaultFolder: 'solidtime',
       create: solidtimeBackup,
+    },
+    [ConnectionProvider.STIRLING_PDF]: {
+      prefix: 'stirling-pdf',
+      extension: 'json',
+      defaultFolder: 'Stirling-PDF',
+      create: stirlingBackup,
     },
   };

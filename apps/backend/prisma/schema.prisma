@@ -27,6 +27,7 @@ enum ConnectionProvider {
   IMMICH
   PAPERLESS
   SOLIDTIME
+  STIRLING_PDF
 }
 
 // Onde é que o serviço corre. Serve para separar o que é do lab do que é de terceiros —

@@ -71,6 +71,7 @@ export const PROVIDER_NAMES: Record<ConnectionProvider, string> = {
   IMMICH: 'Immich',
   PAPERLESS: 'Paperless',
   SOLIDTIME: 'solidtime',
+  STIRLING_PDF: 'Stirling-PDF',
 };
 
 /** O nome de uma app ligada como aparece nas ligações: "Home Assistant · Casa" (sem repetir "Forgejo · Forgejo"). */

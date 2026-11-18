@@ -248,6 +248,51 @@ export function createPaperlessClient(baseUrl: string, token: string) {
     },
     statistics: () =>
       call('/statistics', () => http.get<PaperlessStatistics>('/statistics/')),
+    /** O ficheiro de um documento (o original, não o arquivado com OCR, se `original`). */
+    download: async (id: number, original = false) => {
+      try {
+        const response = await http.get<ArrayBuffer>(
+          `/documents/${id}/download/`,
+          {
+            params: original ? { original: true } : undefined,
+            responseType: 'arraybuffer',
+            timeout: 120_000,
+          },
+        );
+        const disposition = String(
+          response.headers['content-disposition'] ?? '',
+        );
+        const match = disposition.match(/filename*?=(?:UTF-8'')?"?([^";]+)"?/i);
+        return {
+          name: match ? decodeURIComponent(match[1]) : `documento-${id}.pdf`,
+          data: Buffer.from(response.data),
+          contentType: String(
+            response.headers['content-type'] ?? 'application/pdf',
+          ).split(';')[0],
+        };
+      } catch (error) {
+        throw failure(error, `/documents/${id}/download`);
+      }
+    },
+    /** Envia um ficheiro novo (o Paperless processa-o em segundo plano); devolve o id da tarefa. */
+    upload: async (
+      file: { name: string; data: Buffer; contentType: string },
+      title?: string,
+    ) => {
+      const form = new FormData();
+      form.append(
+        'document',
+        new Blob([new Uint8Array(file.data)], { type: file.contentType }),
+        file.name,
+      );
+      if (title) form.append('title', title);
+      return call('/documents/post_document', () =>
+        http.post<string>('/documents/post_document/', form, {
+          timeout: 120_000,
+          maxBodyLength: Infinity,
+        }),
+      );
+    },
     status: () => call('/status', () => http.get<PaperlessStatus>('/status/')),
     tasks: () => call('/tasks', () => http.get<PaperlessTask[]>('/tasks/')),
 

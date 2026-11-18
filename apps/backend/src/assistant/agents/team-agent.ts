@@ -17,6 +17,7 @@ import { buildToolbox } from '../toolsets/toolbox';
 import { AgentContext } from './agent-context';
 import { TREK_PROXY_TOOLS, TREK_SERVER, trekDirect } from './trekDirect';
 import { OPENGYM_SERVER, openGymDirect } from './openGymDirect';
+import { STIRLING_SERVER, stirlingDirect } from './stirlingDirect';
 
 /** Mais fundo do que isto é uma equipa mal montada, não trabalho útil. */
 const MAX_DEPTH = 5;
@@ -36,7 +37,7 @@ const usesDocs = (agent: Agent) =>
  * delas, o agente tem de ter lido (docs_read) os documentos do que o pedido toca.
  */
 const ACTS =
-  /^(server_run_command|pve_(guest_power|create_snapshot|rollback_snapshot|delete_snapshot|backup_now|set_resources)|disk_alert_grow|run_backup|update_(save_study|prepare|run|verify)|adguard_(set|manage|refresh)_\w+|ha_(call_service|save_config|delete_config|update_entity)|forgejo_(create|comment|set)_\w+|opengym_(create|delete|update|schedule)_\w+|gametracker_(set_game|remove_game|watch_price)|immich_(save_album|update_person|run_job|set_settings)|paperless_(update_document|bulk_edit|save_object|set_settings)|solidtime_(start_timer|stop_timer|save_entry|save_object)|trek_write|(create|update|delete)_email_rule|implement_email_proposal|modify_email|trash_email|send_email_draft)$/;
+  /^(server_run_command|pve_(guest_power|create_snapshot|rollback_snapshot|delete_snapshot|backup_now|set_resources)|disk_alert_grow|run_backup|update_(save_study|prepare|run|verify)|adguard_(set|manage|refresh)_\w+|ha_(call_service|save_config|delete_config|update_entity)|forgejo_(create|comment|set)_\w+|opengym_(create|delete|update|schedule)_\w+|gametracker_(set_game|remove_game|watch_price)|immich_(save_album|update_person|run_job|set_settings)|paperless_(update_document|bulk_edit|save_object|set_settings)|solidtime_(start_timer|stop_timer|save_entry|save_object)|stirling_(run|set_settings)|trek_write|(create|update|delete)_email_rule|implement_email_proposal|modify_email|trash_email|send_email_draft)$/;
 
 /**
  * Os documentos que o pedido toca (DocsService.docsFor) vão no fim do último pedido
@@ -145,12 +146,16 @@ export async function runTeamAgent(
         : (context.ai.delegate ?? context.ai);
   const claudeCode = ai.provider === 'CLAUDE_CODE';
   const queued = claudeCode && parent?.provider !== 'CLAUDE_CODE';
-  const [trek, openGym] = claudeCode
+  const [trek, openGym, stirling] = claudeCode
     ? await Promise.all([
         trekDirect(agent.tools, context, agent.key),
         openGymDirect(agent.tools, context, agent.key),
+        stirlingDirect(agent.tools, context, agent.key).catch(() => null),
       ])
-    : [null, null];
+    : [null, null, null];
+  const direct = [trek, openGym, stirling].filter(
+    (entry): entry is NonNullable<typeof entry> => Boolean(entry),
+  );
   const toolNames = agent.tools.filter(
     (tool) =>
       !(trek && TREK_PROXY_TOOLS.has(tool)) &&
@@ -186,6 +191,11 @@ O TREK: usa as ferramentas do MyHomeLab — trek_tools para ver o que há, trek_
         ? `
 
 O openGym: as ferramentas do próprio openGym estão ligadas diretamente (mcp__${OPENGYM_SERVER}__<nome>, ex.: mcp__${OPENGYM_SERVER}__list_routines). Usa só essas; as opengym_* não estão disponíveis.`
+        : '') +
+      (stirling
+        ? `
+
+O Stirling-PDF: o MCP do próprio Stirling também está ligado (mcp__${STIRLING_SERVER}__<nome>). Para ficheiros do Paperless ou do Nextcloud, e para guardar o resultado lá, usa as stirling_* do MyHomeLab (stirling_run); o MCP serve para o resto que só ele tenha.`
         : ''),
     readFirst(
       guardTools(tools, context.deniedPermissions, {
@@ -212,6 +222,9 @@ O openGym: as ferramentas do próprio openGym estão ligadas diretamente (mcp__$
           (toolName.startsWith(`mcp__${OPENGYM_SERVER}__`)
             ? `no openGym: ${toolName.slice(`mcp__${OPENGYM_SERVER}__`.length)}`
             : null) ??
+          (toolName.startsWith(`mcp__${STIRLING_SERVER}__`)
+            ? `no Stirling-PDF: ${toolName.slice(`mcp__${STIRLING_SERVER}__`.length)}`
+            : null) ??
           delegationAction(toolName, members) ??
           `a usar ${toolName}`;
         const detail = actionDetail(input);
@@ -220,12 +233,15 @@ O openGym: as ferramentas do próprio openGym estão ligadas diretamente (mcp__$
         );
         context.activity.update(context.userId, agent.key, action);
       },
-      mcpServers:
-        trek || openGym ? { ...trek?.servers, ...openGym?.servers } : undefined,
-      allowedTools:
-        trek || openGym
-          ? [...(trek?.allowedTools ?? []), ...(openGym?.allowedTools ?? [])]
-          : undefined,
+      mcpServers: direct.length
+        ? direct.reduce<Record<string, unknown>>(
+            (all, entry) => ({ ...all, ...entry.servers }),
+            {},
+          )
+        : undefined,
+      allowedTools: direct.length
+        ? direct.flatMap((entry) => entry.allowedTools)
+        : undefined,
       onUsage: (usage) => {
         context.onUsage?.(usage);
         context.recordUsage?.(agent.key, usage);

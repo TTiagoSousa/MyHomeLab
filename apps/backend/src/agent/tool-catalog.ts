@@ -12,6 +12,7 @@ export type ToolSet =
   | 'immich'
   | 'paperless'
   | 'solidtime'
+  | 'stirling'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -38,6 +39,7 @@ export type ToolGroup =
   | 'immich'
   | 'paperless'
   | 'solidtime'
+  | 'stirling'
   | 'trek'
   | 'docs'
   | 'updates'
@@ -719,6 +721,55 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'a mudar a configuração do Paperless',
   ),
 
+  tool(
+    'stirling_overview',
+    'stirling',
+    'stirling',
+    'read',
+    'a ver o Stirling-PDF',
+  ),
+  tool(
+    'stirling_operations',
+    'stirling',
+    'stirling',
+    'read',
+    'a ver as operações do Stirling-PDF',
+  ),
+  tool(
+    'stirling_describe',
+    'stirling',
+    'stirling',
+    'read',
+    'a ver uma operação do Stirling-PDF',
+  ),
+  tool(
+    'stirling_results',
+    'stirling',
+    'stirling',
+    'read',
+    'a ver os PDFs tratados',
+  ),
+  tool(
+    'stirling_settings',
+    'stirling',
+    'stirling',
+    'read',
+    'a ver as definições do Stirling-PDF',
+  ),
+  tool(
+    'stirling_run',
+    'stirling',
+    'stirling',
+    'write',
+    'a tratar um PDF no Stirling-PDF',
+  ),
+  tool(
+    'stirling_set_settings',
+    'stirling',
+    'stirling',
+    'write',
+    'a mudar as definições do Stirling-PDF',
+  ),
   tool(
     'solidtime_overview',
     'solidtime',

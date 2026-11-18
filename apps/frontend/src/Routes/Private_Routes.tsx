@@ -88,6 +88,9 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Apps/Solidtime' element={ <Private_Page.SolidtimeAccounts /> } />
       <Route path='MyHomeLab/Apps/Solidtime/:accountId' element={ <Private_Page.SolidtimeAccount /> } />
       <Route path='MyHomeLab/Apps/Solidtime/:accountId/Connections' element={ <Private_Page.SolidtimeConnections /> } />
+      <Route path='MyHomeLab/Apps/StirlingPDF' element={ <Private_Page.StirlingAccounts /> } />
+      <Route path='MyHomeLab/Apps/StirlingPDF/:accountId' element={ <Private_Page.StirlingAccount /> } />
+      <Route path='MyHomeLab/Apps/StirlingPDF/:accountId/Connections' element={ <Private_Page.StirlingConnections /> } />
       <Route path='MyHomeLab/Apps/Nextcloud/:accountId/Connections' element={ <Private_Page.NextcloudConnections /> } />
       <Route path='MyHomeLab/Apps/Gmail' element={ <Private_Page.Email /> } />
       <Route path='MyHomeLab/Apps/Gmail/Rules' element={ <Private_Page.EmailRules /> } />

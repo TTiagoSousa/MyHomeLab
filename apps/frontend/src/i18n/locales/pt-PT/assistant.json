@@ -231,6 +231,10 @@
         "trek": {
           "name": "TREK (viagens)",
           "description": "Ver as viagens e tudo o que está nelas pelo MCP do TREK. Alterar é criar, mudar e (com confirmação) apagar no TREK, dentro das permissões do cliente MCP."
+        },
+        "stirling": {
+          "name": "Stirling-PDF (PDFs)",
+          "description": "Ver as operações, os parâmetros e as definições do servidor. Alterar é correr operações (comprimir, OCR, juntar, dividir, converter, proteger…) com ficheiros do Paperless ou do Nextcloud e guardar o resultado como ficheiro novo, e mudar as definições (mostra antes o que muda). Nunca substitui nem apaga o original."
         }
       },
       "layers": "Há três sítios, do mais largo para o mais fino: as ferramentas de cada agente (Workflow), estas áreas (para todos os agentes) e cada app ligada ou servidor (na página dela → Agentes, por agente). Um agente só faz o que os três deixam."
@@ -294,7 +298,8 @@
       "immich": "Immich",
       "paperless": "Paperless",
       "solidtime": "solidtime",
-      "trek": "TREK"
+      "trek": "TREK",
+      "stirling": "Stirling-PDF"
     },
     "editor": {
       "name": "Nome",

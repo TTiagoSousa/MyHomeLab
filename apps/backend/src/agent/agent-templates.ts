@@ -235,11 +235,11 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     key: 'archivist',
     name: 'Arquivista',
     description:
-      'Os documentos digitalizados no Paperless: encontrar e ler faturas, contratos e recibos, arrumá-los (etiquetas, correspondentes, tipos) e cuidar da configuração e das tarefas do servidor.',
+      'Os documentos digitalizados no Paperless: encontrar e ler faturas, contratos e recibos, arrumá-los (etiquetas, correspondentes, tipos), tratar os PDFs no Stirling-PDF (comprimir, OCR, juntar, dividir, converter…) e cuidar da configuração e das tarefas do servidor.',
     prompt: ARCHIVIST_PROMPT,
     model: 'SONNET',
     effort: 'LOW',
-    tools: [...toolsOf('paperless'), ...DOCS_READ],
+    tools: [...toolsOf('paperless', 'stirling'), ...DOCS_READ],
     reportsTo: 'ceo',
     color: 2,
     legacyKeys: [],

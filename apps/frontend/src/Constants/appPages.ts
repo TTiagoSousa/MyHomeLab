@@ -11,4 +11,5 @@ export const APP_PAGES: Record<string, string> = {
   IMMICH: '/MyHomeLab/Apps/Immich',
   PAPERLESS: '/MyHomeLab/Apps/Paperless',
   SOLIDTIME: '/MyHomeLab/Apps/Solidtime',
+  STIRLING_PDF: '/MyHomeLab/Apps/StirlingPDF',
 };
