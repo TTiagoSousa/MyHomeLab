@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -452,6 +453,48 @@ export class AssistantService {
 
     const thread = await this.resolveConversation(user.id, message, target);
     const previous = await this.messagesOf(thread.id, CONTEXT_MESSAGES);
+    // A pergunta grava-se já: um pedido longo (o Jarvis a delegar) pode passar o tempo
+    // de um proxy à frente do MyHomeLab, e a página volta a buscá-la ao histórico. Se a
+    // equipa falhar, fica uma resposta a dizer porquê — nunca uma pergunta sem resposta.
+    await this.prisma.$transaction([
+      this.prisma.chatMessage.create({
+        data: {
+          userId: user.id,
+          conversationId: thread.id,
+          role: ChatRole.USER,
+          content: message,
+          createdAt: askedAt,
+        },
+      }),
+      this.prisma.conversation.update({
+        where: { id: thread.id },
+        data: { lastMessageAt: askedAt },
+      }),
+    ]);
+    const answer = (
+      content: string,
+      extra: {
+        docsUsed?: ReturnType<typeof docsList>;
+        actions?: string[];
+      } = {},
+    ) =>
+      this.prisma.$transaction([
+        this.prisma.chatMessage.create({
+          data: {
+            userId: user.id,
+            conversationId: thread.id,
+            role: ChatRole.ASSISTANT,
+            content,
+            createdAt: new Date(Math.max(Date.now(), askedAt.getTime() + 1)),
+            ...(extra.docsUsed ? { docsUsed: extra.docsUsed } : {}),
+            ...(extra.actions?.length ? { actions: extra.actions } : {}),
+          },
+        }),
+        this.prisma.conversation.update({
+          where: { id: thread.id },
+          data: { lastMessageAt: new Date() },
+        }),
+      ]);
     // A conversa de uma tarefa: falar aqui responde à tarefa, e o Jarvis recebe-a.
     const taskNotice = thread.boardTaskId
       ? await this.board.chatContext(user.id, thread.boardTaskId)
@@ -518,43 +561,28 @@ export class AssistantService {
     } catch (error) {
       // Chave revogada depois de gravada, conta sem crédito, limite de pedidos:
       // são da conta de quem fala, e chegam ao browser com um código traduzível.
-      throw aiFailure(error) ?? error;
+      const failure: unknown = aiFailure(error) ?? error;
+      const reason =
+        failure instanceof HttpException
+          ? ((failure.getResponse() as { message?: string }).message ??
+            failure.message)
+          : failure instanceof Error
+            ? failure.message
+            : String(failure);
+      await answer(
+        `⚠️ Não consegui responder: ${reason}\n\nVolta a perguntar quando quiseres.`,
+      ).catch(() => undefined);
+      throw failure;
     }
 
     // A nota do que a equipa fez é só para o histórico: se o modelo a imitar, sai da resposta.
     const reply =
       stripActionsNote(replyText) || 'Não consegui gerar uma resposta.';
 
-    // Gravadas em par e só depois da resposta existir, para o histórico nunca
-    // ficar com uma pergunta sem resposta se o modelo falhar a meio.
-    await this.prisma.$transaction([
-      this.prisma.chatMessage.createMany({
-        data: [
-          {
-            userId: user.id,
-            conversationId: thread.id,
-            role: ChatRole.USER,
-            content: message,
-            createdAt: askedAt,
-          },
-          {
-            userId: user.id,
-            conversationId: thread.id,
-            role: ChatRole.ASSISTANT,
-            content: reply,
-            createdAt: new Date(Math.max(Date.now(), askedAt.getTime() + 1)),
-            docsUsed: docsList(context.docsUsed),
-            ...(context.actionsDone?.length
-              ? { actions: context.actionsDone.slice(0, 60) }
-              : {}),
-          },
-        ],
-      }),
-      this.prisma.conversation.update({
-        where: { id: thread.id },
-        data: { lastMessageAt: new Date() },
-      }),
-    ]);
+    await answer(reply, {
+      docsUsed: docsList(context.docsUsed),
+      actions: context.actionsDone?.slice(0, 60),
+    });
 
     return {
       reply,

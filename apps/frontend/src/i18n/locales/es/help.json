@@ -162,7 +162,8 @@
         "Instrucciones: \"A partir de ahora, en los resúmenes de correo ignora la publicidad\" — Jarvis muestra el cambio y solo lo aplica cuando dices que sí."
       ],
       "notes": [
-        "Jarvis solo ve tus cuentas, servidores y servicios. Necesita tu clave de IA (Asistente → Ajustes → IA)."
+        "Jarvis solo ve tus cuentas, servidores y servicios. Necesita tu clave de IA (Asistente → Ajustes → IA).",
+        "Las peticiones grandes (Jarvis poniendo a varios agentes a trabajar) pueden tardar unos minutos. La pregunta se guarda enseguida; si la conexión se corta, la página sigue esperando y muestra la respuesta cuando llega. Si falla, aparece \"No pude responder\" con el motivo."
       ],
       "goTo": "Ir al Asistente"
     },
@@ -226,6 +227,98 @@
       ],
       "goTo": "Ir a Apps conectadas"
     },
+    "openGym": {
+      "title": "openGym",
+      "summary": "El gimnasio: el Personal Trainer ve las rutinas y los entrenos, crea rutinas y planifica la semana; avisos de versión nueva y copias.",
+      "steps": [
+        "En openGym, abre Ajustes → emparejar la app del móvil: aparece un código de 8 letras, válido 5 minutos.",
+        "En MyHomeLab, en Apps conectadas → openGym → Conectar openGym, pon la dirección y el código. MyHomeLab queda conectado como la app del móvil.",
+        "Añade el Personal Trainer en Asistente → Workflow (desde la plantilla) para que use openGym."
+      ],
+      "notes": [
+        "Pide, por ejemplo: \"Créame una rutina de piernas\", \"Pon push el lunes y pull el jueves\".",
+        "Los entrenos de openGym también entran en Salud (Ejercicio).",
+        "Con Claude Code, si pones el token del MCP de openGym (Ajustes → Integraciones → Tokens de API) en la rueda → MCP, los agentes usan el MCP del propio openGym."
+      ],
+      "goTo": "Ir a Apps conectadas"
+    },
+    "gameTracker": {
+      "title": "GamesTracker",
+      "summary": "La estantería de juegos: el Curador de Juegos ve lo que juegas, terminaste y quieres jugar, cambia la estantería y sigue precios; avisos de versión nueva y copias.",
+      "steps": [
+        "En GamesTracker, abre Ajustes → API → Nuevo token (empieza por gtv_). Para que los agentes cambien la estantería no lo marques solo lectura; para las copias, créalo con un admin.",
+        "En MyHomeLab, en Apps conectadas → GamesTracker → Conectar GamesTracker, pon la dirección y el token.",
+        "Añade el Curador de Juegos en Asistente → Workflow (desde la plantilla)."
+      ],
+      "notes": [
+        "Pide, por ejemplo: \"Terminé Hollow Knight, ponle un 9\", \"¿Qué juego ahora?\", \"Avísame cuando Elden Ring baje de 30 €\".",
+        "Quitar un juego de la estantería solo con confirmación: pierde las horas, la nota y las notas.",
+        "La copia es el volcado de la propia base de datos de GamesTracker (pg_dump)."
+      ],
+      "goTo": "Ir a Apps conectadas"
+    },
+    "immich": {
+      "title": "Immich",
+      "summary": "Las fotos y los vídeos: el Curador de Fotos busca fotos, ordena álbumes, pone nombre a las personas y cuida los ajustes, las tareas y las copias de Immich.",
+      "steps": [
+        "En Immich, abre tu avatar → Ajustes de la cuenta → Claves de API → Nueva clave. Créala en una cuenta admin con el permiso \"all\": sin él, los ajustes, las tareas y las copias no funcionan.",
+        "En MyHomeLab, en Apps conectadas → Immich → Conectar Immich, pon la dirección y la clave.",
+        "Añade el Curador de Fotos en Asistente → Workflow (desde la plantilla)."
+      ],
+      "notes": [
+        "Pide, por ejemplo: \"Haz un álbum con las fotos de la playa de agosto\", \"¿Quién es esta persona sin nombre?\", \"¿Las tareas de Immich tienen fallos?\".",
+        "Cambiar ajustes: el agente muestra antes → después y solo lo aplica cuando dices que sí. Nunca borra fotos ni álbumes.",
+        "La copia lleva la base de datos de Immich (álbumes, personas, metadatos, usuarios, ajustes). Las fotos y los vídeos (la carpeta UPLOAD_LOCATION) no entran: haz una copia aparte.",
+        "En Conexiones ves cada llamada a la API y si tu clave tiene el permiso."
+      ],
+      "goTo": "Ir a Apps conectadas"
+    },
+    "paperless": {
+      "title": "Paperless",
+      "summary": "Los documentos escaneados: el Archivista busca y lee facturas, contratos y recibos, los ordena y cuida la configuración de Paperless.",
+      "steps": [
+        "En Paperless, abre tu perfil (arriba a la derecha) → Token de autenticación de la API → generar. Usa el de un superusuario para que los agentes vean y cambien la configuración.",
+        "En MyHomeLab, en Apps conectadas → Paperless → Conectar Paperless, pon la dirección y el token.",
+        "Añade el Archivista en Asistente → Workflow (desde la plantilla)."
+      ],
+      "notes": [
+        "Pide, por ejemplo: \"¿Cuánto pagué de luz en octubre?\", \"Ordena los documentos de la bandeja de entrada\", \"Crea la etiqueta Salud y asóciala sola\".",
+        "Ordenar varios documentos a la vez o cambiar la configuración: el agente muestra antes lo que cambia y solo lo aplica cuando dices que sí. Nunca borra documentos.",
+        "La copia es un JSON con la organización (etiquetas, remitentes, tipos, rutas, flujos, reglas del correo) y la configuración. Los documentos se guardan en el servidor con el document_exporter de Paperless."
+      ],
+      "goTo": "Ir a Apps conectadas"
+    },
+    "solidtime": {
+      "title": "solidtime",
+      "summary": "El registro de horas: el Gestor de Horas pone y para el cronómetro, registra horas olvidadas y suma las horas por proyecto o cliente.",
+      "steps": [
+        "En solidtime, abre tu perfil → Tokens de la API → Crear token y cópialo entero (es largo).",
+        "En MyHomeLab, en Apps conectadas → solidtime → Conectar solidtime, pon la dirección y el token. Si estás en varias organizaciones, escribe la que quieres conectar.",
+        "Añade el Gestor de Horas en Asistente → Workflow (desde la plantilla)."
+      ],
+      "notes": [
+        "Pide, por ejemplo: \"Empieza a contar el proyecto MyHomeLab\", \"Para\", \"Ayer trabajé de 14 a 16 h para el cliente X\", \"¿Cuántas horas hice esta semana por proyecto?\".",
+        "Las horas que dices son en tu hora local; MyHomeLab las convierte con la zona horaria de tu cuenta de solidtime. Nunca borra registros.",
+        "La copia es la exportación completa de la organización (necesita propietario o administrador).",
+        "solidtime no dice la versión instalada, así que no hay aviso de versión nueva para él."
+      ],
+      "goTo": "Ir a Apps conectadas"
+    },
+    "instanceBackup": {
+      "title": "Copia de MyHomeLab",
+      "summary": "Todo lo que hay en MyHomeLab en un zip con contraseña: documentos, agentes, conversaciones, apps conectadas e inicios de sesión. Para guardar, llevar a otro servidor o restaurar.",
+      "steps": [
+        "En Admin → Copia de seguridad, define la contraseña de las copias (sin ella no se abre ningún zip).",
+        "Pulsa Crear y descargar para tener un zip ahora, o programa copias a un destino (Nextcloud, local en el CT…) con la frecuencia y cuántas guardar.",
+        "Para restaurar, en Admin → Copia → Restaurar una copia, elige el zip, escribe la contraseña y REPOR. MyHomeLab copia la base actual antes, lo cambia todo y se reinicia."
+      ],
+      "notes": [
+        "El zip tiene una carpeta por área (documentos, agentes, proyectos, apps conectadas, IA…) y los documentos también en Markdown, para leerlos sin MyHomeLab.",
+        "Restaurar sustituye todo por lo que hay en la copia. Si algo falla a medias, vuelve solo a como estaba.",
+        "Desde la consola del CT: myhomelab-restore <archivo.zip>."
+      ],
+      "goTo": "Ir a Admin"
+    },
     "docs": {
       "title": "Documentos",
       "summary": "Tus reglas y los mapas de lo que existe, ordenados en un árbol tuyo. Los agentes siguen las reglas y solo te proponen cambios; lo que hicieron queda en el Historial.",
@@ -240,7 +333,8 @@
         "Lo que no pongas en una sección tuya queda en Automáticas, ordenado por lo que tiene enlazado (Servidores y apps, Proyectos, Generales).",
         "Los agentes reciben el índice de documentos y la lista de los que toca la petición (por títulos, etiquetas y enlaces). Tienen que leerlos antes de cambiar nada.",
         "En tus documentos los agentes no escriben: proponen cambios, que apruebas o rechazas en Documentos.",
-        "Cada documento guarda sus versiones anteriores; puedes restaurar cualquiera. En ⋯ → Crear documentos sugeridos tienes documentos listos para empezar."
+        "Cada documento guarda sus versiones anteriores; puedes restaurar cualquiera. En ⋯ → Crear documentos sugeridos tienes documentos listos para empezar.",
+        "Pide a Jarvis \"ordena mis documentos\": ve la página Documentos como tú y propone nombres, enlaces, etiquetas y secciones (incluso nuevas). Las apruebas en Documentos, una a una."
       ],
       "goTo": "Ir a Documentos"
     },
@@ -319,7 +413,7 @@
     },
     "apps": {
       "title": "Apps conectadas",
-      "summary": "Las cuentas que usan MyHomeLab y Jarvis: Gmail, Google Tasks, Forgejo, Nextcloud, Proxmox, Home Assistant…",
+      "summary": "Las cuentas que usan MyHomeLab y Jarvis: Gmail, Google Tasks, Proxmox, Nextcloud, Forgejo, Home Assistant, AdGuard, TREK, openGym, GamesTracker, Immich, Paperless y solidtime.",
       "steps": [
         "Elige la app y pulsa Conectar. Cada una pide la dirección y una clave o contraseña de app.",
         "Abre la cuenta para ver el resumen: estado, versión y lo que cambió.",

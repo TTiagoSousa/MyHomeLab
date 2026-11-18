@@ -26,12 +26,18 @@ const TOPICS: Help_Topic[] = [
   { id: 'trek', page: '/MyHomeLab/Apps/Trek' },
   { id: 'homeAssistant', page: '/MyHomeLab/Apps/HomeAssistant' },
   { id: 'adguard', page: '/MyHomeLab/Apps/AdGuard' },
+  { id: 'openGym', page: '/MyHomeLab/Apps/OpenGym' },
+  { id: 'gameTracker', page: '/MyHomeLab/Apps/GameTracker' },
+  { id: 'immich', page: '/MyHomeLab/Apps/Immich' },
+  { id: 'paperless', page: '/MyHomeLab/Apps/Paperless' },
+  { id: 'solidtime', page: '/MyHomeLab/Apps/Solidtime' },
   { id: 'docs', page: '/MyHomeLab/Docs' },
   { id: 'todos', page: '/MyHomeLab/Tasks' },
   { id: 'tasks', page: '/MyHomeLab/Projects' },
   { id: 'appUpdates', page: '/MyHomeLab/Projects' },
   { id: 'assistant', page: '/MyHomeLab/Assistant' },
   { id: 'updates', adminOnly: true, page: '/MyHomeLab/Admin' },
+  { id: 'instanceBackup', adminOnly: true, page: '/MyHomeLab/Admin' },
   { id: 'users', adminOnly: true, page: '/MyHomeLab/Admin' },
 ];
 

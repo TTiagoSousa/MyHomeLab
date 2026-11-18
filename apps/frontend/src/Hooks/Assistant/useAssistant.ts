@@ -3,6 +3,7 @@ import { End_Points } from "../../Service/endPoints";
 import http from "../../Service/httpService";
 import { useAlert } from "../../Contexts/Alert_Context";
 import { aiErrorMessage } from "../Ai/useAiProviders";
+import { awaitReply, isCutOff } from "./awaitReply";
 import { clearPendingAsk, listenPendingAsks, pendingAsk, startPendingAsk, type Ask_Reply, type Pending_Ask } from "./pendingAsk";
 
 export interface AssistantMessage {
@@ -50,6 +51,7 @@ export const useAssistant = (conversationId: string | null, onConversation: (id:
     setLoading(false);
     if (ask.error || !ask.reply) {
       showError(ask.error);
+      fetchMessages();
       return;
     }
     const reply = ask.reply;
@@ -89,6 +91,7 @@ export const useAssistant = (conversationId: string | null, onConversation: (id:
 
     setMessages((prev) => [...prev, userMessage(text)]);
     setLoading(true);
+    const askedAt = Date.now();
 
     const request = http
       .post<Ask_Reply>(
@@ -96,7 +99,8 @@ export const useAssistant = (conversationId: string | null, onConversation: (id:
         conversationId ? { message: text, conversationId } : { message: text, newConversation: true },
         { withCredentials: true },
       )
-      .then((response) => response.data);
+      .then((response) => response.data)
+      .catch((error) => (isCutOff(error) ? awaitReply(conversationId, text, askedAt) : Promise.reject(error)));
     startPendingAsk(conversationId, text, request);
   };
 

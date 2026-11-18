@@ -162,7 +162,8 @@
         "Instructions: \"From now on, ignore ads in email summaries\" — Jarvis shows the change and only applies it when you say yes."
       ],
       "notes": [
-        "Jarvis only sees your accounts, servers and services. It needs your AI key (Assistant → Settings → AI)."
+        "Jarvis only sees your accounts, servers and services. It needs your AI key (Assistant → Settings → AI).",
+        "Big requests (Jarvis putting several agents to work) can take a few minutes. The question is saved at once; if the connection drops, the page keeps waiting and shows the reply when it arrives. If it fails, \"I could not answer\" appears with the reason."
       ],
       "goTo": "Go to the Assistant"
     },
@@ -226,6 +227,98 @@
       ],
       "goTo": "Go to Connected apps"
     },
+    "openGym": {
+      "title": "openGym",
+      "summary": "Your gym: the Personal Trainer sees routines and workouts, creates routines and plans the week; new-version alerts and backups.",
+      "steps": [
+        "In openGym, open Settings → pair the phone app: an 8-letter code appears, valid for 5 minutes.",
+        "In MyHomeLab, in Connected apps → openGym → Connect openGym, enter the address and the code. MyHomeLab is connected like the phone app.",
+        "Add the Personal Trainer in Assistant → Workflow (from the template) so it uses openGym."
+      ],
+      "notes": [
+        "Ask, for example: \"Create a leg routine\", \"Put push on Monday and pull on Thursday\".",
+        "openGym workouts also show up in Health (Exercise).",
+        "With Claude Code, if you add openGym's MCP token (Settings → Integrations → API tokens) in the gear → MCP, agents use openGym's own MCP."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "gameTracker": {
+      "title": "GamesTracker",
+      "summary": "Your game shelf: the Games Curator sees what you play, finished and want to play, changes the shelf and follows prices; new-version alerts and backups.",
+      "steps": [
+        "In GamesTracker, open Settings → API → New token (starts with gtv_). For agents to change the shelf, do not make it read-only; for backups, create it as an admin.",
+        "In MyHomeLab, in Connected apps → GamesTracker → Connect GamesTracker, enter the address and the token.",
+        "Add the Games Curator in Assistant → Workflow (from the template)."
+      ],
+      "notes": [
+        "Ask, for example: \"I finished Hollow Knight, give it 9\", \"What should I play next?\", \"Tell me when Elden Ring drops below €30\".",
+        "Removing a game from the shelf needs confirmation: it loses its hours, rating and notes.",
+        "The backup is GamesTracker's own database dump (pg_dump)."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "immich": {
+      "title": "Immich",
+      "summary": "Photos and videos: the Photo Curator finds photos, organises albums, names people and looks after Immich settings, jobs and backups.",
+      "steps": [
+        "In Immich, open your avatar → Account settings → API keys → New API key. Create it in an admin account with the \"all\" permission: without it, settings, jobs and backups do not work.",
+        "In MyHomeLab, in Connected apps → Immich → Connect Immich, enter the address and the key.",
+        "Add the Photo Curator in Assistant → Workflow (from the template)."
+      ],
+      "notes": [
+        "Ask, for example: \"Make an album with the August beach photos\", \"Who is this unnamed person?\", \"Do the Immich jobs have failures?\".",
+        "Changing settings: the agent first shows before → after and only applies when you say yes. It never deletes photos or albums.",
+        "The backup holds the Immich database (albums, people, metadata, users, settings). Photos and videos (the UPLOAD_LOCATION folder) are not included: back them up separately.",
+        "Connections shows each API call and whether your key has the permission."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "paperless": {
+      "title": "Paperless",
+      "summary": "Scanned documents: the Archivist finds and reads invoices, contracts and receipts, files them and looks after the Paperless configuration.",
+      "steps": [
+        "In Paperless, open your profile (top right) → API Auth Token → generate. Use a superuser's so agents can see and change the configuration.",
+        "In MyHomeLab, in Connected apps → Paperless → Connect Paperless, enter the address and the token.",
+        "Add the Archivist in Assistant → Workflow (from the template)."
+      ],
+      "notes": [
+        "Ask, for example: \"How much did I pay for electricity in October?\", \"File the documents in the inbox\", \"Create the Health tag and match it automatically\".",
+        "Filing many documents at once or changing the configuration: the agent first shows what changes and only applies when you say yes. It never deletes documents.",
+        "The backup is a JSON with the organisation (tags, correspondents, types, paths, workflows, mail rules) and the configuration. Documents are saved on the server with Paperless's document_exporter."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "solidtime": {
+      "title": "solidtime",
+      "summary": "Time tracking: the Timekeeper starts and stops the timer, logs forgotten hours and sums hours by project or client.",
+      "steps": [
+        "In solidtime, open your profile → API Tokens → Create token and copy all of it (it is long).",
+        "In MyHomeLab, in Connected apps → solidtime → Connect solidtime, enter the address and the token. If you are in several organisations, type the one to connect.",
+        "Add the Timekeeper in Assistant → Workflow (from the template)."
+      ],
+      "notes": [
+        "Ask, for example: \"Start the MyHomeLab project\", \"Stop\", \"Yesterday I worked 2–4 pm for client X\", \"How many hours did I do this week by project?\".",
+        "The times you say are your local time; MyHomeLab converts them with your solidtime account's time zone. It never deletes entries.",
+        "The backup is the full organisation export (needs owner or admin).",
+        "solidtime does not report its installed version, so there is no new-version alert for it."
+      ],
+      "goTo": "Go to Connected apps"
+    },
+    "instanceBackup": {
+      "title": "MyHomeLab backup",
+      "summary": "Everything in MyHomeLab in a password-protected zip: documents, agents, conversations, connected apps and logins. To keep, move to another server or restore.",
+      "steps": [
+        "In Admin → Backup, set the backup password (no zip opens without it).",
+        "Click Create and download for a zip now, or schedule backups to a destination (Nextcloud, local on the CT…) with frequency and how many to keep.",
+        "To restore, in Admin → Backup → Restore a backup, pick the zip, type the password and REPOR. MyHomeLab copies the current database first, replaces everything and restarts."
+      ],
+      "notes": [
+        "The zip has one folder per area (documents, agents, projects, connected apps, AI…) and the documents also as Markdown, readable without MyHomeLab.",
+        "Restoring replaces everything with what is in the backup. If something fails midway, it goes back to how it was.",
+        "From the CT console: myhomelab-restore <file.zip>."
+      ],
+      "goTo": "Go to Admin"
+    },
     "docs": {
       "title": "Documents",
       "summary": "Your rules and the maps of what exists, organised in a tree of your own. Agents follow the rules and only propose changes; what they did goes to History.",
@@ -240,7 +333,8 @@
         "Anything you do not put in a section of yours stays in Automatic, grouped by what it is linked to (Servers and apps, Projects, General).",
         "Agents get the index of documents and the list of those a request touches (by titles, tags and links). They must read those before changing anything.",
         "Agents do not write in your documents: they propose changes, which you approve or reject in Documents.",
-        "Every document keeps its previous versions; you can restore any of them. ⋯ → Create suggested documents gives you ready-made ones to start with."
+        "Every document keeps its previous versions; you can restore any of them. ⋯ → Create suggested documents gives you ready-made ones to start with.",
+        "Ask Jarvis to \"tidy my documents\": it sees the Documents page as you do and proposes names, links, tags and sections (even new ones). You approve them in Documents, one by one."
       ],
       "goTo": "Go to Documents"
     },
@@ -319,7 +413,7 @@
     },
     "apps": {
       "title": "Connected apps",
-      "summary": "The accounts MyHomeLab and Jarvis use: Gmail, Google Tasks, Forgejo, Nextcloud, Proxmox, Home Assistant…",
+      "summary": "The accounts MyHomeLab and Jarvis use: Gmail, Google Tasks, Proxmox, Nextcloud, Forgejo, Home Assistant, AdGuard, TREK, openGym, GamesTracker, Immich, Paperless and solidtime.",
       "steps": [
         "Pick the app and click Connect. Each one asks for the address and a key or app password.",
         "Open the account to see the summary: status, version and what changed.",

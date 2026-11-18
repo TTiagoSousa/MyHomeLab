@@ -78,7 +78,10 @@ accounts are created in the Admin panel.
 Point your reverse proxy (Nginx Proxy Manager, Caddy, Traefik…) at the container:
 `myhomelab.example.com` → `http://<CT IP>:80`, with TLS. Enable **WebSocket / long-lived
 connection support**: the live agent view keeps a streaming connection open, and buffering
-must be off.
+must be off. Raise the proxy read timeout too (Nginx Proxy Manager: Advanced →
+`proxy_read_timeout 15m; proxy_send_timeout 15m;`): a request where Jarvis delegates work can take
+several minutes. With a shorter timeout nothing is lost — the question is saved at once and the page
+picks the reply up from the history when it is ready — but the answer only shows up later.
 
 `APP_URL` must be the address users open. It is the Google OAuth return address and decides
 whether the session cookie is `secure` (HTTPS only). If you change it later, update
