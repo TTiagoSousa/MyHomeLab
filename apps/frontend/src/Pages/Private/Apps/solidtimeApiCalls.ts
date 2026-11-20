@@ -1,6 +1,6 @@
 export type Solidtime_Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-export type Solidtime_Consumer = 'connect' | 'status' | 'backups' | 'assistant';
+export type Solidtime_Consumer = 'connect' | 'status' | 'assistant';
 
 export type Solidtime_Access = 'public' | 'user' | 'admin';
 
@@ -20,7 +20,7 @@ const ORG = '/api/v1/organizations/{organization}';
 export const SOLIDTIME_USED_CALLS: Solidtime_Api_Call[] = [
   { id: 'up', method: 'GET', path: '/health-check/up', access: 'public', usedBy: ['connect'] },
   { id: 'me', method: 'GET', path: '/api/v1/users/me', access: 'user', usedBy: ['connect', 'status', 'assistant'] },
-  { id: 'memberships', method: 'GET', path: '/api/v1/users/me/memberships', access: 'user', usedBy: ['connect', 'status', 'backups', 'assistant'] },
+  { id: 'memberships', method: 'GET', path: '/api/v1/users/me/memberships', access: 'user', usedBy: ['connect', 'status', 'assistant'] },
   { id: 'active', method: 'GET', path: '/api/v1/users/me/time-entries/active', access: 'user', usedBy: ['status', 'assistant'] },
   { id: 'entries', method: 'GET', path: `${ORG}/time-entries`, access: 'user', usedBy: ['assistant'] },
   { id: 'aggregate', method: 'GET', path: `${ORG}/time-entries/aggregate`, access: 'user', usedBy: ['status', 'assistant'] },
@@ -32,7 +32,7 @@ export const SOLIDTIME_USED_CALLS: Solidtime_Api_Call[] = [
   { id: 'tags', method: 'GET', path: `${ORG}/tags`, access: 'user', usedBy: ['assistant'] },
   { id: 'objectSave', method: 'POST', path: `${ORG}/{projects|clients|tasks|tags}`, access: 'admin', write: true, usedBy: ['assistant'] },
   { id: 'objectUpdate', method: 'PUT', path: `${ORG}/{projects|clients|tasks|tags}/{id}`, access: 'admin', write: true, usedBy: ['assistant'] },
-  { id: 'export', method: 'POST', path: `${ORG}/export`, access: 'admin', write: true, usedBy: ['backups'] },
+  { id: 'export', method: 'POST', path: `${ORG}/export`, access: 'admin', write: true, usedBy: [] },
 ];
 
 export const SOLIDTIME_POSSIBLE_CALLS: Solidtime_Api_Call[] = [

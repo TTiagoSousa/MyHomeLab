@@ -73,7 +73,7 @@ Valem para tudo o que os agentes fazem nos servidores. As regras de cada app gan
 
 /** Os pontos que todas as apps do servidor têm antes de atualizar. */
 const BEFORE = [
-  '🤖 O backup do MyHomeLab desta app está atualizado: menos de 24 h e sem erro (Apps ligadas → a app → Backups). Se não estiver, corre-o (run_backup) e espera que acabe bem — prova: a hora do último backup bom',
+  '🤖 Há um backup da máquina da app (CT ou VM) no Proxmox com menos de 24 h e sem erro. Se não houver, faz um (pve_backup_now, pelo Operador Proxmox) e espera que acabe bem — prova: a hora e o ficheiro do backup',
   '🤖 O disco do CT/VM está abaixo de 90% e a memória abaixo de 100%. Se não estiver, aumentar esse recurso 10% (pve_set_resources, pelo Operador Proxmox), sem me perguntar, e voltar a medir — prova: a percentagem de cada um',
   '🤖 Li as notas de todas as versões pelo meio e não há passos à mão por fazer — prova: as versões lidas',
   '🤖 A versão saiu há pelo menos 3 dias e não há issues graves abertas — prova: a data e os links vistos',
@@ -81,24 +81,15 @@ const BEFORE = [
   '🤖 A app responde na versão de partida e não há outra atualização a correr no servidor — prova: a versão e o que está a correr',
 ];
 
-/** O backup do MyHomeLab do Nextcloud só leva os dados (calendários, contactos): para voltar atrás é preciso o da máquina no Proxmox. */
-const NEXTCLOUD_BACKUP =
-  '🤖 Há um backup da máquina do Nextcloud (CT ou VM) no Proxmox com menos de 24 h e sem erro. Se não houver, faz um (pve_backup_now, pelo Operador Proxmox) e espera que acabe bem — prova: a hora e o ficheiro do backup';
-
 /** Os pontos que todas as apps do servidor têm depois de atualizar. */
 const AFTER_START = [
   '🤖 A app responde na versão nova em menos de 5 minutos — prova: a versão e o tempo',
   '🤖 Os logs não têm erros novos — prova: as linhas vistas ou "nenhuma"',
 ];
-const AFTER_END = [
-  '🤖 Correu um backup novo pelo MyHomeLab — prova: a hora e o resultado',
-];
 
 interface AppRules {
   name: string;
   where?: string;
-  /** Um ponto a juntar ao backup do MyHomeLab, para as apps em que ele não chega para voltar atrás (ex.: o Nextcloud). */
-  backup?: string;
   before: string[];
   after: string[];
   never: string[];
@@ -111,7 +102,7 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
     before: [],
     after: [
       '🤖 Resolve google.com e um domínio da casa pelo AdGuard — prova: as respostas',
-      '🤖 As reescritas DNS e as regras próprias continuam lá (comparar com o backup) — prova: as contagens',
+      '🤖 As reescritas DNS e as regras próprias continuam lá (comparar com o que havia antes) — prova: as contagens',
       '🤖 As listas de bloqueio atualizam sem erro e o registo de consultas recebe pedidos — prova: o que se viu',
     ],
     never: [
@@ -122,7 +113,7 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.TREK]: {
     name: 'TREK',
     before: [
-      '🤖 O zip do backup tem a chave de encriptação — prova: o ficheiro visto',
+      '🤖 O backup do próprio TREK (Admin → Backup) é recente e tem a chave de encriptação — prova: o ficheiro visto',
       '🤖 Nas versões major, há espaço para a cópia da base de dados que a migração faz — prova: o espaço livre',
     ],
     after: [
@@ -136,7 +127,6 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.OPENGYM]: {
     name: 'openGym',
     before: [
-      '🤖 O backup do MyHomeLab do openGym (o estado de cada perfil, em JSON) correu há pouco — prova: a hora do último bom',
       '🤖 Ninguém está a meio de um treino (um treino a decorrer vive no telemóvel e só sobe no fim) — prova: o último treino visto',
     ],
     after: [
@@ -151,7 +141,7 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.GAMETRACKER]: {
     name: 'GamesTracker',
     before: [
-      '🤖 O backup do MyHomeLab do GamesTracker (a base de dados, pg_dump) correu há pouco — prova: a hora do último bom',
+      '🤖 Há um backup recente da base de dados do GamesTracker (o dele, em /var/backups/gametracker) — prova: a data do backup',
     ],
     after: [
       '🤖 O /api/health responde ok com a versão nova — prova: o JSON',
@@ -165,8 +155,8 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.IMMICH]: {
     name: 'Immich',
     before: [
-      '🤖 O backup do MyHomeLab do Immich (a base de dados) correu há pouco — prova: a hora do último bom',
-      '👤 As fotos (a pasta UPLOAD_LOCATION) têm cópia à parte — o backup do MyHomeLab só leva a base de dados',
+      '🤖 Há um backup recente da base de dados do Immich (o dele, em UPLOAD_LOCATION/backups) — prova: a data do backup',
+      '👤 As fotos (a pasta UPLOAD_LOCATION) têm cópia à parte — o backup da base de dados não as leva',
       '🤖 As notas da versão nova não pedem passos à mão (mudanças no docker-compose ou no .env) — prova: o excerto das notas',
     ],
     after: [
@@ -182,7 +172,7 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.PAPERLESS]: {
     name: 'Paperless',
     before: [
-      '👤 Há um export recente dos documentos no servidor (document_exporter) — o backup do MyHomeLab só leva a arrumação e a configuração',
+      '👤 Há um export recente dos documentos no servidor (document_exporter)',
       '🤖 As notas da versão nova não pedem passos à mão (mudanças no docker-compose ou no ambiente) — prova: o excerto das notas',
     ],
     after: [
@@ -198,7 +188,6 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.SOLIDTIME]: {
     name: 'solidtime',
     before: [
-      '🤖 O backup do MyHomeLab do solidtime (o export da organização) correu há pouco — prova: a hora do último bom',
       '🤖 As notas da versão nova não pedem passos à mão (migrações, mudanças no .env ou no docker-compose) — prova: o excerto das notas',
     ],
     after: [
@@ -213,7 +202,6 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.STIRLING_PDF]: {
     name: 'Stirling-PDF',
     before: [
-      '🤖 O backup do MyHomeLab do Stirling-PDF (as definições) correu há pouco — prova: a hora do último bom',
       '🤖 As notas da versão nova não pedem passos à mão (mudanças no docker-compose, no ambiente ou nas definições) — prova: o excerto das notas',
     ],
     after: [
@@ -258,7 +246,7 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.JELLYFIN]: {
     name: 'Jellyfin',
     before: [
-      '🤖 Há um backup recente da configuração do Jellyfin (o do MyHomeLab) e, se for uma versão grande (ex.: 10.11 → 12), um backup completo do próprio Jellyfin ou da pasta de dados — prova: a data do backup',
+      '🤖 Se for uma versão grande (ex.: 10.11 → 12), há um backup completo do próprio Jellyfin (jellyfin_server_backup) ou da pasta de dados — prova: a data do backup',
       '🤖 As notas da versão nova não pedem passos à mão (migração da base de dados, plugins a tirar antes, procura completa depois) — prova: o excerto das notas',
       '🤖 Ninguém está a ver (jellyfin_sessions) — prova: a lista vazia',
     ],
@@ -276,7 +264,7 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.DISPATCHARR]: {
     name: 'Dispatcharr',
     before: [
-      '🤖 Há um backup recente do Dispatcharr (o zip dele, guardado pelo MyHomeLab) — prova: a data do backup',
+      '🤖 Há um backup recente do próprio Dispatcharr (o zip dele, dispatcharr_backups) — prova: a data do backup',
       '🤖 As notas da versão nova não pedem passos à mão (migrações, variáveis novas no docker-compose, mudanças no Redis/PostgreSQL) — prova: o excerto das notas',
       '🤖 Ninguém está a ver (dispatcharr_connections) e não há gravação a decorrer (dispatcharr_recordings) — prova: as listas',
     ],
@@ -320,7 +308,7 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.CLICKHOUSE]: {
     name: 'ClickHouse',
     before: [
-      '🤖 Há um backup do esquema do ClickHouse de hoje (Apps ligadas → ClickHouse → Backups) e, para os dados, um BACKUP do ClickHouse ou do CT — prova: a hora do último bom',
+      '🤖 Para os dados, há um BACKUP do próprio ClickHouse de hoje (ou chega o do CT) — prova: a hora do último bom',
       '🤖 As notas da versão nova não trazem mudanças incompatíveis (Backward Incompatible Change) que toquem nas tabelas ou definições usadas — prova: o excerto das notas',
     ],
     after: [
@@ -367,7 +355,7 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.INFISICAL]: {
     name: 'Infisical',
     before: [
-      '🤖 Há um backup recente do Infisical (o JSON dos segredos e, de preferência, um pg_dump da base de dados dele) — prova: a data do backup',
+      '🤖 Há um pg_dump recente da base de dados do Infisical (ou chega o do CT) — prova: a data do backup',
       '🤖 As notas da versão nova não pedem passos à mão (migrações, variáveis de ambiente, ENCRYPTION_KEY) — prova: o excerto das notas',
     ],
     after: [
@@ -394,7 +382,6 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   },
   [ConnectionProvider.NEXTCLOUD]: {
     name: 'Nextcloud',
-    backup: NEXTCLOUD_BACKUP,
     before: [
       '🤖 Não salta versões major: do Nextcloud só se sobe uma major de cada vez (ex.: 30 → 31, nunca 30 → 32) — prova: a versão de partida e a de chegada',
       '🤖 Todas as apps ligadas aceitam a versão nova (a App Store diz as versões do servidor de cada app); as que não aceitam ficam desligadas pelo Nextcloud — prova: as apps vistas ou "todas aceitam"',
@@ -449,10 +436,10 @@ export function appRulesContent(
 ${CHECK_LEGEND}
 
 ## Antes de atualizar
-${checklist([...BEFORE, ...(rules.backup ? [rules.backup] : []), ...rules.before])}
+${checklist([...BEFORE, ...rules.before])}
 
 ## Depois de atualizar
-${checklist([...AFTER_START, ...rules.after, ...AFTER_END])}
+${checklist([...AFTER_START, ...rules.after])}
 
 ## Nunca
 ${rules.never.map((item) => `- ${item}`).join('\n')}
@@ -470,7 +457,7 @@ Para as atualizações **dentro** do Home Assistant: add-ons, HACS (integraçõe
 ${CHECK_LEGEND}
 
 ## Antes de atualizar
-- [ ] 🤖 Há um backup do Home Assistant feito pelo MyHomeLab há menos de 2 horas e sem erro. Se não houver, corre-o (run_backup) e espera que acabe bem — prova: a hora e o ficheiro do backup
+- [ ] 🤖 A atualização vai com \`backup: true\` (o Home Assistant faz o backup dele antes de instalar) — prova: o pedido feito
 - [ ] 🤖 Li as notas entre a versão instalada e a nova — prova: as versões lidas
 - [ ] 🤖 A versão saiu há pelo menos 3 dias e não há issues graves abertas — prova: a data e os links vistos
 - [ ] 👤 Se é um salto de versão major, eu disse que sim — prova: a minha resposta ou "não é major"
@@ -550,7 +537,7 @@ export function starterDocs(
         kind: DocKind.RULES,
         tags: ['atualizacao', 'home assistant', 'pecas'],
         summary:
-          'As atualizações dentro do Home Assistant (add-ons, HACS, firmware): backup do HA com menos de 2 h, sem snapshot da VM.',
+          'As atualizações dentro do Home Assistant (add-ons, HACS, firmware): com o backup do próprio HA (backup: true), sem snapshot da VM.',
         links,
         content: homeAssistantPartsContent(app.label),
       });

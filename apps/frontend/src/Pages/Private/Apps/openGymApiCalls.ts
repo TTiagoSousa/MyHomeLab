@@ -1,6 +1,6 @@
 export type OpenGym_Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-export type OpenGym_Consumer = 'connect' | 'status' | 'updates' | 'backups' | 'assistant';
+export type OpenGym_Consumer = 'connect' | 'status' | 'updates' | 'assistant';
 
 export type OpenGym_Access = 'public' | 'profile' | 'admin' | 'github';
 
@@ -20,7 +20,7 @@ export const OPENGYM_USED_CALLS: OpenGym_Api_Call[] = [
   { id: 'page', method: 'GET', path: '/ · /assets/index-*.js', access: 'public', usedBy: ['status', 'updates'] },
   { id: 'pairRedeem', method: 'POST', path: '/api/pair/redeem', access: 'public', usedBy: ['connect'] },
   { id: 'me', method: 'GET', path: '/api/me', access: 'profile', usedBy: ['status', 'assistant'] },
-  { id: 'dataGet', method: 'GET', path: '/api/data', access: 'profile', usedBy: ['status', 'backups', 'assistant'] },
+  { id: 'dataGet', method: 'GET', path: '/api/data', access: 'profile', usedBy: ['status', 'assistant'] },
   { id: 'dataPut', method: 'PUT', path: '/api/data', access: 'profile', write: true, usedBy: ['assistant'] },
   { id: 'catalog', method: 'GET', path: 'raw.githubusercontent.com/…/v{versão}/frontend/src/lib/exercises-data.js', access: 'github', usedBy: ['assistant'] },
   { id: 'catalogPt', method: 'GET', path: 'raw.githubusercontent.com/…/catalogue/i18n/pt.json', access: 'github', usedBy: ['assistant'] },

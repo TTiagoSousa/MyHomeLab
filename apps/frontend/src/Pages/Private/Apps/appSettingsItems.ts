@@ -10,7 +10,6 @@ export type App_Settings_Section =
   | 'rules'
   | 'proposals'
   | 'updates'
-  | 'backups'
   | 'agents'
   | 'docs'
   | 'schedules';
@@ -21,7 +20,6 @@ const SECTION_ICONS: Record<App_Settings_Section, ComponentType> = {
   rules: Icon.Doc,
   proposals: Icon.Star,
   updates: Icon.Refresh,
-  backups: Icon.Folder,
   agents: Icon.Agents,
   docs: Icon.Doc,
   schedules: Icon.Clock,

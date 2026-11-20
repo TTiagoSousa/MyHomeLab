@@ -73,7 +73,8 @@ export async function listBackups(backups: BackupService, userId: string) {
   lines.push(
     jobs.length
       ? jobs.map(describeJob).join('\n')
-      : 'Não há backups automáticos configurados.',
+      : 'Não há backups do MyHomeLab configurados.',
+    'As apps ligadas já não têm backups no MyHomeLab: o backup completo de uma app é o da própria app ou o do CT/VM no Proxmox (pve_backup_now).',
   );
   return lines.join('\n');
 }
@@ -91,8 +92,8 @@ export async function runBackup(
     (jobs.length === 1 ? jobs[0] : null);
   if (!job) {
     return jobs.length
-      ? `Não há backup para "${name}". Os que existem: ${jobs.map(jobName).join(', ')}.`
-      : 'Não há backups configurados. Configuram-se na página de cada app, em Apps ligadas.';
+      ? `Não há backup para "${name}": as apps ligadas já não têm backups no MyHomeLab. Para uma app, faz o backup do CT/VM no Proxmox (pve_backup_now, pelo Operador Proxmox). O que existe: ${jobs.map(jobName).join(', ')}.`
+      : 'Não há backups do MyHomeLab configurados (Admin → Backup).';
   }
   const result = await backups.runNow(userId, job.id);
   if (!result.ok) return `O backup de ${jobName(job)} falhou: ${result.error}`;

@@ -9,7 +9,6 @@ import App_Account from './App_Account';
 import App_Location from './App_Location';
 import App_Updates from './App_Updates';
 import App_Settings_Menu from './App_Settings_Menu';
-import App_Backups from './App_Backups';
 import { appSettingsItems } from './appSettingsItems';
 import Linked_Docs from '../../../Components/Linked_Docs/Linked_Docs';
 import Agent_Access from '../../../Components/Agent_Access/Agent_Access';
@@ -46,7 +45,7 @@ const Home_Assistant_Account = () => {
                 {t('apps.homeAssistant.connections.title')}
               </button>
               <App_Settings_Menu
-                items={appSettingsItems(['account', 'location', 'updates', 'backups', 'agents', 'docs', 'schedules'], t, t('apps.homeAssistant.credentialsHint'))}
+                items={appSettingsItems(['account', 'location', 'updates', 'agents', 'docs', 'schedules'], t, t('apps.homeAssistant.credentialsHint'))}
               />
             </>
           )
@@ -93,16 +92,6 @@ const Home_Assistant_Account = () => {
           </App_Account>
 
           <App_Updates accountId={account.id} appName={t('apps.homeAssistant.title')} />
-
-          <div id='app-backups'>
-            <App_Backups
-              accountId={account.id}
-              serviceName={name}
-              defaultFolder='Home Assistant'
-              fileExample='home-assistant-2026-10-30_030000.tar'
-              textKey='addons:apps.homeAssistant.backup'
-            />
-          </div>
 
           <Update_Attempts accountId={account.id} label={label} />
 

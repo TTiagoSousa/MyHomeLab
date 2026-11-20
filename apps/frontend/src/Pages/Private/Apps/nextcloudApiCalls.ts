@@ -1,6 +1,6 @@
 export type Nextcloud_Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PROPFIND' | 'REPORT' | 'MKCOL';
 
-export type Nextcloud_Consumer = 'status' | 'updates' | 'backups' | 'assistant' | 'tasks';
+export type Nextcloud_Consumer = 'status' | 'updates' | 'assistant' | 'tasks';
 
 export type Nextcloud_Access = 'public' | 'user' | 'admin' | 'store';
 
@@ -21,17 +21,17 @@ const CONTACTS = '/remote.php/dav/addressbooks/users/{user}';
 const FILES = '/remote.php/dav/files/{user}';
 
 export const NEXTCLOUD_USED_CALLS: Nextcloud_Api_Call[] = [
-  { id: 'status', method: 'GET', path: '/status.php', access: 'public', usedBy: ['status', 'updates', 'backups', 'assistant'] },
-  { id: 'me', method: 'GET', path: `${OCS}/cloud/user`, access: 'user', usedBy: ['status', 'backups', 'assistant', 'tasks'] },
+  { id: 'status', method: 'GET', path: '/status.php', access: 'public', usedBy: ['status', 'updates', 'assistant'] },
+  { id: 'me', method: 'GET', path: `${OCS}/cloud/user`, access: 'user', usedBy: ['status', 'assistant', 'tasks'] },
   { id: 'myGroups', method: 'GET', path: `${OCS}/cloud/users/{user}/groups`, access: 'user', usedBy: ['status', 'updates'] },
-  { id: 'appsList', method: 'GET', path: `${OCS}/cloud/apps?filter=enabled`, access: 'admin', usedBy: ['status', 'updates', 'backups', 'assistant'] },
+  { id: 'appsList', method: 'GET', path: `${OCS}/cloud/apps?filter=enabled`, access: 'admin', usedBy: ['status', 'updates', 'assistant'] },
   { id: 'appInfo', method: 'GET', path: `${OCS}/cloud/apps/{app}`, access: 'admin', usedBy: ['status', 'updates', 'assistant'] },
-  { id: 'usersList', method: 'GET', path: `${OCS}/cloud/users`, access: 'admin', usedBy: ['backups'] },
-  { id: 'groupsList', method: 'GET', path: `${OCS}/cloud/groups`, access: 'admin', usedBy: ['backups'] },
-  { id: 'calendars', method: 'PROPFIND', path: `${CALENDARS}/`, access: 'user', usedBy: ['backups', 'tasks'] },
-  { id: 'calendarExport', method: 'GET', path: `${CALENDARS}/{calendar}?export`, access: 'user', usedBy: ['backups'] },
-  { id: 'addressBooks', method: 'PROPFIND', path: `${CONTACTS}/`, access: 'user', usedBy: ['backups'] },
-  { id: 'addressBookExport', method: 'GET', path: `${CONTACTS}/{book}?export`, access: 'user', usedBy: ['backups'] },
+  { id: 'usersList', method: 'GET', path: `${OCS}/cloud/users`, access: 'admin', usedBy: [] },
+  { id: 'groupsList', method: 'GET', path: `${OCS}/cloud/groups`, access: 'admin', usedBy: [] },
+  { id: 'calendars', method: 'PROPFIND', path: `${CALENDARS}/`, access: 'user', usedBy: ['tasks'] },
+  { id: 'calendarExport', method: 'GET', path: `${CALENDARS}/{calendar}?export`, access: 'user', usedBy: [] },
+  { id: 'addressBooks', method: 'PROPFIND', path: `${CONTACTS}/`, access: 'user', usedBy: [] },
+  { id: 'addressBookExport', method: 'GET', path: `${CONTACTS}/{book}?export`, access: 'user', usedBy: [] },
   { id: 'listCreate', method: 'MKCOL', path: `${CALENDARS}/{list}`, access: 'user', write: true, usedBy: ['tasks'] },
   { id: 'tasksList', method: 'REPORT', path: `${CALENDARS}/{list}`, access: 'user', usedBy: ['tasks'] },
   { id: 'taskSave', method: 'PUT', path: `${CALENDARS}/{list}/{task}.ics`, access: 'user', write: true, usedBy: ['tasks'] },

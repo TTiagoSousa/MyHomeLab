@@ -1,6 +1,6 @@
 export type Immich_Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-export type Immich_Consumer = 'connect' | 'status' | 'updates' | 'backups' | 'assistant';
+export type Immich_Consumer = 'connect' | 'status' | 'updates' | 'assistant';
 
 export type Immich_Access = 'public' | 'user' | 'admin' | 'github';
 
@@ -37,11 +37,11 @@ export const IMMICH_USED_CALLS: Immich_Api_Call[] = [
   { id: 'queues', method: 'GET', path: '/api/queues', access: 'admin', permission: 'queue.read', usedBy: ['status', 'assistant'] },
   { id: 'queueUpdate', method: 'PUT', path: '/api/queues/{name}', access: 'admin', permission: 'queue.update', write: true, usedBy: ['assistant'] },
   { id: 'queueStart', method: 'PUT', path: '/api/jobs/{name}', access: 'admin', permission: 'job.create', write: true, usedBy: ['assistant'] },
-  { id: 'jobCreate', method: 'POST', path: '/api/jobs', access: 'admin', permission: 'job.create', write: true, usedBy: ['backups', 'assistant'] },
+  { id: 'jobCreate', method: 'POST', path: '/api/jobs', access: 'admin', permission: 'job.create', write: true, usedBy: ['assistant'] },
   { id: 'config', method: 'GET', path: '/api/system-config', access: 'admin', permission: 'systemConfig.read', usedBy: ['assistant'] },
   { id: 'configUpdate', method: 'PUT', path: '/api/system-config', access: 'admin', permission: 'systemConfig.update', write: true, usedBy: ['assistant'] },
-  { id: 'backups', method: 'GET', path: '/api/admin/database-backups', access: 'admin', permission: 'maintenance', usedBy: ['backups'] },
-  { id: 'backupDownload', method: 'GET', path: '/api/admin/database-backups/{filename}', access: 'admin', permission: 'backup.download', usedBy: ['backups'] },
+  { id: 'backups', method: 'GET', path: '/api/admin/database-backups', access: 'admin', permission: 'maintenance', usedBy: [] },
+  { id: 'backupDownload', method: 'GET', path: '/api/admin/database-backups/{filename}', access: 'admin', permission: 'backup.download', usedBy: [] },
   { id: 'releases', method: 'GET', path: 'api.github.com/repos/immich-app/immich/releases', access: 'github', usedBy: ['updates'] },
 ];
 

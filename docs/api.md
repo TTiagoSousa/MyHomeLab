@@ -256,8 +256,8 @@ through nginx (`X-Forwarded-For` present).
 | PATCH | `/backups/destinations/:id` | Update a destination |
 | DELETE | `/backups/destinations/:id` | Delete (409 while backups use it) |
 | GET | `/backups/destinations/:id/check` | Test a destination; reports free space |
-| GET | `/backups/jobs` | List backup jobs with recent runs (`?accountId=`, or `?instance=1` for MyHomeLab's own) |
-| POST | `/backups/jobs` | Create a backup job for a connected app; without `accountId`, a MyHomeLab backup (admin) |
+| GET | `/backups/jobs` | List MyHomeLab's own backup jobs with recent runs (connected apps no longer have backups here) |
+| POST | `/backups/jobs` | Create a MyHomeLab backup job (admin); an `accountId` is rejected with 400 |
 | PATCH | `/backups/jobs/:id` | Update a job (frequency, retention, options) |
 | DELETE | `/backups/jobs/:id` | Delete a job (files already written stay) |
 | POST | `/backups/jobs/:id/run` | Run a backup now |

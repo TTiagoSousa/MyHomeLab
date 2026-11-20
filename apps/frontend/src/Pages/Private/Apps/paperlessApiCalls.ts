@@ -1,6 +1,6 @@
 export type Paperless_Method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
-export type Paperless_Consumer = 'connect' | 'status' | 'updates' | 'backups' | 'assistant';
+export type Paperless_Consumer = 'connect' | 'status' | 'updates' | 'assistant';
 
 export type Paperless_Access = 'user' | 'admin' | 'github';
 
@@ -26,18 +26,18 @@ export const PAPERLESS_USED_CALLS: Paperless_Api_Call[] = [
   { id: 'documentUpdate', method: 'PATCH', path: '/api/documents/{id}/', access: 'user', permission: 'change_document', write: true, usedBy: ['assistant'] },
   { id: 'noteAdd', method: 'POST', path: '/api/documents/{id}/notes/', access: 'user', permission: 'add_note', write: true, usedBy: ['assistant'] },
   { id: 'bulkEdit', method: 'POST', path: '/api/documents/bulk_edit/', access: 'user', permission: 'change_document', write: true, usedBy: ['assistant'] },
-  { id: 'tags', method: 'GET', path: '/api/tags/', access: 'user', permission: 'view_tag', usedBy: ['assistant', 'backups'] },
+  { id: 'tags', method: 'GET', path: '/api/tags/', access: 'user', permission: 'view_tag', usedBy: ['assistant'] },
   { id: 'tagSave', method: 'POST', path: '/api/tags/', access: 'user', permission: 'add_tag', write: true, usedBy: ['assistant'] },
-  { id: 'correspondents', method: 'GET', path: '/api/correspondents/', access: 'user', permission: 'view_correspondent', usedBy: ['assistant', 'backups'] },
+  { id: 'correspondents', method: 'GET', path: '/api/correspondents/', access: 'user', permission: 'view_correspondent', usedBy: ['assistant'] },
   { id: 'correspondentSave', method: 'POST', path: '/api/correspondents/', access: 'user', permission: 'add_correspondent', write: true, usedBy: ['assistant'] },
-  { id: 'documentTypes', method: 'GET', path: '/api/document_types/', access: 'user', permission: 'view_documenttype', usedBy: ['assistant', 'backups'] },
-  { id: 'storagePaths', method: 'GET', path: '/api/storage_paths/', access: 'user', permission: 'view_storagepath', usedBy: ['assistant', 'backups'] },
-  { id: 'customFields', method: 'GET', path: '/api/custom_fields/', access: 'user', permission: 'view_customfield', usedBy: ['assistant', 'backups'] },
-  { id: 'savedViews', method: 'GET', path: '/api/saved_views/', access: 'user', permission: 'view_savedview', usedBy: ['backups'] },
-  { id: 'workflows', method: 'GET', path: '/api/workflows/', access: 'user', permission: 'view_workflow', usedBy: ['assistant', 'backups'] },
-  { id: 'mailRules', method: 'GET', path: '/api/mail_rules/', access: 'user', permission: 'view_mailrule', usedBy: ['assistant', 'backups'] },
-  { id: 'mailAccounts', method: 'GET', path: '/api/mail_accounts/', access: 'user', permission: 'view_mailaccount', usedBy: ['backups'] },
-  { id: 'config', method: 'GET', path: '/api/config/', access: 'admin', permission: 'view_applicationconfiguration', usedBy: ['assistant', 'backups'] },
+  { id: 'documentTypes', method: 'GET', path: '/api/document_types/', access: 'user', permission: 'view_documenttype', usedBy: ['assistant'] },
+  { id: 'storagePaths', method: 'GET', path: '/api/storage_paths/', access: 'user', permission: 'view_storagepath', usedBy: ['assistant'] },
+  { id: 'customFields', method: 'GET', path: '/api/custom_fields/', access: 'user', permission: 'view_customfield', usedBy: ['assistant'] },
+  { id: 'savedViews', method: 'GET', path: '/api/saved_views/', access: 'user', permission: 'view_savedview', usedBy: [] },
+  { id: 'workflows', method: 'GET', path: '/api/workflows/', access: 'user', permission: 'view_workflow', usedBy: ['assistant'] },
+  { id: 'mailRules', method: 'GET', path: '/api/mail_rules/', access: 'user', permission: 'view_mailrule', usedBy: ['assistant'] },
+  { id: 'mailAccounts', method: 'GET', path: '/api/mail_accounts/', access: 'user', permission: 'view_mailaccount', usedBy: [] },
+  { id: 'config', method: 'GET', path: '/api/config/', access: 'admin', permission: 'view_applicationconfiguration', usedBy: ['assistant'] },
   { id: 'configUpdate', method: 'PATCH', path: '/api/config/{id}/', access: 'admin', permission: 'change_applicationconfiguration', write: true, usedBy: ['assistant'] },
   { id: 'releases', method: 'GET', path: 'api.github.com/repos/paperless-ngx/paperless-ngx/releases', access: 'github', usedBy: ['updates'] },
 ];

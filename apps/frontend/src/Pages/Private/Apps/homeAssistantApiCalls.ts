@@ -1,6 +1,6 @@
 export type Home_Assistant_Method = 'GET' | 'POST' | 'DELETE' | 'WS';
 
-export type Home_Assistant_Consumer = 'status' | 'updates' | 'backups' | 'assistant';
+export type Home_Assistant_Consumer = 'status' | 'updates' | 'assistant';
 
 export type Home_Assistant_Access = 'user' | 'admin' | 'supervisor';
 
@@ -26,16 +26,16 @@ export const HOME_ASSISTANT_USED_CALLS: Home_Assistant_Api_Call[] = [
   { id: 'configGet', method: 'GET', path: CONFIG, access: 'admin', usedBy: ['assistant'] },
   { id: 'configSave', method: 'POST', path: CONFIG, access: 'admin', write: true, usedBy: ['assistant'] },
   { id: 'configDelete', method: 'DELETE', path: CONFIG, access: 'admin', write: true, usedBy: ['assistant'] },
-  { id: 'backupDownload', method: 'GET', path: '/api/backup/download/{backup_id}', access: 'admin', usedBy: ['backups'] },
+  { id: 'backupDownload', method: 'GET', path: '/api/backup/download/{backup_id}', access: 'admin', usedBy: [] },
   { id: 'currentUser', method: 'WS', path: 'auth/current_user', access: 'user', usedBy: ['status'] },
   { id: 'registries', method: 'WS', path: 'config/{entity|device|area}_registry/list', access: 'user', usedBy: ['status', 'updates', 'assistant'] },
   { id: 'entityUpdate', method: 'WS', path: 'config/entity_registry/update', access: 'admin', write: true, usedBy: ['assistant'] },
   { id: 'systemLog', method: 'WS', path: 'system_log/list', access: 'admin', usedBy: ['assistant'] },
   { id: 'addonInfo', method: 'WS', path: 'supervisor/api · /addons/{slug}/info', access: 'supervisor', usedBy: ['updates'] },
-  { id: 'backupInfo', method: 'WS', path: 'backup/info', access: 'admin', usedBy: ['backups'] },
-  { id: 'backupAgents', method: 'WS', path: 'backup/agents/info', access: 'admin', usedBy: ['backups'] },
-  { id: 'backupGenerate', method: 'WS', path: 'backup/generate', access: 'admin', write: true, usedBy: ['backups'] },
-  { id: 'backupDelete', method: 'WS', path: 'backup/delete', access: 'admin', write: true, usedBy: ['backups'] },
+  { id: 'backupInfo', method: 'WS', path: 'backup/info', access: 'admin', usedBy: [] },
+  { id: 'backupAgents', method: 'WS', path: 'backup/agents/info', access: 'admin', usedBy: [] },
+  { id: 'backupGenerate', method: 'WS', path: 'backup/generate', access: 'admin', write: true, usedBy: [] },
+  { id: 'backupDelete', method: 'WS', path: 'backup/delete', access: 'admin', write: true, usedBy: [] },
 ];
 
 export const HOME_ASSISTANT_POSSIBLE_CALLS: Home_Assistant_Api_Call[] = [

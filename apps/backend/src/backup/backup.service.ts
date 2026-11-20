@@ -27,7 +27,6 @@ import {
 } from './dto/backup.dto';
 import { Readable } from 'stream';
 import { backupFileName } from './helpers/backupFileName';
-import { BACKUP_SOURCES } from './helpers/backupSources';
 import { backupsToDelete } from './helpers/backupsToDelete';
 import { createNextcloudFiles, joinPath } from './helpers/nextcloudFiles';
 import { createLocalFiles } from './helpers/localFiles';
@@ -63,7 +62,7 @@ const DESTINATION_VIEW = {
   lastError: true,
   createdAt: true,
   updatedAt: true,
-  _count: { select: { jobs: true } },
+  _count: { select: { jobs: { where: { accountId: null } } } },
 } as const;
 
 const JOB_INCLUDE = {
@@ -103,17 +102,6 @@ const errorMessage = (error: unknown) => {
 /** O endereço do Nextcloud a partir do CalDAV da conta: tira o /remote.php/dav… */
 const nextcloudBase = (caldavUrl: string) =>
   caldavUrl.replace(/\/remote\.php\/.*$/i, '').replace(/\/+$/, '');
-
-const accountName = (
-  account: {
-    displayName: string | null;
-    username: string | null;
-    provider: ConnectionProvider;
-  } | null,
-) =>
-  account
-    ? (account.displayName ?? account.username ?? account.provider)
-    : INSTANCE_SOURCE.name;
 
 /**
  * Os backups: destinos (o Nextcloud, por WebDAV — a conta de Apps ligadas ou
@@ -299,23 +287,22 @@ export class BackupService {
 
   async removeDestination(userId: string, id: string) {
     await this.findDestination(userId, id);
-    const jobs = await this.prisma.backupJob.findMany({
-      where: { destinationId: id },
-      select: {
-        account: {
-          select: { displayName: true, username: true, provider: true },
-        },
-      },
+    const jobs = await this.prisma.backupJob.count({
+      where: { destinationId: id, accountId: null },
     });
-    if (jobs.length) {
-      const names = jobs.map((job) => accountName(job.account));
+    if (jobs) {
       throw new ConflictException({
         code: 'DESTINATION_IN_USE',
-        message: `Este destino ainda é usado pelos backups de: ${names.join(', ')}. Remove-os ou muda-lhes o destino primeiro.`,
-        services: names,
+        message:
+          'Este destino ainda é usado pelos backups do MyHomeLab. Remove-os ou muda-lhes o destino primeiro.',
+        services: ['MyHomeLab'],
       });
     }
-    await this.prisma.backupDestination.delete({ where: { id } });
+    // Os backups antigos das apps (parados desde que saíram) vão com o destino; os ficheiros ficam lá.
+    await this.prisma.$transaction([
+      this.prisma.backupJob.deleteMany({ where: { destinationId: id } }),
+      this.prisma.backupDestination.delete({ where: { id } }),
+    ]);
   }
 
   /** Entra no Nextcloud e diz como quem e quanto espaço há. */
@@ -344,31 +331,23 @@ export class BackupService {
 
   // ── Backups ──────────────────────────────────────────────────────────────
 
-  /** `accountId` — só os de uma app; `instance` — só os do próprio MyHomeLab. */
-  async jobs(userId: string, accountId?: string, instance = false) {
+  /** Os backups do próprio MyHomeLab. Os das apps ligadas saíram: as linhas antigas ficam paradas. */
+  async jobs(userId: string) {
     return this.prisma.backupJob.findMany({
-      where: {
-        userId,
-        ...(instance ? { accountId: null } : accountId ? { accountId } : {}),
-      },
+      where: { userId, accountId: null },
       orderBy: { createdAt: 'asc' },
       include: JOB_INCLUDE,
     });
   }
 
-  /** Sem `accountId`, um backup do próprio MyHomeLab (só administradores). */
+  /** Um backup do próprio MyHomeLab (só administradores). As apps ligadas já não têm backups aqui. */
   async createJob(userId: string, dto: CreateBackupJobDto, isAdmin = false) {
-    let accountId: string | null = null;
     if (dto.accountId) {
-      const account = await this.accounts.findById(dto.accountId);
-      if (!account || account.userId !== userId || account.disconnectedAt) {
-        throw new NotFoundException('App ligada não encontrada');
-      }
-      if (!BACKUP_SOURCES[account.provider]) {
-        throw new BadRequestException('Esta app ainda não tem backups.');
-      }
-      accountId = account.id;
-    } else if (!isAdmin) {
+      throw new BadRequestException(
+        'As apps ligadas já não têm backups no MyHomeLab: usa o backup da própria app ou o do CT no Proxmox.',
+      );
+    }
+    if (!isAdmin) {
       throw new BadRequestException(
         'Só um administrador faz backups do MyHomeLab.',
       );
@@ -378,7 +357,7 @@ export class BackupService {
     return this.prisma.backupJob.create({
       data: {
         userId,
-        accountId,
+        accountId: null,
         destinationId: dto.destinationId,
         folder: joinPath(dto.folder),
         runFrequency: dto.runFrequency,
@@ -433,7 +412,7 @@ export class BackupService {
 
   async dueJobs() {
     const jobs = await this.prisma.backupJob.findMany({
-      where: { isActive: true },
+      where: { isActive: true, accountId: null },
       select: { id: true, runFrequency: true, lastRunAt: true },
     });
     return jobs.filter(
@@ -446,7 +425,7 @@ export class BackupService {
   }
 
   /**
-   * Faz o backup: lê a app, grava `<pasta do destino>/<pasta>/<app>-<data>.json`
+   * Faz o backup do MyHomeLab: grava `<pasta do destino>/<pasta>/myhomelab-<data>.zip`
    * e apaga os antigos a mais. Guarda a execução no histórico e abre ou fecha o
    * alerta. Nunca lança — o resultado diz se correu bem.
    */
@@ -464,24 +443,16 @@ export class BackupService {
       where: { id },
       include: { destination: true },
     });
-    const isInstance = !job.accountId;
-    const account = job.accountId
-      ? await this.accounts.findById(job.accountId)
-      : null;
     const startedAt = new Date();
-    const source = account ? BACKUP_SOURCES[account.provider] : undefined;
-    const prefix = isInstance
-      ? INSTANCE_SOURCE.prefix
-      : (source?.prefix ?? 'backup');
-    const extension = isInstance
-      ? INSTANCE_SOURCE.extension
-      : (source?.extension ?? 'json');
+    const { prefix, extension } = INSTANCE_SOURCE;
     const folder = joinPath(job.destination.folder, job.folder);
     let result: BackupRunResult;
 
     try {
-      if (!isInstance && (!account || !source)) {
-        throw new Error('Esta app não sabe fazer backups.');
+      if (job.accountId) {
+        throw new Error(
+          'As apps ligadas já não têm backups no MyHomeLab: usa o backup da própria app ou o do CT no Proxmox.',
+        );
       }
       const files = await this.filesFor(job.destination);
       const { userId: davUser } = await files.account();
@@ -489,9 +460,7 @@ export class BackupService {
       // A pasta primeiro: se não existir (ou tiver sido apagada), é criada.
       await files.ensureFolder(davUser, folder);
 
-      const backup = isInstance
-        ? await this.instance.create()
-        : await source!.create(account!, job.options);
+      const backup = await this.instance.create();
       try {
         await files.upload(
           davUser,
@@ -547,9 +516,8 @@ export class BackupService {
       await this.notifications.openUserSubject({
         userId: job.userId,
         subject: `backup:${job.id}`,
-        connectedAccountId: job.accountId ?? undefined,
         kind: NotificationKind.BACKUP_FAILED,
-        title: `O backup de ${isInstance ? INSTANCE_SOURCE.name : account ? accountName(account) : 'uma app'} falhou`,
+        title: `O backup de ${INSTANCE_SOURCE.name} falhou`,
         message: `Não foi possível guardar o backup em ${job.destination.name} (${folder}): ${result.error}`,
       });
     }

@@ -10,7 +10,6 @@ import App_Location from './App_Location';
 import App_Updates from './App_Updates';
 import App_Settings_Menu from './App_Settings_Menu';
 import App_Cron_Button from './App_Cron_Button';
-import App_Backups from './App_Backups';
 import Adguard_Settings from './Adguard_Settings';
 import { appSettingsItems } from './appSettingsItems';
 import Linked_Docs from '../../../Components/Linked_Docs/Linked_Docs';
@@ -47,7 +46,7 @@ const Adguard_Account = () => {
             <div className='Apps_header_actions'>
               <App_Cron_Button to={`/MyHomeLab/Apps/AdGuard/${account.id}/Cron`} />
               <App_Settings_Menu
-                items={appSettingsItems(['account', 'location', 'updates', 'backups', 'agents', 'docs', 'schedules'], t, t('apps.adguard.credentialsHint'))}
+                items={appSettingsItems(['account', 'location', 'updates', 'agents', 'docs', 'schedules'], t, t('apps.adguard.credentialsHint'))}
               />
             </div>
           )
@@ -98,16 +97,6 @@ const Adguard_Account = () => {
           {status && <Adguard_Settings key={status.filtersInterval} accountId={account.id} status={status} onChanged={() => void fetchStatus()} />}
 
           <App_Updates accountId={account.id} appName={t('apps.adguard.title')} />
-
-          <div id='app-backups'>
-            <App_Backups
-              accountId={account.id}
-              serviceName={name}
-              defaultFolder='AdGuard'
-              fileExample='adguard-2026-11-03_030000.json'
-              textKey='addons:apps.adguard.backup'
-            />
-          </div>
 
           <Update_Attempts accountId={account.id} label={label} />
 

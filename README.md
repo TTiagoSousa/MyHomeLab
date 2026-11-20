@@ -46,7 +46,7 @@ Docker) and updates itself from the app, with automatic rollback.
 | **Integrations** | Home Assistant, AdGuard Home, Nextcloud, Forgejo, TREK, openGym, GamesTracker Vault, Immich, Paperless-ngx, solidtime, Stirling-PDF, Plane, Gitea Mirror, Jellyfin, Dispatcharr, Coolify, Nginx Proxy Manager, ClickHouse, PostgreSQL, Vaultwarden and Infisical — each with a connections page showing the token permissions and the API calls MyHomeLab makes. |
 | **Email** | Gmail, Outlook and IMAP accounts. Gmail rules by sender, subject, keywords or mail type, label hierarchies, and rules proposed by the AI from your inbox. |
 | **Tasks sync** | Nextcloud (CalDAV) task lists into Google Tasks. |
-| **Backups** | Scheduled backups of your apps and of MyHomeLab itself, with retention. |
+| **Backups** | Scheduled backups of MyHomeLab itself, with retention. |
 | **Health** | Import a Huawei Health export: sleep, heart rate, SpO₂, stress, steps and workouts with GPS maps. |
 | **Notifications** | One place for every alert and every question the agents ask you. |
 | **Android app** | The whole app on your phone. It offers new versions by itself. |

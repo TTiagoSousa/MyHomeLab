@@ -10,7 +10,6 @@ import App_Account from './App_Account';
 import App_Location from './App_Location';
 import App_Summary from './App_Summary';
 import App_Updates from './App_Updates';
-import App_Backups from './App_Backups';
 import App_Settings_Menu from './App_Settings_Menu';
 import App_Modal from './App_Modal';
 import App_Linked_Cards, { type App_Linked_Panel } from './App_Linked_Cards';
@@ -63,7 +62,7 @@ const Nextcloud_Account = () => {
     return t('apps.nextcloud.appCount', { count: status.apps, updates: status.appUpdates.length });
   };
 
-  const menuItems = appSettingsItems(['account', 'location', 'updates', 'backups', 'agents', 'docs', 'schedules'], t, t('apps.nextcloud.credentialsHint')).map((item) =>
+  const menuItems = appSettingsItems(['account', 'location', 'updates', 'agents', 'docs', 'schedules'], t, t('apps.nextcloud.credentialsHint')).map((item) =>
     PANEL_SECTIONS[item.id] ? { ...item, onSelect: () => setPanel(PANEL_SECTIONS[item.id]) } : item,
   );
 
@@ -125,16 +124,6 @@ const Nextcloud_Account = () => {
           </App_Summary>
 
           <App_Updates accountId={account.id} appName={t('apps.nextcloud.title')} />
-
-          <div id='app-backups'>
-            <App_Backups
-              accountId={account.id}
-              serviceName={name}
-              defaultFolder='Nextcloud'
-              fileExample='nextcloud-2026-11-09_030000.tar'
-              textKey='addons:apps.nextcloud.backup'
-            />
-          </div>
 
           <Update_Attempts accountId={account.id} label={label} />
 

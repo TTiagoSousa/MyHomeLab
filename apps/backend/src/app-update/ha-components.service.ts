@@ -86,7 +86,7 @@ export class HaComponentsService {
         )
           ? ''
           : '⚠ Não há nenhum documento obrigatório da app marcado com a etiqueta "peças": as regras para estas atualizações ainda não estão escritas. Propõe-nas com docs_propose e pergunta ao utilizador antes de avançar.\n\n') +
-        'Valida cada ponto (os backups e o resto com as tuas ferramentas — se a regra pedir um backup que não há, corre-o com run_backup) e marca-o logo com update_check. Quando tiveres tudo, chama update_prepare outra vez com checklist: [] para escrever a especificação.'
+        'Valida cada ponto (com as tuas ferramentas; o backup é o do próprio Home Assistant, com backup: true no update.install) e marca-o logo com update_check. Quando tiveres tudo, chama update_prepare outra vez com checklist: [] para escrever a especificação.'
       );
     }
     await this.attempts.markMany(
@@ -110,7 +110,7 @@ export class HaComponentsService {
       steps,
       specDocs,
       rollback:
-        'o backup do Home Assistant feito pelo MyHomeLab antes de instalar (e, nos add-ons, a cópia do backup: true); se ficar mal, restaura-se essa cópia ou volta-se à versão anterior pelo próprio Home Assistant. Passa a Waiting for reply com o problema, e eu digo o que fazer.',
+        'o backup do próprio Home Assistant (o backup: true do update.install); se ficar mal, restaura-se esse backup ou volta-se à versão anterior pelo próprio Home Assistant. Passa a Waiting for reply com o problema, e eu digo o que fazer.',
     });
     await this.record.save(
       update,

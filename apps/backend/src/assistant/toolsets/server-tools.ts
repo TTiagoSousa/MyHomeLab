@@ -48,8 +48,7 @@ export function buildServerTools(
         properties: {
           name: {
             type: 'string',
-            description:
-              'Nome (ou parte do nome) da app ligada, ex: "Forgejo".',
+            description: 'O nome do backup, ex: "MyHomeLab".',
           },
         },
         required: ['name'],
@@ -82,16 +81,16 @@ export function buildServerTools(
     {
       name: 'list_backups',
       description:
-        'Lista os destinos de backups (Nextcloud) e os backups automáticos das apps ligadas: ' +
-        'app, destino e pasta, frequência, retenção e como correu o último.',
+        'Lista os destinos de backups (Nextcloud) e os backups automáticos do próprio MyHomeLab: ' +
+        'destino e pasta, frequência, retenção e como correu o último. As apps ligadas já não têm backups aqui.',
       inputSchema: { type: 'object', properties: {} },
       handler: () => listBackups(context.backups, userId),
     },
     {
       name: 'run_backup',
       description:
-        'Faz agora o backup de uma app ligada (ex: o Forgejo) para o destino configurado e ' +
-        'aplica a retenção. Devolve o ficheiro gravado ou o erro.',
+        'Faz agora o backup do próprio MyHomeLab para o destino configurado e aplica a retenção. ' +
+        'Devolve o ficheiro gravado ou o erro. Para uma app ligada, usa o backup do CT/VM no Proxmox.',
       inputSchema: {
         type: 'object',
         properties: {

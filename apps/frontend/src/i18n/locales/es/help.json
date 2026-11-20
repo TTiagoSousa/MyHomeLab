@@ -128,30 +128,25 @@
     },
     "forgejo": {
       "title": "Forgejo",
-      "summary": "Tus repositorios para los agentes, y copias automáticas de ellos.",
+      "summary": "Tus repositorios para los agentes.",
       "steps": [
-        "En Forgejo, ve a Configuración → Aplicaciones → Generar token, con lectura y escritura en \"repository\" e \"issue\" y lectura en \"user\". Para la copia de la instancia entera, usa una cuenta de administrador y da también lectura en \"admin\".",
+        "En Forgejo, ve a Configuración → Aplicaciones → Generar token, con lectura y escritura en \"repository\" e \"issue\" y lectura en \"user\".",
         "En MyHomeLab, en Apps conectadas → Forgejo → Conectar Forgejo, pon la dirección (ej.: https://git.ejemplo.com) y pega el token. La app lo prueba antes de guardar.",
-        "Para que los agentes lo usen, elige las herramientas de Forgejo en el agente, en Asistente → Workflow.",
-        "Para las copias, abre la cuenta (Ajustes) y, en Copias automáticas, elige el destino, la carpeta, la frecuencia y cuántas guardar."
+        "Para que los agentes lo usen, elige las herramientas de Forgejo en el agente, en Asistente → Workflow."
       ],
       "notes": [
-        "La copia es un .tar con el código de cada repositorio (git bundle, se recupera con git clone) y las issues, los pull requests, los comentarios y las releases en JSON.",
         "Los usuarios y la configuración de Forgejo no entran: para eso usa forgejo dump en la propia máquina."
       ],
       "goTo": "Ir a Apps conectadas"
     },
     "trek": {
       "title": "TREK",
-      "summary": "El planificador de viajes: aviso de versión nueva, del registro abierto y copias automáticas.",
+      "summary": "El planificador de viajes: aviso de versión nueva y del registro abierto.",
       "steps": [
         "En TREK, crea (o elige) una cuenta de administrador sin MFA, solo para MyHomeLab. TREK no tiene tokens de API: MyHomeLab entra como en la pantalla de login.",
-        "En MyHomeLab, en Apps conectadas → TREK → Conectar TREK, pon la dirección (ej.: https://trek.ejemplo.com), el email y la contraseña. La app comprueba que entra y que es administrador antes de guardar.",
-        "Para las copias, abre el TREK (Ajustes) y, en Copias automáticas, elige el destino, la carpeta, la frecuencia y cuántas guardar."
+        "En MyHomeLab, en Apps conectadas → TREK → Conectar TREK, pon la dirección (ej.: https://trek.ejemplo.com), el email y la contraseña. La app comprueba que entra y que es administrador antes de guardar."
       ],
       "notes": [
-        "La copia es el zip del propio TREK: base de datos, archivos subidos y clave de cifrado. Se recupera en TREK, en Admin → Backup → Restaurar.",
-        "TREK solo permite 3 copias por hora; por encima se guarda la última que tenga.",
         "Si el registro de cuentas está abierto, la página de la cuenta avisa: en un TREK expuesto, cualquiera puede crear una cuenta."
       ],
       "goTo": "Ir a Apps conectadas"
@@ -203,41 +198,37 @@
     },
     "homeAssistant": {
       "title": "Home Assistant",
-      "summary": "La domótica: los agentes controlan la casa y crean automatizaciones y scripts; aviso de versión nueva y copias automáticas.",
+      "summary": "La domótica: los agentes controlan la casa y crean automatizaciones y scripts; aviso de versión nueva.",
       "steps": [
         "En Home Assistant, con una cuenta de administrador, abre tu perfil → Seguridad → Tokens de acceso de larga duración → Crear token, y cópialo (solo se muestra una vez).",
         "En MyHomeLab, en Apps conectadas → Home Assistant → Conectar Home Assistant, pon la dirección (ej: http://homeassistant.local:8123) y pega el token. La app confirma que es de un administrador antes de guardar.",
-        "Para que los agentes lo usen, elige las herramientas de Home Assistant en el agente (por defecto, el Ingeniero de Infraestructura), en Asistente → Workflow.",
-        "Para las copias, abre el Home Assistant (Ajustes) y, en Copias automáticas, elige el destino, la carpeta, la frecuencia y cuántas guardar."
+        "Para que los agentes lo usen, elige las herramientas de Home Assistant en el agente (por defecto, el Ingeniero de Infraestructura), en Asistente → Workflow."
       ],
       "notes": [
         "Los agentes leen y controlan las entidades, cambian su nombre, área e id, y crean, cambian o borran automatizaciones, scripts y escenas. Al cambiar o borrar, guardan la versión anterior para poder deshacer.",
         "Solo se editan las automatizaciones, scripts y escenas hechos en la interfaz (automations.yaml, scripts.yaml, scenes.yaml); los de otros archivos YAML solo se leen y controlan.",
-        "Lo que Jarvis puede hacer se elige en Asistente → Ajustes → Permisos → Home Assistant.",
-        "La copia es completa y se recupera en Home Assistant, en Ajustes → Sistema → Copias de seguridad."
+        "Lo que Jarvis puede hacer se elige en Asistente → Ajustes → Permisos → Home Assistant."
       ],
       "goTo": "Ir a Apps conectadas"
     },
     "adguard": {
       "title": "AdGuard",
-      "summary": "El DNS de la red: los agentes ven las consultas, bloquean o permiten dominios y gestionan las listas; aviso de versión nueva y copias automáticas.",
+      "summary": "El DNS de la red: los agentes ven las consultas, bloquean o permiten dominios y gestionan las listas; aviso de versión nueva.",
       "steps": [
         "En MyHomeLab, en Apps conectadas → AdGuard → Conectar AdGuard, pon la dirección del panel (ej: http://192.168.1.2) y el usuario y la contraseña con los que entras. La app comprueba que funcionan antes de guardar.",
-        "El Ingeniero de Infraestructura ya recibe las herramientas de AdGuard. Para dárselas a otro agente, elígelas en Asistente → Workflow.",
-        "Para las copias, abre AdGuard (Ajustes) y, en Copias automáticas, elige el destino, la carpeta, la frecuencia y cuántas guardar."
+        "El Ingeniero de Infraestructura ya recibe las herramientas de AdGuard. Para dárselas a otro agente, elígelas en Asistente → Workflow."
       ],
       "notes": [
         "Pide, por ejemplo: \"¿Por qué no abre el sitio X?\", \"Desbloquea el dominio Y\", \"Pausa AdGuard 10 minutos\", \"Crea nas.casa apuntando a 192.168.1.10\".",
         "Para desbloquear, el agente añade una regla de permitido solo para ese dominio en vez de desactivar una lista entera. Al cambiar reglas, guarda las anteriores para poder deshacer.",
         "Lo que Jarvis puede hacer se elige en Asistente → Ajustes → Permisos → AdGuard.",
-        "La copia es un JSON con los ajustes; los certificados, la contraseña y el historial de consultas quedan fuera.",
         "Cron jobs (en la cabecera de la cuenta, junto a Ajustes): MyHomeLab actualiza solo las listas de bloqueo y de permitidos al intervalo que elijas, sin IA. Al activar uno, el intervalo propio de AdGuard pasa a \"nunca\"."
       ],
       "goTo": "Ir a Apps conectadas"
     },
     "openGym": {
       "title": "openGym",
-      "summary": "El gimnasio: el Personal Trainer ve las rutinas y los entrenos, crea rutinas y planifica la semana; avisos de versión nueva y copias.",
+      "summary": "El gimnasio: el Personal Trainer ve las rutinas y los entrenos, crea rutinas y planifica la semana; avisos de versión nueva.",
       "steps": [
         "En openGym, abre Ajustes → emparejar la app del móvil: aparece un código de 8 letras, válido 5 minutos.",
         "En MyHomeLab, en Apps conectadas → openGym → Conectar openGym, pon la dirección y el código. MyHomeLab queda conectado como la app del móvil.",
@@ -252,16 +243,15 @@
     },
     "gameTracker": {
       "title": "GamesTracker",
-      "summary": "La estantería de juegos: el Curador de Juegos ve lo que juegas, terminaste y quieres jugar, cambia la estantería y sigue precios; avisos de versión nueva y copias.",
+      "summary": "La estantería de juegos: el Curador de Juegos ve lo que juegas, terminaste y quieres jugar, cambia la estantería y sigue precios; avisos de versión nueva.",
       "steps": [
-        "En GamesTracker, abre Ajustes → API → Nuevo token (empieza por gtv_). Para que los agentes cambien la estantería no lo marques solo lectura; para las copias, créalo con un admin.",
+        "En GamesTracker, abre Ajustes → API → Nuevo token (empieza por gtv_). Para que los agentes cambien la estantería no lo marques solo lectura.",
         "En MyHomeLab, en Apps conectadas → GamesTracker → Conectar GamesTracker, pon la dirección y el token.",
         "Añade el Curador de Juegos en Asistente → Workflow (desde la plantilla)."
       ],
       "notes": [
         "Pide, por ejemplo: \"Terminé Hollow Knight, ponle un 9\", \"¿Qué juego ahora?\", \"Avísame cuando Elden Ring baje de 30 €\".",
-        "Quitar un juego de la estantería solo con confirmación: pierde las horas, la nota y las notas.",
-        "La copia es el volcado de la propia base de datos de GamesTracker (pg_dump)."
+        "Quitar un juego de la estantería solo con confirmación: pierde las horas, la nota y las notas."
       ],
       "goTo": "Ir a Apps conectadas"
     },
@@ -276,7 +266,6 @@
       "notes": [
         "Pide, por ejemplo: \"Haz un álbum con las fotos de la playa de agosto\", \"¿Quién es esta persona sin nombre?\", \"¿Las tareas de Immich tienen fallos?\".",
         "Cambiar ajustes: el agente muestra antes → después y solo lo aplica cuando dices que sí. Nunca borra fotos ni álbumes.",
-        "La copia lleva la base de datos de Immich (álbumes, personas, metadatos, usuarios, ajustes). Las fotos y los vídeos (la carpeta UPLOAD_LOCATION) no entran: haz una copia aparte.",
         "En Conexiones ves cada llamada a la API y si tu clave tiene el permiso."
       ],
       "goTo": "Ir a Apps conectadas"
@@ -291,8 +280,7 @@
       ],
       "notes": [
         "Pide, por ejemplo: \"¿Cuánto pagué de luz en octubre?\", \"Ordena los documentos de la bandeja de entrada\", \"Crea la etiqueta Salud y asóciala sola\".",
-        "Ordenar varios documentos a la vez o cambiar la configuración: el agente muestra antes lo que cambia y solo lo aplica cuando dices que sí. Nunca borra documentos.",
-        "La copia es un JSON con la organización (etiquetas, remitentes, tipos, rutas, flujos, reglas del correo) y la configuración. Los documentos se guardan en el servidor con el document_exporter de Paperless."
+        "Ordenar varios documentos a la vez o cambiar la configuración: el agente muestra antes lo que cambia y solo lo aplica cuando dices que sí. Nunca borra documentos."
       ],
       "goTo": "Ir a Apps conectadas"
     },
@@ -307,7 +295,6 @@
       "notes": [
         "Pide, por ejemplo: \"Empieza a contar el proyecto MyHomeLab\", \"Para\", \"Ayer trabajé de 14 a 16 h para el cliente X\", \"¿Cuántas horas hice esta semana por proyecto?\".",
         "Las horas que dices son en tu hora local; MyHomeLab las convierte con la zona horaria de tu cuenta de solidtime. Nunca borra registros.",
-        "La copia es la exportación completa de la organización (necesita propietario o administrador).",
         "solidtime no dice la versión instalada, así que no hay aviso de versión nueva para él."
       ],
       "goTo": "Ir a Apps conectadas"
@@ -441,7 +428,7 @@
       "steps": [
         "Elige la app y pulsa Conectar. Cada una pide la dirección y una clave o contraseña de app.",
         "Abre la cuenta para ver el resumen: estado, versión y lo que cambió.",
-        "En la rueda dentada están la cuenta, dónde corre, las actualizaciones, las copias y los agentes que la usan."
+        "En la rueda dentada están la cuenta, dónde corre, las actualizaciones y los agentes que la usan."
       ],
       "notes": [
         "Los agentes solo ven las apps que les des en cada cuenta."

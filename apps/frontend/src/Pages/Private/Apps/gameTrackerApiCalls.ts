@@ -1,6 +1,6 @@
 export type GameTracker_Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-export type GameTracker_Consumer = 'connect' | 'status' | 'updates' | 'backups' | 'assistant';
+export type GameTracker_Consumer = 'connect' | 'status' | 'updates' | 'assistant';
 
 export type GameTracker_Access = 'public' | 'user' | 'admin' | 'github';
 
@@ -29,8 +29,8 @@ export const GAMETRACKER_USED_CALLS: GameTracker_Api_Call[] = [
   { id: 'watchlist', method: 'GET', path: '/api/prices/watchlist', access: 'user', usedBy: ['assistant'] },
   { id: 'watchPut', method: 'PUT', path: '/api/prices/watchlist/{gameId}', access: 'user', write: true, usedBy: ['assistant'] },
   { id: 'watchDelete', method: 'DELETE', path: '/api/prices/watchlist/{gameId}', access: 'user', write: true, usedBy: ['assistant'] },
-  { id: 'backupCreate', method: 'POST', path: '/api/backups', access: 'admin', write: true, usedBy: ['backups'] },
-  { id: 'backupDownload', method: 'GET', path: '/api/backups/{name}/download', access: 'admin', usedBy: ['backups'] },
+  { id: 'backupCreate', method: 'POST', path: '/api/backups', access: 'admin', write: true, usedBy: [] },
+  { id: 'backupDownload', method: 'GET', path: '/api/backups/{name}/download', access: 'admin', usedBy: [] },
   { id: 'releases', method: 'GET', path: 'api.github.com/repos/TTiagoSousa/GamesTracker-Vault/releases', access: 'github', usedBy: ['updates'] },
 ];
 

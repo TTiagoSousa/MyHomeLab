@@ -10,7 +10,6 @@ import App_Account from './App_Account';
 import App_Location from './App_Location';
 import App_Summary from './App_Summary';
 import App_Settings_Menu from './App_Settings_Menu';
-import App_Backups from './App_Backups';
 import App_Modal from './App_Modal';
 import App_Linked_Cards, { type App_Linked_Panel } from './App_Linked_Cards';
 import { appSettingsItems } from './appSettingsItems';
@@ -61,7 +60,7 @@ const Dispatcharr_Account = () => {
     setPanel(null);
   };
 
-  const menuItems = appSettingsItems(['account', 'location', 'backups', 'agents', 'docs', 'schedules'], t, t('apps.dispatcharr.credentialsHint')).map((item) =>
+  const menuItems = appSettingsItems(['account', 'location', 'agents', 'docs', 'schedules'], t, t('apps.dispatcharr.credentialsHint')).map((item) =>
     PANEL_SECTIONS[item.id] ? { ...item, onSelect: () => setPanel(PANEL_SECTIONS[item.id]) } : item,
   );
 
@@ -111,16 +110,6 @@ const Dispatcharr_Account = () => {
           >
             {error && <p className='Apps_section_note error'>{error}</p>}
           </App_Summary>
-
-          <div id='app-backups'>
-            <App_Backups
-              accountId={account.id}
-              serviceName={name}
-              defaultFolder='Dispatcharr'
-              fileExample='dispatcharr-2026-11-20_030000.zip'
-              textKey='addons:apps.dispatcharr.backup'
-            />
-          </div>
 
           <Update_Attempts accountId={account.id} label={label} />
 

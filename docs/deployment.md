@@ -208,7 +208,7 @@ password a backup cannot be restored.
 - **Download:** Admin → Backup → *Create and download*.
 - **Scheduled:** add a backup job in the same section, to a Nextcloud destination or to
   *This server* (a `LOCAL` destination: a folder on the CT, `BACKUP_LOCAL_DIR`, by default
-  `/var/lib/myhomelab/myhomelab-backups`). Same frequency and retention as app backups.
+  `/var/lib/myhomelab/myhomelab-backups`). With frequency and retention.
 - **Restore from the app:** Admin → Backup → *Restore a backup* (file, password, type
   `REPOR`). The backend opens the zip with the password and checks it (a backup from a newer
   version than the installed one is refused), leaves it and the password in

@@ -128,30 +128,25 @@
     },
     "forgejo": {
       "title": "Forgejo",
-      "summary": "Os teus repositórios para os agentes, e backups automáticos deles.",
+      "summary": "Os teus repositórios para os agentes.",
       "steps": [
-        "No Forgejo, vai a Definições → Aplicações → Gerar token, com leitura e escrita em \"repository\" e \"issue\" e leitura em \"user\". Para o backup da instância toda, usa uma conta de administrador e dá também leitura em \"admin\".",
+        "No Forgejo, vai a Definições → Aplicações → Gerar token, com leitura e escrita em \"repository\" e \"issue\" e leitura em \"user\".",
         "No MyHomeLab, em Apps ligadas → Forgejo → Ligar Forgejo, põe o endereço (ex: https://git.exemplo.com) e cola o token. A app testa antes de gravar.",
-        "Para os agentes o usarem, escolhe as ferramentas do Forgejo no agente, em Assistente → Workflow.",
-        "Para os backups, abre a conta (Definições) e, em Backups automáticos, escolhe o destino, a pasta, a frequência e quantos guardar."
+        "Para os agentes o usarem, escolhe as ferramentas do Forgejo no agente, em Assistente → Workflow."
       ],
       "notes": [
-        "O backup é um .tar com o código de cada repositório (git bundle, recupera-se com git clone) e as issues, os pull requests, os comentários e as releases em JSON.",
         "Os utilizadores e as definições do Forgejo não entram: para isso usa o forgejo dump na própria máquina."
       ],
       "goTo": "Ir para Apps ligadas"
     },
     "trek": {
       "title": "TREK",
-      "summary": "O planeador de viagens: aviso de versão nova, do registo aberto e backups automáticos.",
+      "summary": "O planeador de viagens: aviso de versão nova e do registo aberto.",
       "steps": [
         "No TREK, cria (ou escolhe) uma conta de administrador sem MFA, só para o MyHomeLab. O TREK não tem tokens de API: o MyHomeLab entra como no ecrã de login.",
-        "No MyHomeLab, em Apps ligadas → TREK → Ligar TREK, põe o endereço (ex: https://trek.exemplo.com), o email e a password. A app confirma que entra e que é administrador antes de gravar.",
-        "Para os backups, abre o TREK (Definições) e, em Backups automáticos, escolhe o destino, a pasta, a frequência e quantos guardar."
+        "No MyHomeLab, em Apps ligadas → TREK → Ligar TREK, põe o endereço (ex: https://trek.exemplo.com), o email e a password. A app confirma que entra e que é administrador antes de gravar."
       ],
       "notes": [
-        "O backup é o zip do próprio TREK: base de dados, ficheiros enviados e chave de encriptação. Recupera-se no TREK, em Admin → Backup → Restaurar.",
-        "O TREK só deixa fazer 3 backups por hora; acima disso guarda-se o último que lá estiver.",
         "Se o registo de contas estiver aberto, a página da conta avisa: num TREK exposto, qualquer pessoa cria conta."
       ],
       "goTo": "Ir para Apps ligadas"
@@ -203,41 +198,37 @@
     },
     "homeAssistant": {
       "title": "Home Assistant",
-      "summary": "A domótica: os agentes controlam a casa e criam automações e scripts; aviso de versão nova e backups automáticos.",
+      "summary": "A domótica: os agentes controlam a casa e criam automações e scripts; aviso de versão nova.",
       "steps": [
         "No Home Assistant, com uma conta de administrador, abre o teu perfil → Segurança → Tokens de acesso de longa duração → Criar token, e copia-o (só aparece uma vez).",
         "No MyHomeLab, em Apps ligadas → Home Assistant → Ligar Home Assistant, põe o endereço (ex: http://homeassistant.local:8123) e cola o token. A app confirma que é de um administrador antes de gravar.",
-        "Para os agentes o usarem, escolhe as ferramentas do Home Assistant no agente (por omissão, o Engenheiro de Infraestrutura), em Assistente → Workflow.",
-        "Para os backups, abre o Home Assistant (Definições) e, em Backups automáticos, escolhe o destino, a pasta, a frequência e quantos guardar."
+        "Para os agentes o usarem, escolhe as ferramentas do Home Assistant no agente (por omissão, o Engenheiro de Infraestrutura), em Assistente → Workflow."
       ],
       "notes": [
         "Os agentes leem e controlam as entidades, mudam o nome, a área e o id delas, e criam, mudam ou apagam automações, scripts e cenas. Ao mudar ou apagar, guardam a versão anterior para se poder desfazer.",
         "Só se editam as automações, scripts e cenas feitos na interface (automations.yaml, scripts.yaml, scenes.yaml); os de outros ficheiros YAML só se leem e controlam.",
-        "O que o Jarvis pode fazer escolhe-se em Assistente → Definições → Permissões → Home Assistant.",
-        "O backup é completo e recupera-se no Home Assistant, em Definições → Sistema → Cópias de segurança."
+        "O que o Jarvis pode fazer escolhe-se em Assistente → Definições → Permissões → Home Assistant."
       ],
       "goTo": "Ir para Apps ligadas"
     },
     "adguard": {
       "title": "AdGuard",
-      "summary": "O DNS da rede: os agentes veem os pedidos, bloqueiam ou permitem domínios e mexem nas listas; aviso de versão nova e backups automáticos.",
+      "summary": "O DNS da rede: os agentes veem os pedidos, bloqueiam ou permitem domínios e mexem nas listas; aviso de versão nova.",
       "steps": [
         "No MyHomeLab, em Apps ligadas → AdGuard → Ligar AdGuard, põe o endereço do painel (ex: http://192.168.1.2) e o utilizador e a password com que lá entras. A app confirma que entra antes de gravar.",
-        "O Engenheiro de Infraestrutura já recebe as ferramentas do AdGuard. Para as dar a outro agente, escolhe-as em Assistente → Workflow.",
-        "Para os backups, abre o AdGuard (Definições) e, em Backups automáticos, escolhe o destino, a pasta, a frequência e quantos guardar."
+        "O Engenheiro de Infraestrutura já recebe as ferramentas do AdGuard. Para as dar a outro agente, escolhe-as em Assistente → Workflow."
       ],
       "notes": [
         "Pede, por exemplo: \"Porque é que o site X não abre?\", \"Desbloqueia o domínio Y\", \"Pausa o AdGuard 10 minutos\", \"Cria nas.casa a apontar para 192.168.1.10\".",
         "Para desbloquear, o agente acrescenta uma regra de permissão só para esse domínio em vez de desligar uma lista inteira. Ao mudar regras, guarda as de antes para se poder desfazer.",
         "O que o Jarvis pode fazer escolhe-se em Assistente → Definições → Permissões → AdGuard.",
-        "O backup é um JSON com as definições; os certificados, a password e o histórico de pedidos ficam de fora.",
         "Cron jobs (no cabeçalho da conta, ao lado de Definições): o MyHomeLab atualiza sozinho as listas de bloqueio e de permissão ao intervalo que escolheres, sem IA. Ao ligar um, o intervalo próprio do AdGuard passa a \"nunca\"."
       ],
       "goTo": "Ir para Apps ligadas"
     },
     "openGym": {
       "title": "openGym",
-      "summary": "O ginásio: o Personal Trainer vê as rotinas e os treinos, cria rotinas e marca o plano da semana; aviso de versão nova e backups.",
+      "summary": "O ginásio: o Personal Trainer vê as rotinas e os treinos, cria rotinas e marca o plano da semana; aviso de versão nova.",
       "steps": [
         "No openGym, abre Definições → emparelhar a app do telemóvel: aparece um código de 8 letras, válido 5 minutos.",
         "No MyHomeLab, em Apps ligadas → openGym → Ligar openGym, põe o endereço e o código. O MyHomeLab fica ligado como a app do telemóvel.",
@@ -252,16 +243,15 @@
     },
     "gameTracker": {
       "title": "GamesTracker",
-      "summary": "A prateleira de jogos: o Curador de Jogos vê o que jogas, acabaste e queres jogar, muda a prateleira e segue preços; aviso de versão nova e backups.",
+      "summary": "A prateleira de jogos: o Curador de Jogos vê o que jogas, acabaste e queres jogar, muda a prateleira e segue preços; aviso de versão nova.",
       "steps": [
-        "No GamesTracker, abre Definições → API → Novo token (começa por gtv_). Para os agentes mudarem a prateleira não o marques só de leitura; para os backups, cria-o com um admin.",
+        "No GamesTracker, abre Definições → API → Novo token (começa por gtv_). Para os agentes mudarem a prateleira não o marques só de leitura.",
         "No MyHomeLab, em Apps ligadas → GamesTracker → Ligar GamesTracker, põe o endereço e o token.",
         "Acrescenta o Curador de Jogos em Assistente → Workflow (a partir do modelo)."
       ],
       "notes": [
         "Pede, por exemplo: \"Acabei o Hollow Knight, dá-lhe 9\", \"O que devo jogar a seguir?\", \"Avisa-me quando o Elden Ring baixar de 30 €\".",
-        "Tirar um jogo da prateleira só com confirmação: perde as horas, a nota e as notas.",
-        "O backup é o da própria base de dados do GamesTracker (pg_dump)."
+        "Tirar um jogo da prateleira só com confirmação: perde as horas, a nota e as notas."
       ],
       "goTo": "Ir para Apps ligadas"
     },
@@ -276,7 +266,6 @@
       "notes": [
         "Pede, por exemplo: \"Faz um álbum com as fotos da praia de agosto\", \"Quem é esta pessoa sem nome?\", \"As tarefas do Immich têm falhas?\".",
         "Mudar definições: o agente mostra primeiro o antes → depois e só aplica quando disseres que sim. Nunca apaga fotos nem álbuns.",
-        "O backup leva a base de dados do Immich (álbuns, pessoas, metadados, utilizadores, definições). As fotos e os vídeos (a pasta UPLOAD_LOCATION) não entram: faz-lhes uma cópia à parte.",
         "Em Ligações vês cada chamada à API e se a tua chave tem a permissão."
       ],
       "goTo": "Ir para Apps ligadas"
@@ -291,8 +280,7 @@
       ],
       "notes": [
         "Pede, por exemplo: \"Quanto paguei de luz em outubro?\", \"Arruma os documentos da caixa de entrada\", \"Cria a etiqueta Saúde e associa-a sozinha\".",
-        "Arrumar vários documentos de uma vez ou mudar a configuração: o agente mostra primeiro o que muda e só aplica quando disseres que sim. Nunca apaga documentos.",
-        "O backup é um JSON com a arrumação (etiquetas, correspondentes, tipos, caminhos, fluxos, regras do correio) e a configuração. Os documentos guardam-se no servidor com o document_exporter do Paperless."
+        "Arrumar vários documentos de uma vez ou mudar a configuração: o agente mostra primeiro o que muda e só aplica quando disseres que sim. Nunca apaga documentos."
       ],
       "goTo": "Ir para Apps ligadas"
     },
@@ -307,7 +295,6 @@
       "notes": [
         "Pede, por exemplo: \"Começa a contar o projeto MyHomeLab\", \"Pára\", \"Ontem trabalhei das 14h às 16h no cliente X\", \"Quantas horas fiz esta semana por projeto?\".",
         "As horas que dizes são na tua hora local; o MyHomeLab converte-as com o fuso da tua conta no solidtime. Nunca apaga registos.",
-        "O backup é o export completo da organização (precisa de ser dono ou administrador).",
         "O solidtime não diz a versão instalada, por isso não há aviso de versão nova para ele."
       ],
       "goTo": "Ir para Apps ligadas"
@@ -441,7 +428,7 @@
       "steps": [
         "Escolhe a app e carrega em Ligar. Cada uma pede o endereço e uma chave ou password de app.",
         "Abre a conta para ver o resumo: estado, versão e o que mudou.",
-        "Na roda dentada estão a conta, onde corre, as atualizações, os backups e os agentes que a usam."
+        "Na roda dentada estão a conta, onde corre, as atualizações e os agentes que a usam."
       ],
       "notes": [
         "Os agentes só veem as apps que lhes deres em cada conta."

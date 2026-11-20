@@ -10,7 +10,6 @@ import App_Account from './App_Account';
 import App_Location from './App_Location';
 import App_Summary from './App_Summary';
 import App_Settings_Menu from './App_Settings_Menu';
-import App_Backups from './App_Backups';
 import App_Modal from './App_Modal';
 import App_Linked_Cards, { type App_Linked_Panel } from './App_Linked_Cards';
 import { appSettingsItems } from './appSettingsItems';
@@ -107,16 +106,6 @@ const Plane_Account = () => {
           >
             {error && <p className='Apps_section_note error'>{error}</p>}
           </App_Summary>
-
-          <div id='app-backups'>
-            <App_Backups
-              accountId={account.id}
-              serviceName={name}
-              defaultFolder='Plane'
-              fileExample='plane-2026-11-20_030000.json'
-              textKey='addons:apps.plane.backup'
-            />
-          </div>
 
           <Update_Attempts accountId={account.id} label={label} />
 

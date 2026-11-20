@@ -76,8 +76,8 @@ new version detected ──► available (no task yet)
 4. **Install.** A scheduler picks ready updates (one per user, nothing else in progress) and
    asks the first active agent with `update_run` to install it. The agent calls
    `update_prepare` (opens the attempt with the "before" points and MyHomeLab's own
-   measurements — disk and memory headroom, recent successful backup, major-version
-   jump), validates each point (fixing what the rules allow, e.g. running a backup), then
+   measurements — disk and memory headroom and major-version jump), validates each
+   point (fixing what the rules allow, e.g. taking a Proxmox backup of the CT/VM), then
    `update_run`: snapshot of the CT/VM, the update steps, a version check, and rollback to
    the snapshot on failure. A point that cannot be validated closes the attempt and puts
    the update back in *Waiting for reply* with a precise question.

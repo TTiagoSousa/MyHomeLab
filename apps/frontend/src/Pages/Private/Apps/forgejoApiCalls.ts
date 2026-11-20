@@ -1,6 +1,6 @@
 export type Forgejo_Method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
-export type Forgejo_Consumer = 'status' | 'updates' | 'backups' | 'assistant';
+export type Forgejo_Consumer = 'status' | 'updates' | 'assistant';
 
 export type Forgejo_Scope_Group =
   | 'user'
@@ -28,25 +28,25 @@ export const FORGEJO_SCOPE_GROUPS: Forgejo_Scope_Group[] = ['user', 'repository'
 const REPO = '/repos/{owner}/{repo}';
 
 export const FORGEJO_USED_CALLS: Forgejo_Api_Call[] = [
-  { id: 'me', method: 'GET', path: '/user', scope: 'read:user', usedBy: ['status', 'backups'] },
+  { id: 'me', method: 'GET', path: '/user', scope: 'read:user', usedBy: ['status'] },
   { id: 'version', method: 'GET', path: '/version', scope: null, usedBy: ['status', 'updates'] },
-  { id: 'userRepos', method: 'GET', path: '/user/repos', scope: 'read:repository', usedBy: ['status', 'backups', 'assistant'] },
-  { id: 'reposSearch', method: 'GET', path: '/repos/search', scope: 'read:repository', admin: true, usedBy: ['status', 'backups'] },
-  { id: 'bundle', method: 'GET', path: `${REPO}/archive/{branch}.bundle`, scope: 'read:repository', usedBy: ['backups'] },
-  { id: 'issues', method: 'GET', path: `${REPO}/issues`, scope: 'read:issue', usedBy: ['backups', 'assistant'] },
+  { id: 'userRepos', method: 'GET', path: '/user/repos', scope: 'read:repository', usedBy: ['status', 'assistant'] },
+  { id: 'reposSearch', method: 'GET', path: '/repos/search', scope: 'read:repository', admin: true, usedBy: ['status'] },
+  { id: 'bundle', method: 'GET', path: `${REPO}/archive/{branch}.bundle`, scope: 'read:repository', usedBy: [] },
+  { id: 'issues', method: 'GET', path: `${REPO}/issues`, scope: 'read:issue', usedBy: ['assistant'] },
   { id: 'issue', method: 'GET', path: `${REPO}/issues/{number}`, scope: 'read:issue', usedBy: ['assistant'] },
   { id: 'issueComments', method: 'GET', path: `${REPO}/issues/{number}/comments`, scope: 'read:issue', usedBy: ['assistant'] },
-  { id: 'repoComments', method: 'GET', path: `${REPO}/issues/comments`, scope: 'read:issue', usedBy: ['backups'] },
-  { id: 'labels', method: 'GET', path: `${REPO}/labels`, scope: 'read:issue', usedBy: ['backups'] },
-  { id: 'milestones', method: 'GET', path: `${REPO}/milestones`, scope: 'read:issue', usedBy: ['backups'] },
+  { id: 'repoComments', method: 'GET', path: `${REPO}/issues/comments`, scope: 'read:issue', usedBy: [] },
+  { id: 'labels', method: 'GET', path: `${REPO}/labels`, scope: 'read:issue', usedBy: [] },
+  { id: 'milestones', method: 'GET', path: `${REPO}/milestones`, scope: 'read:issue', usedBy: [] },
   { id: 'issueCreate', method: 'POST', path: `${REPO}/issues`, scope: 'write:issue', usedBy: ['assistant'] },
   { id: 'commentCreate', method: 'POST', path: `${REPO}/issues/{number}/comments`, scope: 'write:issue', usedBy: ['assistant'] },
   { id: 'issueState', method: 'PATCH', path: `${REPO}/issues/{number}`, scope: 'write:issue', usedBy: ['assistant'] },
-  { id: 'releases', method: 'GET', path: `${REPO}/releases`, scope: 'read:repository', usedBy: ['backups', 'assistant'] },
+  { id: 'releases', method: 'GET', path: `${REPO}/releases`, scope: 'read:repository', usedBy: ['assistant'] },
   { id: 'commits', method: 'GET', path: `${REPO}/commits`, scope: 'read:repository', usedBy: ['assistant'] },
   { id: 'actionTasks', method: 'GET', path: `${REPO}/actions/tasks`, scope: 'read:repository', usedBy: ['assistant'] },
-  { id: 'cronList', method: 'GET', path: '/admin/cron', scope: 'read:admin', admin: true, usedBy: ['backups'] },
-  { id: 'cronArchives', method: 'POST', path: '/admin/cron/delete_repo_archives', scope: 'write:admin', admin: true, usedBy: ['backups'] },
+  { id: 'cronList', method: 'GET', path: '/admin/cron', scope: 'read:admin', admin: true, usedBy: [] },
+  { id: 'cronArchives', method: 'POST', path: '/admin/cron/delete_repo_archives', scope: 'write:admin', admin: true, usedBy: [] },
 ];
 
 export const FORGEJO_POSSIBLE_CALLS: Forgejo_Api_Call[] = [

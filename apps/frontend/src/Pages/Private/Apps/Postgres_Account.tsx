@@ -11,7 +11,6 @@ import App_Location from './App_Location';
 import App_Summary from './App_Summary';
 import App_Settings_Menu from './App_Settings_Menu';
 import App_Modal from './App_Modal';
-import App_Backups from './App_Backups';
 import App_Linked_Cards, { type App_Linked_Panel } from './App_Linked_Cards';
 import { appSettingsItems } from './appSettingsItems';
 import { formatBytes, formatUptime } from '../Servers/format';
@@ -58,7 +57,7 @@ const Postgres_Account = () => {
     setPanel(null);
   };
 
-  const menuItems = appSettingsItems(['account', 'location', 'backups', 'agents', 'docs', 'schedules'], t, t('apps.postgres.credentialsHint')).map(
+  const menuItems = appSettingsItems(['account', 'location', 'agents', 'docs', 'schedules'], t, t('apps.postgres.credentialsHint')).map(
     (item) => (PANEL_SECTIONS[item.id] ? { ...item, onSelect: () => setPanel(PANEL_SECTIONS[item.id]) } : item),
   );
 
@@ -114,16 +113,6 @@ const Postgres_Account = () => {
             {error && <p className='Apps_section_note error'>{error}</p>}
             {status && !status.superuser && <p className='Apps_section_note'>{t('apps.postgres.notSuperuser')}</p>}
           </App_Summary>
-
-          <div id='app-backups'>
-            <App_Backups
-              accountId={account.id}
-              serviceName={name}
-              defaultFolder='PostgreSQL'
-              fileExample='postgres-2026-11-20_030000.sql.gz'
-              textKey='addons:apps.postgres.backup'
-            />
-          </div>
 
           <Update_Attempts accountId={account.id} label={label} />
 

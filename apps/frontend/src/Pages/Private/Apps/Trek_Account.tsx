@@ -11,7 +11,6 @@ import App_Location from './App_Location';
 import App_Summary from './App_Summary';
 import App_Updates from './App_Updates';
 import App_Settings_Menu from './App_Settings_Menu';
-import App_Backups from './App_Backups';
 import App_Modal from './App_Modal';
 import App_Linked_Cards, { type App_Linked_Panel } from './App_Linked_Cards';
 import { appSettingsItems } from './appSettingsItems';
@@ -71,7 +70,7 @@ const Trek_Account = () => {
       hint: mcp?.configured ? t('apps.trek.mcp.menuOn') : t('apps.trek.mcp.menuOff'),
       onSelect: () => setEditingMcp(true),
     },
-    ...appSettingsItems(['updates', 'backups', 'agents', 'docs', 'schedules'], t),
+    ...appSettingsItems(['updates', 'agents', 'docs', 'schedules'], t),
   ].map((item) => (PANEL_SECTIONS[item.id] ? { ...item, onSelect: () => setPanel(PANEL_SECTIONS[item.id]) } : item));
 
   return (
@@ -140,10 +139,6 @@ const Trek_Account = () => {
           </App_Summary>
 
           <App_Updates accountId={account.id} appName={t('apps.trek.title')} />
-
-          <div id='app-backups'>
-            <App_Backups accountId={account.id} serviceName={name} defaultFolder='TREK' fileExample='trek-2026-10-30_030000.zip' textKey='addons:apps.trek.backup' />
-          </div>
 
           <Update_Attempts accountId={account.id} label={label} />
 

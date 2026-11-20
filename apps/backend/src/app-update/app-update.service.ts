@@ -1308,7 +1308,7 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
           ? `${ATTEMPT_LEGEND}\n${this.attempts.describe(attempt)}\n\n`
           : `FEITO QUANDO (${points.length}), cada um com a prova:\n${points.map((point) => `- ${point}`).join('\n') || '- (nenhum escrito nos documentos)'}\n\n`) +
         `DOCUMENTOS:\n${docs.map((doc) => `── ${doc.title} (${doc.id}) ──\n${doc.content.trim()}`).join('\n\n')}\n\n` +
-        'Verifica cada ponto (só leituras; o backup novo é com run_backup) e marca-o com update_check (os do "depois"); no fim chama update_verify outra vez com a checklist [{ point, ok, evidence }] (ou checklist: [] se já marcaste tudo), ' +
+        'Verifica cada ponto (só leituras) e marca-o com update_check (os do "depois"); no fim chama update_verify outra vez com a checklist [{ point, ok, evidence }] (ou checklist: [] se já marcaste tudo), ' +
         'done: true se ficou tudo bem, ou done: false e a nota com o problema (e diz ao utilizador o que propões: corrigir ou voltar ao snapshot). ' +
         'Um ponto que nenhuma ferramenta tua consegue ver (ex.: abrir a interface) marca-se not_applicable com o porquê e não impede o done: true; done: false só quando algo está mesmo mal.'
       );

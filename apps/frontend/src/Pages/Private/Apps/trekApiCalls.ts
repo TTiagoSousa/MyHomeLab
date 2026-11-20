@@ -1,6 +1,6 @@
 export type Trek_Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-export type Trek_Consumer = 'connect' | 'status' | 'updates' | 'backups' | 'assistant';
+export type Trek_Consumer = 'connect' | 'status' | 'updates' | 'assistant';
 
 export interface Trek_Api_Call {
   id: string;
@@ -12,12 +12,12 @@ export interface Trek_Api_Call {
 
 export const TREK_REST_CALLS: Trek_Api_Call[] = [
   { id: 'appConfig', method: 'GET', path: '/api/auth/app-config', auth: 'public', usedBy: ['connect', 'status', 'updates'] },
-  { id: 'login', method: 'POST', path: '/api/auth/login', auth: 'admin', usedBy: ['connect', 'status', 'backups'] },
-  { id: 'autoSettings', method: 'GET', path: '/api/backup/auto-settings', auth: 'admin', usedBy: ['connect', 'backups'] },
-  { id: 'backupList', method: 'GET', path: '/api/backup/list', auth: 'admin', usedBy: ['status', 'backups'] },
-  { id: 'backupCreate', method: 'POST', path: '/api/backup/create', auth: 'admin', usedBy: ['backups'] },
-  { id: 'backupDownload', method: 'GET', path: '/api/backup/download/{file}', auth: 'admin', usedBy: ['backups'] },
-  { id: 'backupDelete', method: 'DELETE', path: '/api/backup/{file}', auth: 'admin', usedBy: ['backups'] },
+  { id: 'login', method: 'POST', path: '/api/auth/login', auth: 'admin', usedBy: ['connect', 'status'] },
+  { id: 'autoSettings', method: 'GET', path: '/api/backup/auto-settings', auth: 'admin', usedBy: ['connect'] },
+  { id: 'backupList', method: 'GET', path: '/api/backup/list', auth: 'admin', usedBy: ['status'] },
+  { id: 'backupCreate', method: 'POST', path: '/api/backup/create', auth: 'admin', usedBy: [] },
+  { id: 'backupDownload', method: 'GET', path: '/api/backup/download/{file}', auth: 'admin', usedBy: [] },
+  { id: 'backupDelete', method: 'DELETE', path: '/api/backup/{file}', auth: 'admin', usedBy: [] },
   { id: 'oauthToken', method: 'POST', path: '/oauth/token (client_credentials)', auth: 'mcp', usedBy: ['status', 'assistant'] },
   { id: 'mcp', method: 'POST', path: '/mcp (initialize · tools/list · tools/call)', auth: 'mcp', usedBy: ['status', 'assistant'] },
 ];

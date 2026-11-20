@@ -12,7 +12,6 @@ import {
 } from 'src/proxmox/proxmox.client';
 import { UpdateWithAccount } from '../app-update.types';
 import { installedVersion } from './installedVersion';
-import { lisbon } from './updateDates';
 import { UpdateCheck, formatGb, isMajorJump } from './updateChecks';
 
 /** As medições (🔒 medido pelo MyHomeLab): factos para o agente decidir, não travões. */
@@ -26,16 +25,8 @@ export async function codeChecks(
   return [...checks, ...(await serverChecks(prisma, update, server, ref))];
 }
 
-/** Há quanto tempo, em linguagem simples: "40 min", "3 h", "2 dias". */
-const ageLabel = (ms: number) =>
-  ms < 3_600_000
-    ? `${Math.max(1, Math.round(ms / 60_000))} min`
-    : ms < 86_400_000
-      ? `${Math.round(ms / 3_600_000)} h`
-      : `${Math.round(ms / 86_400_000)} dias`;
-
-/** As medições de qualquer atualização: salto major e backup recente. */
-export async function commonChecks(
+/** As medições de qualquer atualização: o salto major. */
+export function commonChecks(
   prisma: PrismaService,
   update: UpdateWithAccount,
 ): Promise<UpdateCheck[]> {
@@ -50,27 +41,8 @@ export async function commonChecks(
     source: 'code',
   });
 
-  // O host não tem backups do MyHomeLab: o backup da configuração está nas regras.
-  if (!update.accountId) return checks;
-  const jobs = await prisma.backupJob.findMany({
-    where: { accountId: update.accountId, isActive: true },
-  });
-  const freshest = jobs
-    .map((job) => job.lastSuccessAt)
-    .filter((date): date is Date => Boolean(date))
-    .sort((a, b) => b.getTime() - a.getTime())[0];
-  // A idade máxima do backup é das regras de cada app (ex.: 1 hora no Forgejo); aqui só se mede.
-  checks.push({
-    point: 'Os backups do MyHomeLab desta app estão ativos e já correram bem',
-    ok: Boolean(jobs.length && freshest),
-    evidence: !jobs.length
-      ? 'não há backup automático desta app (Apps ligadas → a app → Backups)'
-      : freshest
-        ? `o último backup bom foi a ${lisbon(freshest)} (há ${ageLabel(Date.now() - freshest.getTime())})`
-        : 'o backup automático ainda não correu bem nenhuma vez',
-    source: 'code',
-  });
-  return checks;
+  // As apps ligadas já não têm backups do MyHomeLab: o backup do CT/VM no Proxmox está nas regras.
+  return Promise.resolve(checks);
 }
 
 /** As medições do host (Proxmox VE): responde, a versão e o disco da raiz. */

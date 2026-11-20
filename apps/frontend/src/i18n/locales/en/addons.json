@@ -1,7 +1,7 @@
 {
   "page": {
     "title": "Connected apps",
-    "description": "The apps and accounts MyHomeLab uses. Connect an account and, in its settings, choose what the agents can see, the backups and where it runs.",
+    "description": "The apps and accounts MyHomeLab uses. Connect an account and, in its settings, choose what the agents can see and where it runs.",
     "filters": {
       "search": "Search for an app",
       "allHosting": "Self-hosted and cloud",
@@ -68,7 +68,7 @@
   },
   "backups": {
     "title": "Backups",
-    "description": "Where the automatic backups of your connected apps are stored. You can have one general destination or one per app (for example, a Nextcloud account just for backups).",
+    "description": "Where MyHomeLab's own backups are stored. Connected apps have no backups here: the full one is the app's own or the CT backup in Proxmox.",
     "add": "Add destination",
     "menuLabel": "Where to store",
     "empty": "You don't have any destination yet. Add your Nextcloud to start making backups.",
@@ -96,7 +96,7 @@
         "step2": "In the left menu, open Security.",
         "step3": "Under \"Devices & sessions\", type a name (e.g. MyHomeLab backups) and click \"Create new app password\".",
         "step4": "Copy the username and password shown and paste them here. The password is only shown once.",
-        "generalOrPerService": "General or per app: you can use this destination for every backup, or create several (an app password, or even a Nextcloud user, per app) and choose one in each backup.",
+        "generalOrPerService": "You can have more than one destination (an app password, or even a Nextcloud user, for each) and choose in each MyHomeLab backup where it goes.",
         "safety": "An app password only gives access to files and can be revoked in Nextcloud at any time without touching your password. MyHomeLab stores it encrypted and only deletes backups it created itself."
       },
       "name": "Name",
@@ -108,7 +108,7 @@
       "keepPassword": "leave empty to keep the current one",
       "passwordHint": "Use an app password (Security → Create new app password), not your normal password.",
       "folder": "Base folder",
-      "folderHint": "Each app's backups go into subfolders of this one (e.g. backups/Forgejo). It is created if missing.",
+      "folderHint": "Backups go into subfolders of this one (e.g. backups/MyHomeLab). It is created if missing.",
       "save": "Test and save",
       "testing": "Testing…",
       "source": "Nextcloud account",
@@ -152,12 +152,6 @@
       "maintenance": "Maintenance",
       "maintenanceOn": "In maintenance",
       "maintenanceOff": "No",
-      "backup": {
-        "description": "Saves the Nextcloud calendars, tasks and contacts to a destination, as often as you choose.",
-        "included": "A .tar with each calendar and task list of the connected account (.ics), each address book (.vcf) and a nextcloud.json with the version, the enabled apps and, with an admin account, the users and groups.",
-        "notIncluded": "Files, the database and other users’ calendars (except those shared with you) are not included: for the whole machine, back up the VM or CT in Proxmox. Saving into the same Nextcloud protects against accidental deletion, but not against losing the server.",
-        "restore": "To restore: import the .ics in Calendar (or Tasks) and the .vcf in Contacts."
-      },
       "connections": {
         "title": "Connections",
         "permissionsTitle": "What the account allows",
@@ -207,7 +201,6 @@
         "usedBy": {
           "status": "App status",
           "updates": "Updates",
-          "backups": "Backups",
           "assistant": "Jarvis",
           "tasks": "Tasks"
         },
@@ -368,7 +361,7 @@
       "connect": "Connect Forgejo",
       "agentsNote": "For an agent to use Forgejo, pick its tools in Assistant → Workflow.",
       "notFound": "This Forgejo account does not exist or was disconnected.",
-      "accountDescription": "The link to Forgejo. With an administrator account, the backup takes the whole instance.",
+      "accountDescription": "The link to Forgejo.",
       "role": "Permissions",
       "admin": "Administrator",
       "notAdmin": "Regular user",
@@ -378,12 +371,6 @@
       "adminHint": "Without an administrator, the backup only takes this account's repositories. For the whole instance, connect with an administrator's token.",
       "check": "Check",
       "checking": "Checking…",
-      "backup": {
-        "description": "Saves the Forgejo repositories to a destination, as often as you choose.",
-        "included": "A .tar with, per repository: the main branch code with its whole history (git bundle) and a JSON with issues, pull requests, comments, labels, milestones and releases.",
-        "notIncluded": "Not included: users, Forgejo settings, files attached to releases and other branches.",
-        "restore": "To restore a repository: git clone repository.bundle."
-      },
       "version": "Version",
       "updateAvailable": "A new version is out: {{version}}.",
       "releaseNotes": "See what changed",
@@ -427,7 +414,6 @@
         "usedBy": {
           "status": "App status",
           "updates": "Updates",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "scopes": {
@@ -507,12 +493,6 @@
       "updateChip": "New {{version}}",
       "check": "Check",
       "checking": "Checking…",
-      "backup": {
-        "description": "Saves TREK to a destination, as often as you choose.",
-        "included": "The zip TREK itself makes in Admin → Backup: the database (trips, users, settings), the uploaded files and the encryption key.",
-        "notIncluded": "TREK only allows 3 backups per hour; beyond that the latest one stored there is saved. The zip MyHomeLab asked for is deleted from TREK once saved.",
-        "restore": "To restore: in TREK, Admin → Backup → Restore, and pick the zip."
-      },
       "credentialsHint": "The address and the admin's email. To change the password, disconnect and connect again.",
       "mcp": {
         "title": "MCP client",
@@ -609,7 +589,6 @@
           "connect": "Connect",
           "status": "App status",
           "updates": "Updates",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "auth": {
@@ -649,12 +628,6 @@
       "agentsHint": "For Jarvis to work on Home Assistant, give the Home Assistant tools to the agent in Assistant → Workflow.",
       "check": "Check",
       "checking": "Checking…",
-      "backup": {
-        "description": "Saves Home Assistant to a destination, as often as you choose.",
-        "included": "A full backup made by Home Assistant itself: the configuration, the database and, with the Supervisor, every add-on and the share, addons/local, ssl and media folders.",
-        "notIncluded": "The backup is created on Home Assistant's disk, copied to the destination and deleted there. Needs Home Assistant 2025.1 or newer.",
-        "restore": "To restore: in Home Assistant, Settings → System → Backups → Upload backup, and pick the .tar."
-      },
       "updates": {
         "title": "Updates inside Home Assistant",
         "description": "What there is to update inside it, split up: the system, the add-ons, the HACS repositories and the device firmware.",
@@ -724,7 +697,6 @@
         "usedBy": {
           "status": "App status",
           "updates": "Updates",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -942,7 +914,7 @@
     },
     "adguard": {
       "title": "AdGuard",
-      "description": "The network DNS: agents see queries, block or allow domains and manage the lists; version and backups.",
+      "description": "The network DNS: agents see queries, block or allow domains and manage the lists; version.",
       "connect": "Connect AdGuard",
       "notFound": "This AdGuard doesn't exist or has already been disconnected.",
       "accountDescription": "The connection to AdGuard Home, with the dashboard user.",
@@ -963,12 +935,6 @@
       "agentsHint": "The Infrastructure Engineer already has the AdGuard tools. To give them to another agent, pick them in Assistant → Workflow.",
       "check": "Check",
       "checking": "Checking…",
-      "backup": {
-        "description": "Saves the AdGuard settings to a destination, as often as you choose.",
-        "included": "A JSON with the settings: DNS, lists and custom rules, rewrites, clients, access, blocked services, safe browsing, parental control, safe search, query log, statistics and DHCP.",
-        "notIncluded": "TLS certificates, the dashboard password, statistics and the query history are left out.",
-        "restore": "To restore: the settings are in the JSON, by section; put them back in the AdGuard dashboard (or ask Jarvis for the rules, lists and rewrites)."
-      },
       "credentialsHint": "The address and the panel user. To change the password, disconnect and connect again.",
       "settings": {
         "title": "Manual settings",
@@ -1081,10 +1047,6 @@
           "name": "Updates",
           "hint": "New versions and where they stand."
         },
-        "backups": {
-          "name": "Backups",
-          "hint": "Where the copy goes and how often."
-        },
         "agents": {
           "name": "Agents",
           "hint": "Which agents can read or change this app."
@@ -1169,12 +1131,6 @@
       "pairAgain": "Pair again",
       "notWritable": "openGym says its disk does not accept writes: nothing saved will stick. Check the machine space.",
       "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the openGym profile state to a destination, as often as you choose.",
-        "included": "A JSON with the routines, workouts, weight, custom exercises, week plan and settings, as /api/data returns them.",
-        "notIncluded": "Photos and videos (only their references) and other profiles are not included: for that, the machine backup in Proxmox.",
-        "restore": "To restore: in openGym, Settings → Data → import the file (the state field)."
-      },
       "connections": {
         "title": "Connections",
         "permissionsTitle": "What the connection allows",
@@ -1225,7 +1181,6 @@
           "connect": "Connect",
           "status": "App status",
           "updates": "Updates",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1278,7 +1233,7 @@
       "connect": "Connect GamesTracker",
       "agentsNote": "The Games Curator uses GamesTracker (add it in Assistant → Workflow). For another agent, pick its tools in Workflow.",
       "notFound": "This GamesTracker does not exist or was disconnected.",
-      "accountDescription": "The connection to GamesTracker, with a personal token (gtv_…). The token acts as the user who created it: an admin's also reaches the backups.",
+      "accountDescription": "The connection to GamesTracker, with a personal token (gtv_…). The token acts as the user who created it.",
       "credentialsHint": "The address, the user and the token. To change the token, connect again with a new one.",
       "profile": "User",
       "shelf": "Shelf",
@@ -1293,15 +1248,9 @@
       "tokenAdmin": "An admin's",
       "tokenUser": "A user's",
       "tokenHint": "A read-only token can read, but agents cannot change the shelf.",
-      "notAdmin": "The token is not an admin's: GamesTracker backups do not work with it.",
+      "notAdmin": "The token is not an admin's: GamesTracker admin calls do not work with it.",
       "replaceToken": "Change the token",
       "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the GamesTracker database to a destination, as often as you choose.",
-        "included": "The backup GamesTracker itself makes (pg_dump, gzip): the shelf, ratings, followed prices, users and settings.",
-        "notIncluded": "Needs an admin's token. TOKEN_ENCRYPTION_KEY is not included: keep it separately (without it the stored keys cannot be read).",
-        "restore": "To restore: on the server, stop gametracker and import the file with psql (docs/backup-restore.md)."
-      },
       "connections": {
         "title": "Connections",
         "permissionsTitle": "What the connection allows",
@@ -1352,7 +1301,6 @@
           "connect": "Connect",
           "status": "App status",
           "updates": "Updates",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1411,12 +1359,6 @@
       "pausedQueues": "Paused queues: {{queues}}.",
       "replaceKey": "Replace key",
       "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the Immich database to a destination, as often as you choose.",
-        "included": "The database backup Immich itself makes (pg_dump, gzip): albums, people, metadata, users and settings.",
-        "notIncluded": "Photos and videos are not included (they are the UPLOAD_LOCATION folder): back them up separately. Needs an admin's key.",
-        "restore": "To restore: in Immich, Administration → Maintenance → restore a backup, or follow the Immich docs (Backup and Restore)."
-      },
       "connections": {
         "title": "Connections",
         "permissionsTitle": "What the connection allows",
@@ -1473,7 +1415,6 @@
           "connect": "Connect",
           "status": "App status",
           "updates": "Updates",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1543,12 +1484,6 @@
       "problems": "Paperless is not healthy in: {{parts}}.",
       "replaceToken": "Replace token",
       "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the Paperless organisation and configuration to a destination, as often as you choose.",
-        "included": "A JSON with tags, correspondents, types, storage paths, custom fields, saved views, workflows, mail rules and accounts (without passwords) and the application configuration.",
-        "notIncluded": "The documents (PDFs and the database) are not included: save them on the server with Paperless's document_exporter.",
-        "restore": "To restore documents: document_importer on the export folder. The JSON organisation is recreated by hand or through the API."
-      },
       "connections": {
         "title": "Connections",
         "permissionsTitle": "What the connection allows",
@@ -1603,7 +1538,6 @@
           "connect": "Connect",
           "status": "App status",
           "updates": "Updates",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1667,16 +1601,10 @@
       "timerOn": "Running",
       "timerOff": "Stopped",
       "timerHint": "The Timekeeper starts it when you ask.",
-      "notAdmin": "The user's role is not owner or admin: backups (the organisation export) and creating projects or clients may not work.",
+      "notAdmin": "The user's role is not owner or admin: creating projects or clients may not work.",
       "noVersion": "solidtime does not report its installed version, so there are no new-version alerts for it.",
       "replaceToken": "Replace token",
       "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the solidtime organisation to a destination, as often as you choose.",
-        "included": "The export solidtime itself makes (a zip): time entries, projects, clients, tasks, tags and members.",
-        "notIncluded": "Needs a role that can export (owner or admin). Other organisations are not included: connect them separately.",
-        "restore": "To restore: in solidtime, Import → solidtime (the same zip)."
-      },
       "connections": {
         "title": "Connections",
         "permissionsTitle": "What the connection allows",
@@ -1724,7 +1652,6 @@
         "usedBy": {
           "connect": "Connect",
           "status": "App status",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1780,12 +1707,6 @@
       "notAdmin": "The key is not an admin's: the Stirling-PDF settings cannot be read or changed with it (operations work).",
       "replaceKey": "Replace the key",
       "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the Stirling-PDF settings to a destination, as often as you choose.",
-        "included": "A JSON with the server settings (secrets hidden by Stirling itself) and the disabled operations. Needs an admin key.",
-        "notIncluded": "Stirling-PDF stores no documents: processed PDFs stay where they were saved (Paperless or Nextcloud).",
-        "restore": "To restore: put the settings back in the server settings, or through Jarvis (stirling_set_settings)."
-      },
       "connections": {
         "title": "Connections",
         "permissionsTitle": "What the connection allows",
@@ -1837,7 +1758,6 @@
           "connect": "Connect",
           "status": "App status",
           "updates": "Updates",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1906,13 +1826,7 @@
       "mcpNone": "None",
       "mcpHint": "Plane Community has no MCP on the server: Jarvis uses the MyHomeLab tools.",
       "replaceToken": "Replace token",
-      "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the Plane workspace to a destination, as often as you choose.",
-        "included": "A JSON with the members and, per project, the states, labels, cycles, modules and work items (description, state, priority, assignees, labels, parent and dates).",
-        "notIncluded": "Comments, attachments, pages and history are not included: Plane accepts only 60 requests per minute. Requests are spaced out, so the backup can take a few minutes.",
-        "restore": "To restore: in a new Plane, create the projects, states and labels from the JSON and recreate the work items (Jarvis can do it from the file)."
-      }
+      "updateChip": "New {{version}}"
     },
     "giteaMirror": {
       "title": "Gitea Mirror",
@@ -1971,13 +1885,7 @@
       "usersHint_other": "{{count}} users",
       "pendingRestart": "Jellyfin is waiting for a restart to apply changes (plugins or settings).",
       "replaceKey": "Replace the key",
-      "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the Jellyfin configuration to a destination, as often as you choose.",
-        "included": "A JSON with the server, network and transcoding settings, the libraries (folders and options), the users with their policies and preferences, the plugins and the task schedules.",
-        "notIncluded": "The database (watch history, resume points), images, metadata and passwords are not included. For a full backup, use Jellyfin's own (Dashboard → Backups, 10.11 or newer), which stays on the server's disk.",
-        "restore": "To restore: on a new Jellyfin, create the libraries and users from the JSON and install the same plugins; metadata comes back with a library scan."
-      }
+      "updateChip": "New {{version}}"
     },
     "dispatcharr": {
       "title": "Dispatcharr",
@@ -1998,13 +1906,7 @@
       "clientsHint_one": "{{count}} client",
       "clientsHint_other": "{{count}} clients",
       "replaceKey": "Replace the key",
-      "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves Dispatcharr to a destination, as often as you choose.",
-        "included": "Dispatcharr's own backup (a zip with the database): channels, groups, M3U accounts, EPG sources, profiles, users and settings. The zip MyHomeLab asked for is deleted from Dispatcharr once saved.",
-        "notIncluded": "DVR recordings and cached logos are not included. The key must belong to an admin.",
-        "restore": "To restore: in Dispatcharr, Settings → Backups → Upload the zip → Restore."
-      }
+      "updateChip": "New {{version}}"
     },
     "coolify": {
       "title": "Coolify",
@@ -2027,13 +1929,7 @@
       "mcpHint": "In Claude Code, Coolify's own MCP is attached to the agent. Turn it on in Coolify (for the instance and the token's team).",
       "unhealthyItem": "{{name}}: {{status}}",
       "replaceToken": "Replace token",
-      "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves a Coolify inventory to a destination, as often as you choose.",
-        "included": "A JSON with the servers, projects and environments, and the apps, services and databases with their configuration and environment variable names.",
-        "notIncluded": "Variable values, passwords and tokens are left out, as are database data and volumes. The instance backup itself is Coolify's own (Settings → Backup).",
-        "restore": "To recover: use it as a guide to recreate the apps in Coolify; the data comes from the database and volume backups."
-      }
+      "updateChip": "New {{version}}"
     },
     "nginxProxyManager": {
       "title": "Nginx Proxy Manager",
@@ -2059,13 +1955,7 @@
       "expiredItem": "{{name}}: expired",
       "expiringItem_one": "{{name}}: expires on {{date}} ({{count}} day left)",
       "expiringItem_other": "{{name}}: expires on {{date}} ({{count}} days left)",
-      "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the Nginx Proxy Manager configuration to a destination, as often as you choose.",
-        "included": "A JSON with the proxy hosts, redirections, 404 hosts, streams, access lists, settings and certificates (domains, issuer and validity only).",
-        "notIncluded": "Access list passwords, private keys and certificate DNS credentials are left out. Let's Encrypt certificates are requested again; keep uploaded ones separately.",
-        "restore": "To recover: recreate the hosts in Nginx Proxy Manager from the JSON (by hand or by asking the Infrastructure Engineer)."
-      }
+      "updateChip": "New {{version}}"
     },
     "clickhouse": {
       "title": "ClickHouse",
@@ -2082,15 +1972,9 @@
       "disk": "Disk",
       "diskValue": "{{free}} free of {{total}}",
       "uptimeHint": "Up for {{uptime}} · {{running}} queries now",
-      "notAdmin": "This user cannot see users and grants (SHOW ACCESS): the backup only has the table schema.",
+      "notAdmin": "This user cannot see users and grants (SHOW ACCESS).",
       "replacePassword": "Change password",
-      "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the ClickHouse schema to a destination, as often as you choose.",
-        "included": "A JSON with the CREATE of every database, table, view, materialized view and dictionary, the SQL functions and, if the user can, the users, roles, quotas and grants (SHOW ACCESS).",
-        "notIncluded": "Table data is not included (it would be too big): for data use ClickHouse's own BACKUP (to a disk or S3) or the CT/VM backup in Proxmox.",
-        "restore": "To restore: run the CREATE statements in file order (databases, tables, then views and dictionaries) and finally the access lines."
-      }
+      "updateChip": "New {{version}}"
     },
     "postgres": {
       "title": "PostgreSQL",
@@ -2109,13 +1993,7 @@
       "databases": "Databases",
       "notSuperuser": "This user is not a superuser: it only sees its own connections and queries and cannot stop others' (unless it has pg_monitor and pg_signal_backend).",
       "replacePassword": "Change password",
-      "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves this connection's database to a destination, as often as you choose.",
-        "included": "A .sql.gz made with pg_dump (plain SQL): the whole schema and data of this connection's database.",
-        "notIncluded": "Other databases, roles and passwords are not included (that would be pg_dumpall). MyHomeLab's pg_dump must be the same version as the server or newer: if the server is newer, the backup fails and says why.",
-        "restore": "To restore: create the empty database and run gunzip -c file.sql.gz | psql -d database."
-      }
+      "updateChip": "New {{version}}"
     },
     "vaultwarden": {
       "title": "Vaultwarden",
@@ -2139,17 +2017,11 @@
       "signupsClosed": "Sign-ups closed",
       "vaultNote": "The vaults are encrypted with each person's master password: MyHomeLab never asks for it nor reads the stored passwords.",
       "replaceToken": "Change the token",
-      "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves the Vaultwarden settings and users to a destination, as often as you choose.",
-        "included": "A JSON with the current settings (secrets hidden), the users (email, name, 2FA, status, organizations) and the organizations.",
-        "notIncluded": "The vaults are not included: they are encrypted with each person's master password and the admin panel does not export them. To keep them, back up the Vaultwarden data folder (or the CT/VM in Proxmox).",
-        "restore": "It is a record to rebuild the server: put the settings back in /admin or the environment variables, and invite the people again."
-      }
+      "updateChip": "New {{version}}"
     },
     "infisical": {
       "title": "Infisical",
-      "description": "The secrets manager: the Infrastructure Engineer sees the projects, environments and secrets, creates and changes secrets and folders when you ask, and backs everything up.",
+      "description": "The secrets manager: the Infrastructure Engineer sees the projects, environments and secrets, and creates and changes secrets and folders when you ask.",
       "connect": "Connect Infisical",
       "agentsNote": "The Infrastructure Engineer uses Infisical. For another agent, choose its tools in Assistant → Workflow.",
       "notFound": "This Infisical does not exist or was disconnected.",
@@ -2166,13 +2038,7 @@
       "noProjects": "The identity sees no project: add it to a project in Access Control → Machine Identities.",
       "identityNote": "To read and write secrets, the identity needs a role with those permissions in each project (e.g. Developer or Admin).",
       "replaceToken": "Change the client secret",
-      "updateChip": "New {{version}}",
-      "backup": {
-        "description": "Saves every Infisical secret to a destination, as often as you choose. Warning: the file holds the secrets in plain text — choose a private destination only.",
-        "included": "A JSON with each project the identity sees and, per environment, the folders and the secrets with their values, comments and tags (${…} references stay as stored).",
-        "notIncluded": "Personal secrets, old versions, integrations, dynamic secrets and the instance settings are not included. Environments the identity cannot read are left out (and listed as missing).",
-        "restore": "To restore: create the secrets again in Infisical from the JSON (by hand, with the CLI or by asking the agent). Keep the file encrypted or somewhere only you can reach."
-      }
+      "updateChip": "New {{version}}"
     }
   },
   "forgejoModal": {
@@ -2242,7 +2108,7 @@
     "url": "Address",
     "urlPlaceholder": "https://gametracker.example.com",
     "token": "API token",
-    "tokenHint": "In GamesTracker: Settings → API → New token. For agents to change the shelf, do not make it read-only; for backups, create it as an admin. Stored encrypted in MyHomeLab.",
+    "tokenHint": "In GamesTracker: Settings → API → New token. For agents to change the shelf, do not make it read-only. Stored encrypted in MyHomeLab.",
     "connect": "Connect"
   },
   "immichModal": {

@@ -7,7 +7,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -64,14 +63,10 @@ export class BackupController {
     return this.backups.checkDestination(req.user.id, id);
   }
 
-  /** `?accountId=` — só os backups de uma app ligada; `?instance=1` — só os do MyHomeLab. */
+  /** Os backups do próprio MyHomeLab (o `?instance=1` antigo já não muda nada). */
   @Get('jobs')
-  jobs(
-    @Query('accountId') accountId: string | undefined,
-    @Query('instance') instance: string | undefined,
-    @Req() req: AuthedRequest,
-  ) {
-    return this.backups.jobs(req.user.id, accountId, instance === '1');
+  jobs(@Req() req: AuthedRequest) {
+    return this.backups.jobs(req.user.id);
   }
 
   @Post('jobs')

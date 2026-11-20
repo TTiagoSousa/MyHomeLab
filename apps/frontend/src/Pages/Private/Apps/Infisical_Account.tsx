@@ -11,7 +11,6 @@ import App_Location from './App_Location';
 import App_Summary from './App_Summary';
 import App_Settings_Menu from './App_Settings_Menu';
 import App_Modal from './App_Modal';
-import App_Backups from './App_Backups';
 import App_Linked_Cards, { type App_Linked_Panel } from './App_Linked_Cards';
 import { appSettingsItems } from './appSettingsItems';
 import Infisical_Account_Modal from '../../../Components/Modals/Infisical_Account_Modal/Infisical_Account_Modal';
@@ -57,7 +56,7 @@ const Infisical_Account = () => {
     setPanel(null);
   };
 
-  const menuItems = appSettingsItems(['account', 'location', 'backups', 'agents', 'docs', 'schedules'], t, t('apps.infisical.credentialsHint')).map((item) =>
+  const menuItems = appSettingsItems(['account', 'location', 'agents', 'docs', 'schedules'], t, t('apps.infisical.credentialsHint')).map((item) =>
     PANEL_SECTIONS[item.id] ? { ...item, onSelect: () => setPanel(PANEL_SECTIONS[item.id]) } : item,
   );
 
@@ -109,16 +108,6 @@ const Infisical_Account = () => {
             {status && !status.projects.length && <p className='Apps_section_note'>{t('apps.infisical.noProjects')}</p>}
             <p className='Apps_section_note'>{t('apps.infisical.identityNote')}</p>
           </App_Summary>
-
-          <div id='app-backups'>
-            <App_Backups
-              accountId={account.id}
-              serviceName={name}
-              defaultFolder='Infisical'
-              fileExample='infisical-2026-11-20_030000.json'
-              textKey='addons:apps.infisical.backup'
-            />
-          </div>
 
           <Update_Attempts accountId={account.id} label={label} />
 

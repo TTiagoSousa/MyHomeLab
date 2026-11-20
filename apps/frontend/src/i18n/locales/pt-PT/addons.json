@@ -1,7 +1,7 @@
 {
   "page": {
     "title": "Apps ligadas",
-    "description": "As apps e contas que o MyHomeLab usa. Liga uma conta e, nas definições dela, escolhes o que os agentes podem ver, os backups e onde corre.",
+    "description": "As apps e contas que o MyHomeLab usa. Liga uma conta e, nas definições dela, escolhes o que os agentes podem ver e onde corre.",
     "filters": {
       "search": "Procurar uma app",
       "allHosting": "Self-hosted e cloud",
@@ -68,7 +68,7 @@
   },
   "backups": {
     "title": "Backups",
-    "description": "Onde os backups automáticos das tuas apps ligadas ficam guardados. Podes ter um destino geral para tudo ou um por app (por exemplo, uma conta do Nextcloud só para backups).",
+    "description": "Onde ficam guardados os backups do próprio MyHomeLab. As apps ligadas não têm backups aqui: o completo é o da própria app ou o do CT no Proxmox.",
     "add": "Adicionar destino",
     "menuLabel": "Onde guardar",
     "empty": "Ainda não tens nenhum destino. Adiciona o teu Nextcloud para começares a fazer backups.",
@@ -96,7 +96,7 @@
         "step2": "No menu da esquerda, abre Segurança.",
         "step3": "Em \"Dispositivos e sessões\", escreve um nome (ex.: MyHomeLab backups) e carrega em \"Criar nova password de app\".",
         "step4": "Copia o nome de utilizador e a password que aparecem e cola-os aqui. A password só é mostrada uma vez.",
-        "generalOrPerService": "Geral ou por app: podes usar este destino para todos os backups, ou criar vários (uma password de app, ou até um utilizador do Nextcloud, por app) e escolher em cada backup.",
+        "generalOrPerService": "Podes ter mais do que um destino (uma password de app, ou até um utilizador do Nextcloud, para cada) e escolher em cada backup do MyHomeLab para onde vai.",
         "safety": "A password de app só dá acesso aos ficheiros e pode ser revogada no Nextcloud a qualquer momento sem mexer na tua password. O MyHomeLab guarda-a cifrada e só apaga backups que ele próprio criou."
       },
       "name": "Nome",
@@ -108,7 +108,7 @@
       "keepPassword": "deixa vazio para manter a atual",
       "passwordHint": "Usa uma password de app (Segurança → Criar nova password de app), não a tua password normal.",
       "folder": "Pasta base",
-      "folderHint": "Os backups de cada app ficam em subpastas desta (ex.: backups/Forgejo). É criada se não existir.",
+      "folderHint": "Os backups ficam em subpastas desta (ex.: backups/MyHomeLab). É criada se não existir.",
       "save": "Testar e guardar",
       "testing": "A testar…",
       "source": "Conta Nextcloud",
@@ -152,12 +152,6 @@
       "maintenance": "Manutenção",
       "maintenanceOn": "Em manutenção",
       "maintenanceOff": "Não",
-      "backup": {
-        "description": "Guarda os calendários, as tarefas e os contactos do Nextcloud num destino, com a frequência que escolheres.",
-        "included": "Entra num .tar: cada calendário e lista de tarefas da conta ligada (.ics), cada livro de contactos (.vcf) e um nextcloud.json com a versão, as apps ligadas e, com conta de administrador, os utilizadores e os grupos.",
-        "notIncluded": "Não entram os ficheiros, a base de dados nem os calendários dos outros utilizadores (só os partilhados contigo): para a máquina inteira, faz backup da VM ou do CT no Proxmox. Guardar no próprio Nextcloud protege de apagar sem querer, mas não de perder o servidor.",
-        "restore": "Para recuperar: importa o .ics em Calendário (ou Tarefas) e o .vcf em Contactos."
-      },
       "connections": {
         "title": "Ligações",
         "permissionsTitle": "O que a conta deixa fazer",
@@ -207,7 +201,6 @@
         "usedBy": {
           "status": "Estado da app",
           "updates": "Atualizações",
-          "backups": "Backups",
           "assistant": "Jarvis",
           "tasks": "Tarefas"
         },
@@ -368,7 +361,7 @@
       "connect": "Ligar Forgejo",
       "agentsNote": "Para um agente usar o Forgejo, escolhe as ferramentas dele em Assistente → Workflow.",
       "notFound": "Esta conta Forgejo não existe ou já foi desligada.",
-      "accountDescription": "A ligação ao Forgejo. Com uma conta de administrador, o backup leva a instância toda.",
+      "accountDescription": "A ligação ao Forgejo.",
       "role": "Permissões",
       "admin": "Administrador",
       "notAdmin": "Utilizador normal",
@@ -378,12 +371,6 @@
       "adminHint": "Sem administrador, o backup só leva os repositórios desta conta. Para a instância toda, liga com o token de uma conta de administrador.",
       "check": "Verificar",
       "checking": "A verificar…",
-      "backup": {
-        "description": "Guarda os repositórios do Forgejo num destino, com a frequência que escolheres.",
-        "included": "Entra num .tar, por repositório: o código do ramo principal com o histórico todo (git bundle) e um JSON com as issues, os pull requests, os comentários, as etiquetas, as milestones e as releases.",
-        "notIncluded": "Não entram os utilizadores, as definições do Forgejo, os ficheiros anexados às releases nem os outros ramos.",
-        "restore": "Para recuperar um repositório: git clone repositorio.bundle."
-      },
       "version": "Versão",
       "updateAvailable": "Há uma versão nova: {{version}}.",
       "releaseNotes": "Ver o que mudou",
@@ -427,7 +414,6 @@
         "usedBy": {
           "status": "Estado da app",
           "updates": "Atualizações",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "scopes": {
@@ -507,12 +493,6 @@
       "updateChip": "Nova {{version}}",
       "check": "Verificar",
       "checking": "A verificar…",
-      "backup": {
-        "description": "Guarda o TREK num destino, com a frequência que escolheres.",
-        "included": "O zip que o próprio TREK gera em Admin → Backup: a base de dados (viagens, utilizadores, definições), os ficheiros enviados e a chave de encriptação.",
-        "notIncluded": "O TREK só deixa fazer 3 backups por hora; acima disso guarda-se o último que lá estiver. O zip pedido pelo MyHomeLab é apagado do TREK depois de guardado.",
-        "restore": "Para recuperar: no TREK, Admin → Backup → Restaurar, e escolhe o zip."
-      },
       "credentialsHint": "O endereço e o email do administrador. Para trocar a password, desliga e volta a ligar.",
       "mcp": {
         "title": "Cliente MCP",
@@ -609,7 +589,6 @@
           "connect": "Ligar",
           "status": "Estado da app",
           "updates": "Atualizações",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "auth": {
@@ -649,12 +628,6 @@
       "agentsHint": "Para o Jarvis mexer no Home Assistant, dá as ferramentas do Home Assistant ao agente em Assistente → Workflow.",
       "check": "Verificar",
       "checking": "A verificar…",
-      "backup": {
-        "description": "Guarda o Home Assistant num destino, com a frequência que escolheres.",
-        "included": "Um backup completo feito pelo próprio Home Assistant: a configuração, a base de dados e, com Supervisor, todos os add-ons e as pastas share, addons/local, ssl e media.",
-        "notIncluded": "O backup é criado no disco do Home Assistant, copiado para o destino e apagado de lá. Precisa do Home Assistant 2025.1 ou mais recente.",
-        "restore": "Para recuperar: no Home Assistant, Definições → Sistema → Cópias de segurança → Carregar cópia, e escolhe o .tar."
-      },
       "updates": {
         "title": "Atualizações dentro do Home Assistant",
         "description": "O que há para atualizar lá dentro, separado: o sistema, os add-ons, os repositórios do HACS e o firmware dos dispositivos.",
@@ -724,7 +697,6 @@
         "usedBy": {
           "status": "Estado da app",
           "updates": "Atualizações",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -942,7 +914,7 @@
     },
     "adguard": {
       "title": "AdGuard",
-      "description": "O DNS da rede: os agentes veem os pedidos, bloqueiam ou permitem domínios e mexem nas listas; versão e backups.",
+      "description": "O DNS da rede: os agentes veem os pedidos, bloqueiam ou permitem domínios e mexem nas listas; versão.",
       "connect": "Ligar AdGuard",
       "notFound": "Este AdGuard não existe ou já foi desligado.",
       "accountDescription": "A ligação ao AdGuard Home, com o utilizador do painel.",
@@ -963,12 +935,6 @@
       "agentsHint": "O Engenheiro de Infraestrutura já tem as ferramentas do AdGuard. Para dar a outro agente, escolhe-as em Assistente → Workflow.",
       "check": "Verificar",
       "checking": "A verificar…",
-      "backup": {
-        "description": "Guarda as definições do AdGuard num destino, com a frequência que escolheres.",
-        "included": "Um JSON com as definições: DNS, listas e regras próprias, reescritas, clientes, acessos, serviços bloqueados, navegação segura, controlo parental, pesquisa segura, registo, estatísticas e DHCP.",
-        "notIncluded": "Ficam de fora os certificados TLS, a password do painel, as estatísticas e o histórico de pedidos.",
-        "restore": "Para recuperar: as definições estão no JSON, por secção; volta a pô-las no painel do AdGuard (ou pede ao Jarvis as regras, listas e reescritas)."
-      },
       "credentialsHint": "O endereço e o utilizador do painel. Para trocar a password, desliga e volta a ligar.",
       "settings": {
         "title": "Definições manuais",
@@ -1081,10 +1047,6 @@
           "name": "Atualizações",
           "hint": "As versões novas e em que ponto estão."
         },
-        "backups": {
-          "name": "Backups",
-          "hint": "Para onde vai a cópia e de quanto em quanto tempo."
-        },
         "agents": {
           "name": "Agentes",
           "hint": "Que agentes podem ler ou mexer nesta app."
@@ -1169,12 +1131,6 @@
       "pairAgain": "Emparelhar outra vez",
       "notWritable": "O openGym diz que o disco não aceita escritas: nada do que se grava fica guardado. Vê o espaço da máquina.",
       "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda o estado do perfil do openGym num destino, com a frequência que escolheres.",
-        "included": "Entra num JSON: as rotinas, os treinos, o peso, os exercícios próprios, o plano da semana e as definições, tal como o /api/data os devolve.",
-        "notIncluded": "Não entram as fotos e os vídeos (só as referências) nem os outros perfis: para isso, o backup da máquina no Proxmox.",
-        "restore": "Para recuperar: no openGym, Definições → Dados → importar o ficheiro (o campo state)."
-      },
       "connections": {
         "title": "Ligações",
         "permissionsTitle": "O que a ligação deixa fazer",
@@ -1225,7 +1181,6 @@
           "connect": "Ligar",
           "status": "Estado da app",
           "updates": "Atualizações",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1278,7 +1233,7 @@
       "connect": "Ligar GamesTracker",
       "agentsNote": "O Curador de Jogos usa o GamesTracker (acrescenta-o em Assistente → Workflow). Para outro agente, escolhe as ferramentas dele no Workflow.",
       "notFound": "Este GamesTracker não existe ou já foi desligado.",
-      "accountDescription": "A ligação ao GamesTracker, com um token pessoal (gtv_…). O token age como o utilizador que o criou: de um admin, chega também aos backups.",
+      "accountDescription": "A ligação ao GamesTracker, com um token pessoal (gtv_…). O token age como o utilizador que o criou.",
       "credentialsHint": "O endereço, o utilizador e o token. Para trocar o token, liga outra vez com um novo.",
       "profile": "Utilizador",
       "shelf": "Prateleira",
@@ -1293,15 +1248,9 @@
       "tokenAdmin": "De um admin",
       "tokenUser": "De um utilizador",
       "tokenHint": "Um token só de leitura deixa ver, mas os agentes não mudam a prateleira.",
-      "notAdmin": "O token não é de um admin: os backups do GamesTracker não funcionam com ele.",
+      "notAdmin": "O token não é de um admin: as chamadas de admin do GamesTracker não funcionam com ele.",
       "replaceToken": "Trocar o token",
       "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda a base de dados do GamesTracker num destino, com a frequência que escolheres.",
-        "included": "Entra o backup que o próprio GamesTracker faz (pg_dump, gzip): a prateleira, as notas, os preços seguidos, os utilizadores e as definições.",
-        "notIncluded": "Precisa do token de um admin. A TOKEN_ENCRYPTION_KEY não entra: guarda-a à parte (sem ela, as chaves guardadas não se leem).",
-        "restore": "Para recuperar: no servidor, para o gametracker e importa o ficheiro com psql (docs/backup-restore.md)."
-      },
       "connections": {
         "title": "Ligações",
         "permissionsTitle": "O que a ligação deixa fazer",
@@ -1352,7 +1301,6 @@
           "connect": "Ligar",
           "status": "Estado da app",
           "updates": "Atualizações",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1411,12 +1359,6 @@
       "pausedQueues": "Filas em pausa: {{queues}}.",
       "replaceKey": "Trocar a chave",
       "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda a base de dados do Immich num destino, com a frequência que escolheres.",
-        "included": "Entra o backup da base de dados que o próprio Immich faz (pg_dump, gzip): os álbuns, as pessoas, os metadados, os utilizadores e as definições.",
-        "notIncluded": "As fotos e os vídeos não entram (são a pasta UPLOAD_LOCATION): faz-lhes uma cópia à parte. Precisa da chave de um admin.",
-        "restore": "Para recuperar: no Immich, Administração → Manutenção → repor um backup, ou siga a documentação do Immich (Backup and Restore)."
-      },
       "connections": {
         "title": "Ligações",
         "permissionsTitle": "O que a ligação deixa fazer",
@@ -1473,7 +1415,6 @@
           "connect": "Ligar",
           "status": "Estado da app",
           "updates": "Atualizações",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1543,12 +1484,6 @@
       "problems": "O Paperless não está bem em: {{parts}}.",
       "replaceToken": "Trocar o token",
       "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda a arrumação e a configuração do Paperless num destino, com a frequência que escolheres.",
-        "included": "Entra um JSON com as etiquetas, os correspondentes, os tipos, os caminhos, os campos, as vistas guardadas, os fluxos, as regras e as contas do correio (sem as palavras-passe) e a configuração da aplicação.",
-        "notIncluded": "Os documentos (os PDFs e a base de dados) não entram: guarda-os no servidor com o document_exporter do Paperless.",
-        "restore": "Para recuperar os documentos: document_importer na pasta do export. A arrumação do JSON volta a criar-se à mão ou pela API."
-      },
       "connections": {
         "title": "Ligações",
         "permissionsTitle": "O que a ligação deixa fazer",
@@ -1603,7 +1538,6 @@
           "connect": "Ligar",
           "status": "Estado da app",
           "updates": "Atualizações",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1667,16 +1601,10 @@
       "timerOn": "A contar",
       "timerOff": "Parado",
       "timerHint": "O Gestor de Horas põe-no a contar quando lhe pedes.",
-      "notAdmin": "O papel do utilizador não é de dono nem de administrador: os backups (o export da organização) e criar projetos ou clientes podem não funcionar.",
+      "notAdmin": "O papel do utilizador não é de dono nem de administrador: criar projetos ou clientes pode não funcionar.",
       "noVersion": "O solidtime não diz a versão instalada, por isso não há avisos de versão nova para ele.",
       "replaceToken": "Trocar o token",
       "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda a organização do solidtime num destino, com a frequência que escolheres.",
-        "included": "Entra o export que o próprio solidtime faz (um zip): os registos de horas, os projetos, os clientes, as tarefas, as etiquetas e os membros.",
-        "notIncluded": "Precisa de um papel que possa exportar (dono ou administrador). As outras organizações não entram: liga-as à parte.",
-        "restore": "Para recuperar: no solidtime, Importar → solidtime (o mesmo zip)."
-      },
       "connections": {
         "title": "Ligações",
         "permissionsTitle": "O que a ligação deixa fazer",
@@ -1724,7 +1652,6 @@
         "usedBy": {
           "connect": "Ligar",
           "status": "Estado da app",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1780,12 +1707,6 @@
       "notAdmin": "A chave não é de um administrador: as definições do Stirling-PDF não se veem nem mudam com ela (as operações funcionam).",
       "replaceKey": "Trocar a chave",
       "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda as definições do Stirling-PDF num destino, com a frequência que escolheres.",
-        "included": "Entra um JSON com as definições do servidor (os segredos escondidos pelo próprio Stirling) e as operações desligadas. Precisa da chave de um administrador.",
-        "notIncluded": "O Stirling-PDF não guarda documentos: os PDFs tratados ficam onde se gravaram (Paperless ou Nextcloud).",
-        "restore": "Para recuperar: volta a pôr as definições em Definições do servidor, ou pelo Jarvis (stirling_set_settings)."
-      },
       "connections": {
         "title": "Ligações",
         "permissionsTitle": "O que a ligação deixa fazer",
@@ -1837,7 +1758,6 @@
           "connect": "Ligar",
           "status": "Estado da app",
           "updates": "Atualizações",
-          "backups": "Backups",
           "assistant": "Jarvis"
         },
         "calls": {
@@ -1906,13 +1826,7 @@
       "mcpNone": "Não tem",
       "mcpHint": "O Plane Community não tem MCP no servidor: o Jarvis usa as ferramentas do MyHomeLab.",
       "replaceToken": "Trocar o token",
-      "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda o espaço de trabalho do Plane num destino, com a frequência que escolheres.",
-        "included": "Entra um JSON com os membros e, por projeto, os estados, as etiquetas, os ciclos, os módulos e as tarefas (descrição, estado, prioridade, pessoas, etiquetas, tarefa-mãe e datas).",
-        "notIncluded": "Não entram os comentários, os anexos, as páginas nem o histórico: o Plane só aceita 60 pedidos por minuto. Os pedidos vão espaçados, por isso o backup pode demorar uns minutos.",
-        "restore": "Para recuperar: num Plane novo, cria os projetos, os estados e as etiquetas do JSON e volta a criar as tarefas (o Jarvis pode fazê-lo a partir do ficheiro)."
-      }
+      "updateChip": "Nova {{version}}"
     },
     "giteaMirror": {
       "title": "Gitea Mirror",
@@ -1971,13 +1885,7 @@
       "usersHint_other": "{{count}} utilizadores",
       "pendingRestart": "O Jellyfin espera um reinício para aplicar mudanças (plugins ou definições).",
       "replaceKey": "Trocar a chave",
-      "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda a configuração do Jellyfin num destino, com a frequência que escolheres.",
-        "included": "Entra um JSON com a configuração do servidor, de rede e de transcodificação, as bibliotecas (pastas e opções), os utilizadores com as regras e preferências, os plugins e os horários das tarefas.",
-        "notIncluded": "Não entram a base de dados (o que se viu, onde se parou), as imagens, os metadados nem as passwords. Para um backup completo, usa o do próprio Jellyfin (Painel de controlo → Backups, 10.11 ou mais recente), que fica no disco do servidor.",
-        "restore": "Para recuperar: num Jellyfin novo, cria as bibliotecas e os utilizadores com o que está no JSON e instala os mesmos plugins; os metadados voltam numa procura nas bibliotecas."
-      }
+      "updateChip": "Nova {{version}}"
     },
     "dispatcharr": {
       "title": "Dispatcharr",
@@ -1998,13 +1906,7 @@
       "clientsHint_one": "{{count}} cliente",
       "clientsHint_other": "{{count}} clientes",
       "replaceKey": "Trocar a chave",
-      "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda o Dispatcharr num destino, com a frequência que escolheres.",
-        "included": "Entra o backup que o próprio Dispatcharr faz (um zip com a base de dados): canais, grupos, contas M3U, fontes de EPG, perfis, utilizadores e definições. O zip pedido pelo MyHomeLab é apagado do Dispatcharr depois de guardado.",
-        "notIncluded": "Não entram as gravações do DVR nem os logótipos em cache. A chave tem de ser de um administrador.",
-        "restore": "Para recuperar: no Dispatcharr, Definições → Backups → Carregar o zip → Restaurar."
-      }
+      "updateChip": "Nova {{version}}"
     },
     "coolify": {
       "title": "Coolify",
@@ -2027,13 +1929,7 @@
       "mcpHint": "No Claude Code, o MCP do próprio Coolify fica ligado ao agente. Liga-o no Coolify (na instância e na equipa do token).",
       "unhealthyItem": "{{name}}: {{status}}",
       "replaceToken": "Trocar o token",
-      "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda um inventário do Coolify num destino, com a frequência que escolheres.",
-        "included": "Entra um JSON com os servidores, os projetos e ambientes, e as apps, os serviços e as bases de dados com a configuração e os nomes das variáveis de ambiente.",
-        "notIncluded": "Os valores das variáveis, as passwords e os tokens ficam de fora, tal como os dados das bases de dados e os volumes. O backup da própria instância é o do Coolify (Settings → Backup).",
-        "restore": "Para recuperar: serve de guia para recriar as apps no Coolify; os dados vêm dos backups das bases de dados e dos volumes."
-      }
+      "updateChip": "Nova {{version}}"
     },
     "nginxProxyManager": {
       "title": "Nginx Proxy Manager",
@@ -2059,13 +1955,7 @@
       "expiredItem": "{{name}}: expirou",
       "expiringItem_one": "{{name}}: expira a {{date}} (falta {{count}} dia)",
       "expiringItem_other": "{{name}}: expira a {{date}} (faltam {{count}} dias)",
-      "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda a configuração do Nginx Proxy Manager num destino, com a frequência que escolheres.",
-        "included": "Entra um JSON com os proxy hosts, os redirecionamentos, os hosts 404, os streams, as listas de acesso, as definições e os certificados (só domínios, emissor e validade).",
-        "notIncluded": "As passwords das listas de acesso, as chaves privadas e as credenciais de DNS dos certificados ficam de fora. Os certificados Let's Encrypt voltam a pedir-se; os carregados à mão guarda-os à parte.",
-        "restore": "Para recuperar: recria os hosts no Nginx Proxy Manager a partir do JSON (à mão ou pedindo ao Engenheiro de Infraestrutura)."
-      }
+      "updateChip": "Nova {{version}}"
     },
     "clickhouse": {
       "title": "ClickHouse",
@@ -2082,15 +1972,9 @@
       "disk": "Disco",
       "diskValue": "{{free}} livres de {{total}}",
       "uptimeHint": "A correr há {{uptime}} · {{running}} consultas agora",
-      "notAdmin": "Este utilizador não pode ver os utilizadores e os grants (SHOW ACCESS): o backup leva só o esquema das tabelas.",
+      "notAdmin": "Este utilizador não pode ver os utilizadores e os grants (SHOW ACCESS).",
       "replacePassword": "Trocar a password",
-      "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda o esquema do ClickHouse num destino, com a frequência que escolheres.",
-        "included": "Entra um JSON com o CREATE de cada base de dados, tabela, vista, vista materializada e dicionário, as funções SQL e, se o utilizador puder, os utilizadores, os papéis, as quotas e os grants (SHOW ACCESS).",
-        "notIncluded": "Não entram os dados das tabelas (seriam grandes demais): para os dados usa o BACKUP do próprio ClickHouse (para um disco ou S3) ou o backup do CT/VM no Proxmox.",
-        "restore": "Para recuperar: corre os CREATE pela ordem do ficheiro (bases, tabelas, depois vistas e dicionários) e, por fim, as linhas de access."
-      }
+      "updateChip": "Nova {{version}}"
     },
     "postgres": {
       "title": "PostgreSQL",
@@ -2109,13 +1993,7 @@
       "databases": "Bases de dados",
       "notSuperuser": "Este utilizador não é superuser: vê só as ligações e as consultas dele e não pode parar as dos outros (a não ser com pg_monitor e pg_signal_backend).",
       "replacePassword": "Trocar a password",
-      "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda a base de dados desta ligação num destino, com a frequência que escolheres.",
-        "included": "Entra um .sql.gz feito com o pg_dump (SQL simples): o esquema e os dados todos da base desta ligação.",
-        "notIncluded": "Não entram as outras bases nem os papéis e as passwords (isso seria o pg_dumpall). O pg_dump do MyHomeLab tem de ser da mesma versão ou mais recente do que o servidor: se o servidor for mais novo, o backup falha e diz porquê.",
-        "restore": "Para recuperar: cria a base vazia e corre gunzip -c ficheiro.sql.gz | psql -d base."
-      }
+      "updateChip": "Nova {{version}}"
     },
     "vaultwarden": {
       "title": "Vaultwarden",
@@ -2139,17 +2017,11 @@
       "signupsClosed": "Registos fechados",
       "vaultNote": "Os cofres estão cifrados com a password mestra de cada pessoa: o MyHomeLab nunca a pede nem lê as passwords guardadas.",
       "replaceToken": "Trocar o token",
-      "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda a configuração e os utilizadores do Vaultwarden num destino, com a frequência que escolheres.",
-        "included": "Entra um JSON com a configuração em vigor (os segredos escondidos), os utilizadores (email, nome, 2FA, estado, organizações) e as organizações.",
-        "notIncluded": "Não entram os cofres: estão cifrados com a password mestra de cada pessoa e o painel de administração não os exporta. Para os ter, faz backup da pasta data do Vaultwarden (ou do CT/VM no Proxmox).",
-        "restore": "Serve de registo para voltar a montar o servidor: as definições voltam a pôr-se no /admin ou nas variáveis de ambiente, e as pessoas voltam a ser convidadas."
-      }
+      "updateChip": "Nova {{version}}"
     },
     "infisical": {
       "title": "Infisical",
-      "description": "O gestor de segredos: o Engenheiro de Infraestrutura vê os projetos, os ambientes e os segredos, cria e muda segredos e pastas quando pedes, e faz backup de tudo.",
+      "description": "O gestor de segredos: o Engenheiro de Infraestrutura vê os projetos, os ambientes e os segredos, e cria e muda segredos e pastas quando pedes.",
       "connect": "Ligar Infisical",
       "agentsNote": "O Engenheiro de Infraestrutura usa o Infisical. Para outro agente, escolhe as ferramentas dele em Assistente → Workflow.",
       "notFound": "Este Infisical não existe ou já foi desligado.",
@@ -2166,13 +2038,7 @@
       "noProjects": "A identidade não vê nenhum projeto: acrescenta-a a um projeto em Access Control → Machine Identities.",
       "identityNote": "Para ler e escrever segredos, a identidade precisa de um papel com essas permissões em cada projeto (ex.: Developer ou Admin).",
       "replaceToken": "Trocar o client secret",
-      "updateChip": "Nova {{version}}",
-      "backup": {
-        "description": "Guarda todos os segredos do Infisical num destino, com a frequência que escolheres. Atenção: o ficheiro leva os segredos em texto simples — escolhe só um destino privado.",
-        "included": "Entra um JSON com cada projeto que a identidade vê e, por ambiente, as pastas e os segredos com os valores, os comentários e as etiquetas (as referências ${…} ficam como estão guardadas).",
-        "notIncluded": "Não entram os segredos pessoais, as versões antigas, as integrações, os segredos dinâmicos nem a configuração da instância. Os ambientes onde a identidade não tem leitura ficam de fora (e aparecem como em falta).",
-        "restore": "Para recuperar: cria de novo os segredos no Infisical a partir do JSON (à mão, pela CLI ou pedindo ao agente). Guarda o ficheiro cifrado ou num sítio só teu."
-      }
+      "updateChip": "Nova {{version}}"
     }
   },
   "forgejoModal": {
@@ -2242,7 +2108,7 @@
     "url": "Endereço",
     "urlPlaceholder": "https://gametracker.exemplo.com",
     "token": "Token da API",
-    "tokenHint": "No GamesTracker: Definições → API → Novo token. Para os agentes mudarem a prateleira, não o marques só de leitura; para os backups, cria-o com um admin. Fica cifrado no MyHomeLab.",
+    "tokenHint": "No GamesTracker: Definições → API → Novo token. Para os agentes mudarem a prateleira, não o marques só de leitura. Fica cifrado no MyHomeLab.",
     "connect": "Ligar"
   },
   "immichModal": {
