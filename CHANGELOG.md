@@ -7,6 +7,13 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.9.0] — 2026-11-20
+
+### Features
+- **apps**: connect Plane, Gitea Mirror, Jellyfin, Dispatcharr, Coolify, Nginx Proxy Manager, ClickHouse, PostgreSQL, Vaultwarden and Infisical with agent tools, version checks and backups, and use the Gitea Mirror and Coolify MCP servers
+- **assistant**: read PDF, Word and Excel files sent in the chat, connect Google Drive and Sheets with project-linked write access, and let Jarvis create projects and folders and format sheets
+
+
 ## [1.8.1] — 2026-11-18
 
 ### Fixes
@@ -125,3 +132,4 @@ First public release of MyHomeLab.
 [1.7.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.7.0
 [1.8.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.8.0
 [1.8.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.8.1
+[1.9.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.9.0
