@@ -174,7 +174,9 @@ secrets refused). On Claude Code, when the MCP answers, it is also connected dir
 
 **Plane** (`plane`, Jarvis): projects, states, labels and work items through the v1 API (`X-API-Key`,
 workspace slug stored per connection); search, create, update and comment. Plane Community has no
-server-side MCP (the official one is a separate Python program), so only the `plane_*` tools exist.
+server-side MCP (the official one is a separate Python program), so only the `plane_*` tools exist. The backup is a JSON of the members and, per project, the
+states, labels, cycles, modules and work items (no comments, attachments or pages); requests are
+spaced out to stay under the 60 requests per minute limit.
 
 **Gitea Mirror** (`giteaMirror`, Infrastructure Engineer): status, failures, activity, adding
 repositories or organisations and running mirror, sync and retry jobs (`x-api-key`). Its own MCP

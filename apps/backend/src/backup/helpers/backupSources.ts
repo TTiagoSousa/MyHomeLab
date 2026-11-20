@@ -22,6 +22,7 @@ import { nginxProxyManagerBackup } from './nginxProxyManagerBackup';
 import { coolifyBackup } from './coolifyBackup';
 import { dispatcharrBackup } from './dispatcharrBackup';
 import { jellyfinBackup } from './jellyfinBackup';
+import { planeBackup } from './planeBackup';
 
 /** O ficheiro que uma app entrega para guardar no destino. */
 export interface BackupFile {
@@ -160,5 +161,11 @@ export const BACKUP_SOURCES: Partial<Record<ConnectionProvider, BackupSource>> =
       extension: 'json',
       defaultFolder: 'Jellyfin',
       create: jellyfinBackup,
+    },
+    [ConnectionProvider.PLANE]: {
+      prefix: 'plane',
+      extension: 'json',
+      defaultFolder: 'Plane',
+      create: planeBackup,
     },
   };

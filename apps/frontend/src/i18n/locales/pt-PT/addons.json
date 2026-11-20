@@ -1906,7 +1906,13 @@
       "mcpNone": "Não tem",
       "mcpHint": "O Plane Community não tem MCP no servidor: o Jarvis usa as ferramentas do MyHomeLab.",
       "replaceToken": "Trocar o token",
-      "updateChip": "Nova {{version}}"
+      "updateChip": "Nova {{version}}",
+      "backup": {
+        "description": "Guarda o espaço de trabalho do Plane num destino, com a frequência que escolheres.",
+        "included": "Entra um JSON com os membros e, por projeto, os estados, as etiquetas, os ciclos, os módulos e as tarefas (descrição, estado, prioridade, pessoas, etiquetas, tarefa-mãe e datas).",
+        "notIncluded": "Não entram os comentários, os anexos, as páginas nem o histórico: o Plane só aceita 60 pedidos por minuto. Os pedidos vão espaçados, por isso o backup pode demorar uns minutos.",
+        "restore": "Para recuperar: num Plane novo, cria os projetos, os estados e as etiquetas do JSON e volta a criar as tarefas (o Jarvis pode fazê-lo a partir do ficheiro)."
+      }
     },
     "giteaMirror": {
       "title": "Gitea Mirror",
