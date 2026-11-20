@@ -25,7 +25,7 @@
     "dev": "tsc -p tsconfig.esm.json --watch"
   },
   "devDependencies": {
-    "typescript": "^5.7.3"
+    "typescript": "^7.0.2"
   },
   "license": "GPL-3.0-only",
   "engines": {
