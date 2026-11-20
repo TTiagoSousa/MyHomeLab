@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.10.0] — 2026-11-20
+
+### Changes
+- **backup**: connected apps no longer have backups in MyHomeLab; only MyHomeLab's own backup remains, and update rules and agents point to the Proxmox CT backup
+
+
 ## [1.9.0] — 2026-11-20
 
 ### Features
@@ -133,3 +139,4 @@ First public release of MyHomeLab.
 [1.8.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.8.0
 [1.8.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.8.1
 [1.9.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.9.0
+[1.10.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.10.0
