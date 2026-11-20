@@ -41,6 +41,74 @@ export interface CreatePaperlessAccountPayload extends AppLocationPayload {
   token: string;
 }
 
+export interface CreatePlaneAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  apiKey: string;
+  workspace: string;
+}
+
+export interface CreateGiteaMirrorAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  apiKey: string;
+}
+
+export interface CreateJellyfinAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  apiKey: string;
+}
+
+export interface CreateDispatcharrAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  apiKey: string;
+}
+
+export interface CreateCoolifyAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  apiToken: string;
+}
+
+export interface CreateNginxProxyManagerAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  email: string;
+  password: string;
+}
+
+export interface CreateClickHouseAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  username: string;
+  password?: string;
+}
+
+export interface CreatePostgresAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  host: string;
+  port?: number;
+  database?: string;
+  username: string;
+  password: string;
+  ssl?: 'off' | 'on' | 'no-verify';
+}
+
+export interface CreateVaultwardenAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  adminToken: string;
+}
+
+export interface CreateInfisicalAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  clientId: string;
+  clientSecret: string;
+}
+
 export interface CreateStirlingAccountPayload extends AppLocationPayload {
   displayName?: string;
   baseUrl: string;
@@ -179,6 +247,156 @@ export const useConnectedAccount = () => {
     try {
       await http.post(End_Points.Connected_Account_Paperless_Endpoint(), data, { withCredentials: true });
       setAlert({ open: true, message: i18n.t('addons:alerts.paperlessConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createPlaneAccount = async (data: CreatePlaneAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Plane_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.planeConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createGiteaMirrorAccount = async (data: CreateGiteaMirrorAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Gitea_Mirror_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.giteaMirrorConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createJellyfinAccount = async (data: CreateJellyfinAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Jellyfin_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.jellyfinConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createDispatcharrAccount = async (data: CreateDispatcharrAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Dispatcharr_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.dispatcharrConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createCoolifyAccount = async (data: CreateCoolifyAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Coolify_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.coolifyConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createNginxProxyManagerAccount = async (data: CreateNginxProxyManagerAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Nginx_Proxy_Manager_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.nginxProxyManagerConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createClickHouseAccount = async (data: CreateClickHouseAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_ClickHouse_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.clickhouseConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createPostgresAccount = async (data: CreatePostgresAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Postgres_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.postgresConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createVaultwardenAccount = async (data: CreateVaultwardenAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Vaultwarden_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.vaultwardenConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createInfisicalAccount = async (data: CreateInfisicalAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Infisical_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.infisicalConnected'), type: 'success' });
       return true;
     } catch (error: any) {
       const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
@@ -333,6 +551,16 @@ export const useConnectedAccount = () => {
     createImmichAccount,
     createPaperlessAccount,
     createStirlingAccount,
+    createPlaneAccount,
+    createGiteaMirrorAccount,
+    createInfisicalAccount,
+    createVaultwardenAccount,
+    createPostgresAccount,
+    createClickHouseAccount,
+    createNginxProxyManagerAccount,
+    createCoolifyAccount,
+    createDispatcharrAccount,
+    createJellyfinAccount,
     createSolidtimeAccount,
     createTrekAccount,
     createHomeAssistantAccount,

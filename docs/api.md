@@ -96,6 +96,26 @@ there too.
 | GET | `/connected-account/:id/solidtime-status` | JWT | solidtime user, organisation and role, running timer, last 7 days, projects and clients |
 | POST | `/connected-account/stirling` | JWT | Connect Stirling-PDF with an API key |
 | GET | `/connected-account/:id/stirling-status` | JWT | Stirling-PDF operations (and how many are disabled), admin key, MCP tools and version |
+| POST | `/connected-account/plane` | JWT | Connect Plane with a personal token and a workspace |
+| GET | `/connected-account/:id/plane-status` | JWT | Plane user, workspace, edition, projects and version |
+| POST | `/connected-account/gitea-mirror` | JWT | Connect Gitea Mirror with an API key |
+| GET | `/connected-account/:id/gitea-mirror-status` | JWT | Gitea Mirror health, repositories by status, failures, MCP tools and version |
+| POST | `/connected-account/jellyfin` | JWT | Connect Jellyfin with an API key |
+| GET | `/connected-account/:id/jellyfin-status` | JWT | Jellyfin server, libraries, item counts, users, who is playing, pending restart and version |
+| POST | `/connected-account/dispatcharr` | JWT | Connect Dispatcharr with an admin's API key |
+| GET | `/connected-account/:id/dispatcharr-status` | JWT | Dispatcharr user, channel and stream counts, M3U accounts, EPG sources, live channels, clients and version |
+| `POST` | `/connected-accounts/coolify` | Connect a Coolify instance (`baseUrl`, `apiToken`, optional `displayName` and location) |
+| `GET` | `/connected-accounts/:id/coolify-status` | Current Coolify state: team, servers and unreachable ones, projects, resource counts, unhealthy resources, MCP tool count, version |
+| `POST` | `/connected-accounts/nginx-proxy-manager` | Connect a Nginx Proxy Manager (`baseUrl`, `email`, `password`, optional `displayName` and location) |
+| `GET` | `/connected-accounts/:id/nginx-proxy-manager-status` | Current state: user, host counts, disabled and nginx-error hosts, certificates and those expiring within 30 days, version |
+| POST | `/connected-account/clickhouse` | Connect a ClickHouse (`baseUrl`, `username`, `password`, optional `displayName`, `serverConnectionId`, `guestVmid`) |
+| GET | `/connected-account/:id/clickhouse-status` | Current ClickHouse status (user, uptime, databases, tables, rows, bytes, disk, running queries, version) |
+| POST | `/connected-account/postgres` | Connect a PostgreSQL server (`host`, `port`, `database`, `username`, `password`, `ssl` = `off`/`on`/`no-verify`, optional `displayName`, `serverConnectionId`, `guestVmid`) |
+| GET | `/connected-account/:id/postgres-status` | Current PostgreSQL status (user, superuser, database, SSL, uptime, connections/limit, standby, databases with sizes, version) |
+| POST | `/api/connected-accounts/vaultwarden` | Connect a Vaultwarden (address + admin token) |
+| GET | `/api/connected-accounts/:id/vaultwarden-status` | Users, invited/disabled/without 2FA, organizations, database and version |
+| POST | `/api/connected-accounts/infisical` | Connect an Infisical (address + Machine Identity client ID and secret) |
+| GET | `/api/connected-accounts/:id/infisical-status` | Projects and environments the identity sees, and whether an update is available |
 | GET | `/connected-account/:id/trek-tools` | JWT | Tools exposed by TREK's MCP server |
 | POST | `/connected-account/home-assistant` | JWT | Connect Home Assistant (admin token) |
 | GET | `/connected-account/:id/home-assistant-status` | JWT | Entities, automations, pending updates and version |

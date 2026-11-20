@@ -14,6 +14,14 @@ import { immichBackup } from './immichBackup';
 import { paperlessBackup } from './paperlessBackup';
 import { solidtimeBackup } from './solidtimeBackup';
 import { stirlingBackup } from './stirlingBackup';
+import { infisicalBackup } from './infisicalBackup';
+import { vaultwardenBackup } from './vaultwardenBackup';
+import { postgresBackup } from './postgresBackup';
+import { clickhouseBackup } from './clickhouseBackup';
+import { nginxProxyManagerBackup } from './nginxProxyManagerBackup';
+import { coolifyBackup } from './coolifyBackup';
+import { dispatcharrBackup } from './dispatcharrBackup';
+import { jellyfinBackup } from './jellyfinBackup';
 
 /** O ficheiro que uma app entrega para guardar no destino. */
 export interface BackupFile {
@@ -104,5 +112,53 @@ export const BACKUP_SOURCES: Partial<Record<ConnectionProvider, BackupSource>> =
       extension: 'json',
       defaultFolder: 'Stirling-PDF',
       create: stirlingBackup,
+    },
+    [ConnectionProvider.INFISICAL]: {
+      prefix: 'infisical',
+      extension: 'json',
+      defaultFolder: 'Infisical',
+      create: infisicalBackup,
+    },
+    [ConnectionProvider.VAULTWARDEN]: {
+      prefix: 'vaultwarden',
+      extension: 'json',
+      defaultFolder: 'Vaultwarden',
+      create: vaultwardenBackup,
+    },
+    [ConnectionProvider.POSTGRES]: {
+      prefix: 'postgres',
+      extension: 'sql.gz',
+      defaultFolder: 'PostgreSQL',
+      create: postgresBackup,
+    },
+    [ConnectionProvider.CLICKHOUSE]: {
+      prefix: 'clickhouse',
+      extension: 'json',
+      defaultFolder: 'ClickHouse',
+      create: clickhouseBackup,
+    },
+    [ConnectionProvider.NGINX_PROXY_MANAGER]: {
+      prefix: 'nginx-proxy-manager',
+      extension: 'json',
+      defaultFolder: 'Nginx Proxy Manager',
+      create: nginxProxyManagerBackup,
+    },
+    [ConnectionProvider.COOLIFY]: {
+      prefix: 'coolify',
+      extension: 'json',
+      defaultFolder: 'Coolify',
+      create: coolifyBackup,
+    },
+    [ConnectionProvider.DISPATCHARR]: {
+      prefix: 'dispatcharr',
+      extension: 'zip',
+      defaultFolder: 'Dispatcharr',
+      create: dispatcharrBackup,
+    },
+    [ConnectionProvider.JELLYFIN]: {
+      prefix: 'jellyfin',
+      extension: 'json',
+      defaultFolder: 'Jellyfin',
+      create: jellyfinBackup,
     },
   };

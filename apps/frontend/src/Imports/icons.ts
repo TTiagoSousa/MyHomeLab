@@ -40,6 +40,16 @@ export { default as GameTracker } from '../Assets/Icons/GameTracker/GameTracker'
 export { default as Immich } from '../Assets/Icons/Immich/Immich';
 export { default as Paperless } from '../Assets/Icons/Paperless/Paperless';
 export { default as Solidtime } from '../Assets/Icons/Solidtime/Solidtime';
+export { default as Plane } from '../Assets/Icons/Plane/Plane';
+export { default as GiteaMirror } from '../Assets/Icons/GiteaMirror/GiteaMirror';
+export { default as Infisical } from '../Assets/Icons/Infisical/Infisical';
+export { default as Vaultwarden } from '../Assets/Icons/Vaultwarden/Vaultwarden';
+export { default as Postgres } from '../Assets/Icons/Postgres/Postgres';
+export { default as ClickHouse } from '../Assets/Icons/ClickHouse/ClickHouse';
+export { default as NginxProxyManager } from '../Assets/Icons/NginxProxyManager/NginxProxyManager';
+export { default as Coolify } from '../Assets/Icons/Coolify/Coolify';
+export { default as Dispatcharr } from '../Assets/Icons/Dispatcharr/Dispatcharr';
+export { default as Jellyfin } from '../Assets/Icons/Jellyfin/Jellyfin';
 export { default as StirlingPdf } from '../Assets/Icons/StirlingPdf/StirlingPdf';
 export { default as Trek } from '../Assets/Icons/Trek/Trek';
 export { default as HomeAssistant } from '../Assets/Icons/HomeAssistant/HomeAssistant';

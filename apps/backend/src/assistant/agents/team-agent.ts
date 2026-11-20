@@ -18,6 +18,8 @@ import { AgentContext } from './agent-context';
 import { TREK_PROXY_TOOLS, TREK_SERVER, trekDirect } from './trekDirect';
 import { OPENGYM_SERVER, openGymDirect } from './openGymDirect';
 import { STIRLING_SERVER, stirlingDirect } from './stirlingDirect';
+import { GITEA_MIRROR_SERVER, giteaMirrorDirect } from './giteaMirrorDirect';
+import { COOLIFY_SERVER, coolifyDirect } from './coolifyDirect';
 
 /** Mais fundo do que isto é uma equipa mal montada, não trabalho útil. */
 const MAX_DEPTH = 5;
@@ -37,7 +39,7 @@ const usesDocs = (agent: Agent) =>
  * delas, o agente tem de ter lido (docs_read) os documentos do que o pedido toca.
  */
 const ACTS =
-  /^(server_run_command|pve_(guest_power|create_snapshot|rollback_snapshot|delete_snapshot|backup_now|set_resources)|disk_alert_grow|run_backup|update_(save_study|prepare|run|verify)|adguard_(set|manage|refresh)_\w+|ha_(call_service|save_config|delete_config|update_entity)|forgejo_(create|comment|set)_\w+|opengym_(create|delete|update|schedule)_\w+|gametracker_(set_game|remove_game|watch_price)|immich_(save_album|update_person|run_job|set_settings)|paperless_(update_document|bulk_edit|save_object|set_settings)|solidtime_(start_timer|stop_timer|save_entry|save_object)|stirling_(run|set_settings)|drive_(sheet_update|sheet_append|sheet_add_tab|sheet_format|create|create_folder|convert_to_sheet)|trek_write|(create|update|delete)_email_rule|implement_email_proposal|modify_email|trash_email|send_email_draft)$/;
+  /^(server_run_command|pve_(guest_power|create_snapshot|rollback_snapshot|delete_snapshot|backup_now|set_resources)|disk_alert_grow|run_backup|update_(save_study|prepare|run|verify)|adguard_(set|manage|refresh)_\w+|ha_(call_service|save_config|delete_config|update_entity)|forgejo_(create|comment|set)_\w+|opengym_(create|delete|update|schedule)_\w+|gametracker_(set_game|remove_game|watch_price)|immich_(save_album|update_person|run_job|set_settings)|paperless_(update_document|bulk_edit|save_object|set_settings)|solidtime_(start_timer|stop_timer|save_entry|save_object)|stirling_(run|set_settings)|plane_(create|update|comment)|gitea_mirror_(add|run|import)|infisical_(secret_set|secret_delete|folder_create)|vaultwarden_(invite|user_action|delete_user|backup_db|test_smtp)|postgres_(execute|cancel)|clickhouse_(execute|kill)|nginx_proxy_manager_(create_host|update_host|toggle_host|delete_host|renew_certificate)|coolify_(deploy|control|set_env)|dispatcharr_(channel_edit|channel_create|channel_delete|refresh|stop|recordings|backups)|jellyfin_(scan|session_control|user_manage|task_run|restart|server_backup)|drive_(sheet_update|sheet_append|sheet_add_tab|sheet_format|create|create_folder|convert_to_sheet)|trek_write|(create|update|delete)_email_rule|implement_email_proposal|modify_email|trash_email|send_email_draft)$/;
 
 /**
  * Os documentos que o pedido toca (DocsService.docsFor) vão no fim do último pedido
@@ -163,14 +165,16 @@ export async function runTeamAgent(
         : (context.ai.delegate ?? context.ai);
   const claudeCode = ai.provider === 'CLAUDE_CODE';
   const queued = claudeCode && parent?.provider !== 'CLAUDE_CODE';
-  const [trek, openGym, stirling] = claudeCode
+  const [trek, openGym, stirling, giteaMirror, coolify] = claudeCode
     ? await Promise.all([
         trekDirect(agent.tools, context, agent.key),
         openGymDirect(agent.tools, context, agent.key),
         stirlingDirect(agent.tools, context, agent.key).catch(() => null),
+        giteaMirrorDirect(agent.tools, context, agent.key).catch(() => null),
+        coolifyDirect(agent.tools, context, agent.key).catch(() => null),
       ])
-    : [null, null, null];
-  const direct = [trek, openGym, stirling].filter(
+    : [null, null, null, null, null];
+  const direct = [trek, openGym, stirling, giteaMirror, coolify].filter(
     (entry): entry is NonNullable<typeof entry> => Boolean(entry),
   );
   const toolNames = agent.tools.filter(
@@ -213,6 +217,16 @@ O openGym: as ferramentas do próprio openGym estão ligadas diretamente (mcp__$
         ? `
 
 O Stirling-PDF: o MCP do próprio Stirling também está ligado (mcp__${STIRLING_SERVER}__<nome>). Para ficheiros do Paperless ou do Nextcloud, e para guardar o resultado lá, usa as stirling_* do MyHomeLab (stirling_run); o MCP serve para o resto que só ele tenha.`
+        : '') +
+      (giteaMirror
+        ? `
+
+O Gitea Mirror: o MCP do próprio Gitea Mirror também está ligado (mcp__${GITEA_MIRROR_SERVER}__<nome>, ex.: mcp__${GITEA_MIRROR_SERVER}__list_failures). Para o resumo, a atividade e importar do GitHub usa as gitea_mirror_*; o MCP serve para o que só ele tenha.`
+        : '') +
+      (coolify
+        ? `
+
+O Coolify: o MCP do próprio Coolify também está ligado (mcp__${COOLIFY_SERVER}__<nome>, ex.: mcp__${COOLIFY_SERVER}__get_infrastructure_overview). Para o resumo, os deploys, os logs e as variáveis usa as coolify_*; o MCP serve para o que só ele tenha (criar apps e bases de dados, backups das bases de dados, tarefas agendadas, proxy, DNS, rollback).`
         : ''),
     readFirst(
       guardTools(tools, context.deniedPermissions, {
@@ -238,6 +252,12 @@ O Stirling-PDF: o MCP do próprio Stirling também está ligado (mcp__${STIRLING
             : null) ??
           (toolName.startsWith(`mcp__${OPENGYM_SERVER}__`)
             ? `no openGym: ${toolName.slice(`mcp__${OPENGYM_SERVER}__`.length)}`
+            : null) ??
+          (toolName.startsWith(`mcp__${COOLIFY_SERVER}__`)
+            ? `no Coolify: ${toolName.slice(`mcp__${COOLIFY_SERVER}__`.length)}`
+            : null) ??
+          (toolName.startsWith(`mcp__${GITEA_MIRROR_SERVER}__`)
+            ? `no Gitea Mirror: ${toolName.slice(`mcp__${GITEA_MIRROR_SERVER}__`.length)}`
             : null) ??
           (toolName.startsWith(`mcp__${STIRLING_SERVER}__`)
             ? `no Stirling-PDF: ${toolName.slice(`mcp__${STIRLING_SERVER}__`.length)}`

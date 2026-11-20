@@ -89,6 +89,26 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Apps/Solidtime' element={ <Private_Page.SolidtimeAccounts /> } />
       <Route path='MyHomeLab/Apps/Solidtime/:accountId' element={ <Private_Page.SolidtimeAccount /> } />
       <Route path='MyHomeLab/Apps/Solidtime/:accountId/Connections' element={ <Private_Page.SolidtimeConnections /> } />
+      <Route path='MyHomeLab/Apps/Plane' element={ <Private_Page.PlaneAccounts /> } />
+      <Route path='MyHomeLab/Apps/Plane/:accountId' element={ <Private_Page.PlaneAccount /> } />
+      <Route path='MyHomeLab/Apps/GiteaMirror' element={ <Private_Page.GiteaMirrorAccounts /> } />
+      <Route path='MyHomeLab/Apps/GiteaMirror/:accountId' element={ <Private_Page.GiteaMirrorAccount /> } />
+      <Route path='MyHomeLab/Apps/Infisical' element={ <Private_Page.InfisicalAccounts /> } />
+      <Route path='MyHomeLab/Apps/Infisical/:accountId' element={ <Private_Page.InfisicalAccount /> } />
+      <Route path='MyHomeLab/Apps/Vaultwarden' element={ <Private_Page.VaultwardenAccounts /> } />
+      <Route path='MyHomeLab/Apps/Vaultwarden/:accountId' element={ <Private_Page.VaultwardenAccount /> } />
+      <Route path='MyHomeLab/Apps/Postgres' element={ <Private_Page.PostgresAccounts /> } />
+      <Route path='MyHomeLab/Apps/Postgres/:accountId' element={ <Private_Page.PostgresAccount /> } />
+      <Route path='MyHomeLab/Apps/ClickHouse' element={ <Private_Page.ClickHouseAccounts /> } />
+      <Route path='MyHomeLab/Apps/ClickHouse/:accountId' element={ <Private_Page.ClickHouseAccount /> } />
+      <Route path='MyHomeLab/Apps/NginxProxyManager' element={ <Private_Page.NginxProxyManagerAccounts /> } />
+      <Route path='MyHomeLab/Apps/NginxProxyManager/:accountId' element={ <Private_Page.NginxProxyManagerAccount /> } />
+      <Route path='MyHomeLab/Apps/Coolify' element={ <Private_Page.CoolifyAccounts /> } />
+      <Route path='MyHomeLab/Apps/Coolify/:accountId' element={ <Private_Page.CoolifyAccount /> } />
+      <Route path='MyHomeLab/Apps/Dispatcharr' element={ <Private_Page.DispatcharrAccounts /> } />
+      <Route path='MyHomeLab/Apps/Dispatcharr/:accountId' element={ <Private_Page.DispatcharrAccount /> } />
+      <Route path='MyHomeLab/Apps/Jellyfin' element={ <Private_Page.JellyfinAccounts /> } />
+      <Route path='MyHomeLab/Apps/Jellyfin/:accountId' element={ <Private_Page.JellyfinAccount /> } />
       <Route path='MyHomeLab/Apps/StirlingPDF' element={ <Private_Page.StirlingAccounts /> } />
       <Route path='MyHomeLab/Apps/StirlingPDF/:accountId' element={ <Private_Page.StirlingAccount /> } />
       <Route path='MyHomeLab/Apps/StirlingPDF/:accountId/Connections' element={ <Private_Page.StirlingConnections /> } />

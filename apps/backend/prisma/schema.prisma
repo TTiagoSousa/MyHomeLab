@@ -29,6 +29,16 @@ enum ConnectionProvider {
   SOLIDTIME
   STIRLING_PDF
   GOOGLE_DRIVE
+  PLANE
+  GITEA_MIRROR
+  INFISICAL
+  VAULTWARDEN
+  POSTGRES
+  CLICKHOUSE
+  NGINX_PROXY_MANAGER
+  COOLIFY
+  DISPATCHARR
+  JELLYFIN
 }
 
 // Onde é que o serviço corre. Serve para separar o que é do lab do que é de terceiros —

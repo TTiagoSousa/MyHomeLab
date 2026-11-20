@@ -26,6 +26,16 @@ const CATALOG: { kind: App_Kind; descriptionKey: string }[] = [
   { kind: 'PAPERLESS', descriptionKey: 'apps.paperless.description' },
   { kind: 'SOLIDTIME', descriptionKey: 'apps.solidtime.description' },
   { kind: 'STIRLING_PDF', descriptionKey: 'apps.stirling.description' },
+  { kind: 'PLANE', descriptionKey: 'apps.plane.description' },
+  { kind: 'GITEA_MIRROR', descriptionKey: 'apps.giteaMirror.description' },
+  { kind: 'INFISICAL', descriptionKey: 'apps.infisical.description' },
+  { kind: 'VAULTWARDEN', descriptionKey: 'apps.vaultwarden.description' },
+  { kind: 'POSTGRES', descriptionKey: 'apps.postgres.description' },
+  { kind: 'CLICKHOUSE', descriptionKey: 'apps.clickhouse.description' },
+  { kind: 'NGINX_PROXY_MANAGER', descriptionKey: 'apps.nginxProxyManager.description' },
+  { kind: 'COOLIFY', descriptionKey: 'apps.coolify.description' },
+  { kind: 'DISPATCHARR', descriptionKey: 'apps.dispatcharr.description' },
+  { kind: 'JELLYFIN', descriptionKey: 'apps.jellyfin.description' },
   { kind: 'PROXMOX', descriptionKey: 'apps.proxmox.description' },
 ];
 

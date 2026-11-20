@@ -73,6 +73,16 @@ export const PROVIDER_NAMES: Record<ConnectionProvider, string> = {
   SOLIDTIME: 'solidtime',
   STIRLING_PDF: 'Stirling-PDF',
   GOOGLE_DRIVE: 'Google Drive',
+  PLANE: 'Plane',
+  GITEA_MIRROR: 'Gitea Mirror',
+  INFISICAL: 'Infisical',
+  VAULTWARDEN: 'Vaultwarden',
+  POSTGRES: 'PostgreSQL',
+  CLICKHOUSE: 'ClickHouse',
+  NGINX_PROXY_MANAGER: 'Nginx Proxy Manager',
+  COOLIFY: 'Coolify',
+  DISPATCHARR: 'Dispatcharr',
+  JELLYFIN: 'Jellyfin',
 };
 
 /** O nome de uma app ligada como aparece nas ligações: "Home Assistant · Casa" (sem repetir "Forgejo · Forgejo"). */

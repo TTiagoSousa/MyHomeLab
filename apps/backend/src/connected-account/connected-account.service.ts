@@ -32,6 +32,36 @@ import { CreatePaperlessAccountDto } from './dto/create-paperless-account.dto';
 import { CreateStirlingAccountDto } from './dto/create-stirling-account.dto';
 import { createStirlingAccount } from './helpers/createStirlingAccount';
 import { refreshStirlingAccount } from './helpers/refreshStirlingAccount';
+import { CreatePlaneAccountDto } from './dto/create-plane-account.dto';
+import { createPlaneAccount } from './helpers/createPlaneAccount';
+import { refreshPlaneAccount } from './helpers/refreshPlaneAccount';
+import { CreateGiteaMirrorAccountDto } from './dto/create-gitea-mirror-account.dto';
+import { createGiteaMirrorAccount } from './helpers/createGiteaMirrorAccount';
+import { refreshGiteaMirrorAccount } from './helpers/refreshGiteaMirrorAccount';
+import { CreateInfisicalAccountDto } from './dto/create-infisical-account.dto';
+import { createInfisicalAccount } from './helpers/createInfisicalAccount';
+import { refreshInfisicalAccount } from './helpers/refreshInfisicalAccount';
+import { CreateVaultwardenAccountDto } from './dto/create-vaultwarden-account.dto';
+import { createVaultwardenAccount } from './helpers/createVaultwardenAccount';
+import { refreshVaultwardenAccount } from './helpers/refreshVaultwardenAccount';
+import { CreatePostgresAccountDto } from './dto/create-postgres-account.dto';
+import { createPostgresAccount } from './helpers/createPostgresAccount';
+import { refreshPostgresAccount } from './helpers/refreshPostgresAccount';
+import { CreateClickHouseAccountDto } from './dto/create-clickhouse-account.dto';
+import { createClickHouseAccount } from './helpers/createClickHouseAccount';
+import { refreshClickHouseAccount } from './helpers/refreshClickHouseAccount';
+import { CreateNginxProxyManagerAccountDto } from './dto/create-nginx-proxy-manager-account.dto';
+import { createNginxProxyManagerAccount } from './helpers/createNginxProxyManagerAccount';
+import { refreshNginxProxyManagerAccount } from './helpers/refreshNginxProxyManagerAccount';
+import { CreateCoolifyAccountDto } from './dto/create-coolify-account.dto';
+import { createCoolifyAccount } from './helpers/createCoolifyAccount';
+import { refreshCoolifyAccount } from './helpers/refreshCoolifyAccount';
+import { CreateDispatcharrAccountDto } from './dto/create-dispatcharr-account.dto';
+import { createDispatcharrAccount } from './helpers/createDispatcharrAccount';
+import { refreshDispatcharrAccount } from './helpers/refreshDispatcharrAccount';
+import { CreateJellyfinAccountDto } from './dto/create-jellyfin-account.dto';
+import { createJellyfinAccount } from './helpers/createJellyfinAccount';
+import { refreshJellyfinAccount } from './helpers/refreshJellyfinAccount';
 import { createSolidtimeAccount } from './helpers/createSolidtimeAccount';
 import { refreshSolidtimeAccount } from './helpers/refreshSolidtimeAccount';
 import { CreateSolidtimeAccountDto } from './dto/create-solidtime-account.dto';
@@ -442,6 +472,352 @@ export class ConnectedAccountService {
       version: account.appVersion,
       latestVersion: account.appLatestVersion,
       latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createPlane(dto: CreatePlaneAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createPlaneAccount(dto, userId, this.connectedAccountRepository),
+      dto,
+    );
+  }
+
+  /** O estado do Plane e a versão (de /api/instances/). */
+  async planeStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshPlaneAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createGiteaMirror(dto: CreateGiteaMirrorAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createGiteaMirrorAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+  }
+
+  /** O estado do Gitea Mirror e a versão (de /api/health). */
+  async giteaMirrorStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshGiteaMirrorAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createJellyfin(dto: CreateJellyfinAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createJellyfinAccount(dto, userId, this.connectedAccountRepository),
+      dto,
+    );
+  }
+
+  /** O estado do Jellyfin e a versão. */
+  async jellyfinStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshJellyfinAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createDispatcharr(dto: CreateDispatcharrAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createDispatcharrAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+  }
+
+  /** O estado do Dispatcharr e a versão. */
+  async dispatcharrStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshDispatcharrAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createCoolify(dto: CreateCoolifyAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createCoolifyAccount(dto, userId, this.connectedAccountRepository),
+      dto,
+    );
+  }
+
+  /** O estado do Coolify e a versão. */
+  async coolifyStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshCoolifyAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createNginxProxyManager(
+    dto: CreateNginxProxyManagerAccountDto,
+    userId: string,
+  ) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createNginxProxyManagerAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+  }
+
+  /** O estado do Nginx Proxy Manager e a versão. */
+  async nginxProxyManagerStatus(id: string, userId: string) {
+    const { account: checked, ...status } =
+      await refreshNginxProxyManagerAccount(
+        id,
+        userId,
+        this.connectedAccountRepository,
+      );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createClickHouse(dto: CreateClickHouseAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createClickHouseAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+  }
+
+  /** O estado do ClickHouse e a versão. */
+  async clickhouseStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshClickHouseAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createPostgres(dto: CreatePostgresAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createPostgresAccount(dto, userId, this.connectedAccountRepository),
+      dto,
+    );
+  }
+
+  /** O estado do PostgreSQL. */
+  async postgresStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshPostgresAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    return {
+      ...status,
+      version:
+        (status as { serverVersion?: string }).serverVersion ??
+        checked.appVersion,
+    };
+  }
+
+  async createVaultwarden(dto: CreateVaultwardenAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createVaultwardenAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+  }
+
+  /** O estado do Vaultwarden e a versão. */
+  async vaultwardenStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshVaultwardenAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    const account = await checkAppVersion(
+      checked,
+      this.connectedAccountRepository,
+      this.notifications,
+      this.updates,
+    );
+    return {
+      ...status,
+      version: account.appVersion,
+      latestVersion: account.appLatestVersion,
+      latestUrl: account.appLatestUrl,
+    };
+  }
+
+  async createInfisical(dto: CreateInfisicalAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createInfisicalAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+  }
+
+  /** O estado do Infisical. */
+  async infisicalStatus(id: string, userId: string) {
+    const { account: checked, ...status } = await refreshInfisicalAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+    );
+    return {
+      ...status,
+      version:
+        (status as { serverVersion?: string }).serverVersion ??
+        checked.appVersion,
     };
   }
 

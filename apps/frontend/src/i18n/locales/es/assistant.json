@@ -239,6 +239,46 @@
         "drive": {
           "name": "Google Drive",
           "description": "Ver: buscar y leer todo el Drive, hacer cuentas en las hojas y ver el historial de versiones. Cambiar: editar celdas, añadir filas, crear hojas y archivos y convertir Excel en Hoja de Google — solo en lo vinculado a un proyecto. Nunca borra ni comparte."
+        },
+        "plane": {
+          "name": "Plane (proyectos)",
+          "description": "Ver los proyectos, los estados, las etiquetas y las tareas, y buscar. Cambiar es crear, modificar y comentar tareas. Nunca borra."
+        },
+        "giteaMirror": {
+          "name": "Gitea Mirror (espejos)",
+          "description": "Ver los repositorios reflejados, su estado, los fallos y la actividad. Cambiar es añadir repositorios y organizaciones, reflejar, sincronizar, reintentar e importar de GitHub. Nunca borra ni cambia ajustes."
+        },
+        "jellyfin": {
+          "name": "Jellyfin (películas y series)",
+          "description": "Ver las bibliotecas, buscar, quién está viendo, los usuarios, las tareas y la actividad. Cambiar es escanear archivos nuevos, controlar sesiones, gestionar usuarios, ejecutar tareas, reiniciar y hacer copias en el servidor. Solo borra usuarios cuando se lo pidas."
+        },
+        "dispatcharr": {
+          "name": "Dispatcharr (IPTV)",
+          "description": "Ver los canales, los streams, las listas M3U, la EPG, quién está viendo, las grabaciones y las copias. Cambiar es editar, crear y borrar canales, actualizar las M3U y la EPG, parar canales o clientes, programar y borrar grabaciones y hacer copias. Solo borra cuando se lo pidas."
+        },
+        "coolify": {
+          "name": "Coolify",
+          "description": "Apps, servicios y bases de datos en Coolify: estado, deploys, iniciar y parar, logs y variables."
+        },
+        "nginxProxyManager": {
+          "name": "Nginx Proxy Manager",
+          "description": "Proxy hosts, redirecciones, streams, listas de acceso y certificados SSL."
+        },
+        "clickhouse": {
+          "name": "ClickHouse",
+          "description": "Las bases, las tablas, las consultas y la salud de ClickHouse; consultas de lectura y, cuando lo pidas, SQL de escritura."
+        },
+        "postgres": {
+          "name": "PostgreSQL",
+          "description": "Las bases, las tablas, las conexiones, los bloqueos y el vacuum de PostgreSQL; consultas de lectura y, cuando lo pidas, SQL de escritura."
+        },
+        "vaultwarden": {
+          "name": "Vaultwarden",
+          "description": "El almacén de contraseñas: usuarios, invitaciones, 2FA y configuración (las cajas fuertes no se leen)."
+        },
+        "infisical": {
+          "name": "Infisical",
+          "description": "El gestor de secretos: proyectos, entornos, carpetas y secretos."
         }
       },
       "layers": "Hay tres sitios, del más amplio al más fino: las herramientas de cada agente (Workflow), estas áreas (para todos los agentes) y cada app conectada o servidor (en su página → Agentes, por agente). Un agente solo hace lo que los tres permiten."
@@ -305,7 +345,17 @@
       "trek": "TREK",
       "stirling": "Stirling-PDF",
       "chatFiles": "Archivos del chat",
-      "drive": "Google Drive"
+      "drive": "Google Drive",
+      "plane": "Plane",
+      "giteaMirror": "Gitea Mirror",
+      "jellyfin": "Jellyfin",
+      "dispatcharr": "Dispatcharr",
+      "coolify": "Coolify",
+      "nginxProxyManager": "Nginx Proxy Manager",
+      "clickhouse": "ClickHouse",
+      "postgres": "PostgreSQL",
+      "vaultwarden": "Vaultwarden",
+      "infisical": "Infisical"
     },
     "editor": {
       "name": "Nombre",
@@ -497,7 +547,98 @@
       "todo_delete": "Borrar tareas",
       "todo_create_list": "Crear listas",
       "docs_layout": "Ver cómo están ordenados los documentos",
-      "docs_targets": "Ver a qué se puede enlazar un documento"
+      "docs_targets": "Ver a qué se puede enlazar un documento",
+      "plane_overview": "Ver Plane",
+      "plane_project": "Ver un proyecto de Plane",
+      "plane_list": "Ver las tareas de Plane",
+      "plane_get": "Abrir una tarea de Plane",
+      "plane_search": "Buscar en Plane",
+      "plane_create": "Crear una tarea en Plane",
+      "plane_update": "Cambiar una tarea en Plane",
+      "plane_comment": "Comentar en Plane",
+      "gitea_mirror_overview": "Ver Gitea Mirror",
+      "gitea_mirror_repos": "Ver los espejos",
+      "gitea_mirror_activity": "Ver la actividad de los espejos",
+      "gitea_mirror_add": "Añadir un espejo",
+      "gitea_mirror_run": "Reflejar o sincronizar",
+      "gitea_mirror_import": "Importar de GitHub",
+      "jellyfin_overview": "Ver Jellyfin",
+      "jellyfin_libraries": "Ver las bibliotecas de Jellyfin",
+      "jellyfin_search": "Buscar en Jellyfin",
+      "jellyfin_sessions": "Ver quién está viendo en Jellyfin",
+      "jellyfin_users": "Ver los usuarios de Jellyfin",
+      "jellyfin_tasks": "Ver las tareas programadas de Jellyfin",
+      "jellyfin_activity": "Ver la actividad de Jellyfin",
+      "jellyfin_scan": "Escanear las bibliotecas de Jellyfin",
+      "jellyfin_session_control": "Controlar una sesión de Jellyfin",
+      "jellyfin_user_manage": "Gestionar un usuario de Jellyfin",
+      "jellyfin_task_run": "Ejecutar una tarea de Jellyfin",
+      "jellyfin_restart": "Reiniciar Jellyfin",
+      "jellyfin_server_backup": "Copias en el servidor Jellyfin",
+      "dispatcharr_overview": "Ver Dispatcharr",
+      "dispatcharr_channels": "Ver los canales de Dispatcharr",
+      "dispatcharr_streams": "Ver los streams de Dispatcharr",
+      "dispatcharr_connections": "Ver quién está viendo en Dispatcharr",
+      "dispatcharr_channel_edit": "Cambiar un canal de Dispatcharr",
+      "dispatcharr_channel_create": "Crear un canal en Dispatcharr",
+      "dispatcharr_channel_delete": "Borrar un canal de Dispatcharr",
+      "dispatcharr_refresh": "Actualizar las M3U o la EPG de Dispatcharr",
+      "dispatcharr_stop": "Parar un canal o cliente de Dispatcharr",
+      "dispatcharr_recordings": "Grabaciones de Dispatcharr",
+      "dispatcharr_backups": "Copias en Dispatcharr",
+      "coolify_overview": "Ver Coolify",
+      "coolify_resources": "Ver apps, servicios y bases de datos",
+      "coolify_resource": "Ver una app en detalle",
+      "coolify_deploy": "Hacer deploy",
+      "coolify_control": "Iniciar, parar y reiniciar",
+      "coolify_deployments": "Ver los deploys y sus logs",
+      "coolify_logs": "Leer los logs de las apps",
+      "coolify_envs": "Ver las variables de entorno",
+      "coolify_set_env": "Cambiar variables de entorno",
+      "coolify_server": "Ver los servidores",
+      "nginx_proxy_manager_overview": "Ver Nginx Proxy Manager",
+      "nginx_proxy_manager_hosts": "Ver los hosts y streams",
+      "nginx_proxy_manager_host": "Ver un proxy host en detalle",
+      "nginx_proxy_manager_create_host": "Crear proxy hosts",
+      "nginx_proxy_manager_update_host": "Cambiar proxy hosts",
+      "nginx_proxy_manager_toggle_host": "Activar y desactivar hosts",
+      "nginx_proxy_manager_delete_host": "Borrar proxy hosts",
+      "nginx_proxy_manager_certificates": "Ver los certificados",
+      "nginx_proxy_manager_renew_certificate": "Renovar certificados",
+      "nginx_proxy_manager_access_lists": "Ver las listas de acceso",
+      "nginx_proxy_manager_audit": "Ver el registro de cambios",
+      "clickhouse_overview": "Ver ClickHouse",
+      "clickhouse_tables": "Ver las tablas de ClickHouse",
+      "clickhouse_describe": "Ver una tabla de ClickHouse",
+      "clickhouse_query": "Consultar ClickHouse (solo lectura)",
+      "clickhouse_execute": "Ejecutar SQL en ClickHouse",
+      "clickhouse_queries": "Ver las consultas de ClickHouse",
+      "clickhouse_kill": "Detener una consulta en ClickHouse",
+      "clickhouse_health": "Ver la salud de ClickHouse",
+      "postgres_overview": "Ver PostgreSQL",
+      "postgres_tables": "Ver las tablas de PostgreSQL",
+      "postgres_describe": "Ver una tabla de PostgreSQL",
+      "postgres_query": "Consultar PostgreSQL (solo lectura)",
+      "postgres_execute": "Ejecutar SQL en PostgreSQL",
+      "postgres_activity": "Ver las conexiones y bloqueos de PostgreSQL",
+      "postgres_cancel": "Cancelar o cerrar una conexión de PostgreSQL",
+      "postgres_maintenance": "Ver el vacuum y el mantenimiento de PostgreSQL",
+      "vaultwarden_overview": "Ver Vaultwarden",
+      "vaultwarden_users": "Ver los usuarios",
+      "vaultwarden_organizations": "Ver las organizaciones",
+      "vaultwarden_config": "Ver la configuración",
+      "vaultwarden_invite": "Invitar a alguien",
+      "vaultwarden_user_action": "Desactivar, activar, cerrar sesiones o quitar el 2FA",
+      "vaultwarden_delete_user": "Borrar un usuario",
+      "vaultwarden_backup_db": "Copiar la base de datos (SQLite)",
+      "vaultwarden_test_smtp": "Enviar un email de prueba",
+      "infisical_overview": "Ver Infisical",
+      "infisical_secrets": "Ver los secretos",
+      "infisical_secret_get": "Leer un secreto",
+      "infisical_folders": "Ver las carpetas",
+      "infisical_secret_set": "Crear o cambiar un secreto",
+      "infisical_secret_delete": "Borrar un secreto",
+      "infisical_folder_create": "Crear una carpeta"
     }
   },
   "conversations": {

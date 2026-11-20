@@ -252,6 +252,8 @@ export class PrismaConnectedAccountRepository implements ConnectedAccountReposit
       guestVmid: number | null;
       apiClientId: string | null;
       apiClientSecret: string | null;
+      username: string;
+      appPassword: string;
     }>,
   ): Promise<ConnectedAccount> {
     const account = await this.prisma.connectedAccount.update({
@@ -269,6 +271,10 @@ export class PrismaConnectedAccountRepository implements ConnectedAccountReposit
         caldavPassword:
           data.caldavPassword !== undefined
             ? encryptToken(data.caldavPassword)
+            : undefined,
+        appPassword:
+          data.appPassword !== undefined
+            ? encryptToken(data.appPassword)
             : undefined,
         apiClientSecret:
           data.apiClientSecret === undefined

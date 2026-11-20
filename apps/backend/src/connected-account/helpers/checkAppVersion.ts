@@ -39,6 +39,33 @@ import {
   NEXTCLOUD_REPOSITORY,
   nextcloudForAccount,
 } from 'src/nextcloud/nextcloud.client';
+import { PLANE_REPOSITORY, planeVersion } from 'src/plane/plane.client';
+import {
+  GITEA_MIRROR_REPOSITORY,
+  giteaMirrorVersion,
+} from 'src/gitea-mirror/gitea-mirror.client';
+import {
+  JELLYFIN_REPOSITORY,
+  jellyfinVersion,
+} from 'src/jellyfin/jellyfin.client';
+import {
+  DISPATCHARR_REPOSITORY,
+  dispatcharrVersion,
+} from 'src/dispatcharr/dispatcharr.client';
+import { COOLIFY_REPOSITORY, coolifyVersion } from 'src/coolify/coolify.client';
+import {
+  NGINX_PROXY_MANAGER_REPOSITORY,
+  nginxProxyManagerVersion,
+} from 'src/nginx-proxy-manager/nginx-proxy-manager.client';
+import {
+  CLICKHOUSE_REPOSITORY,
+  clickhouseVersion,
+  latestClickhouseRelease,
+} from 'src/clickhouse/clickhouse.client';
+import {
+  VAULTWARDEN_REPOSITORY,
+  vaultwardenVersion,
+} from 'src/vaultwarden/vaultwarden.client';
 import { NotificationService } from 'src/notification/notification.service';
 import { PrismaConnectedAccountRepository } from '../repositories/prisma/prisma-connected-account-repository';
 
@@ -102,6 +129,60 @@ export const VERSION_SOURCES: Partial<
     installed: (account) =>
       stirlingVersion(account.baseUrl ?? '', account.accessToken ?? ''),
     latest: () => latestGithubRelease(STIRLING_REPOSITORY),
+  },
+  [ConnectionProvider.PLANE]: {
+    appName: 'Plane',
+    repository: { host: 'github', repo: PLANE_REPOSITORY },
+    installed: (account) => planeVersion(account.baseUrl ?? ''),
+    latest: () => latestGithubRelease(PLANE_REPOSITORY),
+  },
+  [ConnectionProvider.GITEA_MIRROR]: {
+    appName: 'Gitea Mirror',
+    repository: { host: 'github', repo: GITEA_MIRROR_REPOSITORY },
+    installed: (account) => giteaMirrorVersion(account.baseUrl ?? ''),
+    latest: () => latestGithubRelease(GITEA_MIRROR_REPOSITORY),
+  },
+  [ConnectionProvider.JELLYFIN]: {
+    appName: 'Jellyfin',
+    repository: { host: 'github', repo: JELLYFIN_REPOSITORY },
+    installed: (account) => jellyfinVersion(account.baseUrl ?? ''),
+    latest: () => latestGithubRelease(JELLYFIN_REPOSITORY),
+  },
+  [ConnectionProvider.DISPATCHARR]: {
+    appName: 'Dispatcharr',
+    repository: { host: 'github', repo: DISPATCHARR_REPOSITORY },
+    installed: (account) => dispatcharrVersion(account.baseUrl ?? ''),
+    latest: () => latestGithubRelease(DISPATCHARR_REPOSITORY),
+  },
+  [ConnectionProvider.COOLIFY]: {
+    appName: 'Coolify',
+    repository: { host: 'github', repo: COOLIFY_REPOSITORY },
+    installed: (account) =>
+      coolifyVersion(account.baseUrl ?? '', account.accessToken ?? ''),
+    latest: () => latestGithubRelease(COOLIFY_REPOSITORY),
+  },
+  [ConnectionProvider.NGINX_PROXY_MANAGER]: {
+    appName: 'Nginx Proxy Manager',
+    repository: { host: 'github', repo: NGINX_PROXY_MANAGER_REPOSITORY },
+    installed: (account) => nginxProxyManagerVersion(account.baseUrl ?? ''),
+    latest: () => latestGithubRelease(NGINX_PROXY_MANAGER_REPOSITORY),
+  },
+  [ConnectionProvider.CLICKHOUSE]: {
+    appName: 'ClickHouse',
+    repository: { host: 'github', repo: CLICKHOUSE_REPOSITORY },
+    installed: (account) =>
+      clickhouseVersion(
+        account.baseUrl ?? '',
+        account.username ?? '',
+        account.accessToken ?? '',
+      ),
+    latest: () => latestClickhouseRelease(),
+  },
+  [ConnectionProvider.VAULTWARDEN]: {
+    appName: 'Vaultwarden',
+    repository: { host: 'github', repo: VAULTWARDEN_REPOSITORY },
+    installed: (account) => vaultwardenVersion(account.baseUrl ?? ''),
+    latest: () => latestGithubRelease(VAULTWARDEN_REPOSITORY),
   },
   [ConnectionProvider.HOME_ASSISTANT]: {
     appName: 'Home Assistant',

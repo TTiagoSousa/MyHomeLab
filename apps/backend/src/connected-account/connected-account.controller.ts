@@ -27,6 +27,16 @@ import { CreateImmichAccountDto } from './dto/create-immich-account.dto';
 import { CreatePaperlessAccountDto } from './dto/create-paperless-account.dto';
 import { CreateStirlingAccountDto } from './dto/create-stirling-account.dto';
 import { CreateSolidtimeAccountDto } from './dto/create-solidtime-account.dto';
+import { CreatePlaneAccountDto } from './dto/create-plane-account.dto';
+import { CreateGiteaMirrorAccountDto } from './dto/create-gitea-mirror-account.dto';
+import { CreateInfisicalAccountDto } from './dto/create-infisical-account.dto';
+import { CreateVaultwardenAccountDto } from './dto/create-vaultwarden-account.dto';
+import { CreatePostgresAccountDto } from './dto/create-postgres-account.dto';
+import { CreateClickHouseAccountDto } from './dto/create-clickhouse-account.dto';
+import { CreateNginxProxyManagerAccountDto } from './dto/create-nginx-proxy-manager-account.dto';
+import { CreateCoolifyAccountDto } from './dto/create-coolify-account.dto';
+import { CreateDispatcharrAccountDto } from './dto/create-dispatcharr-account.dto';
+import { CreateJellyfinAccountDto } from './dto/create-jellyfin-account.dto';
 import { CreateTrekAccountDto } from './dto/create-trek-account.dto';
 import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
@@ -215,6 +225,202 @@ export class ConnectedAccountController {
     @Req() req: Request & { user: JwtPayload },
   ) {
     return this.connectedAccountService.solidtimeStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('plane')
+  connectPlane(
+    @Body() dto: CreatePlaneAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createPlane(dto, req.user.id);
+  }
+
+  /** O estado do Plane agora (utilizador, espaço, projetos, versão). */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/plane-status')
+  planeStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.planeStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('gitea-mirror')
+  connectGiteaMirror(
+    @Body() dto: CreateGiteaMirrorAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createGiteaMirror(dto, req.user.id);
+  }
+
+  /** O estado do Gitea Mirror agora (saúde, repositórios por estado, falhas, MCP, versão). */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/gitea-mirror-status')
+  giteaMirrorStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.giteaMirrorStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('jellyfin')
+  connectJellyfin(
+    @Body() dto: CreateJellyfinAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createJellyfin(dto, req.user.id);
+  }
+
+  /** O estado do Jellyfin agora. */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/jellyfin-status')
+  jellyfinStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.jellyfinStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('dispatcharr')
+  connectDispatcharr(
+    @Body() dto: CreateDispatcharrAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createDispatcharr(dto, req.user.id);
+  }
+
+  /** O estado do Dispatcharr agora. */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/dispatcharr-status')
+  dispatcharrStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.dispatcharrStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('coolify')
+  connectCoolify(
+    @Body() dto: CreateCoolifyAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createCoolify(dto, req.user.id);
+  }
+
+  /** O estado do Coolify agora. */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/coolify-status')
+  coolifyStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.coolifyStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('nginx-proxy-manager')
+  connectNginxProxyManager(
+    @Body() dto: CreateNginxProxyManagerAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createNginxProxyManager(
+      dto,
+      req.user.id,
+    );
+  }
+
+  /** O estado do Nginx Proxy Manager agora. */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/nginx-proxy-manager-status')
+  nginxProxyManagerStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.nginxProxyManagerStatus(
+      id,
+      req.user.id,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('clickhouse')
+  connectClickHouse(
+    @Body() dto: CreateClickHouseAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createClickHouse(dto, req.user.id);
+  }
+
+  /** O estado do ClickHouse agora. */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/clickhouse-status')
+  clickhouseStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.clickhouseStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('postgres')
+  connectPostgres(
+    @Body() dto: CreatePostgresAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createPostgres(dto, req.user.id);
+  }
+
+  /** O estado do PostgreSQL agora. */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/postgres-status')
+  postgresStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.postgresStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('vaultwarden')
+  connectVaultwarden(
+    @Body() dto: CreateVaultwardenAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createVaultwarden(dto, req.user.id);
+  }
+
+  /** O estado do Vaultwarden agora. */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/vaultwarden-status')
+  vaultwardenStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.vaultwardenStatus(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('infisical')
+  connectInfisical(
+    @Body() dto: CreateInfisicalAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createInfisical(dto, req.user.id);
+  }
+
+  /** O estado do Infisical agora. */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/infisical-status')
+  infisicalStatus(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.infisicalStatus(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

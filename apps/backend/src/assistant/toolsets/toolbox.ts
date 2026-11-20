@@ -28,6 +28,16 @@ import {
 import { buildDiskAlertTools } from './disk-alert-tools';
 import { buildChatFileTools } from './chat-file-tools';
 import { buildDriveTools } from './drive-tools';
+import { buildPlaneTools } from './plane-tools';
+import { buildGiteaMirrorTools } from './gitea-mirror-tools';
+import { buildInfisicalTools } from './infisical-tools';
+import { buildVaultwardenTools } from './vaultwarden-tools';
+import { buildPostgresTools } from './postgres-tools';
+import { buildClickHouseTools } from './clickhouse-tools';
+import { buildNginxProxyManagerTools } from './nginx-proxy-manager-tools';
+import { buildCoolifyTools } from './coolify-tools';
+import { buildDispatcharrTools } from './dispatcharr-tools';
+import { buildJellyfinTools } from './jellyfin-tools';
 
 const TOOL_SETS: Record<
   ToolSet,
@@ -57,6 +67,16 @@ const TOOL_SETS: Record<
   diskAlerts: buildDiskAlertTools,
   chatFiles: buildChatFileTools,
   drive: buildDriveTools,
+  plane: buildPlaneTools,
+  giteaMirror: buildGiteaMirrorTools,
+  infisical: buildInfisicalTools,
+  vaultwarden: buildVaultwardenTools,
+  postgres: buildPostgresTools,
+  clickhouse: buildClickHouseTools,
+  nginxProxyManager: buildNginxProxyManagerTools,
+  coolify: buildCoolifyTools,
+  dispatcharr: buildDispatcharrTools,
+  jellyfin: buildJellyfinTools,
   server: async (context) =>
     buildServerTools(
       await context.serverConnections.connectionsFor(context.userId),

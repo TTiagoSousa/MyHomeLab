@@ -225,6 +225,161 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
       'Mudar segredos ou o login do Stirling-PDF (chaves de API, palavras-passe, OAuth).',
     ],
   },
+  [ConnectionProvider.PLANE]: {
+    name: 'Plane',
+    before: [
+      '🤖 Há um backup recente da base de dados do Plane (o PostgreSQL dele) — prova: a data do backup',
+      '🤖 As notas da versão nova não pedem passos à mão (migrações, mudanças no .env ou no docker-compose) — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O /api/instances/ responde com a versão nova e o plane_overview mostra os projetos — prova: a versão e os números',
+      '🤖 Uma tarefa abre bem (plane_get numa chave conhecida) — prova: a resposta',
+    ],
+    never: [
+      'Apagar projetos, tarefas ou a base de dados do Plane.',
+      'Mudar a SECRET_KEY nem as chaves do armazenamento (deixam de valer as sessões e os anexos).',
+    ],
+  },
+  [ConnectionProvider.GITEA_MIRROR]: {
+    name: 'Gitea Mirror',
+    before: [
+      '🤖 Há uma cópia da pasta de dados do Gitea Mirror (a base SQLite) — prova: a data da cópia',
+      '🤖 As notas da versão nova não pedem passos à mão (variáveis de ambiente ou migrações) — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O /api/health responde ok com a versão nova (gitea_mirror_overview) — prova: a resposta',
+      '🤖 Os repositórios estão lá, com o mesmo número, e não há falhas novas — prova: os números',
+    ],
+    never: [
+      'Apagar repositórios ou espelhos no Gitea/Forgejo.',
+      'Mudar os tokens do GitHub ou do Gitea guardados no Gitea Mirror.',
+    ],
+  },
+  [ConnectionProvider.JELLYFIN]: {
+    name: 'Jellyfin',
+    before: [
+      '🤖 Há um backup recente da configuração do Jellyfin (o do MyHomeLab) e, se for uma versão grande (ex.: 10.11 → 12), um backup completo do próprio Jellyfin ou da pasta de dados — prova: a data do backup',
+      '🤖 As notas da versão nova não pedem passos à mão (migração da base de dados, plugins a tirar antes, procura completa depois) — prova: o excerto das notas',
+      '🤖 Ninguém está a ver (jellyfin_sessions) — prova: a lista vazia',
+    ],
+    after: [
+      '🤖 O /System/Info/Public responde com a versão nova e o jellyfin_overview mostra as bibliotecas com os números de antes — prova: a versão e os números',
+      '🤖 As tarefas agendadas não falharam desde a atualização e os plugins estão ativos (jellyfin_overview, jellyfin_activity com problemsOnly) — prova: a resposta',
+      'Se as notas o pedirem, correr uma procura completa nas bibliotecas (jellyfin_scan) e ver que acaba bem',
+    ],
+    never: [
+      'Apagar bibliotecas, itens ou a pasta de dados do Jellyfin.',
+      'Apagar utilizadores ou tirar o último administrador sem ele pedir.',
+      'Mudar as chaves de API, o certificado HTTPS ou as definições de rede (o endereço pode deixar de responder).',
+    ],
+  },
+  [ConnectionProvider.DISPATCHARR]: {
+    name: 'Dispatcharr',
+    before: [
+      '🤖 Há um backup recente do Dispatcharr (o zip dele, guardado pelo MyHomeLab) — prova: a data do backup',
+      '🤖 As notas da versão nova não pedem passos à mão (migrações, variáveis novas no docker-compose, mudanças no Redis/PostgreSQL) — prova: o excerto das notas',
+      '🤖 Ninguém está a ver (dispatcharr_connections) e não há gravação a decorrer (dispatcharr_recordings) — prova: as listas',
+    ],
+    after: [
+      '🤖 O /api/core/version/ responde com a versão nova e o dispatcharr_overview mostra os mesmos canais e streams de antes — prova: a versão e os números',
+      '🤖 As contas M3U e as fontes de EPG não ficaram com erro (dispatcharr_overview) — prova: os estados',
+      '🤖 Um canal abre bem pelo proxy (dispatcharr_connections enquanto alguém vê, ou o leitor) — prova: a resposta',
+    ],
+    never: [
+      'Apagar canais, contas M3U, fontes de EPG ou gravações sem ele pedir.',
+      'Restaurar um backup por cima do que está (substitui a base de dados toda).',
+      'Mudar as credenciais dos fornecedores IPTV nem as chaves de API.',
+    ],
+  },
+  [ConnectionProvider.COOLIFY]: {
+    name: 'Coolify',
+    before: [
+      '🤖 Antes de um deploy, um stop ou de mudar uma variável no Coolify, diz-lhe qual a app (nome e uuid) e o que vai acontecer.',
+    ],
+    after: [
+      '🤖 Depois de um deploy no Coolify, confirma o fim com coolify_deployments e, se falhou, mostra as últimas linhas do log.',
+    ],
+    never: [
+      'Nunca mostrar valores de variáveis de ambiente do Coolify sem ele pedir esse valor.',
+      'Nunca parar uma app no Coolify sem ele pedir.',
+    ],
+  },
+  [ConnectionProvider.NGINX_PROXY_MANAGER]: {
+    name: 'Nginx Proxy Manager',
+    before: [
+      '🤖 Antes de criar, mudar, desligar ou apagar um proxy host no Nginx Proxy Manager, diz-lhe o domínio e o destino; para apagar, espera pela confirmação dele.',
+    ],
+    after: [
+      '🤖 Depois de mexer num proxy host, confirma com nginx_proxy_manager_host que o nginx ficou sem erro.',
+    ],
+    never: [
+      'Nunca apagar um proxy host sem ele confirmar (desligar é reversível, apagar não).',
+      'Nunca tirar o SSL ou a lista de acesso de um host sem ele pedir.',
+    ],
+  },
+  [ConnectionProvider.CLICKHOUSE]: {
+    name: 'ClickHouse',
+    before: [
+      '🤖 Há um backup do esquema do ClickHouse de hoje (Apps ligadas → ClickHouse → Backups) e, para os dados, um BACKUP do ClickHouse ou do CT — prova: a hora do último bom',
+      '🤖 As notas da versão nova não trazem mudanças incompatíveis (Backward Incompatible Change) que toquem nas tabelas ou definições usadas — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O ClickHouse responde com a versão nova e todas as bases estão lá (clickhouse_overview) — prova: a versão e as bases',
+      '🤖 Não há erros novos nem tabelas só de leitura (clickhouse_health) — prova: a resposta',
+    ],
+    never: [
+      'Apagar bases de dados ou tabelas (DROP/TRUNCATE) sem ele confirmar.',
+      'Mudar utilizadores, passwords ou grants do ClickHouse sem ele pedir.',
+    ],
+  },
+  [ConnectionProvider.POSTGRES]: {
+    name: 'PostgreSQL',
+    before: [
+      '🤖 Há um backup (pg_dump) de cada base importante de hoje, e um snapshot do CT/VM antes de mudar de versão major — prova: a hora do último bom',
+      '🤖 As notas da versão nova não pedem passos à mão (pg_upgrade/dump e restore num major novo, REINDEX, extensões a atualizar) — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O PostgreSQL responde com a versão nova e todas as bases estão lá (postgres_overview) — prova: a versão e as bases',
+      '🤖 As apps que usam este PostgreSQL voltaram a ligar-se (postgres_activity) — prova: as ligações por base',
+    ],
+    never: [
+      'Apagar bases de dados, esquemas ou tabelas (DROP/TRUNCATE) sem ele confirmar.',
+      'Mudar papéis, passwords ou o pg_hba.conf sem ele pedir.',
+      'Fechar ligações (pg_terminate_backend) das apps sem ele confirmar.',
+    ],
+  },
+  [ConnectionProvider.VAULTWARDEN]: {
+    name: 'Vaultwarden',
+    before: [
+      '🤖 Há uma cópia recente da pasta data do Vaultwarden (com SQLite, vaultwarden_backup_db; ou o backup do CT/VM) — prova: a data da cópia',
+      '🤖 As notas da versão nova não pedem passos à mão (variáveis de ambiente, migrações, versão mínima dos clientes) — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O /api/version responde com a versão nova e o painel abre (vaultwarden_overview) — prova: a resposta',
+      '🤖 Os utilizadores e as organizações estão lá, com os mesmos números — prova: os números',
+    ],
+    never: [
+      'Pedir ou guardar a password mestra de alguém, ou tentar ler os cofres.',
+      'Apagar utilizadores ou organizações durante uma atualização.',
+      'Mudar ou mostrar o ADMIN_TOKEN.',
+    ],
+  },
+  [ConnectionProvider.INFISICAL]: {
+    name: 'Infisical',
+    before: [
+      '🤖 Há um backup recente do Infisical (o JSON dos segredos e, de preferência, um pg_dump da base de dados dele) — prova: a data do backup',
+      '🤖 As notas da versão nova não pedem passos à mão (migrações, variáveis de ambiente, ENCRYPTION_KEY) — prova: o excerto das notas',
+    ],
+    after: [
+      '🤖 O /api/status responde "Ok" e a identidade continua a entrar (infisical_overview) — prova: a resposta',
+      '🤖 Os projetos e o número de segredos por ambiente são os mesmos — prova: os números',
+    ],
+    never: [
+      'Mostrar valores de segredos sem ele pedir, ou copiá-los para documentos, tarefas ou mensagens.',
+      'Mudar a ENCRYPTION_KEY ou a AUTH_SECRET do servidor (os segredos deixam de se ler).',
+      'Apagar segredos, pastas ou ambientes durante uma atualização.',
+    ],
+  },
   [ConnectionProvider.HOME_ASSISTANT]: {
     name: 'Home Assistant',
     before: [
