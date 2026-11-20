@@ -1846,6 +1846,33 @@
           "audit": "O registo de auditoria"
         }
       }
+    },
+    "googleDrive": {
+      "title": "Google Drive",
+      "description": "O teu Drive e as Folhas do Google: o Jarvis procura e lê tudo e só mexe no que ligares a um projeto.",
+      "connect": "Ligar com Google",
+      "meta": "Lê o Drive todo; só altera o que estiver ligado a um projeto.",
+      "disconnect": "Desligar",
+      "confirmDisconnect": "Confirmar: desligar",
+      "links": {
+        "title": "Ligações a projetos",
+        "titleFor": "Ligações a projetos · {{email}}",
+        "description": "Cola o link de uma pasta ou de um ficheiro e escolhe o projeto. O Jarvis só altera o que está aqui (e o que estiver dentro das pastas); o que faz com cada ficheiro está nos documentos do projeto.",
+        "targetPlaceholder": "Link da pasta ou do ficheiro no Drive",
+        "projectPlaceholder": "Projeto",
+        "add": "Ligar",
+        "remove": "Tirar",
+        "confirmRemove": "Confirmar: tirar",
+        "empty": "Ainda não há nada ligado: o Jarvis pode ler, mas não altera nada.",
+        "noProjects": "Cria primeiro um projeto em Projetos."
+      },
+      "kinds": {
+        "folder": "PASTA",
+        "sheet": "FOLHA",
+        "doc": "DOC",
+        "excel": "EXCEL",
+        "file": "FICHEIRO"
+      }
     }
   },
   "forgejoModal": {

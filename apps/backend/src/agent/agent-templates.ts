@@ -54,7 +54,7 @@ const DOCS_READ = [
  * para os agentes que já existem com este template, que continuam a apontar para as
  * instruções daqui enquanto não as editar, para receber as melhorias do site.
  */
-export const AGENT_TEMPLATES: AgentTemplate[] = [
+const TEMPLATES: AgentTemplate[] = [
   {
     key: 'ceo',
     name: 'Jarvis',
@@ -63,7 +63,7 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     prompt: CEO_PROMPT,
     model: 'OPUS',
     effort: 'MEDIUM',
-    tools: toolsOf('team', 'docs', 'schedules', 'board', 'todos'),
+    tools: toolsOf('team', 'docs', 'schedules', 'board', 'todos', 'drive'),
     reportsTo: null,
     color: 1,
     legacyKeys: ['main'],
@@ -239,7 +239,7 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     prompt: ARCHIVIST_PROMPT,
     model: 'SONNET',
     effort: 'LOW',
-    tools: [...toolsOf('paperless', 'stirling'), ...DOCS_READ],
+    tools: [...toolsOf('paperless', 'stirling', 'drive'), ...DOCS_READ],
     reportsTo: 'ceo',
     color: 2,
     legacyKeys: [],
@@ -258,6 +258,14 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     legacyKeys: [],
   },
 ];
+
+/** Os ficheiros que ele manda no chat: toda a equipa os pode ler e fazer contas com eles. */
+const CHAT_FILES = toolsOf('chatFiles');
+
+export const AGENT_TEMPLATES: AgentTemplate[] = TEMPLATES.map((template) => ({
+  ...template,
+  tools: [...template.tools, ...CHAT_FILES],
+}));
 
 export const templatePrompt = (template: string | null) =>
   AGENT_TEMPLATES.find((entry) => entry.key === template)?.prompt ?? null;

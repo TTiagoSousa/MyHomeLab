@@ -28,6 +28,7 @@ enum ConnectionProvider {
   PAPERLESS
   SOLIDTIME
   STIRLING_PDF
+  GOOGLE_DRIVE
 }
 
 // Onde é que o serviço corre. Serve para separar o que é do lab do que é de terceiros —
@@ -91,6 +92,7 @@ model User {
   services            Service[]
   connectedAccounts   ConnectedAccount[]
   chatMessages        ChatMessage[]
+  chatFiles           ChatFile[]
   conversations       Conversation[]
   agentSettings       AgentSetting[]
   agents              Agent[]
@@ -269,6 +271,7 @@ model ConnectedAccount {
   backupDestinations BackupDestination[] @relation("DestinationAccount")
   notifications      Notification[]
   todoSyncLinks      TodoSyncLink[]
+  driveLinks         DriveLink[]
 
   @@index([userId])
 }
@@ -343,6 +346,7 @@ model Conversation {
   boardTaskId   String?       @unique
   boardTask     BoardTask?    @relation(fields: [boardTaskId], references: [id], onDelete: SetNull)
   messages      ChatMessage[]
+  files         ChatFile[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   lastMessageAt DateTime      @default(now())
@@ -362,10 +366,32 @@ model ChatMessage {
   docsUsed       Json?
   /// ["Assistente Administrativo: a ler um anexo (3769.pdf)", …] o que a equipa fez nesta resposta
   actions        Json?
+  files          ChatFile[]
   createdAt      DateTime      @default(now())
 
   @@index([userId, createdAt])
   @@index([conversationId, createdAt])
+}
+
+/// Um ficheiro que ele mandou no chat (PDF, Word, Excel, CSV, texto, imagem). Fica com a
+/// conversa: os agentes voltam a ele pelas ferramentas chat_file_*.
+model ChatFile {
+  id             String       @id @default(uuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  messageId      String?
+  message        ChatMessage? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  name           String
+  mimeType       String
+  size           Int
+  sha256         String
+  data           Bytes
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+  @@index([messageId])
 }
 
 // Legado: as instruções extra dos agentes antigos ('main', 'email', 'server', 'health',
@@ -2137,6 +2163,7 @@ model Project {
   modules            BoardModule[]
   cycles             BoardCycle[]
   tasks              BoardTask[]
+  driveLinks         DriveLink[]
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 
@@ -2517,4 +2544,23 @@ model TodoSyncItem {
 
   @@unique([linkId, remoteId])
   @@unique([linkId, todoId])
+}
+
+/// Uma pasta ou um ficheiro do Google Drive ligado a um projeto. O Jarvis lê o Drive todo,
+/// mas só altera o que estiver ligado (o ficheiro, ou dentro da pasta); o que faz com ele
+/// está nos documentos do projeto.
+model DriveLink {
+  id        String           @id @default(uuid())
+  userId    String
+  accountId String
+  account   ConnectedAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fileId    String
+  name      String
+  mimeType  String
+  createdAt DateTime         @default(now())
+
+  @@unique([accountId, fileId, projectId])
+  @@index([userId])
 }

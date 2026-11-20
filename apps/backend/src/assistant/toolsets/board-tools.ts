@@ -294,6 +294,40 @@ export function buildBoardTools(context: AgentContext): AgentTool[] {
       },
     },
     {
+      name: 'board_project_create',
+      description:
+        'Cria um projeto novo em Projetos, com as colunas normais (Backlog, Todo, Em curso, À espera, Feito, Cancelado). Cria só quando ele pedir. Depois, se o projeto for de trabalho com regras (uma folha do Drive, colunas, o que se atualiza), propõe escrevê-las no documento do projeto.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', description: 'O nome (até 80).' },
+          identifier: {
+            type: 'string',
+            description:
+              'O prefixo das tarefas (até 6 letras; omissão: tirado do nome).',
+          },
+          description: { type: 'string' },
+        },
+        required: ['name'],
+      },
+      handler: async (input: {
+        name: string;
+        identifier?: string;
+        description?: string;
+      }) => {
+        try {
+          const project = await board.createProject(userId, {
+            name: input.name,
+            identifier: input.identifier?.trim() || undefined,
+            description: input.description,
+          });
+          return `Criei o projeto "${project.name}" (prefixo ${project.identifier}), com as colunas ${project.states.map((state) => state.name).join(', ')}.`;
+        } catch (error) {
+          return failure(error);
+        }
+      },
+    },
+    {
       name: 'board_update',
       description:
         'Muda uma tarefa (coluna, prioridade, responsável, datas, módulos…). Só o que mandares muda.',

@@ -22,6 +22,8 @@ export type ToolSet =
   | 'serverControl'
   | 'serverShell'
   | 'diskAlerts'
+  | 'chatFiles'
+  | 'drive'
   | 'team';
 
 export type ToolGroup =
@@ -48,6 +50,8 @@ export type ToolGroup =
   | 'todos'
   | 'serverControl'
   | 'serverShell'
+  | 'chatFiles'
+  | 'drive'
   | 'team';
 
 export interface ToolDescriptor {
@@ -913,6 +917,107 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'a bloquear serviços no AdGuard',
   ),
 
+  tool(
+    'chat_files_list',
+    'chatFiles',
+    'chatFiles',
+    'read',
+    'a ver os ficheiros da conversa',
+  ),
+  tool('chat_file_read', 'chatFiles', 'chatFiles', 'read', 'a ler um ficheiro'),
+  tool(
+    'chat_file_query',
+    'chatFiles',
+    'chatFiles',
+    'read',
+    'a fazer contas numa folha',
+  ),
+  tool(
+    'chat_file_ask',
+    'chatFiles',
+    'chatFiles',
+    'read',
+    'a analisar um ficheiro',
+  ),
+  tool('drive_search', 'drive', 'drive', 'read', 'a procurar no Google Drive'),
+  tool(
+    'drive_links',
+    'drive',
+    'drive',
+    'read',
+    'a ver o que está ligado no Drive',
+  ),
+  tool('drive_read', 'drive', 'drive', 'read', 'a ler um ficheiro do Drive'),
+  tool(
+    'drive_sheet_query',
+    'drive',
+    'drive',
+    'read',
+    'a fazer contas numa folha do Drive',
+  ),
+  tool(
+    'drive_ask',
+    'drive',
+    'drive',
+    'read',
+    'a analisar um ficheiro do Drive',
+  ),
+  tool(
+    'drive_history',
+    'drive',
+    'drive',
+    'read',
+    'a ver o histórico de um ficheiro do Drive',
+  ),
+  tool(
+    'drive_sheet_update',
+    'drive',
+    'drive',
+    'write',
+    'a mudar células no Drive',
+  ),
+  tool(
+    'drive_sheet_append',
+    'drive',
+    'drive',
+    'write',
+    'a acrescentar linhas no Drive',
+  ),
+  tool(
+    'drive_sheet_add_tab',
+    'drive',
+    'drive',
+    'write',
+    'a criar uma folha no Drive',
+  ),
+  tool(
+    'drive_create',
+    'drive',
+    'drive',
+    'write',
+    'a criar um ficheiro no Drive',
+  ),
+  tool(
+    'drive_sheet_format',
+    'drive',
+    'drive',
+    'write',
+    'a mudar o aspeto de uma folha',
+  ),
+  tool(
+    'drive_create_folder',
+    'drive',
+    'drive',
+    'write',
+    'a criar uma pasta no Drive',
+  ),
+  tool(
+    'drive_convert_to_sheet',
+    'drive',
+    'drive',
+    'write',
+    'a converter um Excel do Drive',
+  ),
   tool('docs_search', 'docs', 'docs', 'read', 'a procurar nos documentos'),
   tool('docs_read', 'docs', 'docs', 'read', 'a ler um documento'),
   tool('docs_projects', 'docs', 'docs', 'read', 'a ver os projetos'),
@@ -1024,6 +1129,7 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
   tool('board_list', 'board', 'board', 'read', 'a ver as tarefas'),
   tool('board_get', 'board', 'board', 'read', 'a abrir uma tarefa'),
   tool('board_create', 'board', 'board', 'write', 'a criar uma tarefa'),
+  tool('board_project_create', 'board', 'board', 'write', 'a criar um projeto'),
   tool('board_update', 'board', 'board', 'write', 'a mudar uma tarefa'),
   tool('board_comment', 'board', 'board', 'write', 'a comentar uma tarefa'),
   tool(

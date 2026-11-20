@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type DragEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Assistant.scss';
@@ -14,6 +14,9 @@ import { useAuth } from '../../../Contexts/Auth_Context';
 import * as Icon from '../../../Imports/icons';
 import Doc_Editor from '../../../Components/Doc_Editor/Doc_Editor';
 import { chatMarkdown } from './chatMarkdown';
+import { Assistant_Message_Files, Assistant_Pending_Files } from './Assistant_Files';
+import { CHAT_FILE_ACCEPT, MAX_CHAT_FILES, chatFileProblem } from '../../../Hooks/Assistant/chatFiles';
+import { useAlert } from '../../../Contexts/Alert_Context';
 
 const SUGGESTED_PROMPTS = [
   'suggestedPrompts.todayEmails',
@@ -80,9 +83,25 @@ const Assistant = () => {
   const noKey = !loadingProviders && providers.length === 0;
 
   const [input, setInput] = useState('');
+  const [attached, setAttached] = useState<File[]>([]);
+  const [dragging, setDragging] = useState(false);
+  const { setAlert } = useAlert();
 
   const convoRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const addFiles = (incoming: File[]) => {
+    if (!incoming.length || noKey) return;
+    const problem = incoming.map(chatFileProblem).find(Boolean);
+    const accepted = incoming.filter((file) => !chatFileProblem(file));
+    const room = MAX_CHAT_FILES - attached.length;
+    if (problem) setAlert({ open: true, message: problem, type: 'error' });
+    else if (accepted.length > room) setAlert({ open: true, message: t('files.tooMany', { count: MAX_CHAT_FILES }), type: 'error' });
+    if (room > 0) setAttached([...attached, ...accepted.slice(0, room)]);
+  };
+
+  const hasFiles = (event: DragEvent) => event.dataTransfer.types.includes('Files');
 
   const scrolledRef = useRef({ id: '', count: 0 });
 
@@ -97,9 +116,10 @@ const Assistant = () => {
   }, [messages, loading]);
 
   const handleSend = (text: string) => {
-    if (!text.trim() || loading || noKey) return;
-    sendMessage(text);
+    if ((!text.trim() && !attached.length) || loading || noKey) return;
+    sendMessage(text, attached);
     setInput('');
+    setAttached([]);
     if (inputRef.current) inputRef.current.style.height = '25px';
   };
 
@@ -187,7 +207,30 @@ const Assistant = () => {
           answeringNew={running.some((ask) => ask.conversationId === null)}
         />
 
-        <section className='Assistant_Frame'>
+        <section
+          className='Assistant_Frame'
+          onDragOver={(e) => {
+            if (!hasFiles(e) || noKey) return;
+            e.preventDefault();
+            setDragging(true);
+          }}
+          onDragLeave={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDragging(false);
+          }}
+          onDrop={(e) => {
+            if (!hasFiles(e)) return;
+            e.preventDefault();
+            setDragging(false);
+            addFiles(Array.from(e.dataTransfer.files));
+          }}
+        >
+          {dragging && (
+            <div className='Assistant_Drop'>
+              <Icon.Paperclip />
+              <span className='Assistant_Drop_title'>{t('files.drop')}</span>
+              <span className='Assistant_Drop_hint'>{t('files.dropHint')}</span>
+            </div>
+          )}
           <div className='Assistant_Frame_head'>
             <span className='Assistant_Frame_title'>{activeTitle ?? t('conversations.new')}</span>
             {activeConversation?.taskId ? (
@@ -224,8 +267,9 @@ const Assistant = () => {
                 <span className='Assistant_Msg_who'>
                   {message.role === 'user' ? (username ?? t('conversation.you')) : 'Jarvis'}
                 </span>
+                {message.files && message.files.length > 0 && <Assistant_Message_Files files={message.files} />}
                 {message.role === 'user' ? (
-                  <div className='Assistant_Msg_text'>{message.text}</div>
+                  message.text && <div className='Assistant_Msg_text'>{message.text}</div>
                 ) : (
                   <div className='Assistant_Msg_text rich'>
                     <Doc_Editor value={chatMarkdown(message.text)} />
@@ -266,7 +310,30 @@ const Assistant = () => {
               ))}
             </div>
 
+            <Assistant_Pending_Files files={attached} onRemove={(index) => setAttached(attached.filter((_, at) => at !== index))} />
+
             <div className='Assistant_Bar'>
+              <input
+                ref={fileInputRef}
+                type='file'
+                multiple
+                hidden
+                accept={CHAT_FILE_ACCEPT}
+                onChange={(e) => {
+                  addFiles(Array.from(e.target.files ?? []));
+                  e.target.value = '';
+                }}
+              />
+              <button
+                type='button'
+                className='Assistant_Attach'
+                onClick={() => fileInputRef.current?.click()}
+                disabled={noKey || attached.length >= MAX_CHAT_FILES}
+                aria-label={t('files.attach')}
+                title={t('files.attach')}
+              >
+                <Icon.Paperclip />
+              </button>
               <textarea
                 ref={inputRef}
                 rows={1}
@@ -285,13 +352,19 @@ const Assistant = () => {
                     handleSend(input);
                   }
                 }}
+                onPaste={(e) => {
+                  const pasted = Array.from(e.clipboardData.files);
+                  if (!pasted.length) return;
+                  e.preventDefault();
+                  addFiles(pasted);
+                }}
               />
 
               <button
                 type='button'
                 className='Assistant_Send'
                 onClick={() => handleSend(input)}
-                disabled={loading || noKey || !input.trim()}
+                disabled={loading || noKey || (!input.trim() && !attached.length)}
                 aria-label={t('conversation.send')}
               >
                 <Icon.Send />

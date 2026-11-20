@@ -3,15 +3,24 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   Param,
   Patch,
   Post,
   Query,
   Req,
+  StreamableFile,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
+import {
+  MAX_CHAT_FILES,
+  MAX_CHAT_FILE_BYTES,
+} from 'src/chat-file/chat-file.service';
 import { JwtPayload } from 'src/auth/jwt-payload.interface';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { AssistantService } from './assistant.service';
@@ -77,15 +86,46 @@ export class AssistantController {
     await this.assistantService.deleteConversation(req.user.id, id);
   }
 
+  /** A mensagem, em JSON ou (com ficheiros) em multipart: o campo "files", até 5. */
   @Post('chat')
   @HttpCode(200)
+  @UseInterceptors(
+    FilesInterceptor('files', MAX_CHAT_FILES, {
+      limits: { fileSize: MAX_CHAT_FILE_BYTES },
+    }),
+  )
   async chat(
     @Body() dto: AskAssistantDto,
+    @UploadedFiles() files: Express.Multer.File[] | undefined,
     @Req() req: Request & { user: JwtPayload },
   ) {
-    return this.assistantService.ask(req.user, dto.message, {
-      conversationId: dto.conversationId,
-      newConversation: dto.newConversation,
+    return this.assistantService.ask(
+      req.user,
+      dto.message ?? '',
+      {
+        conversationId: dto.conversationId,
+        newConversation: dto.newConversation,
+      },
+      files ?? [],
+    );
+  }
+
+  /** Um ficheiro que ele mandou no chat, para abrir ou descarregar. */
+  @Get('files/:id')
+  @Header('X-Content-Type-Options', 'nosniff')
+  async file(
+    @Param('id') id: string,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    const file = await this.assistantService.chatFile(req.user.id, id);
+    // Só imagens e PDF abrem no browser; o resto descarrega-se, para um ficheiro não
+    // correr código na origem da API.
+    const inline = /^(image\/(png|jpe?g|gif|webp)|application\/pdf)$/.test(
+      file.mimeType,
+    );
+    return new StreamableFile(Buffer.from(file.data), {
+      type: inline ? file.mimeType : 'application/octet-stream',
+      disposition: `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(file.name)}`,
     });
   }
 

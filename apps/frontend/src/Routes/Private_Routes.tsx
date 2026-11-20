@@ -60,6 +60,7 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Apps/Trek' element={ <Private_Page.TrekAccounts /> } />
       <Route path='MyHomeLab/Apps/GoogleTasks' element={ <Private_Page.GoogleTasksAccounts /> } />
       <Route path='MyHomeLab/Apps/GoogleTasks/Connections' element={ <Private_Page.GoogleTasksConnections /> } />
+      <Route path='MyHomeLab/Apps/GoogleDrive' element={ <Private_Page.GoogleDriveAccounts /> } />
       <Route path='MyHomeLab/Apps/Trek/:accountId' element={ <Private_Page.TrekAccount /> } />
       <Route path='MyHomeLab/Apps/Trek/:accountId/Connections' element={ <Private_Page.TrekConnections /> } />
       <Route path='MyHomeLab/Apps/HomeAssistant' element={ <Private_Page.HomeAssistantAccounts /> } />

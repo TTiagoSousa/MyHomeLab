@@ -28,6 +28,7 @@ import { DocsModule } from './docs/docs.module';
 import { TodoModule } from './todo/todo.module';
 import { TodoSyncModule } from './todo-sync/todo-sync.module';
 import { BoardModule } from './board/board.module';
+import { GoogleDriveModule } from './google-drive/google-drive.module';
 import { AppUpdateModule } from './app-update/app-update.module';
 import { AgentScheduleRunnerModule } from './agent-schedule/agent-schedule-runner.module';
 
@@ -63,6 +64,7 @@ import { AgentScheduleRunnerModule } from './agent-schedule/agent-schedule-runne
     TodoModule,
     TodoSyncModule,
     BoardModule,
+    GoogleDriveModule,
     AppUpdateModule,
     AgentScheduleRunnerModule,
   ],

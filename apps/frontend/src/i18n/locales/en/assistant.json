@@ -235,6 +235,10 @@
         "stirling": {
           "name": "Stirling-PDF (PDFs)",
           "description": "See the operations, their parameters and the server settings. Changing means running operations (compress, OCR, merge, split, convert, protect…) on files from Paperless or Nextcloud and saving the result as a new file, and changing the settings (it shows what changes first). It never replaces or deletes the original."
+        },
+        "drive": {
+          "name": "Google Drive",
+          "description": "View: search and read all of Drive, run maths on sheets and see the version history. Change: edit cells, add rows, create sheets and files and convert Excel into Google Sheets — only in what is linked to a project. Never deletes or shares."
         }
       },
       "layers": "There are three places, from the widest to the finest: each agent's tools (Workflow), these areas (for every agent) and each connected app or server (on its page → Agents, per agent). An agent only does what all three allow."
@@ -299,7 +303,9 @@
       "paperless": "Paperless",
       "solidtime": "solidtime",
       "trek": "TREK",
-      "stirling": "Stirling-PDF"
+      "stirling": "Stirling-PDF",
+      "chatFiles": "Chat files",
+      "drive": "Google Drive"
     },
     "editor": {
       "name": "Name",
@@ -469,6 +475,20 @@
       "board_update": "Change a task",
       "board_comment": "Comment on a task",
       "board_ask_user": "Ask you for an answer",
+      "board_project_create": "Create a project",
+      "drive_search": "Search Drive",
+      "drive_links": "See what is linked to projects",
+      "drive_read": "Read a Drive file",
+      "drive_sheet_query": "Count and filter a sheet",
+      "drive_ask": "Ask about a Drive file",
+      "drive_history": "See what changed in a sheet",
+      "drive_sheet_update": "Change cells",
+      "drive_sheet_append": "Add rows",
+      "drive_sheet_add_tab": "Add a sheet to a file",
+      "drive_create": "Create a Drive file",
+      "drive_create_folder": "Create a Drive folder",
+      "drive_sheet_format": "Change how a sheet looks",
+      "drive_convert_to_sheet": "Convert an Excel file to a Google Sheet",
       "update_attempt_close": "Close an attempt",
       "todo_lists": "See the lists",
       "todo_list": "Read the tasks",
@@ -514,5 +534,17 @@
       "READ": "Read",
       "WRITE": "Read and change"
     }
+  },
+  "files": {
+    "attach": "Attach files",
+    "remove": "Remove {{name}}",
+    "drop": "Drop the files here",
+    "dropHint": "PDF, Word, Excel, CSV, text or images · up to 5, 20 MB each",
+    "open": "Open {{name}}",
+    "tooMany": "You can attach up to {{count}} files at a time.",
+    "tooBig": "“{{name}}” is larger than 20 MB.",
+    "unsupported": "I can’t read “{{name}}”. Attach PDF, Word (.docx), Excel (.xlsx), CSV, text or images.",
+    "legacy": "“{{name}}” is in an old Office format. Save it as .docx or .xlsx.",
+    "openFailed": "Couldn’t open the file."
   }
 }

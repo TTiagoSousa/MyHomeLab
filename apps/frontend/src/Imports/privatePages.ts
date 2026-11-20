@@ -35,6 +35,7 @@ export { default as ForgejoConnections } from '../Pages/Private/Apps/Forgejo_Con
 export { default as TrekAccounts } from '../Pages/Private/Apps/Trek_Accounts';
 export { default as GoogleTasksAccounts } from '../Pages/Private/Apps/Google_Tasks_Accounts';
 export { default as GoogleTasksConnections } from '../Pages/Private/Apps/Google_Tasks_Connections';
+export { default as GoogleDriveAccounts } from '../Pages/Private/Apps/Google_Drive_Accounts';
 export { default as TrekAccount } from '../Pages/Private/Apps/Trek_Account';
 export { default as TrekConnections } from '../Pages/Private/Apps/Trek_Connections';
 export { default as HomeAssistantAccounts } from '../Pages/Private/Apps/Home_Assistant_Accounts';

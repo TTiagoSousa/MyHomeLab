@@ -15,6 +15,7 @@ const CATALOG: { kind: App_Kind; descriptionKey: string }[] = [
   { kind: 'NEXTCLOUD', descriptionKey: 'apps.nextcloud.description' },
   { kind: 'GMAIL', descriptionKey: 'apps.gmail.description' },
   { kind: 'GOOGLE_TASKS', descriptionKey: 'apps.googleTasks.description' },
+  { kind: 'GOOGLE_DRIVE', descriptionKey: 'apps.googleDrive.description' },
   { kind: 'FORGEJO', descriptionKey: 'apps.forgejo.description' },
   { kind: 'TREK', descriptionKey: 'apps.trek.description' },
   { kind: 'HOME_ASSISTANT', descriptionKey: 'apps.homeAssistant.description' },

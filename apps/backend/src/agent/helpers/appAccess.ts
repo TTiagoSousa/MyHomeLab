@@ -31,6 +31,7 @@ export const SET_TARGET: Partial<
   paperless: ConnectionProvider.PAPERLESS,
   solidtime: ConnectionProvider.SOLIDTIME,
   stirling: ConnectionProvider.STIRLING_PDF,
+  drive: ConnectionProvider.GOOGLE_DRIVE,
   trek: ConnectionProvider.TREK,
   server: 'PROXMOX',
   serverControl: 'PROXMOX',

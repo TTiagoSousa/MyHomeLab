@@ -74,6 +74,13 @@ import { describeWhen } from 'src/agent-schedule/helpers/nextRunAt';
 import { AgentSchedule } from 'src/generated/prisma/client/client';
 import { targetLabel } from 'src/app-update/helpers/updateFields';
 import { watchedInstalls } from 'src/app-update/helpers/installRetry';
+import {
+  ChatFileInfo,
+  ChatFileService,
+  UploadedChatFile,
+  fileLine,
+} from 'src/chat-file/chat-file.service';
+import { DriveService } from 'src/google-drive/drive.service';
 
 export interface ChatEntry {
   id: string;
@@ -84,7 +91,13 @@ export interface ChatEntry {
   docsUsed?: { id: string; title: string }[];
   /** O que a equipa fez para esta resposta (vai no histórico para o modelo). */
   actions?: string[];
+  /** Os ficheiros que ele mandou com esta mensagem. */
+  files?: ChatFileInfo[];
 }
+
+/** O nome de um ficheiro como o browser o mandou (o multer lê-o em latin1). */
+const uploadName = (file: UploadedChatFile) =>
+  Buffer.from(file.originalname, 'latin1').toString('utf8');
 
 // Quantas falas anteriores vão como contexto para o modelo. O histórico completo
 // fica na base de dados; isto é só a janela que a conversa arrasta consigo.
@@ -210,6 +223,8 @@ export class AssistantService {
     private readonly todos: TodoService,
     private readonly agentAccess: AgentAccessService,
     private readonly aiUsage: AiUsageService,
+    private readonly chatFiles: ChatFileService,
+    private readonly drive: DriveService,
   ) {}
 
   private buildContext(
@@ -253,6 +268,8 @@ export class AssistantService {
       schedules: this.schedules,
       board: this.board,
       todos: this.todos,
+      chatFiles: this.chatFiles,
+      drive: this.drive,
       health: {
         sleep: this.sleep,
         heart: this.heartRate,
@@ -410,6 +427,18 @@ export class AssistantService {
       where: { conversationId },
       orderBy: { createdAt: 'desc' },
       take: limit,
+      include: {
+        files: {
+          select: {
+            id: true,
+            name: true,
+            mimeType: true,
+            size: true,
+            createdAt: true,
+          },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
     });
     return rows.reverse().map((row) => ({
       id: row.id,
@@ -419,7 +448,13 @@ export class AssistantService {
       docsUsed:
         (row.docsUsed as { id: string; title: string }[] | null) ?? undefined,
       actions: (row.actions as string[] | null) ?? undefined,
+      ...(row.files.length ? { files: row.files } : {}),
     }));
+  }
+
+  /** Um ficheiro que ele mandou no chat (para o abrir na página). */
+  chatFile(userId: string, id: string) {
+    return this.chatFiles.get(userId, id);
   }
 
   /** As últimas mensagens da conversa mais recente (o que a app Android mostra). */
@@ -442,6 +477,7 @@ export class AssistantService {
     user: JwtPayload,
     message: string,
     target: ConversationTarget = {},
+    uploads: UploadedChatFile[] = [],
   ): Promise<{
     reply: string;
     conversationId: string;
@@ -453,13 +489,23 @@ export class AssistantService {
     // Sem chave não há assistente — não existe chave geral no servidor. O código
     // deixa o frontend mostrar o caminho para Assistente → Definições → IA.
     const ai = await this.aiCredentials.requireClient(user.id);
+    this.chatFiles.validate(uploads);
+    if (!message.trim() && !uploads.length) {
+      throw new BadRequestException(
+        'Escreve uma mensagem ou junta um ficheiro.',
+      );
+    }
 
-    const thread = await this.resolveConversation(user.id, message, target);
+    const thread = await this.resolveConversation(
+      user.id,
+      message.trim() || uploads.map(uploadName).join(', '),
+      target,
+    );
     const previous = await this.messagesOf(thread.id, CONTEXT_MESSAGES);
     // A pergunta grava-se já: um pedido longo (o Jarvis a delegar) pode passar o tempo
     // de um proxy à frente do MyHomeLab, e a página volta a buscá-la ao histórico. Se a
     // equipa falhar, fica uma resposta a dizer porquê — nunca uma pergunta sem resposta.
-    await this.prisma.$transaction([
+    const [question] = await this.prisma.$transaction([
       this.prisma.chatMessage.create({
         data: {
           userId: user.id,
@@ -508,14 +554,26 @@ export class AssistantService {
         .catch(() => undefined);
     }
 
+    // Os ficheiros desta mensagem vão inteiros (ou lidos) no pedido; os das mensagens
+    // anteriores vão só pelo nome e id, e os agentes voltam a eles pelas chat_file_*.
+    const files = uploads.length
+      ? await this.chatFiles.save(user.id, thread.id, question.id, uploads)
+      : [];
     const conversation: MessageParam[] = previous.map((entry) => ({
       role: entry.role,
       content:
         entry.role === 'assistant' && entry.actions?.length
           ? `${entry.content}\n\n${ACTIONS_NOTE} ${entry.actions.join('; ')}]`
-          : entry.content,
+          : entry.files?.length
+            ? `${entry.content}\n\n[Ficheiros desta mensagem (lê-os com chat_file_read, chat_file_query ou chat_file_ask): ${entry.files.map(fileLine).join('; ')}]`
+            : entry.content,
     }));
-    conversation.push({ role: 'user', content: message });
+    conversation.push({
+      role: 'user',
+      content: files.length
+        ? this.chatFiles.turnContent(files, message)
+        : message,
+    });
 
     // Uma volta de conversa = uma mensagem dele e a resposta que se lhe segue.
     // As alterações de prompt que o agente proponha ficam presas a este id e não
@@ -531,6 +589,8 @@ export class AssistantService {
       await this.agentSettingRepository.findDeniedPermissions(user.id),
       team,
     );
+    context.conversationId = thread.id;
+    context.filesInTurn = files.length > 0;
 
     // Estado que muda de volta para volta entra aqui, no fim das mensagens — e
     // nunca no system prompt, que tem de ficar byte a byte igual para a cache

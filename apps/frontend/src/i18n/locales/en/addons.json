@@ -1846,6 +1846,33 @@
           "audit": "The audit log"
         }
       }
+    },
+    "googleDrive": {
+      "title": "Google Drive",
+      "description": "Your Drive and Google Sheets: Jarvis searches and reads everything and only changes what you link to a project.",
+      "connect": "Connect with Google",
+      "meta": "Reads all of Drive; only changes what is linked to a project.",
+      "disconnect": "Disconnect",
+      "confirmDisconnect": "Confirm: disconnect",
+      "links": {
+        "title": "Project links",
+        "titleFor": "Project links · {{email}}",
+        "description": "Paste the link of a folder or a file and pick the project. Jarvis only changes what is here (and what is inside the folders); what it does with each file is in the project documents.",
+        "targetPlaceholder": "Link of the folder or file in Drive",
+        "projectPlaceholder": "Project",
+        "add": "Link",
+        "remove": "Remove",
+        "confirmRemove": "Confirm: remove",
+        "empty": "Nothing linked yet: Jarvis can read, but changes nothing.",
+        "noProjects": "Create a project in Projects first."
+      },
+      "kinds": {
+        "folder": "FOLDER",
+        "sheet": "SHEET",
+        "doc": "DOC",
+        "excel": "EXCEL",
+        "file": "FILE"
+      }
     }
   },
   "forgejoModal": {

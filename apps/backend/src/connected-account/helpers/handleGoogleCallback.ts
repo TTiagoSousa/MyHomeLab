@@ -5,12 +5,14 @@ import {
   exchangeGoogleCode,
   fetchGoogleEmailAddress,
   GoogleConnectionKind,
+  googleKind,
 } from '../google/google-oauth.client';
 import { ConnectionProvider } from 'src/generated/prisma/client/client';
 
 const PROVIDERS: Record<GoogleConnectionKind, ConnectionProvider> = {
   gmail: ConnectionProvider.GMAIL,
   tasks: ConnectionProvider.GOOGLE_TASKS,
+  drive: ConnectionProvider.GOOGLE_DRIVE,
 };
 
 export async function handleGoogleCallback(
@@ -27,7 +29,7 @@ export async function handleGoogleCallback(
       kind?: GoogleConnectionKind;
     }>(state);
     userId = payload.userId;
-    kind = payload.kind === 'tasks' ? 'tasks' : 'gmail';
+    kind = googleKind(payload.kind);
   } catch {
     throw new BadRequestException('State inválido ou expirado');
   }

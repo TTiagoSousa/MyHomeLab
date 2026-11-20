@@ -95,6 +95,10 @@ export const useConnectedAccount = () => {
     window.location.href = `${BASE_URL}${End_Points.Connected_Account_Google_Tasks_Connect_Endpoint()}`;
   };
 
+  const connectGoogleDriveAccount = () => {
+    window.location.href = `${BASE_URL}${End_Points.Connected_Account_Google_Drive_Connect_Endpoint()}`;
+  };
+
   const createNextcloudAccount = async (data: CreateNextcloudAccountPayload) => {
     setLoading(true);
     try {
@@ -335,6 +339,7 @@ export const useConnectedAccount = () => {
     createAdguardAccount,
     deleteConnectedAccount,
     connectGoogleTasksAccount,
+    connectGoogleDriveAccount,
     updateRunFrequency,
     updateProposalSettings,
     loading,

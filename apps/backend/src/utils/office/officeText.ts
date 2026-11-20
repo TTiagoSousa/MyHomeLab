@@ -11,7 +11,7 @@ const CENTRAL = 0x02014b50;
 const LOCAL = 0x04034b50;
 
 /** Os ficheiros de dentro do zip (nome → conteúdo), só os que `wanted` aceitar. */
-function unzip(data: Buffer, wanted: (name: string) => boolean) {
+export function unzip(data: Buffer, wanted: (name: string) => boolean) {
   let end = -1;
   for (let i = data.length - 22; i >= Math.max(0, data.length - 65_557); i--) {
     if (data.readUInt32LE(i) === EOCD) {
@@ -46,7 +46,7 @@ function unzip(data: Buffer, wanted: (name: string) => boolean) {
   return files;
 }
 
-const decodeXml = (text: string) =>
+export const decodeXml = (text: string) =>
   text
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')

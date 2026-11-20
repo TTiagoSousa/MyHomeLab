@@ -26,6 +26,8 @@ import {
   buildServerShellTools,
 } from './server-control-tools';
 import { buildDiskAlertTools } from './disk-alert-tools';
+import { buildChatFileTools } from './chat-file-tools';
+import { buildDriveTools } from './drive-tools';
 
 const TOOL_SETS: Record<
   ToolSet,
@@ -53,6 +55,8 @@ const TOOL_SETS: Record<
   serverControl: buildServerControlTools,
   serverShell: buildServerShellTools,
   diskAlerts: buildDiskAlertTools,
+  chatFiles: buildChatFileTools,
+  drive: buildDriveTools,
   server: async (context) =>
     buildServerTools(
       await context.serverConnections.connectionsFor(context.userId),

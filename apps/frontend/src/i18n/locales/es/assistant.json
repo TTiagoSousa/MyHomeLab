@@ -235,6 +235,10 @@
         "stirling": {
           "name": "Stirling-PDF (PDFs)",
           "description": "Ver las operaciones, sus parámetros y los ajustes del servidor. Cambiar es ejecutar operaciones (comprimir, OCR, unir, dividir, convertir, proteger…) con ficheros de Paperless o Nextcloud y guardar el resultado como fichero nuevo, y cambiar los ajustes (muestra antes lo que cambia). Nunca sustituye ni borra el original."
+        },
+        "drive": {
+          "name": "Google Drive",
+          "description": "Ver: buscar y leer todo el Drive, hacer cuentas en las hojas y ver el historial de versiones. Cambiar: editar celdas, añadir filas, crear hojas y archivos y convertir Excel en Hoja de Google — solo en lo vinculado a un proyecto. Nunca borra ni comparte."
         }
       },
       "layers": "Hay tres sitios, del más amplio al más fino: las herramientas de cada agente (Workflow), estas áreas (para todos los agentes) y cada app conectada o servidor (en su página → Agentes, por agente). Un agente solo hace lo que los tres permiten."
@@ -299,7 +303,9 @@
       "paperless": "Paperless",
       "solidtime": "solidtime",
       "trek": "TREK",
-      "stirling": "Stirling-PDF"
+      "stirling": "Stirling-PDF",
+      "chatFiles": "Archivos del chat",
+      "drive": "Google Drive"
     },
     "editor": {
       "name": "Nombre",
@@ -469,6 +475,20 @@
       "board_update": "Cambiar una tarea",
       "board_comment": "Comentar una tarea",
       "board_ask_user": "Pedirte una respuesta",
+      "board_project_create": "Crear un proyecto",
+      "drive_search": "Buscar en Drive",
+      "drive_links": "Ver lo que está vinculado a proyectos",
+      "drive_read": "Leer un archivo de Drive",
+      "drive_sheet_query": "Contar y filtrar una hoja",
+      "drive_ask": "Preguntar sobre un archivo de Drive",
+      "drive_history": "Ver qué cambió en una hoja",
+      "drive_sheet_update": "Cambiar celdas",
+      "drive_sheet_append": "Añadir filas",
+      "drive_sheet_add_tab": "Crear una hoja en un archivo",
+      "drive_create": "Crear un archivo en Drive",
+      "drive_create_folder": "Crear una carpeta en Drive",
+      "drive_sheet_format": "Cambiar el aspecto de una hoja",
+      "drive_convert_to_sheet": "Convertir un Excel en Hoja de Google",
       "update_attempt_close": "Cerrar un intento",
       "todo_lists": "Ver las listas",
       "todo_list": "Leer las tareas",
@@ -514,5 +534,17 @@
       "READ": "Leer",
       "WRITE": "Leer y cambiar"
     }
+  },
+  "files": {
+    "attach": "Adjuntar archivos",
+    "remove": "Quitar {{name}}",
+    "drop": "Suelta aquí los archivos",
+    "dropHint": "PDF, Word, Excel, CSV, texto o imágenes · hasta 5, 20 MB cada uno",
+    "open": "Abrir {{name}}",
+    "tooMany": "Puedes adjuntar hasta {{count}} archivos a la vez.",
+    "tooBig": "«{{name}}» pesa más de 20 MB.",
+    "unsupported": "No sé leer «{{name}}». Adjunta PDF, Word (.docx), Excel (.xlsx), CSV, texto o imágenes.",
+    "legacy": "«{{name}}» está en un formato antiguo de Office. Guárdalo como .docx o .xlsx.",
+    "openFailed": "No pude abrir el archivo."
   }
 }

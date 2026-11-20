@@ -51,7 +51,8 @@
       "notes": [
         "Enquanto a app da Google estiver em modo Teste, a Google pede para voltar a ligar a conta de 7 em 7 dias. Para evitar isso, publica a app no ecrã de consentimento.",
         "Se aparecer redirect_uri_mismatch, o URI na Google tem de ser exatamente o endereço com que abres o MyHomeLab, incluindo o /api.",
-        "Para o Google Tasks (sincronizar as Tarefas), ativa também a Google Tasks API na Biblioteca; liga-se em Apps ligadas → Google Tasks e só pede acesso às tarefas."
+        "Para o Google Tasks (sincronizar as Tarefas), ativa também a Google Tasks API na Biblioteca; liga-se em Apps ligadas → Google Tasks e só pede acesso às tarefas.",
+        "Para o Google Drive, ativa também a Google Drive API e a Google Sheets API na Biblioteca e junta no ecrã de consentimento as permissões .../auth/drive e .../auth/spreadsheets. Liga-se em Apps ligadas → Google Drive e não dá acesso ao email."
       ],
       "goTo": "Ir para Email"
     },
@@ -163,11 +164,13 @@
         "Servidor: \"Que máquinas estão a correr?\", \"Quanta memória está a usar o immich?\".",
         "Serviços: \"Os meus serviços estão todos online?\", \"Testa o AdGuard\", \"Houve algum alerta esta semana?\".",
         "AdGuard: \"Quando foram atualizadas as listas do AdGuard?\", \"O AdGuard precisa de atualização?\".",
+        "Ficheiros: junta PDF, Word, Excel, CSV ou imagens pelo clipe (ou arrasta-os para a conversa) e pede: \"Há contactos repetidos neste Excel?\", \"Quanto soma a coluna Valor por mês?\", \"Resume-me este contrato e diz-me os prazos\".",
         "Instruções: \"A partir de agora, nos resumos de email ignora a publicidade\" — o Jarvis mostra a alteração e só a aplica quando disseres que sim."
       ],
       "notes": [
         "O Jarvis só vê as tuas contas, servidores e serviços. Precisa da tua chave de IA (Assistente → Definições → IA).",
-        "Pedidos grandes (o Jarvis a pôr vários agentes a trabalhar) podem levar alguns minutos. A pergunta fica gravada logo; se a ligação cair, a página continua à espera e mostra a resposta quando chegar. Se falhar, aparece \"Não consegui responder\" com o motivo."
+        "Pedidos grandes (o Jarvis a pôr vários agentes a trabalhar) podem levar alguns minutos. A pergunta fica gravada logo; se a ligação cair, a página continua à espera e mostra a resposta quando chegar. Se falhar, aparece \"Não consegui responder\" com o motivo.",
+        "Ficheiros: até 5 por mensagem, 20 MB cada. As contas nas folhas fazem-se no código, por isso os totais e as contagens saem certos. Os formatos antigos (.doc, .xls) têm de ser guardados primeiro como .docx ou .xlsx."
       ],
       "goTo": "Ir para o Assistente"
     },

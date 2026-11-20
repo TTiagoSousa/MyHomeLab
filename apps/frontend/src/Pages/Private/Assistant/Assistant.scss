@@ -258,6 +258,130 @@
     flex-direction: column;
     min-height: 0;
     overflow: hidden;
+    position: relative;
+  }
+
+  .Assistant_Drop{
+    position: absolute;
+    inset: 10px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1.5px dashed var(--accent);
+    border-radius: var(--border-radius);
+    background: color-mix(in srgb, var(--cards-background) 88%, transparent);
+    backdrop-filter: blur(3px);
+    color: var(--accent-bright);
+    pointer-events: none;
+    text-align: center;
+    padding: 16px;
+
+    svg{ width: 30px; height: 30px; }
+  }
+
+  .Assistant_Drop_title{
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .Assistant_Drop_hint{
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+
+  .Assistant_Files{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+    min-width: 0;
+
+    &.pending{ margin-bottom: 0; }
+  }
+
+  .Assistant_File{
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 100%;
+    min-width: 0;
+    padding: 4px 6px 4px 4px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    background: var(--input-global-background-color);
+    color: var(--text-main);
+    font-size: 12.5px;
+    text-align: left;
+
+    &:is(button){
+      cursor: pointer;
+      &:hover:not(:disabled){ border-color: var(--accent); }
+      &:disabled{ cursor: default; opacity: .75; }
+    }
+  }
+
+  .Assistant_File_ext{
+    flex-shrink: 0;
+    min-width: 34px;
+    padding: 3px 5px;
+    border-radius: 4px;
+    background: var(--accent-soft);
+    color: var(--accent-bright);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-align: center;
+  }
+
+  .Assistant_File_name{
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 240px;
+  }
+
+  .Assistant_File_size{
+    flex-shrink: 0;
+    color: var(--text-faint);
+    font-size: 11px;
+  }
+
+  .Assistant_File_remove{
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-faint);
+    cursor: pointer;
+
+    &:hover{ color: var(--accent-bright); background: var(--accent-soft); }
+  }
+
+  .Assistant_Attach{
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    margin-left: -6px;
+    padding: 6px;
+    border: 0;
+    border-radius: var(--ctrl-radius);
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+
+    &:hover:not(:disabled){ color: var(--accent-bright); background: var(--accent-soft); }
+    &:disabled{ opacity: .4; cursor: default; }
   }
 
   .Assistant_Frame_head{

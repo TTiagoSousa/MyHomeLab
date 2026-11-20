@@ -37,7 +37,7 @@ const usesDocs = (agent: Agent) =>
  * delas, o agente tem de ter lido (docs_read) os documentos do que o pedido toca.
  */
 const ACTS =
-  /^(server_run_command|pve_(guest_power|create_snapshot|rollback_snapshot|delete_snapshot|backup_now|set_resources)|disk_alert_grow|run_backup|update_(save_study|prepare|run|verify)|adguard_(set|manage|refresh)_\w+|ha_(call_service|save_config|delete_config|update_entity)|forgejo_(create|comment|set)_\w+|opengym_(create|delete|update|schedule)_\w+|gametracker_(set_game|remove_game|watch_price)|immich_(save_album|update_person|run_job|set_settings)|paperless_(update_document|bulk_edit|save_object|set_settings)|solidtime_(start_timer|stop_timer|save_entry|save_object)|stirling_(run|set_settings)|trek_write|(create|update|delete)_email_rule|implement_email_proposal|modify_email|trash_email|send_email_draft)$/;
+  /^(server_run_command|pve_(guest_power|create_snapshot|rollback_snapshot|delete_snapshot|backup_now|set_resources)|disk_alert_grow|run_backup|update_(save_study|prepare|run|verify)|adguard_(set|manage|refresh)_\w+|ha_(call_service|save_config|delete_config|update_entity)|forgejo_(create|comment|set)_\w+|opengym_(create|delete|update|schedule)_\w+|gametracker_(set_game|remove_game|watch_price)|immich_(save_album|update_person|run_job|set_settings)|paperless_(update_document|bulk_edit|save_object|set_settings)|solidtime_(start_timer|stop_timer|save_entry|save_object)|stirling_(run|set_settings)|drive_(sheet_update|sheet_append|sheet_add_tab|sheet_format|create|create_folder|convert_to_sheet)|trek_write|(create|update|delete)_email_rule|implement_email_proposal|modify_email|trash_email|send_email_draft)$/;
 
 /**
  * Os documentos que o pedido toca (DocsService.docsFor) vão no fim do último pedido
@@ -53,15 +53,26 @@ async function withDocsToRead(
 ): Promise<MessageParam[]> {
   const index = messages.map((message) => message.role).lastIndexOf('user');
   const last = messages[index];
-  if (index < 0 || typeof last.content !== 'string') return messages;
+  if (index < 0) return messages;
+  // Com ficheiros, o pedido são blocos: conta o que ele escreveu e os nomes dos ficheiros
+  // (o conteúdo lido de um Word ou de uma folha fica de fora).
+  const text =
+    typeof last.content === 'string'
+      ? last.content
+      : last.content
+          .map((block) =>
+            block.type === 'text' && !block.text.startsWith('## Ficheiro ')
+              ? block.text
+              : '',
+          )
+          .join('\n');
   const docs = await context.docs.docsFor(
     context.userId,
-    last.content,
+    text,
     context.agentKey,
   );
   for (const doc of docs) {
-    if (last.content.includes(`(${doc.id})`))
-      context.docsUsed?.set(doc.id, doc.title);
+    if (text.includes(`(${doc.id})`)) context.docsUsed?.set(doc.id, doc.title);
     else toRead.set(doc.id, doc.title);
   }
   if (!toRead.size) return messages;
@@ -70,7 +81,13 @@ async function withDocsToRead(
     [...toRead].map(([id, title]) => `- ${title} (${id})`).join('\n') +
     '\nSe no índice houver outro documento que toque no que vais fazer (pelo título ou pelas etiquetas), lê-o também.';
   const copy = [...messages];
-  copy[index] = { ...last, content: `${last.content}\n\n${block}` };
+  copy[index] = {
+    ...last,
+    content:
+      typeof last.content === 'string'
+        ? `${last.content}\n\n${block}`
+        : [...last.content, { type: 'text', text: block }],
+  };
   return copy;
 }
 
@@ -248,8 +265,9 @@ O Stirling-PDF: o MCP do próprio Stirling também está ligado (mcp__${STIRLING
       },
       queued,
       model: agent.model === 'OPUS' ? AGENT_MODEL : SUBAGENT_MODEL,
+      // Com ficheiros na mensagem, o Jarvis pensa a sério: é para os analisar bem.
       effort:
-        agent.effort === 'HIGH'
+        agent.effort === 'HIGH' || (depth === 0 && context.filesInTurn)
           ? 'high'
           : agent.effort === 'MEDIUM'
             ? 'medium'

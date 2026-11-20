@@ -12,7 +12,7 @@ const AREAS: Record<string, string[]> = {
     'AssistantPermissionSetting',
   ],
   disparos: ['AgentSchedule', 'AgentScheduleRun'],
-  assistente: ['Conversation', 'ChatMessage'],
+  assistente: ['Conversation', 'ChatMessage', 'ChatFile'],
   ia: ['AiCredential', 'AiUsage', 'AiRouting'],
   documentos: [
     'Doc',

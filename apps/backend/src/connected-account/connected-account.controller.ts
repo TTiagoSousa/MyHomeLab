@@ -33,6 +33,7 @@ import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
 import { CreateHomeAssistantAccountDto } from './dto/create-home-assistant-account.dto';
 import { CreateAdguardAccountDto } from './dto/create-adguard-account.dto';
 import { SetAdguardSettingsDto } from './dto/set-adguard-settings.dto';
+import { googleKind } from './google/google-oauth.client';
 
 @Controller('connected-account')
 export class ConnectedAccountController {
@@ -58,7 +59,7 @@ export class ConnectedAccountController {
   ) {
     const url = this.connectedAccountService.buildGoogleAuthUrl(
       req.user.id,
-      kind === 'tasks' ? 'tasks' : 'gmail',
+      googleKind(kind),
     );
     res.redirect(url);
   }
@@ -73,8 +74,13 @@ export class ConnectedAccountController {
       code,
       state,
     );
-    // Volta à página de onde se ligou: a do Gmail ou a do Google Tasks.
-    const page = kind === 'tasks' ? 'GoogleTasks' : 'Gmail';
+    // Volta à página de onde se ligou: a do Gmail, a do Google Tasks ou a do Drive.
+    const page =
+      kind === 'tasks'
+        ? 'GoogleTasks'
+        : kind === 'drive'
+          ? 'GoogleDrive'
+          : 'Gmail';
     res.redirect(`${process.env.FRONTEND_URL}/MyHomeLab/Apps/${page}`);
   }
 

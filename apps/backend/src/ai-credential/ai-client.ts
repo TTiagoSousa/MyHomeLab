@@ -121,7 +121,7 @@ export function conversationPrompt(messages: MessageParam[]): string {
 }
 
 /** Os PDF e as imagens que vêm nas mensagens, como ficheiros para o modelo ler. */
-function filesOf(messages: MessageParam[]): ClaudeCodeFile[] {
+export function filesOf(messages: MessageParam[]): ClaudeCodeFile[] {
   const files: ClaudeCodeFile[] = [];
   for (const message of messages) {
     if (typeof message.content === 'string') continue;
@@ -134,8 +134,15 @@ function filesOf(messages: MessageParam[]): ClaudeCodeFile[] {
           block.type === 'document'
             ? 'pdf'
             : (block.source.media_type.split('/')[1] ?? 'png');
+        // O PDF vai com o nome dele (o title), para o prompt e o ficheiro baterem certo.
+        const title =
+          block.type === 'document' && block.title
+            ? block.title.replace(/[^\w.\- ]+/g, '_').replace(/\.pdf$/i, '')
+            : null;
         files.push({
-          name: `${block.type}-${files.length + 1}.${extension}`,
+          name: title
+            ? `${files.length + 1}-${title}.pdf`
+            : `${block.type}-${files.length + 1}.${extension}`,
           data: Buffer.from(block.source.data, 'base64'),
         });
       }

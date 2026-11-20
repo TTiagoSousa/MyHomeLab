@@ -4,6 +4,7 @@ import {
   AiClient,
   SUBAGENT_MODEL,
   conversationPrompt,
+  filesOf,
 } from 'src/ai-credential/ai-client';
 import type { ModelUsage } from 'src/ai-credential/ai-usage.service';
 import { runClaudeCode } from 'src/claude-code/claudeCode.runner';
@@ -97,6 +98,8 @@ export async function runAgent(
     const result = await runClaudeCode({
       systemPrompt,
       prompt: conversationPrompt(messages),
+      // Os PDF e as imagens que ele mandou no chat: ficam numa pasta que o modelo lê.
+      files: filesOf(messages),
       model: client.pick(options.model ?? AGENT_MODEL),
       effort: options.effort ?? 'medium',
       mcpServers: {

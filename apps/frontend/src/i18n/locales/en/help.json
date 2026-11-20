@@ -51,7 +51,8 @@
       "notes": [
         "While the Google app is in Testing mode, Google asks to reconnect the account every 7 days. To avoid it, publish the app on the consent screen.",
         "If you see redirect_uri_mismatch, the URI in Google must be exactly the address you open MyHomeLab with, including /api.",
-        "For Google Tasks (syncing your Tasks), also enable the Google Tasks API in the Library; connect it in Connected apps → Google Tasks — it only asks for access to your tasks."
+        "For Google Tasks (syncing your Tasks), also enable the Google Tasks API in the Library; connect it in Connected apps → Google Tasks — it only asks for access to your tasks.",
+        "For Google Drive, also enable the Google Drive API and the Google Sheets API in the Library and add the .../auth/drive and .../auth/spreadsheets scopes to the consent screen. Connect it in Connected apps → Google Drive; it gives no access to email."
       ],
       "goTo": "Go to Email"
     },
@@ -163,11 +164,13 @@
         "Server: \"Which machines are running?\", \"How much memory is immich using?\".",
         "Services: \"Are all my services online?\", \"Check AdGuard\", \"Were there any alerts this week?\".",
         "AdGuard: \"When were the AdGuard lists last updated?\", \"Does AdGuard need an update?\".",
+        "Files: attach PDF, Word, Excel, CSV or images with the paperclip (or drag them into the conversation) and ask: \"Are there duplicate contacts in this spreadsheet?\", \"What is the total of the Value column per month?\", \"Summarise this contract and list the deadlines\".",
         "Instructions: \"From now on, ignore ads in email summaries\" — Jarvis shows the change and only applies it when you say yes."
       ],
       "notes": [
         "Jarvis only sees your accounts, servers and services. It needs your AI key (Assistant → Settings → AI).",
-        "Big requests (Jarvis putting several agents to work) can take a few minutes. The question is saved at once; if the connection drops, the page keeps waiting and shows the reply when it arrives. If it fails, \"I could not answer\" appears with the reason."
+        "Big requests (Jarvis putting several agents to work) can take a few minutes. The question is saved at once; if the connection drops, the page keeps waiting and shows the reply when it arrives. If it fails, \"I could not answer\" appears with the reason.",
+        "Files: up to 5 per message, 20 MB each. Spreadsheet maths runs in code, so totals and counts are exact. Old formats (.doc, .xls) must be saved as .docx or .xlsx first."
       ],
       "goTo": "Go to the Assistant"
     },

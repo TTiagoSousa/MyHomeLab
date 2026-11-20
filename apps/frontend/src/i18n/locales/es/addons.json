@@ -1846,6 +1846,33 @@
           "audit": "El registro de auditoría"
         }
       }
+    },
+    "googleDrive": {
+      "title": "Google Drive",
+      "description": "Tu Drive y las Hojas de Google: Jarvis busca y lee todo y solo cambia lo que vincules a un proyecto.",
+      "connect": "Conectar con Google",
+      "meta": "Lee todo el Drive; solo cambia lo que esté vinculado a un proyecto.",
+      "disconnect": "Desconectar",
+      "confirmDisconnect": "Confirmar: desconectar",
+      "links": {
+        "title": "Vínculos a proyectos",
+        "titleFor": "Vínculos a proyectos · {{email}}",
+        "description": "Pega el enlace de una carpeta o de un archivo y elige el proyecto. Jarvis solo cambia lo que está aquí (y lo que esté dentro de las carpetas); lo que hace con cada archivo está en los documentos del proyecto.",
+        "targetPlaceholder": "Enlace de la carpeta o del archivo en Drive",
+        "projectPlaceholder": "Proyecto",
+        "add": "Vincular",
+        "remove": "Quitar",
+        "confirmRemove": "Confirmar: quitar",
+        "empty": "Aún no hay nada vinculado: Jarvis puede leer, pero no cambia nada.",
+        "noProjects": "Crea primero un proyecto en Proyectos."
+      },
+      "kinds": {
+        "folder": "CARPETA",
+        "sheet": "HOJA",
+        "doc": "DOC",
+        "excel": "EXCEL",
+        "file": "ARCHIVO"
+      }
     }
   },
   "forgejoModal": {

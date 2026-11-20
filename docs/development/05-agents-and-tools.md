@@ -96,8 +96,27 @@ export function buildTodoTools(context: AgentContext): AgentTool[] {
 
 Toolsets: `email`, `server`, `serverControl`, `serverShell`, `health`, `forgejo`,
 `homeAssistant`, `adguard`, `nextcloud`, `docs`, `updates`, `schedules`, `board`, `todos`,
-`team` (plus `trek`, `opengym`, `gametracker`, `immich`, `paperless`, `solidtime`, `stirling` and others). `buildToolbox(names, context)` builds only the
+`team` (plus `trek`, `opengym`, `gametracker`, `immich`, `paperless`, `solidtime`, `stirling`, `chatFiles` and others). `buildToolbox(names, context)` builds only the
 toolsets an agent uses.
+
+**Google Drive** (`drive`, Jarvis and the Archivist): search and read all of Drive, run exact
+maths on Google Sheets (`drive_sheet_query`), compare versions to see which cells changed
+(`drive_history`), and change cells, append rows, format sheets (`drive_sheet_format`: Sheets
+tables, header, column types, dropdowns, conditional colours) and create files **only in folders or files linked
+to a project** (`DriveLink`, checked in code by walking the parents). New folders can be created
+anywhere (`drive_create_folder`, optionally linked to a project on creation), since a new folder
+touches nothing that already exists; moving or linking existing files stays with the user. Jarvis
+can also create a project on the board (`board_project_create`). What to do with each sheet
+(which columns, how to match an existing row, what to update or add) lives in the project
+documents, not in code.
+
+**Chat files** (`chatFiles`, every agent): files sent in the chat are stored with the
+conversation (`ChatFile`). In the message itself the PDF goes whole as a `document` block (text
+plus page images) and images as `image` blocks; Word becomes Markdown (headings, lists, tables)
+and spreadsheets (`.xlsx`, CSV) become tables with a profile of every column and the Excel row
+numbers. `chat_file_query` does filters, sums, counts, group-bys and duplicates in code so the
+numbers are exact; `chat_file_read` pages through rows or text; `chat_file_ask` sends a file whole
+to the model with a question (PDFs and images, files from earlier messages, delegated work).
 
 **TREK** reaches the agent one of two ways, by AI provider: with **Claude Code** the agent gets
 TREK's own MCP server directly (`mcp__trek__*`, `trekDirect`); with the **Claude API** it uses the

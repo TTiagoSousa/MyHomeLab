@@ -72,6 +72,7 @@ export const PROVIDER_NAMES: Record<ConnectionProvider, string> = {
   PAPERLESS: 'Paperless',
   SOLIDTIME: 'solidtime',
   STIRLING_PDF: 'Stirling-PDF',
+  GOOGLE_DRIVE: 'Google Drive',
 };
 
 /** O nome de uma app ligada como aparece nas ligações: "Home Assistant · Casa" (sem repetir "Forgejo · Forgejo"). */

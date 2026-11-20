@@ -20,6 +20,8 @@ import { AppUpdateModule } from 'src/app-update/app-update.module';
 import { UpdateStudyScheduler } from './update-study.scheduler';
 import { AgentScheduleModule } from 'src/agent-schedule/agent-schedule.module';
 import { BoardModule } from 'src/board/board.module';
+import { ChatFileModule } from 'src/chat-file/chat-file.module';
+import { GoogleDriveModule } from 'src/google-drive/google-drive.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { BoardModule } from 'src/board/board.module';
     AgentScheduleModule,
     BoardModule,
     TodoModule,
+    ChatFileModule,
+    GoogleDriveModule,
   ],
   controllers: [AssistantController, TerminalController],
   providers: [AssistantService, UpdateStudyScheduler],

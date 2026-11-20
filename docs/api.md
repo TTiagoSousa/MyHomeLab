@@ -71,7 +71,10 @@ there too.
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
 | GET | `/connected-account` | JWT | List connected apps (optional `?provider=`); never returns secrets |
-| GET | `/connected-account/google/connect` | JWT | Redirect to Google consent (`?kind=gmail\|tasks`) |
+| GET | `/connected-account/google/connect` | JWT | Redirect to Google consent (`?kind=gmail\|tasks\|drive`) |
+| GET | `/google-drive/:accountId/links` | JWT | Drive folders and files linked to projects (Jarvis only changes these) |
+| POST | `/google-drive/:accountId/links` | JWT | Link a Drive folder or file (`target`: link or id) to a project |
+| DELETE | `/google-drive/links/:id` | JWT | Remove a link |
 | GET | `/connected-account/google/callback` | public | Google OAuth callback; authorised by a signed, short-lived `state` |
 | POST | `/connected-account/nextcloud` | JWT | Connect a Nextcloud account |
 | GET | `/connected-account/:id/nextcloud-status` | JWT | Nextcloud version, apps and app updates |
@@ -162,7 +165,8 @@ there too.
 | GET | `/assistant/conversations/:id/messages` | Messages of a conversation |
 | PATCH | `/assistant/conversations/:id` | Rename a conversation |
 | DELETE | `/assistant/conversations/:id` | Delete a conversation |
-| POST | `/assistant/chat` | Send a message to Jarvis; returns the reply and the documents used |
+| POST | `/assistant/chat` | Send a message to Jarvis (JSON, or multipart with up to 5 `files`: PDF, Word, Excel, CSV, text, images; 20 MB each); returns the reply and the documents used |
+| GET | `/assistant/files/:id` | A file sent in the chat (PDF and images open inline, the rest downloads) |
 | POST | `/assistant/preview-style` | Re-answer the last question with draft instructions (no tools, nothing saved) |
 | DELETE | `/assistant/history` | Delete all of the user's conversations |
 

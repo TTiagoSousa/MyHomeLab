@@ -5,12 +5,14 @@ import { useAlert } from "../../Contexts/Alert_Context";
 import { aiErrorMessage } from "../Ai/useAiProviders";
 import { awaitReply, isCutOff } from "./awaitReply";
 import { clearPendingAsk, listenPendingAsks, pendingAsk, startPendingAsk, type Ask_Reply, type Pending_Ask } from "./pendingAsk";
+import type { Chat_File } from "./chatFiles";
 
 export interface AssistantMessage {
   id: string;
   role: 'user' | 'assistant';
   text: string;
   docsUsed?: { id: string; title: string }[];
+  files?: Chat_File[];
 }
 
 interface ChatEntry {
@@ -19,9 +21,23 @@ interface ChatEntry {
   content: string;
   createdAt: string;
   docsUsed?: { id: string; title: string }[];
+  files?: Chat_File[];
 }
 
-const userMessage = (text: string): AssistantMessage => ({ id: crypto.randomUUID(), role: 'user', text });
+const userMessage = (text: string, files?: Chat_File[]): AssistantMessage => ({ id: crypto.randomUUID(), role: 'user', text, files });
+
+const localFiles = (files: File[]): Chat_File[] =>
+  files.map((file) => ({ id: '', name: file.name, mimeType: file.type, size: file.size }));
+
+const chatBody = (conversationId: string | null, text: string, files: File[]) => {
+  if (!files.length) return conversationId ? { message: text, conversationId } : { message: text, newConversation: true };
+  const form = new FormData();
+  form.append('message', text);
+  if (conversationId) form.append('conversationId', conversationId);
+  else form.append('newConversation', 'true');
+  files.forEach((file) => form.append('files', file, file.name));
+  return form;
+};
 
 export const useAssistant = (conversationId: string | null, onConversation: (id: string) => void) => {
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
@@ -39,7 +55,7 @@ export const useAssistant = (conversationId: string | null, onConversation: (id:
       const response = await http.get<ChatEntry[]>(End_Points.Assistant_Conversation_Messages_Endpoint(conversationId), {
         withCredentials: true,
       });
-      const saved = response.data.map((entry): AssistantMessage => ({ id: entry.id, role: entry.role, text: entry.content, docsUsed: entry.docsUsed }));
+      const saved = response.data.map((entry): AssistantMessage => ({ id: entry.id, role: entry.role, text: entry.content, docsUsed: entry.docsUsed, files: entry.files }));
       setMessages(pendingText ? [...saved, userMessage(pendingText)] : saved);
     } catch (error: any) {
       showError(error);
@@ -86,19 +102,15 @@ export const useAssistant = (conversationId: string | null, onConversation: (id:
     fetchMessages();
   }, [conversationId]);
 
-  const sendMessage = async (text: string) => {
-    if (!text.trim()) return;
+  const sendMessage = async (text: string, files: File[] = []) => {
+    if (!text.trim() && !files.length) return;
 
-    setMessages((prev) => [...prev, userMessage(text)]);
+    setMessages((prev) => [...prev, userMessage(text, files.length ? localFiles(files) : undefined)]);
     setLoading(true);
     const askedAt = Date.now();
 
     const request = http
-      .post<Ask_Reply>(
-        End_Points.Assistant_Chat_Endpoint(),
-        conversationId ? { message: text, conversationId } : { message: text, newConversation: true },
-        { withCredentials: true },
-      )
+      .post<Ask_Reply>(End_Points.Assistant_Chat_Endpoint(), chatBody(conversationId, text, files), { withCredentials: true })
       .then((response) => response.data)
       .catch((error) => (isCutOff(error) ? awaitReply(conversationId, text, askedAt) : Promise.reject(error)));
     startPendingAsk(conversationId, text, request);

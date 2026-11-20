@@ -22,6 +22,8 @@ import type { ModelUsage } from 'src/ai-credential/ai-usage.service';
 import { AppUpdateService } from 'src/app-update/app-update.service';
 import { AgentScheduleService } from 'src/agent-schedule/agent-schedule.service';
 import { TodoService } from 'src/todo/todo.service';
+import { ChatFileService } from 'src/chat-file/chat-file.service';
+import { DriveService } from 'src/google-drive/drive.service';
 
 /**
  * O que qualquer agente precisa de ter à mão. Passa-se um objeto só em vez de uma lista
@@ -80,6 +82,14 @@ export interface AgentContext {
   board: BoardService;
   /** As tarefas do utilizador (os afazeres, em Tarefas). */
   todos: TodoService;
+  /** Os ficheiros que ele manda no chat (PDF, Word, Excel…). */
+  chatFiles: ChatFileService;
+  /** O Google Drive (a conta, as ligações a projetos e a regra de só mudar o que está ligado). */
+  drive: DriveService;
+  /** A conversa desta volta (as ferramentas chat_file_* veem os ficheiros dela). */
+  conversationId?: string;
+  /** Ele mandou ficheiros nesta mensagem: o Jarvis pensa mais para os analisar. */
+  filesInTurn?: boolean;
   /** As apps e servidores com o que cada agente pode (a página da app → Agentes). */
   appAccess: () => Promise<AccessTarget[]>;
 

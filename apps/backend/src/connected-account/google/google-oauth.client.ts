@@ -2,8 +2,8 @@ const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 
-/** O que se liga com uma conta Google: o Gmail ou o Google Tasks (cada um a sua conta). */
-export type GoogleConnectionKind = 'gmail' | 'tasks';
+/** O que se liga com uma conta Google: o Gmail, o Google Tasks ou o Drive (cada um a sua conta). */
+export type GoogleConnectionKind = 'gmail' | 'tasks' | 'drive';
 
 const GMAIL_SCOPES = [
   'https://www.googleapis.com/auth/gmail.readonly',
@@ -22,10 +22,23 @@ const TASKS_SCOPES = [
   'https://www.googleapis.com/auth/userinfo.email',
 ];
 
+// O Drive todo (procurar, ler, criar, copiar) e as Folhas do Google (mexer nas células).
+// Ligar o Drive não dá acesso ao email.
+const DRIVE_SCOPES = [
+  'https://www.googleapis.com/auth/drive',
+  'https://www.googleapis.com/auth/spreadsheets',
+  'https://www.googleapis.com/auth/userinfo.email',
+];
+
 const SCOPES: Record<GoogleConnectionKind, string[]> = {
   gmail: GMAIL_SCOPES,
   tasks: TASKS_SCOPES,
+  drive: DRIVE_SCOPES,
 };
+
+/** O tipo de ligação que veio no pedido (omissão: o Gmail). */
+export const googleKind = (value: unknown): GoogleConnectionKind =>
+  value === 'tasks' || value === 'drive' ? value : 'gmail';
 
 function getEnv(name: string): string {
   const value = process.env[name];

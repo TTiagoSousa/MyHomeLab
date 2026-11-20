@@ -235,6 +235,10 @@
         "stirling": {
           "name": "Stirling-PDF (PDFs)",
           "description": "Ver as operações, os parâmetros e as definições do servidor. Alterar é correr operações (comprimir, OCR, juntar, dividir, converter, proteger…) com ficheiros do Paperless ou do Nextcloud e guardar o resultado como ficheiro novo, e mudar as definições (mostra antes o que muda). Nunca substitui nem apaga o original."
+        },
+        "drive": {
+          "name": "Google Drive",
+          "description": "Ver: procurar e ler no Drive todo, fazer contas nas folhas e ver o histórico de versões. Alterar: mudar células, acrescentar linhas, criar folhas e ficheiros e converter Excel em Folha do Google — só no que estiver ligado a um projeto. Nunca apaga nem partilha."
         }
       },
       "layers": "Há três sítios, do mais largo para o mais fino: as ferramentas de cada agente (Workflow), estas áreas (para todos os agentes) e cada app ligada ou servidor (na página dela → Agentes, por agente). Um agente só faz o que os três deixam."
@@ -299,7 +303,9 @@
       "paperless": "Paperless",
       "solidtime": "solidtime",
       "trek": "TREK",
-      "stirling": "Stirling-PDF"
+      "stirling": "Stirling-PDF",
+      "chatFiles": "Ficheiros do chat",
+      "drive": "Google Drive"
     },
     "editor": {
       "name": "Nome",
@@ -469,6 +475,20 @@
       "board_update": "Mudar uma tarefa",
       "board_comment": "Comentar uma tarefa",
       "board_ask_user": "Pedir-te uma resposta",
+      "board_project_create": "Criar um projeto",
+      "drive_search": "Procurar no Drive",
+      "drive_links": "Ver o que está ligado a projetos",
+      "drive_read": "Ler um ficheiro do Drive",
+      "drive_sheet_query": "Contar e filtrar uma folha",
+      "drive_ask": "Perguntar sobre um ficheiro do Drive",
+      "drive_history": "Ver o que mudou numa folha",
+      "drive_sheet_update": "Mudar células",
+      "drive_sheet_append": "Acrescentar linhas",
+      "drive_sheet_add_tab": "Criar uma folha num ficheiro",
+      "drive_create": "Criar um ficheiro no Drive",
+      "drive_create_folder": "Criar uma pasta no Drive",
+      "drive_sheet_format": "Mudar o aspeto de uma folha",
+      "drive_convert_to_sheet": "Converter um Excel em Folha do Google",
       "update_attempt_close": "Fechar uma tentativa",
       "todo_lists": "Ver as listas",
       "todo_list": "Ler as tarefas",
@@ -514,5 +534,17 @@
       "READ": "Ler",
       "WRITE": "Ler e mudar"
     }
+  },
+  "files": {
+    "attach": "Juntar ficheiros",
+    "remove": "Tirar {{name}}",
+    "drop": "Larga aqui os ficheiros",
+    "dropHint": "PDF, Word, Excel, CSV, texto ou imagens · até 5, 20 MB cada",
+    "open": "Abrir {{name}}",
+    "tooMany": "Podes juntar até {{count}} ficheiros de cada vez.",
+    "tooBig": "«{{name}}» tem mais de 20 MB.",
+    "unsupported": "Não sei ler «{{name}}». Junta PDF, Word (.docx), Excel (.xlsx), CSV, texto ou imagens.",
+    "legacy": "«{{name}}» está num formato antigo do Office. Guarda-o como .docx ou .xlsx.",
+    "openFailed": "Não consegui abrir o ficheiro."
   }
 }

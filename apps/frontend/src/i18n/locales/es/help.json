@@ -51,7 +51,8 @@
       "notes": [
         "Mientras la app de Google esté en modo Prueba, Google pide volver a conectar la cuenta cada 7 días. Para evitarlo, publica la app en la pantalla de consentimiento.",
         "Si aparece redirect_uri_mismatch, la URI en Google tiene que ser exactamente la dirección con la que abres MyHomeLab, incluido /api.",
-        "Para Google Tasks (sincronizar las Tareas), activa también la Google Tasks API en la Biblioteca; se conecta en Apps conectadas → Google Tasks y solo pide acceso a las tareas."
+        "Para Google Tasks (sincronizar las Tareas), activa también la Google Tasks API en la Biblioteca; se conecta en Apps conectadas → Google Tasks y solo pide acceso a las tareas.",
+        "Para Google Drive, activa también la Google Drive API y la Google Sheets API en la Biblioteca y añade en la pantalla de consentimiento los permisos .../auth/drive y .../auth/spreadsheets. Se conecta en Apps conectadas → Google Drive y no da acceso al correo."
       ],
       "goTo": "Ir a Correo"
     },
@@ -163,11 +164,13 @@
         "Servidor: \"¿Qué máquinas están en marcha?\", \"¿Cuánta memoria usa immich?\".",
         "Servicios: \"¿Están todos mis servicios en línea?\", \"Comprueba AdGuard\", \"¿Hubo alguna alerta esta semana?\".",
         "AdGuard: \"¿Cuándo se actualizaron las listas de AdGuard?\", \"¿AdGuard necesita actualización?\".",
+        "Archivos: adjunta PDF, Word, Excel, CSV o imágenes con el clip (o arrástralos a la conversación) y pide: \"¿Hay contactos repetidos en este Excel?\", \"¿Cuánto suma la columna Valor por mes?\", \"Resúmeme este contrato y dime los plazos\".",
         "Instrucciones: \"A partir de ahora, en los resúmenes de correo ignora la publicidad\" — Jarvis muestra el cambio y solo lo aplica cuando dices que sí."
       ],
       "notes": [
         "Jarvis solo ve tus cuentas, servidores y servicios. Necesita tu clave de IA (Asistente → Ajustes → IA).",
-        "Las peticiones grandes (Jarvis poniendo a varios agentes a trabajar) pueden tardar unos minutos. La pregunta se guarda enseguida; si la conexión se corta, la página sigue esperando y muestra la respuesta cuando llega. Si falla, aparece \"No pude responder\" con el motivo."
+        "Las peticiones grandes (Jarvis poniendo a varios agentes a trabajar) pueden tardar unos minutos. La pregunta se guarda enseguida; si la conexión se corta, la página sigue esperando y muestra la respuesta cuando llega. Si falla, aparece \"No pude responder\" con el motivo.",
+        "Archivos: hasta 5 por mensaje, 20 MB cada uno. Las cuentas en las hojas se hacen en código, así que los totales y recuentos salen exactos. Los formatos antiguos (.doc, .xls) hay que guardarlos antes como .docx o .xlsx."
       ],
       "goTo": "Ir al Asistente"
     },

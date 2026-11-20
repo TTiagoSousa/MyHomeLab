@@ -6,6 +6,7 @@ export const APP_PAGES: Record<string, string> = {
   NEXTCLOUD: '/MyHomeLab/Apps/Nextcloud',
   GMAIL: '/MyHomeLab/Apps/Gmail',
   GOOGLE_TASKS: '/MyHomeLab/Apps/GoogleTasks',
+  GOOGLE_DRIVE: '/MyHomeLab/Apps/GoogleDrive',
   OPENGYM: '/MyHomeLab/Apps/OpenGym',
   GAMETRACKER: '/MyHomeLab/Apps/GameTracker',
   IMMICH: '/MyHomeLab/Apps/Immich',
