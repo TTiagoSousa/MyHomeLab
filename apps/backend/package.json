@@ -22,7 +22,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
     "@myhomelab/shared": "*",
-    "@nestjs/axios": "^4.0.1",
+    "@nestjs/axios": "^12.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
