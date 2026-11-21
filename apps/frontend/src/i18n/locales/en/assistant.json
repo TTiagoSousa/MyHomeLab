@@ -25,7 +25,9 @@
     "send": "Send",
     "you": "You",
     "docsUsed": "Documents used:",
-    "openTask": "Open task {{key}}"
+    "openTask": "Open task {{key}}",
+    "proposal": "Proposal to decide",
+    "proposalHint": "Approve or reject it here, or tell Jarvis you approve."
   },
   "core": {
     "working": "working"
@@ -264,6 +266,10 @@
           "name": "Nginx Proxy Manager",
           "description": "Proxy hosts, redirections, streams, access lists and SSL certificates."
         },
+        "tplinkRouter": {
+          "name": "TP-Link router",
+          "description": "The home router: Internet, Wi-Fi, who is connected, DHCP, ports and access control. Changing means turning networks on and off, blocking devices, reserving IPs, opening ports, renewing the IP and rebooting."
+        },
         "clickhouse": {
           "name": "ClickHouse",
           "description": "ClickHouse databases, tables, queries and health; read queries and, when you ask, write SQL."
@@ -352,6 +358,7 @@
       "dispatcharr": "Dispatcharr",
       "coolify": "Coolify",
       "nginxProxyManager": "Nginx Proxy Manager",
+      "tplinkRouter": "TP-Link router",
       "clickhouse": "ClickHouse",
       "postgres": "PostgreSQL",
       "vaultwarden": "Vaultwarden",
@@ -503,6 +510,7 @@
       "docs_write": "Write the agents' documents",
       "docs_log": "Write to the log of what it did",
       "docs_propose": "Propose changes to your documents",
+      "docs_decide": "Decide proposals when you tell it in the chat",
       "updates_list": "See the updates",
       "update_status": "See an update",
       "update_release_notes": "Read the release notes",
@@ -607,6 +615,19 @@
       "nginx_proxy_manager_renew_certificate": "Renew certificates",
       "nginx_proxy_manager_access_lists": "See access lists",
       "nginx_proxy_manager_audit": "See the audit log",
+      "tplink_router_overview": "View the router",
+      "tplink_router_clients": "View connected devices",
+      "tplink_router_wifi": "View Wi-Fi networks",
+      "tplink_router_dhcp": "View DHCP and reservations",
+      "tplink_router_port_forwards": "View open ports",
+      "tplink_router_access": "View access control",
+      "tplink_router_wifi_set": "Change a Wi-Fi network",
+      "tplink_router_block": "Block and unblock devices",
+      "tplink_router_access_control": "Change access control",
+      "tplink_router_reservation": "Reserve IPs",
+      "tplink_router_port_forward": "Open and close ports",
+      "tplink_router_wan_renew": "Renew the Internet IP",
+      "tplink_router_reboot": "Reboot the router",
       "clickhouse_overview": "See ClickHouse",
       "clickhouse_tables": "See ClickHouse tables",
       "clickhouse_describe": "Describe a ClickHouse table",

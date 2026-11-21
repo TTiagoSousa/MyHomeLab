@@ -110,6 +110,7 @@ const TEMPLATES: AgentTemplate[] = [
         'postgres',
         'clickhouse',
         'nginxProxyManager',
+        'tplinkRouter',
         'coolify',
         'adguard',
         'nextcloud',

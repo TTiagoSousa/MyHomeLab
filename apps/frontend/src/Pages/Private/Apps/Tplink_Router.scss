@@ -1,0 +1,339 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Tplink_Router{
+  .Tplink_Router_Connection{
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--stat-attention);
+    border-radius: var(--ctrl-radius);
+    background: var(--accent-soft);
+
+    &.failed{
+      border-color: var(--danger-color);
+      background: var(--danger-color-soft);
+
+      .Tplink_Router_Connection_Icon,
+      .Tplink_Router_Connection_Title{ color: var(--danger-color); }
+    }
+  }
+
+  .Tplink_Router_Connection_Icon{
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--stat-attention);
+
+    svg{ width: 100%; height: 100%; }
+  }
+
+  .Tplink_Router_Connection_Text{
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+  }
+
+  .Tplink_Router_Connection_Title{
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--stat-attention);
+  }
+
+  .Tplink_Router_Connection_Reason{ color: var(--text-main); overflow-wrap: anywhere; }
+
+  .Tplink_Router_Connection_Since{ font-size: 11.5px; color: var(--text-faint); }
+
+  .Tplink_Router_Connection_Actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex-shrink: 0;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+
+      &.primary{
+        @include Mixin.Solid_Button;
+        height: 32px;
+        padding: 0 14px;
+        font-size: 12.5px;
+      }
+    }
+  }
+
+  .Tplink_Router_Section{ gap: 0; padding: 0; }
+
+  .Tplink_Router_Tabs{
+    display: flex;
+    gap: 4px;
+    padding: 10px 12px 0;
+    border-bottom: 1px solid var(--hud-line);
+    overflow-x: auto;
+    scrollbar-width: thin;
+
+    button{
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+      height: 38px;
+      padding: 0 12px;
+      border: none;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--text-soft);
+      font-family: Font.$font_family_sans;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color .15s ease, border-color .15s ease;
+
+      &:hover{ color: var(--accent-bright); }
+
+      &.active{
+        color: var(--text-main);
+        border-bottom-color: var(--accent);
+      }
+
+      &:focus-visible{
+        outline: none;
+        box-shadow: inset 0 0 0 2px var(--accent);
+      }
+    }
+  }
+
+  .Tplink_Router_Tab_Count{
+    min-width: 18px;
+    padding: 0 6px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: 999px;
+    font-family: Font.$font_family_mono;
+    font-size: 10.5px;
+    line-height: 16px;
+    text-align: center;
+    color: var(--text-faint);
+  }
+
+  .Tplink_Router_Tab_Body{
+    min-height: 600px;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  .Tplink_Router_Panel{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .Tplink_Router_Boxes{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .Tplink_Router_Box,
+  .Tplink_Router_Form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Tplink_Router_Form .Apps_footer{ padding-top: 10px; }
+
+  .Tplink_Router_Box_Title{
+    @include Mixin.Hud_Label(9.5px);
+    color: var(--text-soft);
+  }
+
+  .Tplink_Router_Block{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .Tplink_Router_Block_Head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .Tplink_Router_Ports{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+  }
+
+  .Tplink_Router_Port{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+    opacity: .7;
+
+    &.up{
+      opacity: 1;
+      border-color: var(--stat-positive);
+
+      .Tplink_Router_Port_State{ color: var(--stat-positive); }
+    }
+  }
+
+  .Tplink_Router_Port_Name{ font-size: 12.5px; font-weight: 700; color: var(--text-main); }
+
+  .Tplink_Router_Port_State{ font-family: Font.$font_family_mono; font-size: 11px; color: var(--text-faint); }
+
+  .Tplink_Router_Rows{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Tplink_Router_Row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+
+    & + .Tplink_Router_Row{ border-top: 1px solid var(--hud-line); }
+  }
+
+  .Tplink_Router_Row_Info{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .Tplink_Router_Row_Title{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    overflow-wrap: anywhere;
+  }
+
+  .Tplink_Router_Row_Meta{ font-size: 12px; color: var(--text-faint); overflow-wrap: anywhere; }
+
+  .Apps_footer.Tplink_Router_Row_Actions{
+    padding-top: 0;
+    border-top: none;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+  }
+
+  .Tplink_Router_Confirm{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .Tplink_Router_Confirm_Question{ font-size: 12px; color: var(--text-soft); }
+
+  .Tplink_Router_Footer{
+    flex-wrap: wrap;
+
+    .Tplink_Router_Footer_Note{
+      flex: 1 1 220px;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Tplink_Router_Table{
+    td.wrap{ font-family: Font.$font_family_sans; }
+
+    td.name{ min-width: 110px; }
+
+    td.Tplink_Router_Connection_Cell{ white-space: nowrap; overflow-wrap: normal; }
+
+    td:last-child{ width: 1%; white-space: nowrap; }
+
+    .Apps_footer.Tplink_Router_Row_Actions{
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+
+      button{ height: 28px; }
+    }
+
+    .Tplink_Router_Confirm{ flex-direction: column; align-items: stretch; gap: 4px; }
+  }
+
+  .Tplink_Router_Backhaul_Value{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+  }
+
+  .Tplink_Router_Backhaul_Detail{ font-size: 11.5px; color: var(--text-faint); }
+
+  .Tplink_Router_Ap{
+    display: inline-flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    align-items: center;
+    gap: 4px 6px;
+  }
+
+  .Tplink_Router_Speed{ display: flex; flex-direction: column; gap: 2px; }
+
+  .Tplink_Router_Nowrap{ white-space: nowrap; overflow-wrap: normal; }
+
+  .Tplink_Router_Access_Fields{
+    align-items: flex-end;
+
+    .Apps_checkbox{ flex: 0 0 auto; height: 38px; }
+
+    .Tplink_Router_Access_Mode{ flex: 0 1 320px; }
+
+    .Dropdown_Field{ height: 38px; }
+  }
+
+  @media (max-width: 900px){
+    .Tplink_Router_Boxes{ grid-template-columns: minmax(0, 1fr); }
+
+    .Tplink_Router_Tab_Body{ min-height: 0; padding: 12px; }
+
+    .Tplink_Router_Connection{ flex-direction: column; }
+
+    .Tplink_Router_Connection_Actions{ width: 100%; }
+
+    .Tplink_Router_Row{ flex-wrap: wrap; }
+
+    .Apps_footer.Tplink_Router_Row_Actions{ flex-wrap: wrap; }
+  }
+
+  @media (max-width: 600px){
+    .Tplink_Router_Box .Apps_details{
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+
+      dd{ margin-bottom: 6px; }
+    }
+  }
+}

@@ -79,6 +79,13 @@ export interface CreateNginxProxyManagerAccountPayload extends AppLocationPayloa
   password: string;
 }
 
+export interface CreateTplinkRouterAccountPayload extends AppLocationPayload {
+  displayName?: string;
+  baseUrl: string;
+  username?: string;
+  password: string;
+}
+
 export interface CreateClickHouseAccountPayload extends AppLocationPayload {
   displayName?: string;
   baseUrl: string;
@@ -347,6 +354,21 @@ export const useConnectedAccount = () => {
     }
   };
 
+  const createTplinkRouterAccount = async (data: CreateTplinkRouterAccountPayload) => {
+    setLoading(true);
+    try {
+      await http.post(End_Points.Connected_Account_Tplink_Router_Endpoint(), data, { withCredentials: true });
+      setAlert({ open: true, message: i18n.t('addons:alerts.tplinkRouterConnected'), type: 'success' });
+      return true;
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
+      setAlert({ open: true, message: msg, type: 'error' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const createClickHouseAccount = async (data: CreateClickHouseAccountPayload) => {
     setLoading(true);
     try {
@@ -558,6 +580,7 @@ export const useConnectedAccount = () => {
     createPostgresAccount,
     createClickHouseAccount,
     createNginxProxyManagerAccount,
+    createTplinkRouterAccount,
     createCoolifyAccount,
     createDispatcharrAccount,
     createJellyfinAccount,

@@ -15,6 +15,8 @@ export interface App_Summary_Fact {
 interface App_Summary_Props {
   icon: ReactNode;
   state: App_Account_State;
+  stateLabel?: string;
+  stateHint?: string;
   host?: string | null;
   user?: string | null;
   since?: string | null;
@@ -41,6 +43,8 @@ const Summary_Fact = ({ label, value, hint }: App_Summary_Fact) => (
 const App_Summary = ({
   icon,
   state,
+  stateLabel,
+  stateHint,
   host,
   user,
   since,
@@ -100,11 +104,11 @@ const App_Summary = ({
       <div className='App_Summary_Facts'>
         <Summary_Fact
           label={t('apps.account.state')}
-          hint={t(`apps.summary.stateHint.${state}`)}
+          hint={stateHint ?? t(`apps.summary.stateHint.${state}`)}
           value={
             <span className={`Apps_state ${state}`}>
               <span className='Apps_state_dot' />
-              {t(`apps.account.states.${state}`)}
+              {stateLabel ?? t(`apps.account.states.${state}`)}
             </span>
           }
         />

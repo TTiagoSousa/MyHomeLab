@@ -31,6 +31,7 @@ export const APP_KINDS: Record<App_Kind, App_Kind_Info> = {
   POSTGRES: { icon: Icon.Postgres, titleKey: 'apps.postgres.title', listPath: '/MyHomeLab/Apps/Postgres', hosting: 'selfHosted' },
   CLICKHOUSE: { icon: Icon.ClickHouse, titleKey: 'apps.clickhouse.title', listPath: '/MyHomeLab/Apps/ClickHouse', hosting: 'selfHosted' },
   NGINX_PROXY_MANAGER: { icon: Icon.NginxProxyManager, titleKey: 'apps.nginxProxyManager.title', listPath: '/MyHomeLab/Apps/NginxProxyManager', hosting: 'selfHosted' },
+  TPLINK_ROUTER: { icon: Icon.TplinkRouter, titleKey: 'apps.tplinkRouter.title', listPath: '/MyHomeLab/Apps/TplinkRouter', hosting: 'selfHosted' },
   COOLIFY: { icon: Icon.Coolify, titleKey: 'apps.coolify.title', listPath: '/MyHomeLab/Apps/Coolify', hosting: 'selfHosted' },
   DISPATCHARR: { icon: Icon.Dispatcharr, titleKey: 'apps.dispatcharr.title', listPath: '/MyHomeLab/Apps/Dispatcharr', hosting: 'selfHosted' },
   JELLYFIN: { icon: Icon.Jellyfin, titleKey: 'apps.jellyfin.title', listPath: '/MyHomeLab/Apps/Jellyfin', hosting: 'selfHosted' },

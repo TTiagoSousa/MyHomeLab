@@ -17,6 +17,9 @@ import { chatMarkdown } from './chatMarkdown';
 import { Assistant_Message_Files, Assistant_Pending_Files } from './Assistant_Files';
 import { CHAT_FILE_ACCEPT, MAX_CHAT_FILES, chatFileProblem } from '../../../Hooks/Assistant/chatFiles';
 import { useAlert } from '../../../Contexts/Alert_Context';
+import { useDocProposals } from '../../../Hooks/Docs/useDocProposals';
+import Doc_Proposal_Card from '../Docs/Doc_Proposal_Card';
+import '../Docs/Doc_Proposals.scss';
 
 const SUGGESTED_PROMPTS = [
   'suggestedPrompts.todayEmails',
@@ -50,6 +53,12 @@ const Assistant = () => {
     if (id !== activeId) setSearchParams({ c: id }, { replace: true });
     fetchConversations();
   });
+
+  const { proposals, busyId, fetchProposals, approveProposal, rejectProposal } = useDocProposals(activeId);
+
+  useEffect(() => {
+    if (!loading) fetchProposals();
+  }, [messages.length, loading]);
 
   useEffect(() => {
     if (!requested) setSearchParams({ c: pendingAsks().find((ask) => !ask.done)?.conversationId ?? NEW }, { replace: true });
@@ -286,6 +295,19 @@ const Assistant = () => {
                   </div>
                 )}
               </div>
+            ))}
+
+            {proposals.map((proposal) => (
+              <section key={proposal.id} className='Assistant_Proposal'>
+                <span className='Assistant_Proposal_label'>{t('conversation.proposal')}</span>
+                <Doc_Proposal_Card
+                  proposal={proposal}
+                  busy={busyId === proposal.id}
+                  onApprove={(content) => void approveProposal(proposal.id, content)}
+                  onReject={() => void rejectProposal(proposal.id)}
+                />
+                <span className='Assistant_Proposal_hint'>{t('conversation.proposalHint')}</span>
+              </section>
             ))}
 
             {loading && (

@@ -33,6 +33,7 @@ const CATALOG: { kind: App_Kind; descriptionKey: string }[] = [
   { kind: 'POSTGRES', descriptionKey: 'apps.postgres.description' },
   { kind: 'CLICKHOUSE', descriptionKey: 'apps.clickhouse.description' },
   { kind: 'NGINX_PROXY_MANAGER', descriptionKey: 'apps.nginxProxyManager.description' },
+  { kind: 'TPLINK_ROUTER', descriptionKey: 'apps.tplinkRouter.description' },
   { kind: 'COOLIFY', descriptionKey: 'apps.coolify.description' },
   { kind: 'DISPATCHARR', descriptionKey: 'apps.dispatcharr.description' },
   { kind: 'JELLYFIN', descriptionKey: 'apps.jellyfin.description' },

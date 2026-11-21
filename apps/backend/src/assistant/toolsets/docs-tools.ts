@@ -548,7 +548,8 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
             return `Já existe "${same.title}" (${same.id}). Não cries outro: lê-o com docs_read e, se faltar alguma coisa, propõe uma mudança nele (edit, append ou organize).`;
           }
         }
-        await context.docs.propose(context.userId, {
+        const inChat = context.source === 'chat' && context.conversationId;
+        const proposal = await context.docs.propose(context.userId, {
           docId,
           action:
             input.action === 'edit'
@@ -568,6 +569,12 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
           organize: Object.keys(organize).length ? organize : undefined,
           proposedBy: agentKey,
           task,
+          chat: inChat
+            ? {
+                conversationId: context.conversationId!,
+                turnId: context.turnId,
+              }
+            : undefined,
         });
         if (task) {
           await context.board.comment(
@@ -577,9 +584,75 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
             agentKey,
           );
         }
-        return task
-          ? 'Proposta feita. O utilizador aprova ou recusa na tarefa (diz-lho no relatório).'
-          : 'Proposta feita. O utilizador aprova ou recusa em Documentos (diz-lho no relatório).';
+        const where = inChat
+          ? 'aqui no chat (aparece por baixo da resposta, com o botão Aprovar), na tarefa ou em Documentos; também pode dizer que aprova, e aí o Jarvis decide-a com docs_decide'
+          : task
+            ? 'na tarefa'
+            : 'em Documentos';
+        return `Proposta feita (id ${proposal.id}). O utilizador aprova ou recusa ${where} (diz-lho no relatório).`;
+      },
+    },
+    {
+      name: 'docs_decide',
+      description:
+        'Aprova ou recusa uma proposta de documento (feita com docs_propose) quando ele to diz no chat ("aprovo", "pode gravar", "recusa"). Só com a decisão dele na mensagem a que estás a responder: nunca por iniciativa tua nem na resposta em que a propuseste. Aprova o texto tal como foi proposto; se ele quiser mudar alguma coisa, recusa esta e faz uma proposta nova. Sem proposal, decide a única por decidir nesta conversa.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          proposal: {
+            type: 'string',
+            description:
+              'O id da proposta (vem no resultado do docs_propose). Omite se só houver uma por decidir nesta conversa.',
+          },
+          decision: { type: 'string', enum: ['approve', 'reject'] },
+        },
+        required: ['decision'],
+      },
+      handler: async (input: {
+        proposal?: string;
+        decision: 'approve' | 'reject';
+      }) => {
+        if (context.source !== 'chat') {
+          return 'Uma proposta só se decide no chat, quando ele o diz. Deixa-a para ele aprovar.';
+        }
+        const pending = await context.docs.proposals(context.userId);
+        const labelOf = (item: (typeof pending)[number]) =>
+          item.doc?.title ?? item.title ?? 'Documento novo';
+        const wanted = input.proposal?.trim();
+        let proposal = wanted
+          ? pending.find((item) => item.id === wanted)
+          : undefined;
+        if (wanted && !proposal) {
+          return 'Não há nenhuma proposta por decidir com esse id (já pode ter sido decidida).';
+        }
+        if (!proposal) {
+          const here = pending.filter(
+            (item) =>
+              context.conversationId &&
+              item.conversationId === context.conversationId,
+          );
+          if (here.length !== 1) {
+            return here.length
+              ? `Há ${here.length} propostas por decidir nesta conversa; diz qual (proposal):\n${here.map((item) => `- ${item.id} · «${labelOf(item)}»: ${item.reason ?? ''}`).join('\n')}`
+              : 'Não há nenhuma proposta por decidir nesta conversa. Se for outra, diz o id (proposal).';
+          }
+          proposal = here[0];
+        }
+        // Proposta e decisão na mesma volta seria aprovar sem ele a ver.
+        if (proposal.turnId && proposal.turnId === context.turnId) {
+          return 'Propuseste-a nesta mesma resposta: mostra-lha e espera que ele diga que aprova numa mensagem nova.';
+        }
+        const label = labelOf(proposal);
+        if (input.decision === 'reject') {
+          await context.docs.reject(context.userId, proposal.id);
+          return `Recusada: «${label}». O documento ficou como estava.`;
+        }
+        try {
+          const doc = await context.docs.approve(context.userId, proposal.id);
+          return `Aprovada: «${doc.title}» já está gravado (a versão anterior fica no histórico).`;
+        } catch (error) {
+          return `Não aprovei «${label}»: ${error instanceof Error ? error.message : 'erro desconhecido'}`;
+        }
       },
     },
   ];

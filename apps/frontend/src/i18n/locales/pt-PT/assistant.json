@@ -25,7 +25,9 @@
     "send": "Enviar",
     "you": "Tu",
     "docsUsed": "Documentos usados:",
-    "openTask": "Abrir tarefa {{key}}"
+    "openTask": "Abrir tarefa {{key}}",
+    "proposal": "Proposta por decidir",
+    "proposalHint": "Aprova ou recusa aqui, ou diz ao Jarvis que aprovas."
   },
   "core": {
     "working": "a trabalhar"
@@ -264,6 +266,10 @@
           "name": "Nginx Proxy Manager",
           "description": "Proxy hosts, redirecionamentos, streams, listas de acesso e certificados SSL."
         },
+        "tplinkRouter": {
+          "name": "Router TP-Link",
+          "description": "O router da casa: Internet, Wi-Fi, quem está ligado, DHCP, portas e controlo de acesso. Alterar é ligar e desligar redes, bloquear dispositivos, reservar IPs, abrir portas, renovar o IP e reiniciar."
+        },
         "clickhouse": {
           "name": "ClickHouse",
           "description": "As bases, as tabelas, as consultas e a saúde do ClickHouse; consultas de leitura e, quando pedires, SQL de escrita."
@@ -352,6 +358,7 @@
       "dispatcharr": "Dispatcharr",
       "coolify": "Coolify",
       "nginxProxyManager": "Nginx Proxy Manager",
+      "tplinkRouter": "Router TP-Link",
       "clickhouse": "ClickHouse",
       "postgres": "PostgreSQL",
       "vaultwarden": "Vaultwarden",
@@ -503,6 +510,7 @@
       "docs_write": "Escrever os documentos dos agentes",
       "docs_log": "Escrever no registo do que fez",
       "docs_propose": "Propor mudanças nos teus documentos",
+      "docs_decide": "Decidir as propostas quando lhe dizes no chat",
       "updates_list": "Ver as atualizações",
       "update_status": "Ver uma atualização",
       "update_release_notes": "Ler as notas das versões",
@@ -607,6 +615,19 @@
       "nginx_proxy_manager_renew_certificate": "Renovar certificados",
       "nginx_proxy_manager_access_lists": "Ver as listas de acesso",
       "nginx_proxy_manager_audit": "Ver o registo de alterações",
+      "tplink_router_overview": "Ver o router",
+      "tplink_router_clients": "Ver os dispositivos ligados",
+      "tplink_router_wifi": "Ver as redes Wi-Fi",
+      "tplink_router_dhcp": "Ver o DHCP e as reservas",
+      "tplink_router_port_forwards": "Ver as portas abertas",
+      "tplink_router_access": "Ver o controlo de acesso",
+      "tplink_router_wifi_set": "Mudar uma rede Wi-Fi",
+      "tplink_router_block": "Bloquear e desbloquear dispositivos",
+      "tplink_router_access_control": "Mudar o controlo de acesso",
+      "tplink_router_reservation": "Reservar IPs",
+      "tplink_router_port_forward": "Abrir e fechar portas",
+      "tplink_router_wan_renew": "Renovar o IP da Internet",
+      "tplink_router_reboot": "Reiniciar o router",
       "clickhouse_overview": "Ver o ClickHouse",
       "clickhouse_tables": "Ver as tabelas do ClickHouse",
       "clickhouse_describe": "Ver uma tabela do ClickHouse",

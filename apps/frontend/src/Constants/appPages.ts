@@ -22,5 +22,6 @@ export const APP_PAGES: Record<string, string> = {
   COOLIFY: '/MyHomeLab/Apps/Coolify',
   DISPATCHARR: '/MyHomeLab/Apps/Dispatcharr',
   JELLYFIN: '/MyHomeLab/Apps/Jellyfin',
+  TPLINK_ROUTER: '/MyHomeLab/Apps/TplinkRouter',
   STIRLING_PDF: '/MyHomeLab/Apps/StirlingPDF',
 };

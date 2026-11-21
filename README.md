@@ -43,7 +43,7 @@ Docker) and updates itself from the app, with automatic rollback.
 | **Projects and tasks** | A project board (columns, comments, schedules for the agents) and a personal to-do list. |
 | **Servers** | Proxmox nodes, storages and every VM/container; SMART disk health with alerts; commands run over SSH with a snapshot before anything that changes the machine. |
 | **Watched services** | HTTP(S) or TCP checks every N minutes. Alerts open when something goes down and close when it comes back. |
-| **Integrations** | Home Assistant, AdGuard Home, Nextcloud, Forgejo, TREK, openGym, GamesTracker Vault, Immich, Paperless-ngx, solidtime, Stirling-PDF, Plane, Gitea Mirror, Jellyfin, Dispatcharr, Coolify, Nginx Proxy Manager, ClickHouse, PostgreSQL, Vaultwarden and Infisical — each with a connections page showing the token permissions and the API calls MyHomeLab makes. |
+| **Integrations** | Home Assistant, AdGuard Home, Nextcloud, Forgejo, TREK, openGym, GamesTracker Vault, Immich, Paperless-ngx, solidtime, Stirling-PDF, Plane, Gitea Mirror, Jellyfin, Dispatcharr, Coolify, Nginx Proxy Manager, ClickHouse, PostgreSQL, Vaultwarden, Infisical and TP-Link Archer routers — each with a connections page showing the token permissions and the API calls MyHomeLab makes. |
 | **Email** | Gmail, Outlook and IMAP accounts. Gmail rules by sender, subject, keywords or mail type, label hierarchies, and rules proposed by the AI from your inbox. |
 | **Tasks sync** | Nextcloud (CalDAV) task lists into Google Tasks. |
 | **Backups** | Scheduled backups of MyHomeLab itself, with retention. |

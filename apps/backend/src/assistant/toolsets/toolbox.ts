@@ -35,6 +35,7 @@ import { buildVaultwardenTools } from './vaultwarden-tools';
 import { buildPostgresTools } from './postgres-tools';
 import { buildClickHouseTools } from './clickhouse-tools';
 import { buildNginxProxyManagerTools } from './nginx-proxy-manager-tools';
+import { buildTplinkRouterTools } from './tplink-router-tools';
 import { buildCoolifyTools } from './coolify-tools';
 import { buildDispatcharrTools } from './dispatcharr-tools';
 import { buildJellyfinTools } from './jellyfin-tools';
@@ -74,6 +75,7 @@ const TOOL_SETS: Record<
   postgres: buildPostgresTools,
   clickhouse: buildClickHouseTools,
   nginxProxyManager: buildNginxProxyManagerTools,
+  tplinkRouter: buildTplinkRouterTools,
   coolify: buildCoolifyTools,
   dispatcharr: buildDispatcharrTools,
   jellyfin: buildJellyfinTools,

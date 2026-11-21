@@ -70,8 +70,11 @@ export class DocsController {
   }
 
   @Get('proposals')
-  proposals(@Req() req: AuthedRequest) {
-    return this.docs.proposals(req.user.id);
+  proposals(
+    @Req() req: AuthedRequest,
+    @Query('conversationId') conversationId?: string,
+  ) {
+    return this.docs.proposals(req.user.id, conversationId || undefined);
   }
 
   @Post('proposals/:id/approve')

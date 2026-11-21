@@ -50,6 +50,7 @@ export { default as NginxProxyManager } from '../Assets/Icons/NginxProxyManager/
 export { default as Coolify } from '../Assets/Icons/Coolify/Coolify';
 export { default as Dispatcharr } from '../Assets/Icons/Dispatcharr/Dispatcharr';
 export { default as Jellyfin } from '../Assets/Icons/Jellyfin/Jellyfin';
+export { default as TplinkRouter } from '../Assets/Icons/TplinkRouter/TplinkRouter';
 export { default as StirlingPdf } from '../Assets/Icons/StirlingPdf/StirlingPdf';
 export { default as Trek } from '../Assets/Icons/Trek/Trek';
 export { default as HomeAssistant } from '../Assets/Icons/HomeAssistant/HomeAssistant';

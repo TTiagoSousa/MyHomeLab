@@ -40,6 +40,8 @@ export { default as ClickHouseAccounts } from '../Pages/Private/Apps/ClickHouse_
 export { default as ClickHouseAccount } from '../Pages/Private/Apps/ClickHouse_Account';
 export { default as NginxProxyManagerAccounts } from '../Pages/Private/Apps/Nginx_Proxy_Manager_Accounts';
 export { default as NginxProxyManagerAccount } from '../Pages/Private/Apps/Nginx_Proxy_Manager_Account';
+export { default as TplinkRouterAccounts } from '../Pages/Private/Apps/Tplink_Router_Accounts';
+export { default as TplinkRouterAccount } from '../Pages/Private/Apps/Tplink_Router_Account';
 export { default as CoolifyAccounts } from '../Pages/Private/Apps/Coolify_Accounts';
 export { default as CoolifyAccount } from '../Pages/Private/Apps/Coolify_Account';
 export { default as DispatcharrAccounts } from '../Pages/Private/Apps/Dispatcharr_Accounts';

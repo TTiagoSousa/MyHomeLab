@@ -6,14 +6,18 @@ import i18n from "../../i18n";
 import { docErrorMessage } from "./docErrorMessage";
 import type { Doc, DocProposal } from "./docTypes";
 
-export const useDocProposals = () => {
+export const useDocProposals = (conversationId?: string | null) => {
   const [proposals, setProposals] = useState<DocProposal[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
   const { setAlert } = useAlert();
 
   const fetchProposals = async () => {
+    if (conversationId === null) {
+      setProposals([]);
+      return;
+    }
     try {
-      const response = await http.get(End_Points.Doc_Proposals_Endpoint(), { withCredentials: true });
+      const response = await http.get(End_Points.Doc_Proposals_Endpoint(conversationId), { withCredentials: true });
       setProposals(response.data);
     } catch {
       setProposals([]);
@@ -22,7 +26,7 @@ export const useDocProposals = () => {
 
   useEffect(() => {
     fetchProposals();
-  }, []);
+  }, [conversationId]);
 
   const approveProposal = async (id: string, content?: string): Promise<Doc | null> => {
     setBusyId(id);

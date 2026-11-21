@@ -18,6 +18,18 @@ export class ConnectedAccountScheduler implements OnApplicationBootstrap {
     setTimeout(() => void this.checkVersions(), 60_000);
   }
 
+  /** Os routers TP-Link desligados voltam a ligar sozinhos (cada um de 5 em 5 minutos). */
+  @Interval(60_000)
+  async reconnectRouters(): Promise<void> {
+    await this.accounts
+      .reconnectTplinkRouters()
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Falha a voltar a ligar os routers: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+  }
+
   @Interval(6 * 60 * 60_000)
   async checkVersions(): Promise<void> {
     if (this.checking) return;

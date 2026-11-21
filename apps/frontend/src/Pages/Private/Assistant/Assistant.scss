@@ -593,6 +593,30 @@
     }
   }
 
+  .Assistant_Proposal{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 92ch;
+    padding: 12px 14px;
+    border: 1px solid var(--stat-attention);
+    border-radius: var(--ctrl-radius);
+    background: var(--cards-background);
+
+    .Assistant_Proposal_label{
+      @include Mixin.Hud_Label(9px);
+      letter-spacing: .18em;
+      color: var(--stat-attention);
+    }
+
+    .Assistant_Proposal_hint{
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+  }
+
   .Assistant_Thinking{
     position: relative;
     display: flex;

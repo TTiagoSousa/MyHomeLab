@@ -39,6 +39,7 @@ enum ConnectionProvider {
   COOLIFY
   DISPATCHARR
   JELLYFIN
+  TPLINK_ROUTER
 }
 
 // Onde é que o serviço corre. Serve para separar o que é do lab do que é de terceiros —
@@ -357,6 +358,7 @@ model Conversation {
   boardTask     BoardTask?    @relation(fields: [boardTaskId], references: [id], onDelete: SetNull)
   messages      ChatMessage[]
   files         ChatFile[]
+  docProposals  DocProposal[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   lastMessageAt DateTime      @default(now())
@@ -1884,11 +1886,17 @@ model DocProposal {
   proposedBy String
   // A tarefa do quadro de onde veio: a decisão aparece lá.
   taskId     String?
+  // A conversa do chat onde foi proposta: aparece lá, com o botão de aprovar.
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  // A volta do chat em que foi proposta: o Jarvis só a decide numa volta seguinte, depois de ele a ver.
+  turnId     String?
   status     DocProposalStatus @default(PENDING)
   createdAt  DateTime          @default(now())
   decidedAt  DateTime?
 
   @@index([userId, status])
+  @@index([conversationId])
 }
 
 // ── Atualizações das apps ──────────────────────────────────────────────────

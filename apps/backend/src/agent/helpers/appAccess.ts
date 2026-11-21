@@ -39,6 +39,7 @@ export const SET_TARGET: Partial<
   postgres: ConnectionProvider.POSTGRES,
   clickhouse: ConnectionProvider.CLICKHOUSE,
   nginxProxyManager: ConnectionProvider.NGINX_PROXY_MANAGER,
+  tplinkRouter: ConnectionProvider.TPLINK_ROUTER,
   coolify: ConnectionProvider.COOLIFY,
   dispatcharr: ConnectionProvider.DISPATCHARR,
   jellyfin: ConnectionProvider.JELLYFIN,

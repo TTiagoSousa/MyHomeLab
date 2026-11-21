@@ -121,6 +121,7 @@ export interface DocProposal {
   replaces: string[];
   proposedBy: string;
   taskId: string | null;
+  conversationId: string | null;
   status: string;
   createdAt: string;
   doc: { id: string; title: string; content: string } | null;

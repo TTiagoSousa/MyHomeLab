@@ -42,6 +42,8 @@ import { SetTrekMcpDto } from './dto/set-trek-mcp.dto';
 import { SetOpenGymMcpDto } from './dto/set-opengym-mcp.dto';
 import { CreateHomeAssistantAccountDto } from './dto/create-home-assistant-account.dto';
 import { CreateAdguardAccountDto } from './dto/create-adguard-account.dto';
+import { CreateTplinkRouterAccountDto } from './dto/create-tplink-router-account.dto';
+import { TplinkRouterActionDto } from './dto/tplink-router-action.dto';
 import { SetAdguardSettingsDto } from './dto/set-adguard-settings.dto';
 import { googleKind } from './google/google-oauth.client';
 
@@ -344,6 +346,45 @@ export class ConnectedAccountController {
     return this.connectedAccountService.nginxProxyManagerStatus(
       id,
       req.user.id,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('tplink-router')
+  connectTplinkRouter(
+    @Body() dto: CreateTplinkRouterAccountDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.createTplinkRouter(dto, req.user.id);
+  }
+
+  /** O router agora; desligado volta o estado da ligação (não é um erro). `?force=1` tenta já. */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/tplink-router-status')
+  tplinkRouterStatus(
+    @Param('id') id: string,
+    @Query('force') force: string | undefined,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.tplinkRouterStatus(
+      id,
+      req.user.id,
+      force === '1' || force === 'true',
+    );
+  }
+
+  /** Uma ação no router (Wi-Fi, bloquear, reservas, portas, reiniciar). */
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/tplink-router-action')
+  tplinkRouterAction(
+    @Param('id') id: string,
+    @Body() dto: TplinkRouterActionDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
+    return this.connectedAccountService.tplinkRouterAction(
+      id,
+      req.user.id,
+      dto,
     );
   }
 

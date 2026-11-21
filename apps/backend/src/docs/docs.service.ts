@@ -80,6 +80,7 @@ export const PROVIDER_NAMES: Record<ConnectionProvider, string> = {
   POSTGRES: 'PostgreSQL',
   CLICKHOUSE: 'ClickHouse',
   NGINX_PROXY_MANAGER: 'Nginx Proxy Manager',
+  TPLINK_ROUTER: 'TP-Link Archer',
   COOLIFY: 'Coolify',
   DISPATCHARR: 'Dispatcharr',
   JELLYFIN: 'Jellyfin',
@@ -457,11 +458,18 @@ export class DocsService {
 
   // ── Propostas dos agentes ───────────────────────────────────────────────
 
-  /** As propostas por decidir, cada uma com `changes`: o que muda além do texto. */
-  async proposals(userId: string) {
+  /**
+   * As propostas por decidir, cada uma com `changes`: o que muda além do texto.
+   * Com `conversationId`, só as feitas nessa conversa do chat.
+   */
+  async proposals(userId: string, conversationId?: string) {
     const [proposals, sections] = await Promise.all([
       this.prisma.docProposal.findMany({
-        where: { userId, status: DocProposalStatus.PENDING },
+        where: {
+          userId,
+          status: DocProposalStatus.PENDING,
+          ...(conversationId ? { conversationId } : {}),
+        },
         include: {
           doc: {
             select: {
@@ -561,6 +569,8 @@ export class DocsService {
       proposedBy: string;
       /** A tarefa do quadro de onde veio: a proposta aparece lá, e o aviso "Aprovar: …" leva até ela. */
       task?: { id: string; key: string };
+      /** A conversa e a volta do chat onde foi feita: aparece lá, com o botão de aprovar. */
+      chat?: { conversationId: string; turnId: string };
     },
   ) {
     const doc = input.docId ? await this.findOwned(userId, input.docId) : null;
@@ -583,6 +593,8 @@ export class DocsService {
           : undefined,
         proposedBy: input.proposedBy,
         taskId: input.task?.id ?? null,
+        conversationId: input.chat?.conversationId ?? null,
+        turnId: input.chat?.turnId ?? null,
       },
     });
     // Vai para as Notificações ("Precisa de ti"); abre a tarefa de onde veio, onde se decide.

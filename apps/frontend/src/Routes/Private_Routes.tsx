@@ -103,6 +103,8 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Apps/ClickHouse/:accountId' element={ <Private_Page.ClickHouseAccount /> } />
       <Route path='MyHomeLab/Apps/NginxProxyManager' element={ <Private_Page.NginxProxyManagerAccounts /> } />
       <Route path='MyHomeLab/Apps/NginxProxyManager/:accountId' element={ <Private_Page.NginxProxyManagerAccount /> } />
+      <Route path='MyHomeLab/Apps/TplinkRouter' element={ <Private_Page.TplinkRouterAccounts /> } />
+      <Route path='MyHomeLab/Apps/TplinkRouter/:accountId' element={ <Private_Page.TplinkRouterAccount /> } />
       <Route path='MyHomeLab/Apps/Coolify' element={ <Private_Page.CoolifyAccounts /> } />
       <Route path='MyHomeLab/Apps/Coolify/:accountId' element={ <Private_Page.CoolifyAccount /> } />
       <Route path='MyHomeLab/Apps/Dispatcharr' element={ <Private_Page.DispatcharrAccounts /> } />

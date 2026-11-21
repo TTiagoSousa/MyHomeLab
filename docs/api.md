@@ -108,6 +108,9 @@ there too.
 | `GET` | `/connected-accounts/:id/coolify-status` | Current Coolify state: team, servers and unreachable ones, projects, resource counts, unhealthy resources, MCP tool count, version |
 | `POST` | `/connected-accounts/nginx-proxy-manager` | Connect a Nginx Proxy Manager (`baseUrl`, `email`, `password`, optional `displayName` and location) |
 | `GET` | `/connected-accounts/:id/nginx-proxy-manager-status` | Current state: user, host counts, disabled and nginx-error hosts, certificates and those expiring within 30 days, version |
+| `POST` | `/connected-accounts/tplink-router` | Connect a TP-Link router (Archer) with the local management password (`baseUrl`, optional `username` — default `admin` —, `password`, optional `displayName` and location); detects the login scheme and reads the model and firmware |
+| `GET` | `/connected-accounts/:id/tplink-router-status` | `{ connection, router, version }` (`connection.kind` and `router.kind`: `router` or `extender`; `router.repeater` is an extender's backhaul to the main router, `null` on a router): `connection.state` is `connected`, `disconnected` (session interrupted or router unreachable — not an error, retried every 5 minutes, `nextRetryAt`) or `failed` (password refused); `router` has firmware, WAN/LAN, CPU and memory, Wi-Fi networks, devices, ports, mesh, DHCP leases and reservations, port forwards and access control (`null` when not connected). `?force=1` tries right away |
+| `POST` | `/connected-accounts/:id/tplink-router-action` | An action: `wifi`, `block`, `unblock`, `accessControl`, `reservationAdd`, `reservationDelete`, `portForwardAdd`, `portForwardDelete`, `wanRenew`, `reboot` → `{ ok, message, connection }` (`ok: false` = disconnected, not an error) |
 | POST | `/connected-account/clickhouse` | Connect a ClickHouse (`baseUrl`, `username`, `password`, optional `displayName`, `serverConnectionId`, `guestVmid`) |
 | GET | `/connected-account/:id/clickhouse-status` | Current ClickHouse status (user, uptime, databases, tables, rows, bytes, disk, running queries, version) |
 | POST | `/connected-account/postgres` | Connect a PostgreSQL server (`host`, `port`, `database`, `username`, `password`, `ssl` = `off`/`on`/`no-verify`, optional `displayName`, `serverConnectionId`, `guestVmid`) |
@@ -274,7 +277,7 @@ through nginx (`X-Forwarded-For` present).
 | GET | `/docs` | Document index with filters and search |
 | GET | `/docs/targets` | Things a document can be linked to |
 | GET | `/docs/linked` | Documents linked to a target (`?type=&targetId=`) |
-| GET | `/docs/proposals` | Pending agent proposals, each with `changes` (title, section, links and tags it would change) |
+| GET | `/docs/proposals` | Pending agent proposals, each with `changes` (title, section, links and tags it would change); `?conversationId=` keeps only those made in that chat conversation |
 | POST | `/docs/proposals/:id/approve` | Approve a proposal (optionally edited) |
 | POST | `/docs/proposals/:id/reject` | Reject a proposal |
 | POST | `/docs/starter` | Create any missing starter documents (general rules, process docs, one rules doc per connected app) |

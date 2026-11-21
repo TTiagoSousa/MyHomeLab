@@ -61,6 +61,7 @@
     "dispatcharrConnected": "Dispatcharr connected",
     "coolifyConnected": "Coolify connected",
     "nginxProxyManagerConnected": "Nginx Proxy Manager connected",
+    "tplinkRouterConnected": "TP-Link Archer connected",
     "clickhouseConnected": "ClickHouse connected.",
     "postgresConnected": "PostgreSQL connected.",
     "vaultwardenConnected": "Vaultwarden connected",
@@ -1957,6 +1958,256 @@
       "expiringItem_other": "{{name}}: expires on {{date}} ({{count}} days left)",
       "updateChip": "New {{version}}"
     },
+    "tplinkRouter": {
+      "title": "TP-Link Archer",
+      "description": "Your TP-Link router or extenders: the Infrastructure Engineer sees the Internet, the Wi-Fi and who is connected, and changes networks, IP reservations, ports and blocks when you ask.",
+      "connect": "Connect TP-Link Archer",
+      "agentsNote": "The Infrastructure Engineer uses the router and the extenders. For another agent, pick its tools in Assistant → Workflow.",
+      "notFound": "This router or extender does not exist or was already disconnected.",
+      "accountDescription": "The connection to the router's or extender's management page, with the user and the local password. It accepts one session at a time: MyHomeLab logs in only when needed and leaves after about 90 s idle.",
+      "credentialsHint": "The address, the user and the local password. To change the password, disconnect and connect again.",
+      "updateChip": "New firmware {{version}}",
+      "working": "Working…",
+      "on": "On",
+      "off": "Off",
+      "model": "Model",
+      "modelHint": "Hardware {{hardware}}",
+      "internet": "Internet",
+      "internetHint": "{{type}} · gateway {{gateway}}",
+      "devicesFact": "Devices",
+      "devicesHint": "{{wired}} wired · {{wifi}} on Wi-Fi · {{guest}} guests · {{iot}} IoT",
+      "states": {
+        "connected": "Connected",
+        "disconnected": "Disconnected",
+        "failed": "Password refused"
+      },
+      "stateHints": {
+        "connected": "MyHomeLab can log in to the management page.",
+        "disconnected": "The session dropped or the management page is busy. This is not an error: MyHomeLab tries again by itself.",
+        "failed": "The management page refused the password. Connect again with the right password."
+      },
+      "connection": {
+        "disconnectedTitle": {
+          "router": "Router disconnected from MyHomeLab",
+          "extender": "Extender disconnected from MyHomeLab"
+        },
+        "failedTitle": {
+          "router": "The router refused the password",
+          "extender": "The extender refused the password"
+        },
+        "retryAt": "I try again by myself every 5 minutes — next try at {{time}}.",
+        "retrySoon": "I try again by myself every 5 minutes.",
+        "failedHint": "I will not try this password again. Open the account, disconnect it and connect again with the right local password.",
+        "since": "Since {{when}}",
+        "connectNow": "Connect now",
+        "connecting": "Connecting…",
+        "openAccount": "Open the account",
+        "reconnectHint": "The saved password was refused. Disconnect this account and connect again with the local password (the TP-Link ID one does not work; on an EasyMesh extender it is usually the same as the main router)."
+      },
+      "tabs": {
+        "overview": "Overview",
+        "wifi": "Wi-Fi",
+        "devices": "Devices",
+        "dhcp": "DHCP",
+        "ports": "Ports",
+        "access": "Access control"
+      },
+      "duration": {
+        "days": "{{days}} d {{hours}} h",
+        "hours": "{{hours}} h {{minutes}} min",
+        "minutes": "{{minutes}} min"
+      },
+      "connections": {
+        "wired": "Wired",
+        "unknown": "Unknown",
+        "wireless": "{{network}} {{band}}"
+      },
+      "networkShort": {
+        "host": "Wi-Fi",
+        "guest": "Guests",
+        "iot": "IoT"
+      },
+      "networks": {
+        "host": "Main network",
+        "guest": "Guest network",
+        "iot": "IoT network"
+      },
+      "bands": {
+        "2g": "2.4 GHz",
+        "5g": "5 GHz",
+        "6g": "6 GHz",
+        "mlo": "MLO"
+      },
+      "overview": {
+        "internet": "Internet",
+        "wanIp": "IP",
+        "wanType": "Type",
+        "gateway": "Gateway",
+        "uptime": "Up for",
+        "ipv6": "IPv6",
+        "lan": "Local network",
+        "lanIp": "Router IP",
+        "lanIpExtender": "Extender IP",
+        "dhcp": "DHCP",
+        "lanMac": "LAN MAC",
+        "wanMac": "Internet MAC",
+        "system": "System",
+        "model": "Model",
+        "hardware": "Hardware",
+        "firmware": "Firmware",
+        "cpu": "CPU",
+        "memory": "Memory",
+        "devices": "Connected devices",
+        "wired": "Wired",
+        "wifi": "Wi-Fi",
+        "guest": "Guests",
+        "iot": "IoT",
+        "ports": "Network ports",
+        "port": "Port {{port}}",
+        "portSpeed": "{{speed}} Mbps {{duplex}}",
+        "portUp": "Connected",
+        "portDown": "No cable",
+        "mesh": "Mesh",
+        "actionsNote": "Renewing the IP cuts the Internet for a few seconds. Rebooting leaves the house without network for a few minutes.",
+        "wanRenew": "Renew Internet IP",
+        "wanRenewConfirm": "Renew",
+        "wanRenewQuestion": "The Internet drops for a few seconds.",
+        "reboot": "Reboot router",
+        "rebootConfirm": "Reboot",
+        "rebootQuestion": "The house is without network for a few minutes.",
+        "actionsNoteExtender": "Rebooting leaves everyone on the extender without network for a few minutes.",
+        "rebootExtender": "Reboot extender",
+        "rebootExtenderQuestion": "Everyone on the extender loses the network for a few minutes."
+      },
+      "table": {
+        "name": "Name",
+        "model": "Model",
+        "role": "Role",
+        "state": "State",
+        "ip": "IP",
+        "clients": "Clients",
+        "mac": "MAC",
+        "connection": "Connection",
+        "signal": "Signal",
+        "speed": "Speed",
+        "online": "Online for",
+        "traffic": "Traffic",
+        "actions": "Actions",
+        "leaseTime": "Time",
+        "ap": "Connected to"
+      },
+      "wifi": {
+        "none": "The router did not show any Wi-Fi network.",
+        "noName": "No name",
+        "enabled": "On",
+        "disabled": "Off",
+        "security": "Security {{value}}",
+        "channel": "Channel {{value}}",
+        "hidden": "Hidden",
+        "turnOn": "Turn on",
+        "turnOff": "Turn off",
+        "turnOffConfirm": "Turn off",
+        "turnOffQuestion": "Everyone on this network loses Wi-Fi.",
+        "mlo": "MLO on in {{bands}}."
+      },
+      "devices": {
+        "search": "Search by name, IP, MAC or extender",
+        "noName": "No name",
+        "speedDown": "↓ {{value}}",
+        "speedUp": "↑ {{value}}",
+        "reserve": "Reserve IP",
+        "reserved": "IP reserved",
+        "block": "Block",
+        "blockConfirm": "Block",
+        "blocked": "Blocked",
+        "none": "No devices connected.",
+        "noResults": "No device matches the search.",
+        "blockHint": "Blocking takes the device off the network. Unblock it in Access control.",
+        "extenderHint": "Blocks and IP reservations are done on the main router.",
+        "viaExtender": "extender"
+      },
+      "dhcp": {
+        "reservations": "IP reservations ({{count}})",
+        "add": "New reservation",
+        "formTitle": "Reserve IP",
+        "macPlaceholder": "AA:BB:CC:DD:EE:FF",
+        "ipPlaceholder": "192.168.1.50",
+        "save": "Reserve",
+        "delete": "Delete",
+        "deleteConfirm": "Delete",
+        "noReservations": "No reserved IPs yet.",
+        "leases": "Current leases ({{count}})",
+        "noLeases": "The router has no leases right now.",
+        "extenderHint": "An extender only shows the leases. Reservations are done on the main router."
+      },
+      "ports": {
+        "rules": "Rules ({{count}})",
+        "external": "External port",
+        "internal": "Internal port",
+        "protocol": "Protocol",
+        "protocols": {
+          "ALL": "TCP and UDP",
+          "TCP": "TCP",
+          "UDP": "UDP"
+        },
+        "delete": "Delete",
+        "deleteConfirm": "Close port",
+        "none": "No open ports.",
+        "formTitle": "Open a port",
+        "namePlaceholder": "E.g. Web server",
+        "ip": "Device IP",
+        "externalPlaceholder": "8080 or 8000-8100",
+        "internalPlaceholder": "Same as external",
+        "hint": "Opening a port exposes that device to the Internet. Only open what you need.",
+        "clear": "Clear",
+        "add": "Open port"
+      },
+      "access": {
+        "title": "Access control",
+        "enabled": "On",
+        "disabled": "Off",
+        "mode": "Mode",
+        "modes": {
+          "blacklist": "Blocklist",
+          "whitelist": "Allowlist"
+        },
+        "modeHints": {
+          "blacklist": "Blocklist: everyone gets in except the blocked ones.",
+          "whitelist": "Allowlist: only devices on the list get in. Be careful not to lock yourself out."
+        },
+        "save": "Save",
+        "unavailable": "This router does not show access control.",
+        "blocked": "Blocked ({{count}})",
+        "unblock": "Unblock",
+        "noneBlocked": "No blocked devices."
+      },
+      "kind": "Type",
+      "kinds": {
+        "router": "Router",
+        "extender": "Extender"
+      },
+      "kindHints": {
+        "router": "The main router: it has the Internet, DHCP, ports and access control.",
+        "extender": "An extender: it repeats the main router's Wi-Fi. Blocks, IP reservations and ports are done on the router."
+      },
+      "typeValue": "TP-Link Archer · {{kind}}",
+      "backhaulFact": "Link to router",
+      "backhaul": {
+        "title": "Link to the main router",
+        "connected": "Connected",
+        "disconnected": "Disconnected",
+        "signal": "signal {{value}}",
+        "rate": "↓ {{rx}} · ↑ {{tx}}",
+        "internet": "Internet",
+        "mesh": "Mesh",
+        "meshSync": "sync {{sync}}",
+        "unknown": "The extender did not show its link to the router.",
+        "link": "Link",
+        "wired": "Wired to the main router",
+        "wiredIp": "Wired to the main router ({{ip}})",
+        "internetConnected": "Connected"
+      }
+    },
     "clickhouse": {
       "title": "ClickHouse",
       "description": "Analytics database: Jarvis sees the databases, tables and queries, runs read queries and, when you ask, write SQL on ClickHouse.",
@@ -2286,6 +2537,19 @@
     "emailPlaceholder": "admin@example.com",
     "password": "Password",
     "hint": "A panel user without two-factor login (ideally one just for MyHomeLab). The password is stored encrypted in MyHomeLab.",
+    "connect": "Connect"
+  },
+  "tplinkRouterModal": {
+    "title": "Connect TP-Link Archer",
+    "name": "Name (optional)",
+    "namePlaceholder": "E.g. Living room router",
+    "url": "Management page address",
+    "urlPlaceholder": "http://tplinkwifi.net",
+    "urlHint": "Connect the router or a TP-Link extender by its management page address (the IP, or http://tplinkwifi.net on the router). MyHomeLab works out by itself if it is an extender.",
+    "username": "User",
+    "password": "Local password",
+    "passwordHint": "The local password of the management page. Logging in with TP-Link ID does not work. On an EasyMesh extender it is usually the same as the main router. It is stored encrypted in MyHomeLab.",
+    "sessionHint": "The management page accepts one session at a time: MyHomeLab logs in only when needed and leaves after about 90 s idle, so it does not kick you out.",
     "connect": "Connect"
   },
   "clickhouseModal": {

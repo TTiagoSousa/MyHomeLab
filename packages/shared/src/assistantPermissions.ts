@@ -45,6 +45,7 @@ export const ASSISTANT_PERMISSION_AREAS: readonly AssistantPermissionArea[] = [
   { key: 'dispatcharr', group: 'organization', access: ['read', 'write'] },
   { key: 'coolify', group: 'servers', access: ['read', 'write'] },
   { key: 'nginxProxyManager', group: 'servers', access: ['read', 'write'] },
+  { key: 'tplinkRouter', group: 'servers', access: ['read', 'write'] },
   { key: 'clickhouse', group: 'servers', access: ['read', 'write'] },
   { key: 'postgres', group: 'servers', access: ['read', 'write'] },
   { key: 'vaultwarden', group: 'servers', access: ['read', 'write'] },

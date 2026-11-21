@@ -51,6 +51,12 @@ import { CreateClickHouseAccountDto } from './dto/create-clickhouse-account.dto'
 import { createClickHouseAccount } from './helpers/createClickHouseAccount';
 import { refreshClickHouseAccount } from './helpers/refreshClickHouseAccount';
 import { CreateNginxProxyManagerAccountDto } from './dto/create-nginx-proxy-manager-account.dto';
+import { CreateTplinkRouterAccountDto } from './dto/create-tplink-router-account.dto';
+import { TplinkRouterActionDto } from './dto/tplink-router-action.dto';
+import { createTplinkRouterAccount } from './helpers/createTplinkRouterAccount';
+import { refreshTplinkRouterAccount } from './helpers/refreshTplinkRouterAccount';
+import { runTplinkRouterAction } from './helpers/runTplinkRouterAction';
+import { reconnectDueTplinkRouters } from 'src/tplink-router/tplink-router.client';
 import { createNginxProxyManagerAccount } from './helpers/createNginxProxyManagerAccount';
 import { refreshNginxProxyManagerAccount } from './helpers/refreshNginxProxyManagerAccount';
 import { CreateCoolifyAccountDto } from './dto/create-coolify-account.dto';
@@ -689,6 +695,56 @@ export class ConnectedAccountService {
     };
   }
 
+  async createTplinkRouter(dto: CreateTplinkRouterAccountDto, userId: string) {
+    await assertOwnServer(
+      userId,
+      dto.serverConnectionId,
+      this.connectedAccountRepository,
+    );
+    return this.afterConnect(
+      await createTplinkRouterAccount(
+        dto,
+        userId,
+        this.connectedAccountRepository,
+      ),
+      dto,
+    );
+  }
+
+  /** O router agora e a ligação a ele (desligado não é um erro). */
+  async tplinkRouterStatus(id: string, userId: string, force = false) {
+    const { account, ...status } = await refreshTplinkRouterAccount(
+      id,
+      userId,
+      this.connectedAccountRepository,
+      force,
+    );
+    return { ...status, version: account.appVersion };
+  }
+
+  tplinkRouterAction(id: string, userId: string, dto: TplinkRouterActionDto) {
+    return runTplinkRouterAction(
+      id,
+      userId,
+      this.connectedAccountRepository,
+      dto,
+    );
+  }
+
+  /** De minuto a minuto: volta a ligar os routers desligados cuja próxima tentativa já chegou. */
+  async reconnectTplinkRouters() {
+    const accounts = await this.connectedAccountRepository.findAllByProviders([
+      ConnectionProvider.TPLINK_ROUTER,
+    ]);
+    await reconnectDueTplinkRouters(
+      new Set(
+        accounts
+          .filter((account) => account.isActive)
+          .map((account) => account.id),
+      ),
+    );
+  }
+
   async createClickHouse(dto: CreateClickHouseAccountDto, userId: string) {
     await assertOwnServer(
       userId,
@@ -1006,6 +1062,7 @@ export class ConnectedAccountService {
     });
   }
 
+  /** O afterConnect para quem não verifica a versão logo: devolve já a vista sem segredos. */
   private async checkVersion(account: ConnectedAccount) {
     await checkAppVersion(
       account,

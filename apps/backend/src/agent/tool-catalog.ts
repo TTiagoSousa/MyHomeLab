@@ -20,6 +20,7 @@ export type ToolSet =
   | 'postgres'
   | 'clickhouse'
   | 'nginxProxyManager'
+  | 'tplinkRouter'
   | 'coolify'
   | 'dispatcharr'
   | 'jellyfin'
@@ -59,6 +60,7 @@ export type ToolGroup =
   | 'postgres'
   | 'clickhouse'
   | 'nginxProxyManager'
+  | 'tplinkRouter'
   | 'coolify'
   | 'dispatcharr'
   | 'jellyfin'
@@ -1217,6 +1219,97 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'a ver o registo do proxy',
   ),
   tool(
+    'tplink_router_overview',
+    'tplinkRouter',
+    'tplinkRouter',
+    'read',
+    'a ver o router',
+  ),
+  tool(
+    'tplink_router_clients',
+    'tplinkRouter',
+    'tplinkRouter',
+    'read',
+    'a ver os dispositivos ligados ao router',
+  ),
+  tool(
+    'tplink_router_wifi',
+    'tplinkRouter',
+    'tplinkRouter',
+    'read',
+    'a ver as redes Wi-Fi',
+  ),
+  tool(
+    'tplink_router_dhcp',
+    'tplinkRouter',
+    'tplinkRouter',
+    'read',
+    'a ver o DHCP do router',
+  ),
+  tool(
+    'tplink_router_port_forwards',
+    'tplinkRouter',
+    'tplinkRouter',
+    'read',
+    'a ver as portas abertas no router',
+  ),
+  tool(
+    'tplink_router_access',
+    'tplinkRouter',
+    'tplinkRouter',
+    'read',
+    'a ver o controlo de acesso do router',
+  ),
+  tool(
+    'tplink_router_wifi_set',
+    'tplinkRouter',
+    'tplinkRouter',
+    'write',
+    'a mudar uma rede Wi-Fi',
+  ),
+  tool(
+    'tplink_router_block',
+    'tplinkRouter',
+    'tplinkRouter',
+    'write',
+    'a bloquear um dispositivo no router',
+  ),
+  tool(
+    'tplink_router_access_control',
+    'tplinkRouter',
+    'tplinkRouter',
+    'write',
+    'a mudar o controlo de acesso do router',
+  ),
+  tool(
+    'tplink_router_reservation',
+    'tplinkRouter',
+    'tplinkRouter',
+    'write',
+    'a reservar um IP no router',
+  ),
+  tool(
+    'tplink_router_port_forward',
+    'tplinkRouter',
+    'tplinkRouter',
+    'write',
+    'a abrir ou fechar uma porta no router',
+  ),
+  tool(
+    'tplink_router_wan_renew',
+    'tplinkRouter',
+    'tplinkRouter',
+    'write',
+    'a pedir um IP novo à Internet',
+  ),
+  tool(
+    'tplink_router_reboot',
+    'tplinkRouter',
+    'tplinkRouter',
+    'write',
+    'a reiniciar o router',
+  ),
+  tool(
     'clickhouse_overview',
     'clickhouse',
     'clickhouse',
@@ -1653,6 +1746,13 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'docs',
     'write',
     'a propor uma mudança num documento',
+  ),
+  tool(
+    'docs_decide',
+    'docs',
+    'docs',
+    'write',
+    'a decidir uma proposta de documento',
   ),
 
   tool('updates_list', 'updates', 'updates', 'read', 'a ver as atualizações'),
