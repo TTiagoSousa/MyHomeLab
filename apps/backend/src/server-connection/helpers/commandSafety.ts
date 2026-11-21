@@ -67,12 +67,18 @@ const without =
       forbidden.some((word) => arg === word || arg.startsWith(`${word}=`)),
     );
 
+/** Uma flag curta, sozinha ou junta com outras ("-K", "-tnK"). */
+const hasShortFlag = (args: string[], flag: string): boolean =>
+  args.some((arg) => /^-[a-zA-Z]+$/.test(arg) && arg.includes(flag));
+
 /** Os comandos que só leem, e com que argumentos. */
 const READ_COMMANDS: Record<string, ArgsCheck> = {
   cat: any,
   ls: any,
   ll: any,
-  tree: any,
+  // tree -o <ficheiro> escreve a árvore num ficheiro.
+  tree: (args) =>
+    !hasShortFlag(args, 'o') && !args.some((arg) => arg.startsWith('--output')),
   stat: any,
   file: any,
   readlink: any,
@@ -83,19 +89,17 @@ const READ_COMMANDS: Record<string, ArgsCheck> = {
   egrep: any,
   wc: any,
   sort: without('-o', '--output'),
-  uniq: any,
+  // uniq <entrada> <saída> escreve o resultado num ficheiro.
+  uniq: (args) => args.filter((arg) => !arg.startsWith('-')).length <= 1,
   cut: any,
   column: any,
-  find: without(
-    '-delete',
-    '-exec',
-    '-execdir',
-    '-ok',
-    '-okdir',
-    '-fprint',
-    '-fprintf',
-    '-fls',
-  ),
+  // Por prefixo: -fprint0, -fprintf e -fls também escrevem ficheiros.
+  find: (args) =>
+    !args.some((arg) =>
+      ['-delete', '-exec', '-ok', '-fprint', '-fls'].some((word) =>
+        arg.startsWith(word),
+      ),
+    ),
   df: any,
   du: any,
   free: any,
@@ -146,7 +150,8 @@ const READ_COMMANDS: Record<string, ArgsCheck> = {
         'append',
       ].includes(arg),
     ),
-  ss: any,
+  // ss -K fecha as ligações que mostra.
+  ss: (args) => !hasShortFlag(args, 'K') && !args.includes('--kill'),
   netstat: any,
   ping: (args) => args.includes('-c'),
   dig: any,

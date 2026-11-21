@@ -2,6 +2,8 @@ import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12;
+// O tag do GCM tem sempre 16 bytes: um tag mais curto facilitaria forjar valores.
+const AUTH_TAG_LENGTH = 16;
 
 function getKey(): Buffer {
   const key = process.env.TOKEN_ENCRYPTION_KEY;
@@ -19,7 +21,9 @@ function getKey(): Buffer {
 
 export function encryptToken(plainText: string): string {
   const iv = randomBytes(IV_LENGTH);
-  const cipher = createCipheriv(ALGORITHM, getKey(), iv);
+  const cipher = createCipheriv(ALGORITHM, getKey(), iv, {
+    authTagLength: AUTH_TAG_LENGTH,
+  });
 
   const encrypted = Buffer.concat([
     cipher.update(plainText, 'utf8'),
@@ -38,12 +42,18 @@ export function decryptToken(cipherText: string): string {
     throw new Error('Formato de token cifrado inválido');
   }
 
+  const authTag = Buffer.from(authTagPart, 'base64');
+  if (authTag.length !== AUTH_TAG_LENGTH) {
+    throw new Error('Formato de token cifrado inválido');
+  }
+
   const decipher = createDecipheriv(
     ALGORITHM,
     getKey(),
     Buffer.from(ivPart, 'base64'),
+    { authTagLength: AUTH_TAG_LENGTH },
   );
-  decipher.setAuthTag(Buffer.from(authTagPart, 'base64'));
+  decipher.setAuthTag(authTag);
 
   const decrypted = Buffer.concat([
     decipher.update(Buffer.from(encryptedPart, 'base64')),

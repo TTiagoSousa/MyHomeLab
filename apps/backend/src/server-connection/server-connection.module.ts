@@ -5,6 +5,7 @@ import { ServerConnectionScheduler } from './server-connection.scheduler';
 import { ServerCommandService } from './server-command.service';
 import { NotificationModule } from 'src/notification/notification.module';
 import { DocsModule } from 'src/docs/docs.module';
+import { PrismaServerHostKeyRepository } from './repositories/prisma/prisma-server-host-key-repository';
 
 @Module({
   imports: [NotificationModule, DocsModule],
@@ -13,6 +14,7 @@ import { DocsModule } from 'src/docs/docs.module';
     ServerConnectionService,
     ServerConnectionScheduler,
     ServerCommandService,
+    PrismaServerHostKeyRepository,
   ],
   exports: [ServerConnectionService, ServerCommandService],
 })

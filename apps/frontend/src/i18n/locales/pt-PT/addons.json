@@ -804,7 +804,13 @@
           "REJECTED": "Recusado",
           "BLOCKED": "Bloqueado"
         },
-        "snapshot": "Com snapshot"
+        "snapshot": "Com snapshot",
+        "hostKey": "Chave do servidor",
+        "hostKeyStored": "{{fingerprint}} (guardada a {{date}})",
+        "hostKeyPending": "Ainda por guardar: fica a que o servidor apresentar na primeira ligação.",
+        "hostKeyNote": "O MyHomeLab guarda a impressão digital da chave do servidor na primeira ligação e, daí em diante, recusa ligar se ela mudar. Se reinstalaste o servidor, confia na chave nova; se não, pode ser um ataque na rede.",
+        "trustNewKey": "Confiar na chave nova",
+        "confirmTrustNewKey": "Confirmar: esquecer a chave guardada"
       },
       "typeName": "Proxmox VE",
       "packagesSummary_one": "{{count}} pacote por atualizar nos nós.",

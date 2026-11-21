@@ -96,7 +96,8 @@ REPO_URL="${REPO_URL:-https://github.com/TTiagoSousa/MyHomeLab.git}"
 REPO_TOKEN="${REPO_TOKEN:-}"
 APP_URL="${APP_URL:-}"
 ADMIN_USERNAME="${ADMIN_USERNAME:-admin}"
-ADMIN_PASSWORD="${ADMIN_PASSWORD:-admin}"
+# Empty: a random one is generated and shown once at the end.
+ADMIN_PASSWORD="${ADMIN_PASSWORD:-}"
 
 # --- dialogs --------------------------------------------------------------------------
 
@@ -229,9 +230,9 @@ advanced_settings() {
 
   ask ADMIN_USERNAME "Admin user" "Username of the first (admin) account." valid_hostname
   local pw
-  pw="$(wt --title "Admin password" --passwordbox "Password for '$ADMIN_USERNAME'. Leave empty for the default: admin" "$(H 9)" "$W" "")" \
+  pw="$(wt --title "Admin password" --passwordbox "Password for '$ADMIN_USERNAME'. Leave empty to generate a random one (shown at the end)." "$(H 9)" "$W" "")" \
     || abort "Admin password" $?
-  ADMIN_PASSWORD="${pw:-admin}"
+  ADMIN_PASSWORD="$pw"
 
   radio BRANCH "Version" "Which branch to install?" \
     main "Stable" \
@@ -242,7 +243,7 @@ advanced_settings() {
   wt --title "Repository" --yesno "Is the repository public?\n\n$REPO_URL" "$(H 10)" "$W" || rc=$?
   case "$rc" in
     0) REPO_TOKEN="" ;;
-    1) REPO_TOKEN="$(wt --title "Repository token" --passwordbox "Read-only access token for the private repository." "$(H 9)" "$W" "")" \
+    1) REPO_TOKEN="$(wt --title "Repository token" --passwordbox "Read-only access token for the private repository. Used only for the clone, not kept." "$(H 9)" "$W" "")" \
          || abort "Repository token" $? ;;
     *) abort "Repository" "$rc" ;;
   esac
@@ -260,7 +261,7 @@ settings_text() {
     "DNS             ${DNS:-same as host}" \
     "Start on boot   $([ "$ONBOOT" = 1 ] && echo yes || echo no)" \
     "App address     ${APP_URL:-http://<container IP>}" \
-    "Admin           $ADMIN_USERNAME / $([ "$ADMIN_PASSWORD" = admin ] && echo 'admin (default)' || echo '(custom)')" \
+    "Admin           $ADMIN_USERNAME / $([ -n "$ADMIN_PASSWORD" ] && echo '(custom)' || echo '(random, shown at the end)')" \
     "Version         $BRANCH"
 }
 
@@ -306,6 +307,10 @@ if [ "$NET_MODE" = static ]; then
 fi
 check_vlan "$VLAN" || die "Invalid VLAN tag: $VLAN"
 if [ -n "$APP_URL" ]; then APP_URL="${APP_URL%/}"; check_url "$APP_URL" || die "Invalid APP_URL: $APP_URL"; fi
+if [ -n "$REPO_TOKEN" ] && [[ "$REPO_URL" != https://* ]]; then die "REPO_TOKEN needs an https REPO_URL."; fi
+if [ -n "$ADMIN_PASSWORD" ] && [ "${#ADMIN_PASSWORD}" -lt 12 ]; then
+  warn "The admin password is short (${#ADMIN_PASSWORD} characters). Change it before exposing the app."
+fi
 
 printf '%s\n' "${BOLD}Settings${RESET}"; settings_text | sed 's/^/  /'; echo
 
@@ -353,9 +358,14 @@ if ! pct start "$CTID"; then
   pct destroy "$CTID" --purge >/dev/null 2>&1 || true
   die "Container $CTID failed to start and was removed. The reason is in the host log: journalctl -xe"
 fi
+# Secrets for the container (git credential, admin password) are written here and
+# copied in with pct push, never passed on a command line (ps on the host shows those).
+HOST_SECRETS="$(mktemp -d)"
 on_exit() {
   local rc=$?
+  rm -rf "$HOST_SECRETS"
   if [ "$rc" -ne 0 ]; then
+    pct exec "$CTID" -- rm -f /root/.myhomelab-git-credentials /root/.myhomelab-admin-password >/dev/null 2>&1 || true
     warn "Install failed. Container $CTID was kept so you can look inside: pct enter $CTID"
     warn "To remove it: pct stop $CTID; pct destroy $CTID --purge"
   fi
@@ -376,11 +386,17 @@ ok "Network up: $CT_IP"
 
 # --- code and install -----------------------------------------------------------------
 
-# With a token it goes into the clone's remote URL, so myhomelab-update can pull.
-# It stays inside the container (.git/config of the repo).
-CLONE_URL="$REPO_URL"
+# The token (private repository only) is used for the clone and not kept: a temporary
+# credential file, given to git with -c before the subcommand (so it is not saved in
+# .git/config) and deleted right after. myhomelab-update of a private repository then
+# needs a credential set up for the myhomelab user.
+GIT_AUTH=()
 if [ -n "$REPO_TOKEN" ]; then
-  CLONE_URL="$(printf '%s' "$REPO_URL" | sed -E "s#^https://#https://oauth2:${REPO_TOKEN}@#")"
+  repo_host="$(printf '%s' "$REPO_URL" | sed -E 's#^https://([^/]+)/.*#\1#')"
+  ( umask 077; printf 'https://oauth2:%s@%s\n' "$REPO_TOKEN" "$repo_host" > "$HOST_SECRETS/git-credentials" )
+  pct push "$CTID" "$HOST_SECRETS/git-credentials" /root/.myhomelab-git-credentials --perms 0600
+  rm -f "$HOST_SECRETS/git-credentials"
+  GIT_AUTH=(-c "credential.helper=store --file=/root/.myhomelab-git-credentials")
 fi
 
 msg "Cloning $APP ($BRANCH)…"
@@ -388,27 +404,50 @@ msg "Cloning $APP ($BRANCH)…"
 # and every perl/apt call would print locale warnings.
 CT_ENV=(env LANG=C.UTF-8 LC_ALL=C.UTF-8)
 pct exec "$CTID" -- "${CT_ENV[@]}" bash -c "export DEBIAN_FRONTEND=noninteractive; apt-get update -qq && apt-get install -y -qq git ca-certificates >/dev/null"
-pct exec "$CTID" -- "${CT_ENV[@]}" git clone --quiet --branch "$BRANCH" "$CLONE_URL" /opt/myhomelab
+clone_rc=0
+pct exec "$CTID" -- "${CT_ENV[@]}" git "${GIT_AUTH[@]}" clone --quiet --branch "$BRANCH" "$REPO_URL" /opt/myhomelab || clone_rc=$?
+pct exec "$CTID" -- rm -f /root/.myhomelab-git-credentials
+[ "$clone_rc" -eq 0 ] || die "git clone failed (exit $clone_rc)."
 ok "Code in /opt/myhomelab"
+if [ -n "$REPO_TOKEN" ]; then
+  warn "The repository token was not kept. For myhomelab-update to pull from a private repository, give the myhomelab user its own credential (e.g. a deploy key)."
+fi
+
+# No password chosen: a random one, shown once below (a copy stays in the container's
+# /root/myhomelab-credentials.txt, root only).
+ADMIN_PASSWORD_RANDOM=""
+if [ -z "$ADMIN_PASSWORD" ]; then
+  ADMIN_PASSWORD="$(head -c 15 /dev/urandom | base64 | tr '+/' '-_')"
+  ADMIN_PASSWORD_RANDOM=1
+fi
+( umask 077; printf '%s' "$ADMIN_PASSWORD" > "$HOST_SECRETS/admin-password" )
+pct push "$CTID" "$HOST_SECRETS/admin-password" /root/.myhomelab-admin-password --perms 0600
+rm -f "$HOST_SECRETS/admin-password"
 
 msg "Installing inside the container (a few minutes)…"
+# install.sh reads the password from that file and deletes it.
+install_rc=0
 pct exec "$CTID" -- "${CT_ENV[@]}" \
   APP_URL="$APP_URL" \
   ADMIN_USERNAME="$ADMIN_USERNAME" \
-  ADMIN_PASSWORD="$ADMIN_PASSWORD" \
-  bash /opt/myhomelab/deploy/proxmox/install.sh
+  ADMIN_PASSWORD_FILE=/root/.myhomelab-admin-password \
+  bash /opt/myhomelab/deploy/proxmox/install.sh || install_rc=$?
+pct exec "$CTID" -- rm -f /root/.myhomelab-admin-password || true
+[ "$install_rc" -eq 0 ] || exit "$install_rc"
 
 cat <<EOF
 
 ${GREEN}${APP} is ready.${RESET}
 
   Open:         ${BOLD}${APP_URL}${RESET}
-  Login:        ${ADMIN_USERNAME} / $([ "$ADMIN_PASSWORD" = admin ] && echo admin || echo '(the password you chose)')
+  Login:        ${ADMIN_USERNAME} / $([ -n "$ADMIN_PASSWORD_RANDOM" ] && printf %s "$ADMIN_PASSWORD" || echo '(the password you chose)')
   Container:    $CTID ($CT_IP)
   Credentials:  pct exec $CTID -- cat /root/myhomelab-credentials.txt
   Configure:    pct enter $CTID  →  myhomelab-config
   Update:       pct enter $CTID  →  myhomelab-update
 
 EOF
-[ "$ADMIN_PASSWORD" = admin ] && warn "The admin password is 'admin'. Change it before exposing the app to the internet."
+if [ -n "$ADMIN_PASSWORD_RANDOM" ]; then
+  warn "The admin password above was generated now and is not shown again — write it down."
+fi
 exit 0

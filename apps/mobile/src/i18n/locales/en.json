@@ -19,7 +19,8 @@
     "hidePassword": "Hide password",
     "submit": "Sign in",
     "errorCredentials": "Wrong username or password.",
-    "errorMissing": "Fill in the username and password."
+    "errorMissing": "Fill in the username and password.",
+    "insecureServer": "No padlock (http://) and outside your home network: your password is sent in the clear. Use https://."
   },
   "nav": {
     "openMenu": "Open menu",

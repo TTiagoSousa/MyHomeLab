@@ -1,6 +1,6 @@
 const { withAndroidManifest, withAppBuildGradle, withGradleProperties } = require('expo/config-plugins');
 
-// Servidores na LAN por http (ex.: http://192.168.1.60) e só as arquiteturas pedidas (para o
+// Servidores na LAN por http (ex.: http://192.168.1.60; o login avisa quando é http:// fora da rede de casa) e só as arquiteturas pedidas (para o
 // APK não levar as bibliotecas de x86 que nenhum telemóvel usa).
 //
 // CMake 3.31: o ninja do 3.22 (o de origem) recusa caminhos com mais de 260 caracteres no

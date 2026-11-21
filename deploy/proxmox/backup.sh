@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Dump da base de dados para /var/backups/myhomelab, comprimido, mantendo 14 dias.
-# Corre pelo cron (/etc/cron.d/myhomelab-backup); pode correr-se à mão.
+# Corre pelo cron (/etc/cron.d/myhomelab-backup), a partir da cópia do root em
+# /usr/local/lib/myhomelab; pode correr-se à mão.
 #
 # Repor:  gunzip -c <ficheiro> | runuser -u postgres -- psql -d myhomelab
 set -euo pipefail

@@ -17,6 +17,8 @@ export interface ServerEntry {
   sshUser: string | null;
   sshPort: number;
   sshPublicKey: string | null;
+  sshHostKey: string | null;
+  sshHostKeyAt: string | null;
 }
 
 export interface ServerPayload {

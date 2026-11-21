@@ -16,8 +16,11 @@ import { KEYS_FILE } from '../backup/helpers/instanceBackup';
  *   node dist/src/cli/backup-tool.js import <backup.zip> <chaves.env>
  *       (repõe os dados no DATABASE_URL e copia as chaves do backup para <chaves.env>)
  *   node dist/src/cli/backup-tool.js merge-env <chaves.env> <myhomelab.env>
- *       (troca ou acrescenta no .env as chaves que vêm no backup)
+ *       (troca ou acrescenta no .env as chaves que vêm no backup; o restore.sh já não a
+ *       usa: junta ele as chaves, só as conhecidas e com valores que a shell não expande,
+ *       porque o root lê o .env com `source`)
  *
+ * O restore.sh corre o check e o import como o utilizador da app, não como root.
  * A password do .zip vem em MYHOMELAB_BACKUP_PASSWORD.
  */
 const KEY_LINE = /^([A-Z][A-Z0-9_]*)=(.*)$/;

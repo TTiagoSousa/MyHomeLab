@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
-# Funções partilhadas pelo install.sh, update.sh e config.sh. Corre dentro do CT,
-# como root. Não se executa sozinho: faz-se `source`.
+# Funções partilhadas pelo install.sh, update.sh, restore.sh, backup.sh e config.sh.
+# Corre dentro do CT, como root. Não se executa sozinho: faz-se `source`.
 
 # Usadas pelos scripts que fazem source deste ficheiro.
 # shellcheck disable=SC2034
 APP_USER="${APP_USER:-myhomelab}"
+# A pasta do repo. A cópia do root (ROOT_LIB) traz o install.env com ela; a partir do
+# próprio repo (install.sh, ou um update.sh antigo a passar para o novo) é a de cima.
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -z "${APP_DIR:-}" ]; then
+  if [ -f "$LIB_DIR/install.env" ]; then
+    # shellcheck source=/dev/null
+    . "$LIB_DIR/install.env"
+  elif [ -d "$LIB_DIR/../../.git" ]; then
+    APP_DIR="$(cd "$LIB_DIR/../.." && pwd)"
+  fi
+fi
 APP_DIR="${APP_DIR:-/opt/myhomelab}"
 APP_HOME="/var/lib/myhomelab"
 ENV_FILE="${ENV_FILE:-/etc/myhomelab/myhomelab.env}"
@@ -14,14 +25,48 @@ BACKUP_DIR="/var/backups/myhomelab"
 DB_NAME="myhomelab"
 DB_USER="myhomelab"
 BACKEND_PORT=3000
-# Where the app asks for updates and reads their progress (see configure_updater).
-UPDATES_DIR="$APP_HOME/updates"
+# Where the app asks for updates and restores and reads their progress (see
+# configure_updater). The parent belongs to root: the app user owns $APP_HOME and could
+# swap a folder in there for one of its own.
+#   requests/  the app user writes the requests here, and nothing else
+#   state/     root writes the status, the logs and the lock; the app only reads them
+UPDATES_DIR="/var/lib/myhomelab-updates"
+REQUESTS_DIR="$UPDATES_DIR/requests"
+STATE_DIR="$UPDATES_DIR/state"
+# Older versions kept all of it in one folder of the app user.
+LEGACY_UPDATES_DIR="$APP_HOME/updates"
+# The scripts root runs (systemd units, cron, /usr/bin/myhomelab-*) are a copy owned by
+# root — never the files in $APP_DIR, which the app user (and whatever runs as it, the
+# backend or an npm postinstall) can change.
+ROOT_LIB="/usr/local/lib/myhomelab"
+ROOT_SCRIPTS=(lib.sh update.sh restore.sh backup.sh config.sh)
+# What the configure step of myhomelab-update rewrites; saved before and put back by the
+# rollback (snapshot_system / restore_system).
+SYSTEM_PATHS=(
+  "/etc/systemd/system/${SERVICE}.service"
+  /etc/systemd/system/myhomelab-updater.path
+  /etc/systemd/system/myhomelab-updater.service
+  /etc/systemd/system/myhomelab-restore.path
+  /etc/systemd/system/myhomelab-restore.service
+  /etc/systemd/system/postgresql@.service.d/myhomelab.conf
+  /etc/nginx/sites-available/myhomelab
+  /etc/nginx/snippets/myhomelab-headers.conf
+  /etc/cron.d/myhomelab-backup
+  /usr/bin/myhomelab-update
+  /usr/bin/myhomelab-config
+  /usr/bin/myhomelab-restore
+  "$ROOT_LIB"
+)
 
 msg()  { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!!\033[0m %s\n' "$*" >&2; }
 die()  { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
 
 require_root() { [ "$(id -u)" -eq 0 ] || die "Run this as root."; }
+
+# Um ficheiro normal e não um atalho: nas pastas do utilizador da app, um nome pode ser
+# um symlink para um ficheiro do sistema.
+regular_file() { [ -f "$1" ] && [ ! -L "$1" ]; }
 
 # Corre um comando como o utilizador da app, na pasta do repo, com o HOME dele (é
 # lá que fica a cache do npm — fora do repo).
@@ -38,6 +83,107 @@ load_env() {
   . "$ENV_FILE"
   set +a
 }
+
+# --- pastas dos pedidos e do estado ------------------------------------------------
+
+# Cria (ou corrige, numa instalação antiga) as pastas dos pedidos e do estado. O
+# $UPDATES_DIR é do root, por isso o utilizador da app não consegue pôr lá nomes seus.
+ensure_update_dirs() {
+  mkdir -p "$UPDATES_DIR" "$REQUESTS_DIR" "$STATE_DIR"
+  chown root:root "$UPDATES_DIR"
+  chmod 755 "$UPDATES_DIR"
+  chown "$APP_USER:$APP_USER" "$REQUESTS_DIR"
+  chmod 750 "$REQUESTS_DIR"
+  chown root:"$APP_USER" "$STATE_DIR"
+  chmod 750 "$STATE_DIR"
+}
+
+# write_state_file NAME < conteúdo — escreve $STATE_DIR/NAME de forma atómica (mktemp
+# na própria pasta e mv), legível pelo backend.
+write_state_file() {
+  local tmp
+  tmp="$(mktemp "$STATE_DIR/.tmp.XXXXXX")"
+  cat > "$tmp"
+  chgrp "$APP_USER" "$tmp"
+  chmod 640 "$tmp"
+  mv -f "$tmp" "$STATE_DIR/$1"
+}
+
+# start_state_log NAME — começa $STATE_DIR/NAME vazio e manda para lá (e para o
+# terminal) todo o output a partir daqui.
+start_state_log() {
+  write_state_file "$1" < /dev/null
+  exec > >(tee -a "$STATE_DIR/$1") 2>&1
+}
+
+# --- a cópia dos scripts do root ---------------------------------------------------
+
+# stage_root_scripts SRC DEST — copia os scripts de SRC (uma pasta do repo, do
+# utilizador da app) para DEST, uma pasta nova só do root. Os ficheiros são lidos como o
+# utilizador da app: um symlink lá dentro não faz o root copiar um ficheiro do sistema.
+stage_root_scripts() {
+  local src="$1" dest="$2" file
+  mkdir -p "$dest"
+  chown root:root "$dest"
+  chmod 755 "$dest"
+  for file in "${ROOT_SCRIPTS[@]}"; do
+    if ! as_app test -f "$src/$file"; then
+      case "$file" in
+        lib.sh|update.sh) warn "Missing $src/$file."; return 1 ;;
+        *) continue ;;
+      esac
+    fi
+    as_app cat "$src/$file" > "$dest/$file" || return 1
+    chown root:root "$dest/$file"
+    if [ "$file" = lib.sh ]; then chmod 644 "$dest/$file"; else chmod 755 "$dest/$file"; fi
+  done
+  printf 'APP_DIR=%q\n' "$APP_DIR" > "$dest/install.env"
+  chmod 644 "$dest/install.env"
+}
+
+# install_root_scripts STAGED — põe em $ROOT_LIB os scripts já copiados por
+# stage_root_scripts (pasta do root).
+install_root_scripts() {
+  local tmp
+  msg "Installing the maintenance scripts in $ROOT_LIB…"
+  mkdir -p "$(dirname "$ROOT_LIB")"
+  tmp="$(mktemp -d "${ROOT_LIB}.new.XXXXXX")"
+  cp -a "$1/." "$tmp/"
+  chown -R root:root "$tmp"
+  chmod 755 "$tmp"
+  rm -rf "$ROOT_LIB"
+  mv "$tmp" "$ROOT_LIB"
+}
+
+# refresh_root_scripts SRC — as duas de cima de seguida (install.sh).
+refresh_root_scripts() {
+  local work
+  work="$(mktemp -d /var/tmp/myhomelab-scripts.XXXXXX)"
+  stage_root_scripts "$1" "$work/scripts" || return 1
+  install_root_scripts "$work/scripts" || return 1
+  rm -rf "$work"
+}
+
+# snapshot_system FILE — guarda num tar o que o passo configure vai reescrever.
+snapshot_system() {
+  local existing=() path
+  for path in "${SYSTEM_PATHS[@]}"; do
+    if [ -e "$path" ] || [ -L "$path" ]; then existing+=("$path"); fi
+  done
+  tar -cPpf "$1" -T /dev/null "${existing[@]}"
+}
+
+# restore_system FILE — repõe o que snapshot_system guardou (e apaga o que não existia).
+restore_system() {
+  msg "Putting back the previous services, nginx site and scripts…"
+  rm -rf "${SYSTEM_PATHS[@]}"
+  tar -xPpf "$1" || return 1
+  systemctl daemon-reload
+  systemctl restart myhomelab-updater.path myhomelab-restore.path 2>/dev/null || true
+  if nginx -t >/dev/null 2>&1; then systemctl reload nginx; else warn "nginx -t fails after the rollback."; return 1; fi
+}
+
+# --- build, base de dados e serviço --------------------------------------------------
 
 # Dependências, shared, backend e frontend. O frontend é compilado para a API em
 # /api, que o nginx encaminha para o backend.
@@ -202,8 +348,10 @@ systemctl enable "$SERVICE" >/dev/null
 # utilizador da app) ou num token guardado em Definições → IA. Não falha a instalação.
 install_claude_code() {
   msg "Installing Claude Code…"
-  if npm install -g --no-fund --no-audit @anthropic-ai/claude-code >/dev/null 2>&1; then
-    msg "Claude Code $(claude --version 2>/dev/null | head -1)"
+  # Em / e não no repo: o npm, como root, leria o .npmrc da pasta onde está, e o repo é
+  # do utilizador da app.
+  if ( cd / && npm install -g --no-fund --no-audit @anthropic-ai/claude-code >/dev/null 2>&1 ); then
+    msg "Claude Code $(cd / && claude --version 2>/dev/null | head -1)"
   else
     warn "Claude Code could not be installed now (the agents need it). Try: npm install -g @anthropic-ai/claude-code"
   fi
@@ -211,6 +359,16 @@ install_claude_code() {
 
 configure_nginx() {
 msg "Configuring nginx…"
+# A location with its own add_header does not inherit the server's, so the security
+# headers live in a snippet included in the server and in each of those locations.
+mkdir -p /etc/nginx/snippets
+cat > /etc/nginx/snippets/myhomelab-headers.conf <<'EOF'
+# Written by MyHomeLab (deploy/proxmox/lib.sh) — myhomelab-update overwrites it.
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header Content-Security-Policy "frame-ancestors 'self'" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+EOF
 cat > /etc/nginx/sites-available/myhomelab <<EOF
 # The protocol the browser really used: Nginx Proxy Manager terminates https and
 # sends X-Forwarded-Proto; opened by IP there is no header and it is this nginx's.
@@ -228,6 +386,9 @@ server {
     root ${WEB_ROOT};
     index index.html;
 
+    server_tokens off;
+    include /etc/nginx/snippets/myhomelab-headers.conf;
+
     # Uploads grandes (exports de dados) passam pelo backend.
     client_max_body_size 300m;
 
@@ -239,6 +400,9 @@ server {
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$myhomelab_proto;
         proxy_set_header Connection "";
+        # nosniff already comes from the snippet (some routes set it too: no duplicate).
+        proxy_hide_header X-Content-Type-Options;
+        proxy_hide_header X-Powered-By;
 
         # O estado ao vivo dos agentes é SSE: sem buffering e com ligação longa,
         # senão a página fica em "Tempo real: em baixo".
@@ -250,12 +414,19 @@ server {
     # Ficheiros com hash no nome: podem ficar em cache para sempre.
     location /assets/ {
         expires 1y;
+        include /etc/nginx/snippets/myhomelab-headers.conf;
         add_header Cache-Control "public, immutable";
         try_files \$uri =404;
     }
 
-    location = /env-config.js { add_header Cache-Control "no-store"; }
-    location = /index.html   { add_header Cache-Control "no-cache"; }
+    location = /env-config.js {
+        include /etc/nginx/snippets/myhomelab-headers.conf;
+        add_header Cache-Control "no-store";
+    }
+    location = /index.html {
+        include /etc/nginx/snippets/myhomelab-headers.conf;
+        add_header Cache-Control "no-cache";
+    }
 
     # SPA: qualquer rota volta ao index.html.
     location / {
@@ -265,26 +436,27 @@ server {
 EOF
 ln -sf /etc/nginx/sites-available/myhomelab /etc/nginx/sites-enabled/myhomelab
 rm -f /etc/nginx/sites-enabled/default
-nginx -t >/dev/null 2>&1 || { nginx -t; die "Invalid nginx configuration."; }
+# return and not die: in myhomelab-update this runs inside a step, and the failure has
+# to reach the rollback.
+nginx -t >/dev/null 2>&1 || { nginx -t; warn "Invalid nginx configuration."; return 1; }
 systemctl enable --now nginx >/dev/null
 systemctl reload nginx
 }
 
-# In-app updates. The backend runs unprivileged and only writes $UPDATES_DIR/request
-# with the version to install; this .path unit (root) sees the file appear and runs
-# update.sh, which writes its progress to status.json and its output to update.log.
+# In-app updates. The backend runs unprivileged and only writes
+# $REQUESTS_DIR/request with the version to install; this .path unit (root) sees the
+# file appear and runs update.sh — the root copy in $ROOT_LIB — which writes its
+# progress to $STATE_DIR/status.json and its output to $STATE_DIR/update.log.
 configure_updater() {
   msg "Configuring in-app updates…"
-  mkdir -p "$UPDATES_DIR"
-  chown "$APP_USER:$APP_USER" "$UPDATES_DIR"
-  chmod 755 "$UPDATES_DIR"
+  ensure_update_dirs
 
   cat > /etc/systemd/system/myhomelab-updater.path <<EOF
 [Unit]
 Description=MyHomeLab — watch for update requests from the app
 
 [Path]
-PathExists=${UPDATES_DIR}/request
+PathExists=${REQUESTS_DIR}/request
 Unit=myhomelab-updater.service
 
 [Install]
@@ -302,7 +474,7 @@ Environment=LANG=C.UTF-8 LC_ALL=C.UTF-8
 # (ex: o npm ci), o script continua e faz rollback em vez de ser parado a meio.
 OOMScoreAdjust=-900
 OOMPolicy=continue
-ExecStart=/usr/bin/bash ${APP_DIR}/deploy/proxmox/update.sh --from-request
+ExecStart=/usr/bin/bash ${ROOT_LIB}/update.sh --from-request
 EOF
 
   # A reposição de um backup pedida pela app (Admin → Backup): o mesmo mecanismo.
@@ -311,7 +483,7 @@ EOF
 Description=MyHomeLab — watch for backup restore requests from the app
 
 [Path]
-PathExists=${UPDATES_DIR}/restore-request
+PathExists=${REQUESTS_DIR}/restore-request
 Unit=myhomelab-restore.service
 
 [Install]
@@ -327,21 +499,33 @@ Type=oneshot
 Environment=LANG=C.UTF-8 LC_ALL=C.UTF-8
 OOMScoreAdjust=-900
 OOMPolicy=continue
-ExecStart=/usr/bin/bash ${APP_DIR}/deploy/proxmox/restore.sh --from-request
+ExecStart=/usr/bin/bash ${ROOT_LIB}/restore.sh --from-request
 EOF
 
   systemctl daemon-reload
-  systemctl enable --now myhomelab-updater.path >/dev/null 2>&1
-  systemctl enable --now myhomelab-restore.path >/dev/null 2>&1
+  systemctl enable myhomelab-updater.path >/dev/null 2>&1
+  systemctl enable myhomelab-restore.path >/dev/null 2>&1
+  # restart and not just --now: an existing unit has to start watching the new path.
+  systemctl restart myhomelab-updater.path myhomelab-restore.path >/dev/null 2>&1
 }
 
-# myhomelab-update / myhomelab-config. In /usr/bin and not /usr/local/bin: the shell
-# opened by `pct enter` / `pct exec` does not always have /usr/local/bin in its PATH.
+# Dump diário da base de dados às 03:30 (guarda 14 dias), pela cópia do root do backup.sh.
+configure_backup_cron() {
+  mkdir -p "$BACKUP_DIR"
+  chmod 700 "$BACKUP_DIR"
+  cat > /etc/cron.d/myhomelab-backup <<EOF
+# Dump diário da base de dados às 03:30 (guarda 14 dias). Um snapshot do container
+# com o Postgres a correr nem sempre é consistente; o dump é.
+30 3 * * * root ${ROOT_LIB}/backup.sh >/var/log/myhomelab-backup.log 2>&1
+EOF
+}
+
+# myhomelab-update / myhomelab-config / myhomelab-restore, pointing at the root copy.
+# In /usr/bin and not /usr/local/bin: the shell opened by `pct enter` / `pct exec` does
+# not always have /usr/local/bin in its PATH.
 install_commands() {
-  local dir; dir="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-  chmod +x "$dir"/*.sh
-  ln -sf "$dir/update.sh" /usr/bin/myhomelab-update
-  ln -sf "$dir/config.sh" /usr/bin/myhomelab-config
-  ln -sf "$dir/restore.sh" /usr/bin/myhomelab-restore
+  ln -sfn "$ROOT_LIB/update.sh" /usr/bin/myhomelab-update
+  ln -sfn "$ROOT_LIB/config.sh" /usr/bin/myhomelab-config
+  ln -sfn "$ROOT_LIB/restore.sh" /usr/bin/myhomelab-restore
   rm -f /usr/local/bin/myhomelab-update /usr/local/bin/myhomelab-config
 }

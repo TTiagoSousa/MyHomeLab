@@ -47,4 +47,21 @@ export class PrismaUserRepository implements UserRepository {
   async count(): Promise<number> {
     return this.prisma.user.count();
   }
+
+  /** O que o JwtStrategy confirma a cada pedido: que existe, o role e o tokenVersion. */
+  async findSessionById(
+    id: string,
+  ): Promise<Pick<User, 'id' | 'username' | 'role' | 'tokenVersion'> | null> {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true, username: true, role: true, tokenVersion: true },
+    });
+  }
+
+  async incrementTokenVersion(id: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { id },
+      data: { tokenVersion: { increment: 1 } },
+    });
+  }
 }

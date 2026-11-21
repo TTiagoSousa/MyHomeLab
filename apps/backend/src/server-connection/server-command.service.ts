@@ -17,6 +17,8 @@ import { classifyCommand } from './helpers/commandSafety';
 import { generateSshKeys, sshExec } from './helpers/sshExec';
 import { INVENTORY_SCRIPT } from './helpers/inventoryScript';
 import { snapshotBeforeCommand } from './helpers/snapshotBeforeCommand';
+import { verifySshHostKey } from './helpers/verifySshHostKey';
+import { PrismaServerHostKeyRepository } from './repositories/prisma/prisma-server-host-key-repository';
 import { DocsService } from 'src/docs/docs.service';
 
 export interface CommandRequest {
@@ -52,6 +54,7 @@ export class ServerCommandService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly docs: DocsService,
+    private readonly hostKeys: PrismaServerHostKeyRepository,
   ) {}
 
   registerUpdateRunner(runner: UpdateRunner) {
@@ -100,6 +103,15 @@ export class ServerCommandService {
       where: { id: server.id },
       data: { sshPrivateKey: null, sshPublicKey: null },
     });
+  }
+
+  /**
+   * Esquece a chave guardada do servidor: a próxima ligação guarda a que ele
+   * apresentar (para depois de reinstalar o servidor).
+   */
+  async resetSshHostKey(userId: string, serverId: string) {
+    const server = await this.findServer(userId, serverId);
+    await this.hostKeys.clear(server.id);
   }
 
   /** Entra e corre `hostname` — não fica no registo. */
@@ -382,6 +394,8 @@ export class ServerCommandService {
       port: server.sshPort,
       username: server.sshUser,
       privateKey: decryptToken(server.sshPrivateKey),
+      verifyHostKey: (fingerprint: string) =>
+        verifySshHostKey(server, fingerprint, this.hostKeys),
     };
   }
 

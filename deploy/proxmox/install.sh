@@ -11,7 +11,9 @@
 # Variáveis (todas opcionais):
 #   APP_URL         endereço por onde se abre a app (omissão: http://<IP do CT>)
 #   ADMIN_USERNAME  primeiro utilizador, fica ADMIN (omissão: admin)
-#   ADMIN_PASSWORD  password dele (omissão: admin — trocar depois de instalar)
+#   ADMIN_PASSWORD  password dele (omissão: uma aleatória, mostrada uma vez no fim)
+#   ADMIN_PASSWORD_FILE  em vez da de cima, um ficheiro com a password, apagado depois
+#                   de lido (o ct-create.sh usa-o para não a pôr na linha de comandos)
 #   NODE_MAJOR      versão do Node (omissão: 22)
 set -euo pipefail
 
@@ -40,7 +42,12 @@ ip_address() { hostname -I 2>/dev/null | awk '{print $1}'; }
 APP_URL="${APP_URL:-http://$(ip_address)}"
 APP_URL="${APP_URL%/}"
 ADMIN_USERNAME="${ADMIN_USERNAME:-admin}"
-ADMIN_PASSWORD="${ADMIN_PASSWORD:-admin}"
+ADMIN_PASSWORD="${ADMIN_PASSWORD:-}"
+if [ -n "${ADMIN_PASSWORD_FILE:-}" ]; then
+  [ -f "$ADMIN_PASSWORD_FILE" ] || die "ADMIN_PASSWORD_FILE not found: $ADMIN_PASSWORD_FILE"
+  ADMIN_PASSWORD="$(cat "$ADMIN_PASSWORD_FILE")"
+  rm -f "$ADMIN_PASSWORD_FILE"
+fi
 
 random_secret() { openssl rand -base64 "$1" | tr -d '\n'; }
 
@@ -165,6 +172,9 @@ publish_frontend
 
 # --- serviço systemd e nginx (lib.sh) -----------------------------------------------
 
+# Os scripts que o root corre (units, cron, myhomelab-*) vão para uma pasta só dele: o
+# repo é do utilizador da app.
+refresh_root_scripts "$SCRIPT_DIR"
 configure_service
 configure_updater
 restart_backend
@@ -172,29 +182,30 @@ configure_nginx
 
 # --- comandos de manutenção e backups ------------------------------------------------
 
-msg "Installing the myhomelab-update and myhomelab-config commands…"
+msg "Installing the myhomelab-update, myhomelab-config and myhomelab-restore commands…"
 install_commands
-
-mkdir -p "$BACKUP_DIR"
-chmod 700 "$BACKUP_DIR"
-cat > /etc/cron.d/myhomelab-backup <<EOF
-# Dump diário da base de dados às 03:30 (guarda 14 dias). Um snapshot do container
-# com o Postgres a correr nem sempre é consistente; o dump é.
-30 3 * * * root ${SCRIPT_DIR}/backup.sh >/var/log/myhomelab-backup.log 2>&1
-EOF
+configure_backup_cron
 systemctl enable --now cron >/dev/null
+# Instalação antiga: os pedidos e o estado passaram para $UPDATES_DIR.
+if [ -d "$LEGACY_UPDATES_DIR" ] && [ ! -L "$LEGACY_UPDATES_DIR" ]; then
+  as_app rm -rf "$LEGACY_UPDATES_DIR" || true
+fi
 
 # --- primeiro utilizador ------------------------------------------------------------
 
-# Direto na base de dados (create-admin.cjs) e não por POST /auth/register: a omissão
-# é admin/admin e o registo exige 8 caracteres de password.
+# Direto na base de dados (create-admin.cjs) e não por POST /auth/register: quem instala
+# pode escolher uma password com menos de 8 caracteres, que o registo recusa. Sem
+# password escolhida, é gerada uma aleatória (mostrada uma vez no fim e guardada só em
+# $CREDS_FILE).
 USERS="$(runuser -u postgres -- psql -d "$DB_NAME" -tAc 'SELECT count(*) FROM "User"')"
 ADMIN_CREATED=""
 if [ "$USERS" = "0" ]; then
   msg "Creating the ${ADMIN_USERNAME} account (ADMIN)…"
+  [ -n "$ADMIN_PASSWORD" ] || ADMIN_PASSWORD="$(random_secret 15 | tr '+/' '-_')"
   load_env
-  if ( cd "$APP_DIR/apps/backend" && as_app env DATABASE_URL="$DATABASE_URL" \
-        ADMIN_USERNAME="$ADMIN_USERNAME" ADMIN_PASSWORD="$ADMIN_PASSWORD" \
+  # A password vai pelo stdin e não pela linha de comandos (que o ps mostra).
+  if printf '%s' "$ADMIN_PASSWORD" | ( cd "$APP_DIR/apps/backend" && as_app env -u ADMIN_PASSWORD \
+        DATABASE_URL="$DATABASE_URL" ADMIN_USERNAME="$ADMIN_USERNAME" \
         node "$SCRIPT_DIR/create-admin.cjs" ); then
     ADMIN_CREATED="yes"
   else
@@ -233,7 +244,8 @@ $( [ -n "$ADMIN_CREATED" ] && printf '  User:           %s\n  Password:       %s
   Logs:           journalctl -u ${SERVICE} -f
   Backups:        ${BACKUP_DIR}   (daily at 03:30)
 
-$( [ -n "$ADMIN_CREATED" ] && [ "$ADMIN_PASSWORD" = "admin" ] && printf '  \033[1;33m⚠ The admin password is "admin". Change it before exposing the app to the internet.\033[0m\n\n')
+$( [ -n "$ADMIN_CREATED" ] && printf '  \033[1;33mWrite the password down: it is not shown again (a copy stays in %s).\033[0m\n\n' "$CREDS_FILE")
+$( [ -n "$ADMIN_CREATED" ] && [ "${#ADMIN_PASSWORD}" -lt 12 ] && printf '  \033[1;33m⚠ The admin password is weak. Change it in the app before exposing it to the internet.\033[0m\n\n')
   Still to configure (myhomelab-config):
     - GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET for Gmail and Tasks;
       redirect URI to register with Google: ${APP_URL}/api/connected-account/google/callback

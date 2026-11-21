@@ -96,6 +96,8 @@ model User {
   username       String   @unique
   hashedPassword String
   role           Role     @default(USER)
+  // Sobe ao sair ou mudar a password: as sessões emitidas antes deixam de valer.
+  tokenVersion   Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -638,6 +640,10 @@ model ServerConnection {
   sshPort       Int        @default(22)
   sshPrivateKey String?    @db.Text // cifrada com TOKEN_ENCRYPTION_KEY
   sshPublicKey  String?    @db.Text
+  // Impressão digital (SHA256) da chave do servidor, guardada no primeiro contacto.
+  // Se mudar, o SSH recusa até o utilizador voltar a confiar.
+  sshHostKey    String?
+  sshHostKeyAt  DateTime?
 
   serviceMonitors ServiceMonitor[]
   diskReadings    DiskReading[]

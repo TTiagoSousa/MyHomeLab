@@ -5,6 +5,7 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { registerFirstUser } from './helpers/registerFirstUser';
 import { validateUser } from './helpers/validateUser';
 import { loginUser } from './helpers/loginUser';
+import { logoutUser } from './helpers/logoutUser';
 import { Role } from 'src/generated/prisma/client/client';
 
 @Injectable()
@@ -22,7 +23,16 @@ export class AuthService {
     return validateUser(username, password, this.userRepository);
   }
 
-  async login(user: { id: string; username: string; role: Role }) {
+  login(user: {
+    id: string;
+    username: string;
+    role: Role;
+    tokenVersion: number;
+  }) {
     return loginUser(user, this.jwt);
+  }
+
+  async logout(userId: string) {
+    return logoutUser(userId, this.userRepository);
   }
 }

@@ -1,5 +1,6 @@
 import { PrismaEmailRuleRepository } from '../repositories/prisma/prisma-email-rule-repository';
 import { CreateEmailRuleDto } from '../dto/create-email-rule.dto';
+import { assertSafePatterns } from './assertSafePatterns';
 
 function buildFallbackName(dto: CreateEmailRuleDto): string {
   if (dto.name && dto.name.trim() !== '') return dto.name.trim();
@@ -20,6 +21,7 @@ export async function createEmailRule(
   dto: CreateEmailRuleDto,
   emailRuleRepository: PrismaEmailRuleRepository,
 ) {
+  assertSafePatterns(dto);
   const order = await emailRuleRepository.countByAccount(accountId);
   return emailRuleRepository.create({
     ...dto,

@@ -1,15 +1,25 @@
 // Cria o primeiro utilizador (ADMIN) diretamente na base de dados. O install.sh corre
-// isto em vez de chamar POST /auth/register porque a omissão é admin/admin e o registo
-// exige 8 caracteres de password. A password vai cifrada com bcrypt, tal como a app faz.
+// isto em vez de chamar POST /auth/register porque quem instala pode escolher uma
+// password com menos de 8 caracteres, que o registo recusa. A password vai cifrada com
+// bcrypt, tal como a app faz.
 //
 // Só cria se ainda não houver utilizadores. Corre a partir de apps/backend, para o
-// require encontrar o bcrypt e o pg do projeto:
-//   DATABASE_URL=… ADMIN_USERNAME=admin ADMIN_PASSWORD=admin node create-admin.cjs
+// require encontrar o bcrypt e o pg do projeto. A password vem no stdin (o install.sh
+// manda-a assim, para não aparecer no ps) ou em ADMIN_PASSWORD:
+//   printf '%s' "$PASSWORD" | DATABASE_URL=… ADMIN_USERNAME=admin node create-admin.cjs
 const bcrypt = require('bcrypt');
 const { Client } = require('pg');
 
+async function readStdin() {
+  if (process.stdin.isTTY) return '';
+  const chunks = [];
+  for await (const chunk of process.stdin) chunks.push(chunk);
+  return Buffer.concat(chunks).toString('utf8');
+}
+
 async function main() {
-  const { DATABASE_URL, ADMIN_USERNAME, ADMIN_PASSWORD } = process.env;
+  const { DATABASE_URL, ADMIN_USERNAME } = process.env;
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || (await readStdin());
   if (!DATABASE_URL || !ADMIN_USERNAME || !ADMIN_PASSWORD) {
     throw new Error('Faltam DATABASE_URL, ADMIN_USERNAME ou ADMIN_PASSWORD.');
   }

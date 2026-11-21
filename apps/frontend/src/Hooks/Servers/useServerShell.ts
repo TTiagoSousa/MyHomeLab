@@ -39,6 +39,20 @@ export const useServerShell = (serverId: string | undefined, onChanged: () => vo
     }
   };
 
+  const resetHostKey = async () => {
+    if (!serverId) return;
+    setBusy(true);
+    try {
+      await http.post(End_Points.Server_Ssh_Host_Key_Reset_Endpoint(serverId), {}, { withCredentials: true });
+      setTest(null);
+      onChanged();
+    } catch (error: any) {
+      setAlert({ open: true, message: errorMessage(error), type: 'error' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const runTest = async () => {
     if (!serverId) return;
     setBusy(true);
@@ -52,5 +66,5 @@ export const useServerShell = (serverId: string | undefined, onChanged: () => vo
     }
   };
 
-  return { busy, test, enable, disable, runTest };
+  return { busy, test, enable, disable, resetHostKey, runTest };
 };

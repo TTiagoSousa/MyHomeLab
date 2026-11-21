@@ -4,16 +4,19 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { StatusLogger } from './system/helpers/statusLogger';
+import { trustedProxies } from './utils/trustedProxies';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: new StatusLogger(),
   });
 
-  // No container os pedidos chegam pelo nginx local; confiar só nele (loopback) faz o
+  // No container os pedidos chegam pelo nginx local; confiar nele (loopback) faz o
   // req.secure refletir o https do Nginx Proxy Manager, que decide o cookie seguro.
-  // Ligações diretas de outros IPs continuam a não poder fingir o protocolo.
-  app.set('trust proxy', 'loopback');
+  // O TRUSTED_PROXIES junta o próprio NPM: sem ele o req.ip era o do NPM para todos e
+  // o travão do login bloqueava toda a gente. Ligações diretas de outros IPs
+  // continuam a não poder fingir o protocolo nem o endereço.
+  app.set('trust proxy', trustedProxies());
 
   app.use(cookieParser());
 

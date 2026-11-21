@@ -29,7 +29,11 @@ host creates a Debian 13 container and installs everything inside it.
 
 nginx serves the frontend and proxies `/api/` to the backend, stripping the prefix, with
 buffering disabled and a long read timeout so the live agent stream (SSE) works.
-`index.html` is never cached; hashed assets are cached immutably.
+`index.html` is never cached; hashed assets are cached immutably. Every response carries
+`X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Content-Security-Policy:
+frame-ancestors 'self'` and `Referrer-Policy: strict-origin-when-cross-origin` (snippet
+`/etc/nginx/snippets/myhomelab-headers.conf`, included in the server and in every location
+with its own `add_header`), and `server_tokens` is off.
 
 ## Scripts (`deploy/proxmox/`)
 
@@ -37,10 +41,16 @@ buffering disabled and a long read timeout so the live agent stream (SSE) works.
 |---|---|---|
 | `ct-create.sh` | Proxmox host | Asks for the settings, creates the CT, clones the repo and runs `install.sh` inside it |
 | `install.sh` | inside the CT | Packages, Node, PostgreSQL, environment file and secrets, build, migrations, systemd units, nginx, backup cron, first admin user. Safe to re-run: existing config, secrets and data are kept |
-| `update.sh` (`myhomelab-update`) | inside the CT | Fetch, checkout, `npm ci`, build, database dump, migrations, publish frontend, rewrite units and nginx, restart — with rollback |
+| `update.sh` (`myhomelab-update`) | inside the CT | Fetch, checkout, `npm ci`, build, database dump, migrations, publish frontend, rewrite units, nginx, cron and the root copy of the scripts, restart — with rollback |
 | `backup.sh` | cron, 03:30 | `pg_dump` to `/var/backups/myhomelab`, 14 days of retention |
 | `restore.sh` (`myhomelab-restore`) | inside the CT | Restores a full MyHomeLab backup (`.zip`), with rollback; also run by `myhomelab-restore.path` when a restore is requested from the app |
 | `config.sh` (`myhomelab-config`) | inside the CT | Menu to edit the settings; `--raw` opens the file in an editor |
+
+The repository in `/opt/myhomelab` belongs to the `myhomelab` user (`npm ci` and the backend
+run as it), so root never runs the scripts from there. `install.sh` and every update copy
+`lib.sh`, `update.sh`, `restore.sh`, `backup.sh` and `config.sh` to `/usr/local/lib/myhomelab`
+(root:root, 755/644); the systemd units, the backup cron and `/usr/bin/myhomelab-*` point at
+that copy.
 
 ## 1. Create and install
 
@@ -56,7 +66,8 @@ A menu offers:
   RAM, DHCP, host DNS, app address `http://<CT IP>`, branch `main`.
 - **Advanced settings** — CT id and hostname, storages, disk/CPU/RAM/swap, bridge, DHCP
   or static IP (with gateway and optional VLAN), DNS, start on boot, the app address (CT IP
-  or your own domain), the admin username/password, and the branch.
+  or your own domain), the admin username/password, and the branch (and a token, only for a
+  private repository: it is used for the clone and not kept in the CT).
 
 A review screen lets you create, edit or cancel before anything is created.
 
@@ -69,8 +80,10 @@ NONINTERACTIVE=1 NET_MODE=static IP=192.168.1.50/24 GATEWAY=192.168.1.1 \
   bash -c "$(curl -fsSL https://raw.githubusercontent.com/TTiagoSousa/MyHomeLab/main/deploy/proxmox/ct-create.sh)"
 ```
 
-**The initial user is `admin` / `admin` unless you chose otherwise. Change the password
-before exposing the app.** After the first user, public registration is closed; new
+**The initial user is `admin` with a random password**, shown once at the end (a copy stays
+in `/root/myhomelab-credentials.txt` inside the CT, root only), unless you chose one. A chosen
+password goes into the CT through a temporary file (mode 600, deleted right away), never on
+a command line. After the first user, public registration is closed; new
 accounts are created in the Admin panel.
 
 ## 2. Domain, TLS and reverse proxy
@@ -86,6 +99,14 @@ picks the reply up from the history when it is ready — but the answer only sho
 `APP_URL` must be the address users open. It is the Google OAuth return address and decides
 whether the session cookie is `secure` (HTTPS only). If you change it later, update
 `FRONTEND_URL` and `GOOGLE_OAUTH_REDIRECT_URI` with `myhomelab-config`.
+
+**Real client IP.** Requests reach the backend through the CT's own nginx, which is always
+trusted. Your reverse proxy is not, so by default every request looks like it comes from the
+proxy's IP — and with the login throttle (5 failures per IP and username in 15 minutes)
+anyone could lock a username out for everyone. Set `TRUSTED_PROXIES` to the proxy's address (comma-separated IPs or
+CIDRs, e.g. `TRUSTED_PROXIES=192.168.1.20`) with `myhomelab-config --raw`, then
+`systemctl restart myhomelab`. Only list proxies: anyone on a trusted address can claim any
+client IP through `X-Forwarded-For`.
 
 ## 3. Configure
 
@@ -136,15 +157,28 @@ the page at the end.
 How it works:
 
 1. The backend runs unprivileged. It only writes the requested version to
-   `/var/lib/myhomelab/updates/request`.
+   `/var/lib/myhomelab-updates/requests/request`.
 2. A root systemd **`.path` unit** (`myhomelab-updater.path`) notices the file and starts
-   `myhomelab-updater.service`, which runs `update.sh --from-request`.
-3. The script writes progress to `status.json` and output to `update.log` in the same
-   folder, and runs one update at a time. Steps: fetch, build, dump, migrate, publish,
-   configure, restart.
+   `myhomelab-updater.service`, which runs `/usr/local/lib/myhomelab/update.sh --from-request`.
+3. The script reads the request as the `myhomelab` user (and only if it is a regular file,
+   not a symlink), writes progress to `state/status.json` and output to `state/update.log`,
+   and runs one update at a time. Steps: fetch, build, dump, migrate, publish, configure,
+   restart. After the checkout, stage 1 copies the new version's scripts to a root-only
+   temporary folder and stage 2 runs from there; the configure step installs that copy in
+   `/usr/local/lib/myhomelab`.
 4. **Rollback**: if any step fails, it restores the database from the pre-update dump (if
-   migrations had started), checks out the previous version, rebuilds and restarts — the
+   migrations had started), checks out the previous version, rebuilds, puts back the units,
+   the nginx site, the cron and `/usr/local/lib/myhomelab` as they were, and restarts — the
    app keeps running on the version it had.
+
+`/var/lib/myhomelab-updates` belongs to root. `requests/` (myhomelab, 750) only holds the
+requests; `state/` (root:myhomelab, 750) holds the status, logs and lock, written with
+`mktemp` in that folder and `mv`, so root never writes where the app user could plant a
+symlink. Older installs move to this layout on their first update: the old `update.sh`
+(from the repository) runs the new one after the checkout, which creates the folders, copies
+itself to a root folder and carries on from there; during that update the status is also
+written to the old folder (as `myhomelab`) for the old backend, and the old
+`/var/lib/myhomelab/updates` is removed at the end.
 
 The updater is protected against the OOM killer so that, under memory pressure, the kernel
 kills the backend (restarted by the rollback) rather than the update itself.
@@ -182,7 +216,7 @@ Before migrations, the database is dumped to
 ```bash
 journalctl -u myhomelab -f                       # backend logs
 systemctl status myhomelab nginx postgresql
-/opt/myhomelab/deploy/proxmox/backup.sh          # back up now
+/usr/local/lib/myhomelab/backup.sh               # back up now
 gunzip -c /var/backups/myhomelab/<file>.sql.gz | runuser -u postgres -- psql -d myhomelab   # restore
 ```
 
@@ -212,8 +246,9 @@ password a backup cannot be restored.
 - **Restore from the app:** Admin → Backup → *Restore a backup* (file, password, type
   `REPOR`). The backend opens the zip with the password and checks it (a backup from a newer
   version than the installed one is refused), leaves it and the password in
-  `$SYSTEM_UPDATES_DIR/restore/` and writes `restore-request`; `myhomelab-restore.path` runs
-  `restore.sh --from-request` as root.
+  `$SYSTEM_UPDATES_DIR/requests/restore/` and writes `requests/restore-request`;
+  `myhomelab-restore.path` runs `restore.sh --from-request` as root, which reads them as the
+  `myhomelab` user.
 - **Restore from the console** (also how you move to a new CT: install, then restore):
 
 ```bash
@@ -222,11 +257,13 @@ myhomelab-restore /root/myhomelab-2026-11-17_030000.zip   # asks for the passwor
 
 `restore.sh` checks the zip, dumps the current database (`…-before-restore.sql.gz`) and copies
 the environment file, stops the backend, and loads the data with
-`node apps/backend/dist/src/cli/backup-tool.js import`: in one transaction, with the foreign
+`node apps/backend/dist/src/cli/backup-tool.js import` (run as the `myhomelab` user, like the
+`check` before it): in one transaction, with the foreign
 keys made deferrable while loading, it empties every table and inserts the `.jsonl` rows
 (`json_populate_recordset`; columns that no longer exist are skipped, new ones get their
 default), then resets the sequences. It then merges the keys into
-`/etc/myhomelab/myhomelab.env`, runs the migrations and starts the backend. If a step fails, it
+`/etc/myhomelab/myhomelab.env` itself — only the four known keys, and only values without
+characters the shell would expand, since root sources that file — runs the migrations and starts the backend. If a step fails, it
 puts the previous database and environment file back. Everyone signs in again afterwards. Not
 included: the Claude Code session stored on the server (sign in again in Settings → AI).
 

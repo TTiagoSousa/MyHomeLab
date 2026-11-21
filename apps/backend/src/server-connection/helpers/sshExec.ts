@@ -1,10 +1,16 @@
 import { Client, utils } from 'ssh2';
+import { sshHostKeyFingerprint } from './sshHostKeyFingerprint';
 
 export interface SshTarget {
   host: string;
   port: number;
   username: string;
   privateKey: string;
+  /**
+   * Recebe a impressão digital da chave do servidor e devolve `null` para
+   * aceitar, ou a mensagem com que a ligação é recusada.
+   */
+  verifyHostKey?: (fingerprint: string) => Promise<string | null>;
 }
 
 export interface SshResult {
@@ -37,7 +43,8 @@ function trimOutput(text: string, max: number): string {
 /**
  * Corre um comando por SSH e devolve o código de saída e o stdout+stderr juntos.
  * Ao fim do tempo, a ligação fecha e o comando conta como falhado. A chave do
- * servidor não é verificada: é a rede de casa, e o Proxmox muda de chave ao reinstalar.
+ * servidor passa pelo `target.verifyHostKey` antes de se enviar a nossa: um
+ * impostor na rede nunca chega a ver a autenticação.
  */
 export function sshExec(
   target: SshTarget,
@@ -52,6 +59,7 @@ export function sshExec(
     const client = new Client();
     let output = '';
     let settled = false;
+    let hostKeyRefusal: string | null = null;
 
     const finish = (error: Error | null, result?: SshResult) => {
       if (settled) return;
@@ -93,7 +101,8 @@ export function sshExec(
       .on('error', (error) =>
         finish(
           new Error(
-            `Não foi possível entrar por SSH em ${target.username}@${target.host}:${target.port}: ${error.message}`,
+            hostKeyRefusal ??
+              `Não foi possível entrar por SSH em ${target.username}@${target.host}:${target.port}: ${error.message}`,
           ),
         ),
       )
@@ -103,6 +112,21 @@ export function sshExec(
         username: target.username,
         privateKey: target.privateKey,
         readyTimeout: 15_000,
+        hostVerifier: (key: Buffer, verify: (valid: boolean) => void) => {
+          const check = target.verifyHostKey;
+          if (!check) return verify(true);
+          check(sshHostKeyFingerprint(key))
+            .then((refusal) => {
+              hostKeyRefusal = refusal;
+              verify(refusal === null);
+            })
+            .catch((error: unknown) => {
+              hostKeyRefusal = `Não foi possível verificar a chave SSH do servidor: ${
+                error instanceof Error ? error.message : String(error)
+              }`;
+              verify(false);
+            });
+        },
       });
   });
 }

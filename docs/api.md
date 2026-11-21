@@ -9,6 +9,14 @@ under `/api/…` and strips the prefix before proxying.
 - **Session**: `POST /auth/login` sets an httpOnly `access_token` cookie (JWT, 7 days,
   `sameSite: strict`, `secure` when served over HTTPS). Clients send it with
   `credentials: 'include'` / `withCredentials: true`.
+  The JWT carries `aud: "session"` and the user's `tokenVersion` (`ver`); every request
+  re-reads the user from the database (role included) and rejects the token if the user is
+  gone or the version changed. Logging out bumps `tokenVersion`, ending that user's sessions
+  on every device. Other JWTs signed with the same secret (the Google OAuth `state`, with
+  `aud: "google-oauth-state"`) are rejected as sessions.
+- **Login throttle**: 5 failed logins per client IP and username in 15 minutes, or 30 per
+  username from any IP in 5 minutes, return **429**. Behind a reverse proxy set
+  `TRUSTED_PROXIES` so the client IP is the real one (see [deployment](deployment.md)).
 - **Guards**: unless noted, every route requires a valid session (**JWT**). Routes marked
   **ADMIN** also require the admin role. Routes marked **public** need no session.
 - **Ownership**: resources belong to a user; another user's resource returns **404**.
@@ -37,7 +45,7 @@ there too.
 |---|---|---|---|
 | POST | `/auth/register` | public | Create the first user (becomes ADMIN); 403 once any user exists |
 | POST | `/auth/login` | public (credentials) | Log in; sets the session cookie |
-| POST | `/auth/logout` | JWT | Clear the session cookie |
+| POST | `/auth/logout` | JWT | End the session: bumps `tokenVersion` (all of the user's sessions) and clears the cookie |
 | GET | `/auth/me` | JWT | Current user `{ id, username, role }` |
 
 ## Users · `/user`
@@ -70,7 +78,7 @@ there too.
 
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
-| GET | `/connected-account` | JWT | List connected apps (optional `?provider=`); never returns secrets |
+| GET | `/connected-account` | JWT | List connected apps (optional `?provider=`); never returns secrets. The create (`POST /connected-account/<app>`) and `PATCH` routes return the same secret-free view |
 | GET | `/connected-account/google/connect` | JWT | Redirect to Google consent (`?kind=gmail\|tasks\|drive`) |
 | GET | `/google-drive/:accountId/links` | JWT | Drive folders and files linked to projects (Jarvis only changes these) |
 | POST | `/google-drive/:accountId/links` | JWT | Link a Drive folder or file (`target`: link or id) to a project |
@@ -239,6 +247,9 @@ through nginx (`X-Forwarded-For` present).
 | PATCH | `/servers/:id/ssh` | Change SSH user or port |
 | DELETE | `/servers/:id/ssh` | Disable SSH and delete the keys |
 | GET | `/servers/:id/ssh/test` | Test the SSH connection |
+| POST | `/servers/:id/ssh/host-key/reset` | Trust the server's new SSH host key (after a reinstall): forgets the stored fingerprint, the next connection stores the new one; returns the server |
+
+SSH uses trust on first use: the first connection stores the server's host key fingerprint (`sshHostKey`, OpenSSH `SHA256:` format, and `sshHostKeyAt`, both in the server view); later connections with a different key are refused with a message saying so, until the key is trusted again. Changing the server's `host` also forgets the stored key.
 
 ## Service monitors · `/service-monitors`
 

@@ -22,6 +22,8 @@ a app precisa. Sem Docker e sem Coolify.
 | Base de dados | PostgreSQL local, base e utilizador `myhomelab` |
 | Backups | `/var/backups/myhomelab`, todos os dias às 03:30 e antes de cada atualização (`…-before-update.sql.gz`), 14 dias |
 | Credenciais geradas | `/root/myhomelab-credentials.txt` |
+| Scripts que o root corre | `/usr/local/lib/myhomelab` (cópia do root de `deploy/proxmox`; units, cron e `myhomelab-*` apontam para lá) |
+| Pedidos e estado das atualizações | `/var/lib/myhomelab-updates/requests` (do `myhomelab`) e `…/state` (do root, só leitura para a app) |
 
 ## 1. Criar e instalar
 
@@ -43,15 +45,18 @@ Abre um menu (em inglês, ao estilo dos community-scripts):
   - DNS do host ou servidores próprios;
   - arrancar com o host;
   - endereço da app: IP do container ou domínio próprio;
-  - utilizador e password do admin (em branco = `admin`);
-  - versão: `main`, `staging` ou `develop`; token só se o repo for privado.
+  - utilizador e password do admin (em branco = uma aleatória, mostrada no fim);
+  - versão: `main`, `staging` ou `develop`; token só se o repo for privado (serve só para o
+    clone e não fica guardado no CT).
 
 Um valor inválido volta a ser pedido em vez de abortar. No fim aparece o ecrã **Review**
 com tudo o que foi escolhido: *Create the container*, *Edit settings* ou *Cancel*.
 
 
-**Utilizador inicial: `admin` / `admin`.** Troca a password antes de abrires a app à
-internet.
+**Utilizador inicial: `admin`, com uma password aleatória** que aparece uma única vez no fim
+(fica também em `/root/myhomelab-credentials.txt` no CT, só root). Se escolheres uma, vai
+para dentro do CT por um ficheiro temporário (600, apagado logo) e não pela linha de
+comandos.
 
 Sem menus (automação): `NONINTERACTIVE=1` e as variáveis que quiseres mudar — lista
 no cabeçalho do `ct-create.sh`:
@@ -143,18 +148,46 @@ FORCE=1 myhomelab-update     # recompilar mesmo sem nada novo
 ```
 
 Faz fetch, checkout da versão, `npm ci`, build, **guarda a base de dados**, migrações,
-publica o frontend, reescreve as units e o nginx e reinicia o backend. Antes das migrações,
+publica o frontend, reescreve as units, o nginx, o cron e a cópia dos scripts do root e reinicia o backend. Antes das migrações,
 `dump_db` grava `/var/backups/myhomelab/myhomelab-<data>-before-update.sql.gz`
 (`pg_dump --clean`, permissões 600; apagado com os do cron ao fim de 14 dias). **Se um passo
 falhar, volta sozinho à versão anterior** e a app continua a funcionar: se as migrações já
 tinham começado, primeiro `restore_db` repõe a base (para o serviço, `dropdb --force`,
-`createdb -O myhomelab` e carrega o dump); depois checkout do código anterior, build e
-restart.
+`createdb -O myhomelab` e carrega o dump); depois checkout do código anterior, build, volta a
+pôr as units, o nginx, o cron e `/usr/local/lib/myhomelab` como estavam e restart.
 
 Como o botão funciona: o backend corre sem privilégios e só escreve
-`/var/lib/myhomelab/updates/request` com a versão; a unit `myhomelab-updater.path`
-(root) vê o ficheiro e corre `update.sh --from-request`, que escreve o progresso em
-`status.json` e o output em `update.log` na mesma pasta. Logs: `journalctl -u myhomelab-updater`.
+`/var/lib/myhomelab-updates/requests/request` com a versão; a unit `myhomelab-updater.path`
+(root) vê o ficheiro e corre `/usr/local/lib/myhomelab/update.sh --from-request`, que lê o
+pedido como o utilizador da app e escreve o progresso em `state/status.json` e o output em
+`state/update.log`. Logs: `journalctl -u myhomelab-updater`.
+
+### Segurança do CT
+
+- **O root nunca corre ficheiros que o `myhomelab` possa alterar.** O repo em `/opt/myhomelab`
+  é do `myhomelab` (o `npm ci` e o backend correm como ele), por isso o root não corre os
+  scripts de lá: o `install.sh` e cada atualização copiam `lib.sh`, `update.sh`, `restore.sh`,
+  `backup.sh` e `config.sh` para `/usr/local/lib/myhomelab` (root:root, 755/644), e as units,
+  o cron e `/usr/bin/myhomelab-*` apontam para essa cópia. Na atualização, a fase 1 faz o
+  checkout da versão nova e copia os scripts dela para uma pasta temporária do root; a fase 2
+  corre dessa cópia e instala-a em `/usr/local/lib/myhomelab` no passo *configure*. O
+  `backup-tool.js` (repor um backup) corre como `myhomelab`, e as chaves do backup voltam ao
+  `.env` pelo `restore.sh`, só as conhecidas e sem caracteres que a shell expanda.
+- **Pastas das atualizações separadas.** `/var/lib/myhomelab-updates` é do root;
+  `requests/` (myhomelab, 750) só leva os pedidos, `state/` (root:myhomelab, 750) leva o
+  estado, os logs e o cadeado, escritos com `mktemp` na própria pasta e `mv`. O root lê os
+  pedidos como o `myhomelab` e só se forem ficheiros normais (não symlinks).
+- **Cabeçalhos do nginx.** `/etc/nginx/snippets/myhomelab-headers.conf` (`nosniff`,
+  `X-Frame-Options: SAMEORIGIN`, `frame-ancestors 'self'`, `Referrer-Policy:
+  strict-origin-when-cross-origin`), incluído no `server` e em cada `location` com
+  `add_header` próprio; `server_tokens off`.
+
+Instalações antigas: a primeira atualização para uma versão com esta estrutura ainda arranca
+pelo `update.sh` antigo (do repo), que corre o novo a seguir ao checkout; o novo cria as
+pastas, copia-se para uma pasta do root e continua de lá. Durante essa atualização o estado
+aparece também na pasta antiga (escrito como `myhomelab`), para o backend antigo o mostrar; no
+fim a pasta antiga `/var/lib/myhomelab/updates` é apagada. Se falhar, o rollback deixa tudo
+como estava (incluindo a estrutura antiga).
 
 ## Releases
 
@@ -180,7 +213,7 @@ A versão sobe pelos commits desde a última release: `feat` → minor, `fix`/`p
 ```bash
 journalctl -u myhomelab -f          # logs do backend
 systemctl status myhomelab nginx postgresql
-/opt/myhomelab/deploy/proxmox/backup.sh            # backup agora
+/usr/local/lib/myhomelab/backup.sh                 # backup agora
 gunzip -c /var/backups/myhomelab/<ficheiro>.sql.gz | runuser -u postgres -- psql -d myhomelab   # repor
 ```
 
@@ -204,7 +237,7 @@ backup. Antes de repor guarda-se um dump da base de dados atual; se algo falhar,
 
 ## Utilizadores
 
-O instalador cria o primeiro utilizador (ADMIN, por omissão `admin`/`admin`). A partir daí o registo público está
+O instalador cria o primeiro utilizador (ADMIN, por omissão `admin` com uma password aleatória). A partir daí o registo público está
 fechado: as contas novas criam-se no painel de Admin da app.
 
 ## Reinstalar por cima

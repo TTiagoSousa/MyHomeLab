@@ -4,14 +4,28 @@ import { join } from 'path';
 /**
  * Ficheiros partilhados com o atualizador (deploy/proxmox/update.sh), na pasta
  * SYSTEM_UPDATES_DIR. O backend corre sem privilégios e não atualiza nada sozinho:
- * escreve `request` com a versão pedida, e uma unit .path do systemd (root) vê o
- * ficheiro aparecer e corre a atualização. O progresso volta em `status.json` e o
- * output em `update.log`.
+ * escreve `requests/request` com a versão pedida, e uma unit .path do systemd (root)
+ * vê o ficheiro aparecer e corre a atualização. O progresso volta em
+ * `state/status.json` e o output em `state/update.log`.
+ *
+ * Duas pastas: em `requests/` só o backend escreve (o root lê os pedidos como o
+ * utilizador da app); `state/` é do root e o backend só a lê. Assim o root nunca
+ * escreve numa pasta onde o utilizador da app possa deixar um symlink.
  *
  * Sem SYSTEM_UPDATES_DIR (desenvolvimento) as atualizações estão desligadas.
  */
 export function updatesDir(): string | null {
   return process.env.SYSTEM_UPDATES_DIR || null;
+}
+
+/** Os pedidos do backend ao root (atualização e reposição de um backup). */
+export function requestsDir(dir: string): string {
+  return join(dir, 'requests');
+}
+
+/** O estado e os registos que o root escreve; o backend só lê. */
+export function stateDir(dir: string): string {
+  return join(dir, 'state');
 }
 
 export type UpdateState = 'idle' | 'queued' | 'running' | 'success' | 'failed';
@@ -47,10 +61,10 @@ export async function readUpdateStatus(logLines = 40): Promise<UpdateStatus> {
   if (!dir) return IDLE;
 
   const pending = await fs
-    .readFile(join(dir, 'request'), 'utf8')
+    .readFile(join(requestsDir(dir), 'request'), 'utf8')
     .catch(() => null);
   const raw = await fs
-    .readFile(join(dir, 'status.json'), 'utf8')
+    .readFile(join(stateDir(dir), 'status.json'), 'utf8')
     .catch(() => null);
   let status: UpdateStatus = { ...IDLE };
   if (raw) {
@@ -71,7 +85,7 @@ export async function readUpdateStatus(logLines = 40): Promise<UpdateStatus> {
   }
 
   const log = await fs
-    .readFile(join(dir, 'update.log'), 'utf8')
+    .readFile(join(stateDir(dir), 'update.log'), 'utf8')
     .catch(() => '');
   const lines = log
     .replace(ANSI_COLOURS, '')
@@ -85,7 +99,7 @@ export async function readUpdateStatus(logLines = 40): Promise<UpdateStatus> {
 export async function writeUpdateRequest(version: string): Promise<void> {
   const dir = updatesDir();
   if (!dir) throw new Error('Updates are disabled');
-  const tmp = join(dir, `.request-${process.pid}`);
+  const tmp = join(requestsDir(dir), `.request-${process.pid}`);
   await fs.writeFile(tmp, `${version}\n`, { mode: 0o644 });
-  await fs.rename(tmp, join(dir, 'request'));
+  await fs.rename(tmp, join(requestsDir(dir), 'request'));
 }

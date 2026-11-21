@@ -72,8 +72,11 @@ talk to `PrismaService` directly from the service and skip the repository layer.
 
 Other cross-cutting decisions:
 
-- **Sessions** are a JWT in an httpOnly, `sameSite: strict` cookie (`secure` behind HTTPS).
-  Admin routes add a roles guard.
+- **Sessions** are a JWT in an httpOnly, `sameSite: strict` cookie (`secure` behind HTTPS),
+  with `aud: "session"` and the user's `tokenVersion`. Each request re-reads the user (and
+  role) from the database; logging out bumps `tokenVersion`. Admin routes add a roles guard.
+- **API responses never carry secrets**: connected accounts go out through `toAccountView`
+  (no tokens, passwords or client secrets), on list, create and update alike.
 - **Ownership**: every helper checks the `userId` before reading or writing; another user's
   resource is a 404.
 - **Credentials at rest** (OAuth tokens, app passwords, server secrets) are encrypted with

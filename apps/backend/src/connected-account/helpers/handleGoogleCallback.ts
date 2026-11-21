@@ -8,6 +8,7 @@ import {
   googleKind,
 } from '../google/google-oauth.client';
 import { ConnectionProvider } from 'src/generated/prisma/client/client';
+import { GOOGLE_OAUTH_STATE_AUDIENCE } from 'src/auth/token-audience';
 
 const PROVIDERS: Record<GoogleConnectionKind, ConnectionProvider> = {
   gmail: ConnectionProvider.GMAIL,
@@ -24,10 +25,14 @@ export async function handleGoogleCallback(
   let userId: string;
   let kind: GoogleConnectionKind;
   try {
+    // Só um state emitido pelo buildGoogleAuthUrl: um cookie de sessão não serve.
     const payload = stateJwt.verify<{
-      userId: string;
+      userId?: unknown;
       kind?: GoogleConnectionKind;
-    }>(state);
+    }>(state, { audience: GOOGLE_OAUTH_STATE_AUDIENCE });
+    if (typeof payload.userId !== 'string' || !payload.userId) {
+      throw new Error('state sem utilizador');
+    }
     userId = payload.userId;
     kind = googleKind(payload.kind);
   } catch {

@@ -18,6 +18,7 @@ import {
 } from './archiveLeftoverThreads';
 import { RunScope } from '../dto/run-email-rule.dto';
 import { EmailRuleWithLabelPaths } from '../repositories/email-rule-repository';
+import { isSafePattern, MAX_INPUT_LENGTH } from './assertSafePatterns';
 
 const MAX_MESSAGES_PER_RULE = 200;
 
@@ -41,8 +42,9 @@ export interface RunEmailRulesResult {
 }
 
 function safeRegexTest(pattern: string, input: string): boolean {
+  if (!isSafePattern(pattern)) return false;
   try {
-    return new RegExp(pattern).test(input);
+    return new RegExp(pattern).test(input.slice(0, MAX_INPUT_LENGTH));
   } catch {
     return false;
   }

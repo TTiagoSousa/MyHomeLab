@@ -25,12 +25,18 @@ const Proxmox_Server_Commands = ({ server, onChanged }: Proxmox_Server_Commands_
   const [user, setUser] = useState(server.sshUser ?? 'root');
   const [port, setPort] = useState(String(server.sshPort ?? 22));
   const [confirmDisable, setConfirmDisable] = useState(false);
+  const [confirmTrustNewKey, setConfirmTrustNewKey] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const history = commands.slice(0, HISTORY_SHOWN);
   const setupCommand = server.sshPublicKey
     ? `mkdir -p ~/.ssh && chmod 700 ~/.ssh && echo '${server.sshPublicKey}' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys`
     : '';
+
+  const trustNewKey = async () => {
+    await shell.resetHostKey();
+    setConfirmTrustNewKey(false);
+  };
 
   const copySetup = async () => {
     await navigator.clipboard.writeText(setupCommand);
@@ -67,7 +73,38 @@ const Proxmox_Server_Commands = ({ server, onChanged }: Proxmox_Server_Commands_
         <dd>
           {server.sshUser}@{server.host}:{server.sshPort}
         </dd>
+        <dt>{t('apps.proxmox.commands.hostKey')}</dt>
+        <dd>
+          {server.sshHostKey
+            ? t('apps.proxmox.commands.hostKeyStored', {
+                fingerprint: server.sshHostKey,
+                date: server.sshHostKeyAt ? formatDateTime(server.sshHostKeyAt) : '—',
+              })
+            : t('apps.proxmox.commands.hostKeyPending')}
+        </dd>
       </dl>
+
+      {server.sshHostKey && (
+        <div className='Apps_setup'>
+          <p className='Apps_section_note'>{t('apps.proxmox.commands.hostKeyNote')}</p>
+          <div className='Apps_footer'>
+            {confirmTrustNewKey ? (
+              <>
+                <button type='button' onClick={() => setConfirmTrustNewKey(false)}>
+                  {t('apps.cancel')}
+                </button>
+                <button type='button' className='danger' onClick={() => void trustNewKey()} disabled={shell.busy}>
+                  {t('apps.proxmox.commands.confirmTrustNewKey')}
+                </button>
+              </>
+            ) : (
+              <button type='button' onClick={() => setConfirmTrustNewKey(true)}>
+                {t('apps.proxmox.commands.trustNewKey')}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className='Apps_setup'>
         <p className='Apps_section_note'>{t('apps.proxmox.commands.setup', { user: server.sshUser })}</p>

@@ -118,6 +118,7 @@ export const End_Points = {
     Server_Commands_Endpoint:      (id: string) => `/servers/${id}/commands`,
     Server_Ssh_Endpoint:           (id: string) => `/servers/${id}/ssh`,
     Server_Ssh_Test_Endpoint:      (id: string) => `/servers/${id}/ssh/test`,
+    Server_Ssh_Host_Key_Reset_Endpoint: (id: string) => `/servers/${id}/ssh/host-key/reset`,
     Server_Dashboard_Endpoint:     (id: string) => `/servers/${id}/dashboard`,
     Update_Attempts_Endpoint:      () => '/app-updates/attempts',
     Update_Attempt_Endpoint:       (id: string) => `/app-updates/attempts/${id}`,

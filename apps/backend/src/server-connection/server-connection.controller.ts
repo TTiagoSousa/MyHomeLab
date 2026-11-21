@@ -66,6 +66,13 @@ export class ServerConnectionController {
     await this.commands.disableSsh(req.user.id, id);
   }
 
+  /** Confia na chave nova do servidor (depois de o reinstalar): a próxima ligação guarda-a. */
+  @Post(':id/ssh/host-key/reset')
+  async resetSshHostKey(@Param('id') id: string, @Req() req: AuthedRequest) {
+    await this.commands.resetSshHostKey(req.user.id, id);
+    return this.service.view(req.user.id, id);
+  }
+
   @Get(':id/ssh/test')
   testSsh(@Param('id') id: string, @Req() req: AuthedRequest) {
     return this.commands.testSsh(req.user.id, id);

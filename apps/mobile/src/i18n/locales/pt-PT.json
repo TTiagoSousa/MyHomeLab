@@ -19,7 +19,8 @@
     "hidePassword": "Esconder a palavra-passe",
     "submit": "Entrar",
     "errorCredentials": "Utilizador ou palavra-passe errados.",
-    "errorMissing": "Preenche o utilizador e a palavra-passe."
+    "errorMissing": "Preenche o utilizador e a palavra-passe.",
+    "insecureServer": "Sem cadeado (http://) e fora da rede de casa: a palavra-passe vai à vista. Usa https://."
   },
   "nav": {
     "openMenu": "Abrir o menu",

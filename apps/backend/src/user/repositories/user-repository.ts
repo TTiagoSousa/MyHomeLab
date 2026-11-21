@@ -10,4 +10,8 @@ export interface UserRepository {
   }): Promise<User>;
   findAll(): Promise<Omit<User, 'hashedPassword'>[]>;
   count(): Promise<number>;
+  findSessionById(
+    id: string,
+  ): Promise<Pick<User, 'id' | 'username' | 'role' | 'tokenVersion'> | null>;
+  incrementTokenVersion(id: string): Promise<void>;
 }

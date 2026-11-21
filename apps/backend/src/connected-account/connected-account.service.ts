@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaConnectedAccountRepository } from './repositories/prisma/prisma-connected-account-repository';
 import { listConnectedAccounts } from './helpers/listConnectedAccounts';
+import { toAccountView } from './helpers/toAccountView';
 import { buildGoogleAuthUrl } from './helpers/buildGoogleAuthUrl';
 import { GoogleConnectionKind } from './google/google-oauth.client';
 import { handleGoogleCallback } from './helpers/handleGoogleCallback';
@@ -142,11 +143,13 @@ export class ConnectedAccountService {
   }
 
   async update(id: string, userId: string, dto: UpdateConnectedAccountDto) {
-    return updateConnectedAccount(
-      id,
-      userId,
-      dto,
-      this.connectedAccountRepository,
+    return toAccountView(
+      await updateConnectedAccount(
+        id,
+        userId,
+        dto,
+        this.connectedAccountRepository,
+      ),
     );
   }
 
@@ -163,7 +166,7 @@ export class ConnectedAccountService {
     );
     const connected = await this.afterConnect(account, dto);
     void this.checkVersion(connected);
-    return connected;
+    return toAccountView(connected);
   }
 
   /**
@@ -203,7 +206,7 @@ export class ConnectedAccountService {
       dto,
     );
     void this.checkVersion(account);
-    return account;
+    return toAccountView(account);
   }
 
   /** O estado da conta Forgejo e, já agora, a versão (abre o aviso se houver nova). */
@@ -241,7 +244,7 @@ export class ConnectedAccountService {
       dto,
     );
     void this.checkVersion(account);
-    return account;
+    return toAccountView(account);
   }
 
   /** O estado do TREK (registo aberto, logins, backups lá dentro) e a versão. */
@@ -311,7 +314,7 @@ export class ConnectedAccountService {
       dto,
     );
     void this.checkVersion(account);
-    return account;
+    return toAccountView(account);
   }
 
   /** O estado do openGym (servidor, perfil, rotinas e treinos) e a versão. */
@@ -383,7 +386,7 @@ export class ConnectedAccountService {
       dto,
     );
     void this.checkVersion(account);
-    return account;
+    return toAccountView(account);
   }
 
   /** O estado do GamesTracker (utilizador do token, a prateleira) e a versão. */
@@ -425,7 +428,7 @@ export class ConnectedAccountService {
       dto,
     );
     void this.checkVersion(account);
-    return account;
+    return toAccountView(account);
   }
 
   async createPaperless(dto: CreatePaperlessAccountDto, userId: string) {
@@ -443,7 +446,7 @@ export class ConnectedAccountService {
       dto,
     );
     void this.checkVersion(account);
-    return account;
+    return toAccountView(account);
   }
 
   async createStirling(dto: CreateStirlingAccountDto, userId: string) {
@@ -457,7 +460,7 @@ export class ConnectedAccountService {
       dto,
     );
     void this.checkVersion(account);
-    return account;
+    return toAccountView(account);
   }
 
   /** O estado do Stirling-PDF (versão, operações, administrador, MCP) e a versão nova. */
@@ -487,7 +490,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createPlaneAccount(dto, userId, this.connectedAccountRepository),
       dto,
     );
@@ -520,7 +523,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createGiteaMirrorAccount(
         dto,
         userId,
@@ -557,7 +560,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createJellyfinAccount(dto, userId, this.connectedAccountRepository),
       dto,
     );
@@ -590,7 +593,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createDispatcharrAccount(
         dto,
         userId,
@@ -627,7 +630,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createCoolifyAccount(dto, userId, this.connectedAccountRepository),
       dto,
     );
@@ -663,7 +666,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createNginxProxyManagerAccount(
         dto,
         userId,
@@ -701,7 +704,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createTplinkRouterAccount(
         dto,
         userId,
@@ -751,7 +754,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createClickHouseAccount(
         dto,
         userId,
@@ -788,7 +791,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createPostgresAccount(dto, userId, this.connectedAccountRepository),
       dto,
     );
@@ -815,7 +818,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createVaultwardenAccount(
         dto,
         userId,
@@ -852,7 +855,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createInfisicalAccount(
         dto,
         userId,
@@ -883,7 +886,7 @@ export class ConnectedAccountService {
       dto.serverConnectionId,
       this.connectedAccountRepository,
     );
-    return this.afterConnect(
+    return this.connectView(
       await createSolidtimeAccount(
         dto,
         userId,
@@ -963,7 +966,7 @@ export class ConnectedAccountService {
       dto,
     );
     void this.checkVersion(account);
-    return account;
+    return toAccountView(account);
   }
 
   /** O estado do Home Assistant (dono do token, o que lá existe) e a versão. */
@@ -1001,7 +1004,7 @@ export class ConnectedAccountService {
       dto,
     );
     void this.checkVersion(account);
-    return account;
+    return toAccountView(account);
   }
 
   /** O estado do AdGuard (proteção, pedidos, listas, regras) e a versão. */
@@ -1063,6 +1066,13 @@ export class ConnectedAccountService {
   }
 
   /** O afterConnect para quem não verifica a versão logo: devolve já a vista sem segredos. */
+  private async connectView(
+    account: ConnectedAccount,
+    location: AppLocationDto,
+  ) {
+    return toAccountView(await this.afterConnect(account, location));
+  }
+
   private async checkVersion(account: ConnectedAccount) {
     await checkAppVersion(
       account,

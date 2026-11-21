@@ -10,6 +10,7 @@ import { ApiError } from '../../api/client';
 import { errorText } from '../../api/errorText';
 import { useAuth } from '../../context/AuthContext';
 import { useColors } from '../../theme/useColors';
+import { isInsecureServer } from '../../utils/insecureServer';
 
 const LoginScreen = () => {
   const { t } = useTranslation();
@@ -64,6 +65,9 @@ const LoginScreen = () => {
             keyboardType='url'
             returnKeyType='next'
           />
+          {isInsecureServer(server) && (
+            <Text style={[styles.warning, { color: colors.danger }]}>{t('login.insecureServer')}</Text>
+          )}
           <TextField
             label={t('login.username')}
             value={username}
@@ -107,6 +111,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: '700', textAlign: 'center', marginTop: 8 },
   subtitle: { fontSize: 15, textAlign: 'center', marginBottom: 8 },
   error: { fontSize: 15, textAlign: 'center' },
+  warning: { fontSize: 14, marginTop: -8 },
 });
 
 export default LoginScreen;

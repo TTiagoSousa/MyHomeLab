@@ -804,7 +804,13 @@
           "REJECTED": "Rejected",
           "BLOCKED": "Blocked"
         },
-        "snapshot": "With snapshot"
+        "snapshot": "With snapshot",
+        "hostKey": "Server key",
+        "hostKeyStored": "{{fingerprint}} (stored on {{date}})",
+        "hostKeyPending": "Not stored yet: the key the server presents on the first connection is kept.",
+        "hostKeyNote": "MyHomeLab stores the fingerprint of the server key on the first connection and, from then on, refuses to connect if it changes. If you reinstalled the server, trust the new key; if not, it may be an attack on the network.",
+        "trustNewKey": "Trust the new key",
+        "confirmTrustNewKey": "Confirm: forget the stored key"
       },
       "typeName": "Proxmox VE",
       "packagesSummary_one": "{{count}} package to update on the nodes.",

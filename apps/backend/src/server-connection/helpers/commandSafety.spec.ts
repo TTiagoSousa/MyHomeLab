@@ -66,6 +66,27 @@ describe('classifyCommand', () => {
     expect(classifyCommand(command)).toBe('read');
   });
 
+  it.each([
+    'ss -K dst 192.0.2.10',
+    'ss -tnK',
+    'ss --kill state established',
+    'find /var/log -fprint0 /tmp/lista',
+    'find / -name x -fls /tmp/l',
+    'tree -o /tmp/arvore /etc',
+    'uniq /etc/hosts /tmp/out',
+  ])('"%s" escreve', (command) => {
+    expect(classifyCommand(command)).toBe('write');
+  });
+
+  it.each([
+    'ss -tlnp',
+    'find /etc -name "*.conf"',
+    'tree -L 2 /etc',
+    'uniq -c /tmp/a',
+  ])('"%s" só lê', (command) => {
+    expect(classifyCommand(command)).toBe('read');
+  });
+
   it('2>&1 e 2>/dev/null não contam como redireção', () => {
     expect(classifyCommand('df -h 2>&1')).toBe('read');
     expect(classifyCommand('ls /root 2>/dev/null')).toBe('read');

@@ -14,6 +14,8 @@ Tests sit **next to the code** they cover, for example:
 - `todo-sync/reconcile-group.spec.ts`, `nextcloud-tasks.spec.ts`
 - `claude-code/mcpBridge.spec.ts`, `utils/lisbonTime.spec.ts`
 - `docs/doc-templates.spec.ts`
+- `auth/strategies/jwt.strategy.spec.ts`, `auth/helpers/loginThrottle.spec.ts`
+- `connected-account/helpers/toAccountView.spec.ts`
 
 Run them:
 

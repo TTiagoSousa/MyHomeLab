@@ -19,7 +19,8 @@
     "hidePassword": "Ocultar la contraseña",
     "submit": "Entrar",
     "errorCredentials": "Usuario o contraseña incorrectos.",
-    "errorMissing": "Rellena el usuario y la contraseña."
+    "errorMissing": "Rellena el usuario y la contraseña.",
+    "insecureServer": "Sin candado (http://) y fuera de la red de casa: la contraseña viaja a la vista. Usa https://."
   },
   "nav": {
     "openMenu": "Abrir el menú",

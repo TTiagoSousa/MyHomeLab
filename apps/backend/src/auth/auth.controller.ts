@@ -33,8 +33,10 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(200)
-  async login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const token = await this.authService.login(req.user as any);
+  login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const token = this.authService.login(
+      req.user as Parameters<AuthService['login']>[0],
+    );
 
     res.cookie(SESSION_COOKIE, token, {
       ...sessionCookieOptions(req),
@@ -47,7 +49,11 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(200)
-  logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async logout(
+    @Req() req: Request & { user: JwtPayload },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.logout(req.user.id);
     res.clearCookie(SESSION_COOKIE, sessionCookieOptions(req));
     return { message: 'Sessão terminada' };
   }

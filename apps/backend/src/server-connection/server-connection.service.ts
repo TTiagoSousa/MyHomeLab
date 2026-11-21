@@ -46,6 +46,8 @@ export interface ServerConnectionView {
   sshUser: string | null;
   sshPort: number;
   sshPublicKey: string | null;
+  sshHostKey: string | null;
+  sshHostKeyAt: Date | null;
 }
 
 export interface ServerCheck {
@@ -70,6 +72,8 @@ const toView = (row: ServerConnection): ServerConnectionView => ({
   sshUser: row.sshUser,
   sshPort: row.sshPort,
   sshPublicKey: row.sshPublicKey,
+  sshHostKey: row.sshHostKey,
+  sshHostKeyAt: row.sshHostKeyAt,
 });
 
 export const toProxmoxConnection = (
@@ -214,9 +218,17 @@ export class ServerConnectionService implements OnApplicationBootstrap {
       next.verifyTls !== before.verifyTls;
     if (connectionChanged) await this.assertWorks(next);
 
+    // Outro endereço é outra máquina: a chave SSH guardada deixa de valer e a
+    // próxima ligação guarda a do servidor novo.
+    const hostKeyReset =
+      next.host !== before.host ? { sshHostKey: null, sshHostKeyAt: null } : {};
     const row = await this.prisma.serverConnection.update({
       where: { id },
-      data: { ...next, tokenSecret: encryptToken(next.tokenSecret) },
+      data: {
+        ...next,
+        tokenSecret: encryptToken(next.tokenSecret),
+        ...hostKeyReset,
+      },
     });
     return toView(row);
   }

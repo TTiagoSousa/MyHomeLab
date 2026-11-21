@@ -6,16 +6,17 @@
 #   myhomelab-restore <backup.zip>      no CT, como root (pede a password do backup)
 #   restore.sh --from-request           pedido pela app (Admin → Backup → Repor): a app já
 #                                       confirmou a password e deixou o .zip e a password em
-#                                       $UPDATES_DIR/restore/
+#                                       $REQUESTS_DIR/restore/
 #
 # Antes de mexer guarda um dump da base de dados atual e uma cópia do .env; se um passo
 # falhar, volta a eles. Os dados entram pelo backend (dist/src/cli/backup-tool.js import),
-# tabela a tabela, a partir dos .jsonl do backup. O progresso vai para restore-status.json
-# e o output para restore.log.
+# tabela a tabela, a partir dos .jsonl do backup. O backup-tool corre como o utilizador da
+# app (o código e o node_modules são dele) e as chaves voltam ao .env por este script, só
+# as conhecidas e com valores que a shell não expande. O progresso vai para
+# $STATE_DIR/restore-status.json e o output para $STATE_DIR/restore.log.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-APP_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # shellcheck source=lib.sh
 . "$SCRIPT_DIR/lib.sh"
 
@@ -24,16 +25,19 @@ export LANG=C.UTF-8 LC_ALL=C.UTF-8 PATH="/usr/local/bin:$PATH"
 export PRISMA_HIDE_UPDATE_MESSAGE=1
 cd "$APP_DIR"
 
-STATUS_FILE="$UPDATES_DIR/restore-status.json"
-LOG_FILE="$UPDATES_DIR/restore.log"
-REQUEST_DIR="$UPDATES_DIR/restore"
+REQUEST_DIR="$REQUESTS_DIR/restore"
 TOOL="$APP_DIR/apps/backend/dist/src/cli/backup-tool.js"
 BACKUP_CREATED_AT=""
 STARTED_AT="$(date -Is)"
+# As chaves que um backup pode trazer (INSTANCE_SECRET_KEYS em
+# apps/backend/src/backup/helpers/instanceBackup.ts) e os valores aceites: o .env é lido
+# pela shell como root (load_env), por isso nada de $, `, \ ou aspas no meio.
+BACKUP_ENV_KEYS="TOKEN_ENCRYPTION_KEY JWT_SECRET GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET"
+SAFE_ENV_VALUE='^("[A-Za-z0-9+/=._:@~-]*"|[A-Za-z0-9+/=._:@~-]*)$'
 
 json() {
   local s="$1"
-  s="${s//\/\\}"; s="${s//\"/\\\"}"; s="${s//$'\n'/ }"; s="${s//$'\r'/}"
+  s="${s//\\/\\\\}"; s="${s//\"/\\\"}"; s="${s//$'\n'/ }"; s="${s//$'\r'/}"
   printf '"%s"' "$s"
 }
 
@@ -45,49 +49,99 @@ status() {
     printf '{"state":%s,"step":%s,"message":%s,"backupCreatedAt":%s,' \
       "$(json "$1")" "$(json "$2")" "$(json "$3")" "$(json "$BACKUP_CREATED_AT")"
     printf '"startedAt":%s,"finishedAt":%s}\n' "$(json "$STARTED_AT")" "$finished"
-  } > "$STATUS_FILE.tmp"
-  chmod 644 "$STATUS_FILE.tmp"
-  mv "$STATUS_FILE.tmp" "$STATUS_FILE"
+  } | write_state_file restore-status.json
 }
 
-mkdir -p "$UPDATES_DIR"
-chown "$APP_USER:$APP_USER" "$UPDATES_DIR"
+# merge_env_keys KEYS — troca (ou acrescenta) no $ENV_FILE as chaves do ficheiro KEYS,
+# que o backup-tool escreveu como o utilizador da app.
+merge_env_keys() {
+  local keys line key value tmp
+  local -A wanted=() replaced=()
+  keys="$(as_app cat "$1")" || return 1
+  while IFS= read -r line; do
+    line="${line%$'\r'}"
+    [[ "$line" =~ ^([A-Z][A-Z0-9_]*)=(.*)$ ]] || continue
+    key="${BASH_REMATCH[1]}"
+    value="${BASH_REMATCH[2]}"
+    case " $BACKUP_ENV_KEYS " in
+      *" $key "*) ;;
+      *) warn "Ignoring $key from the backup (not one of the backup's keys)."; continue ;;
+    esac
+    if ! [[ "$value" =~ $SAFE_ENV_VALUE ]]; then
+      warn "The value of $key in the backup has characters that are not allowed."
+      return 1
+    fi
+    wanted[$key]="$value"
+  done <<<"$keys"
+
+  tmp="$(mktemp "${ENV_FILE}.XXXXXX")"
+  while IFS= read -r line || [ -n "$line" ]; do
+    key="${line%%=*}"
+    if [[ "$line" =~ ^[A-Z][A-Z0-9_]*= ]] && [ -n "${wanted[$key]+set}" ]; then
+      printf '%s=%s\n' "$key" "${wanted[$key]}"
+      replaced[$key]=1
+    else
+      printf '%s\n' "$line"
+    fi
+  done < "$ENV_FILE" > "$tmp"
+  for key in "${!wanted[@]}"; do
+    [ -n "${replaced[$key]+set}" ] || printf '%s=%s\n' "$key" "${wanted[$key]}" >> "$tmp"
+  done
+  chown root:"$APP_USER" "$tmp"
+  chmod 640 "$tmp"
+  mv -f "$tmp" "$ENV_FILE"
+  msg "Keys restored: ${!wanted[*]}"
+}
+
+ensure_update_dirs
 # Uma coisa de cada vez: o mesmo cadeado das atualizações.
-exec 9>"$UPDATES_DIR/.lock"
+exec 9>"$STATE_DIR/.lock"
 flock -n 9 || die "An update or a restore is already running."
 
+# WORK: do root (a cópia do .env). APP_WORK: do utilizador da app, onde o backup-tool
+# escreve as chaves (e, à mão, a cópia do .zip que ele vai ler).
 WORK="$(mktemp -d /var/tmp/myhomelab-restore.XXXXXX)"
 chmod 700 "$WORK"
+APP_WORK="$(as_app mktemp -d /tmp/myhomelab-restore.XXXXXX)"
 FROM_REQUEST=0
 cleanup() {
   rm -rf "$WORK"
-  if [ "$FROM_REQUEST" = 1 ]; then rm -rf "$REQUEST_DIR"; fi
+  as_app rm -rf "$APP_WORK" || true
+  if [ "$FROM_REQUEST" = 1 ]; then as_app rm -rf "$REQUEST_DIR" || true; fi
 }
 trap cleanup EXIT
 
 [ -f "$TOOL" ] || die "Missing $TOOL — build the backend first (myhomelab-update)."
 
 if [ "${1:-}" = "--from-request" ]; then
-  [ -f "$UPDATES_DIR/restore-request" ] || exit 0
-  request="$(tr -d '[:space:]' < "$UPDATES_DIR/restore-request")"
-  # Apagado logo: enquanto existir, a unit .path volta a disparar.
-  rm -f "$UPDATES_DIR/restore-request"
-  FROM_REQUEST=1
-  : > "$LOG_FILE"
-  chmod 644 "$LOG_FILE"
-  exec > >(tee -a "$LOG_FILE") 2>&1
-  if [ "$request" != "restore/backup.zip" ] || [ ! -f "$REQUEST_DIR/backup.zip" ] || [ ! -f "$REQUEST_DIR/password" ]; then
-    status failed request "Invalid restore request"
-    die "Invalid restore request: '$request'"
+  request="$REQUESTS_DIR/restore-request"
+  [ -e "$request" ] || [ -L "$request" ] || exit 0
+  # Lido como o utilizador da app (foi ele que o escreveu): um symlink não faz o root ler
+  # um ficheiro do sistema.
+  content=""
+  if regular_file "$request"; then
+    content="$(as_app head -c 64 "$request" | tr -d '[:space:]' || true)"
   fi
+  # Apagado logo: enquanto existir, a unit .path volta a disparar.
+  rm -f "$request"
+  FROM_REQUEST=1
+  start_state_log restore.log
   ZIP="$REQUEST_DIR/backup.zip"
-  MYHOMELAB_BACKUP_PASSWORD="$(cat "$REQUEST_DIR/password")"
-  rm -f "$REQUEST_DIR/password"
+  if [ "$content" != "restore/backup.zip" ] || ! regular_file "$ZIP" || ! regular_file "$REQUEST_DIR/password"; then
+    status failed request "Invalid restore request"
+    die "Invalid restore request: '$content'"
+  fi
+  MYHOMELAB_BACKUP_PASSWORD="$(as_app cat "$REQUEST_DIR/password")"
+  as_app rm -f "$REQUEST_DIR/password"
 else
   ZIP="${1:-}"
   if [ -z "$ZIP" ] || [ ! -f "$ZIP" ]; then
     die "Usage: myhomelab-restore <backup.zip>"
   fi
+  # O backup-tool corre como o utilizador da app, que pode não conseguir ler o ficheiro
+  # onde está (ex: /root): vai uma cópia para a pasta dele.
+  as_app tee "$APP_WORK/backup.zip" < "$ZIP" > /dev/null
+  ZIP="$APP_WORK/backup.zip"
   if [ -z "${MYHOMELAB_BACKUP_PASSWORD:-}" ]; then
     read -rsp "Backup password: " MYHOMELAB_BACKUP_PASSWORD
     echo
@@ -96,7 +150,7 @@ fi
 export MYHOMELAB_BACKUP_PASSWORD
 
 status running check "Reading the backup"
-if ! summary="$(node "$TOOL" check "$ZIP" 2>&1)"; then
+if ! summary="$(as_app node "$TOOL" check "$ZIP" 2>&1)"; then
   status failed check "$summary"
   die "$summary"
 fi
@@ -107,16 +161,14 @@ if [ "$FROM_REQUEST" = 0 ]; then
   warn "This replaces ALL MyHomeLab data (and its keys) with the backup."
   read -rp "Type RESTORE to continue: " answer
   [ "$answer" = "RESTORE" ] || die "Cancelled."
-  : > "$LOG_FILE"
-  chmod 644 "$LOG_FILE"
-  exec > >(tee -a "$LOG_FILE") 2>&1
+  start_state_log restore.log
 fi
 
 STEP=""
 REPLACED=0
 DB_DUMP=""
 ENV_BEFORE="$WORK/env.before"
-KEYS="$WORK/keys.env"
+KEYS="$APP_WORK/keys.env"
 rollback() {
   trap - ERR
   set +e
@@ -124,7 +176,7 @@ rollback() {
   status running rollback "Step '$STEP' failed — restoring the previous data"
   local restored=true
   if [ "$REPLACED" = 1 ]; then
-    if [ -f "$ENV_BEFORE" ]; then cp "$ENV_BEFORE" "$ENV_FILE"; fi
+    if [ -f "$ENV_BEFORE" ]; then cp -p "$ENV_BEFORE" "$ENV_FILE"; fi
     restore_db "$DB_DUMP" || restored=false
   fi
   systemctl start "$SERVICE"
@@ -141,16 +193,16 @@ step() { STEP="$1"; status running "$1" "$2"; }
 
 step dump "Saving the current database"
 dump_db before-restore
-cp "$ENV_FILE" "$ENV_BEFORE"
+cp -p "$ENV_FILE" "$ENV_BEFORE"
 
 step database "Restoring the data"
 load_env
 systemctl stop "$SERVICE"
 REPLACED=1
-node "$TOOL" import "$ZIP" "$KEYS"
+as_app env DATABASE_URL="$DATABASE_URL" node "$TOOL" import "$ZIP" "$KEYS"
 
 step keys "Restoring the keys"
-node "$TOOL" merge-env "$KEYS" "$ENV_FILE"
+merge_env_keys "$KEYS"
 
 step migrate "Applying database migrations"
 migrate_db
