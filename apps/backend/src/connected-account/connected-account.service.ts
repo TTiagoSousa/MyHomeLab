@@ -127,10 +127,15 @@ export class ConnectedAccountService {
     return buildGoogleAuthUrl(userId, kind, this.jwt);
   }
 
-  async handleGoogleCallback(code: string, state: string) {
+  async handleGoogleCallback(
+    code: string | undefined,
+    state: string | undefined,
+    providerError: string | undefined,
+  ) {
     return handleGoogleCallback(
       code,
       state,
+      providerError,
       this.jwt,
       this.connectedAccountRepository,
     );
@@ -1074,11 +1079,13 @@ export class ConnectedAccountService {
   }
 
   private async checkVersion(account: ConnectedAccount) {
+    // Em segundo plano espera-se até ao fim: o agendamento corre as contas uma a uma.
     await checkAppVersion(
       account,
       this.connectedAccountRepository,
       this.notifications,
       this.updates,
+      Infinity,
     ).catch(() => undefined);
     await this.updates
       .checkHomeAssistantComponents(account)

@@ -3,6 +3,8 @@ import axios, { AxiosInstance } from 'axios';
 
 export interface ProxmoxNode {
   node: string;
+  /** "online", "offline" ou "unknown" (num cluster). */
+  status?: string;
 }
 
 export interface ProxmoxGuest {
@@ -321,15 +323,31 @@ export function createProxmoxClient(conn: ProxmoxConnection): ProxmoxClient {
 
   const listNodes = () => get<ProxmoxNode[]>('/nodes');
 
+  /**
+   * As VMs e os CTs de todos os nós. Num cluster, um nó desligado (ou que falha) fica de
+   * fora em vez de deitar a lista toda abaixo; só falha se nenhum nó responder.
+   */
   async function listGuests(): Promise<ProxmoxGuestRef[]> {
     const guests: ProxmoxGuestRef[] = [];
+    let reached = 0;
+    let failure: Error | null = null;
     for (const node of await listNodes()) {
-      for (const kind of ['qemu', 'lxc'] as GuestKind[]) {
-        const found = await get<ProxmoxGuest[]>(`/nodes/${node.node}/${kind}`);
-        for (const guest of found)
-          guests.push({ node: node.node, kind, guest });
+      if (node.status && node.status !== 'online') continue;
+      try {
+        const found: ProxmoxGuestRef[] = [];
+        for (const kind of ['qemu', 'lxc'] as GuestKind[]) {
+          for (const guest of await get<ProxmoxGuest[]>(
+            `/nodes/${node.node}/${kind}`,
+          ))
+            found.push({ node: node.node, kind, guest });
+        }
+        guests.push(...found);
+        reached += 1;
+      } catch (error) {
+        failure = error instanceof Error ? error : new Error(String(error));
       }
     }
+    if (!reached && failure) throw failure;
     return guests;
   }
 

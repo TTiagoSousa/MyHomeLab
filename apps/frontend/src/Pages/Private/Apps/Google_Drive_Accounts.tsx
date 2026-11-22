@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConnectedAccounts } from '../../../Hooks/ConnectedAccount/useConnectedAccounts';
 import { useConnectedAccount } from '../../../Hooks/ConnectedAccount/useConnectedAccount';
+import { useGoogleConnectResult } from '../../../Hooks/ConnectedAccount/useGoogleConnectResult';
 import { useBoardProjects } from '../../../Hooks/Board/useBoardProjects';
 import { Apps_Account_Card, Apps_Empty_Card, Apps_Page } from './appsShared';
 import Google_Drive_Links from './Google_Drive_Links';
@@ -14,6 +15,7 @@ const Google_Drive_Accounts = () => {
   const { connectGoogleDriveAccount, deleteConnectedAccount, loading } = useConnectedAccount();
   const { projects } = useBoardProjects();
   const [confirming, setConfirming] = useState('');
+  useGoogleConnectResult();
 
   const disconnect = async (id: string) => {
     if (confirming !== id) {
@@ -34,10 +36,18 @@ const Google_Drive_Accounts = () => {
               avatar={account.emailAddress ?? 'GD'}
               title={account.emailAddress ?? t('apps.googleDrive.title')}
               meta={t('apps.googleDrive.meta')}
+              chips={!account.isActive && <span className='Apps_chip off'>{t('google.reconnectChip')}</span>}
               actions={
-                <button type='button' className={confirming === account.id ? 'danger' : ''} disabled={loading} onClick={() => void disconnect(account.id)}>
-                  {confirming === account.id ? t('apps.googleDrive.confirmDisconnect') : t('apps.googleDrive.disconnect')}
-                </button>
+                <>
+                  {!account.isActive && (
+                    <button type='button' className='danger' onClick={connectGoogleDriveAccount}>
+                      {t('google.reconnect')}
+                    </button>
+                  )}
+                  <button type='button' className={confirming === account.id ? 'danger' : ''} disabled={loading} onClick={() => void disconnect(account.id)}>
+                    {confirming === account.id ? t('apps.googleDrive.confirmDisconnect') : t('apps.googleDrive.disconnect')}
+                  </button>
+                </>
               }
               onOpen={() => window.open('https://drive.google.com/', '_blank', 'noopener')}
             />

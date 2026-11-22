@@ -8,6 +8,7 @@ import {
   AdguardApi,
   AdguardFilter,
   BLOCKED_REASONS,
+  adguardStatsPeriod,
   createAdguardClient,
 } from 'src/adguard/adguard.client';
 
@@ -90,10 +91,11 @@ const filterLine = (filter: AdguardFilter) =>
   `- [${filter.enabled ? 'ligada' : 'desligada'}] ${filter.name} — ${filter.rules_count} regras, atualizada ${filter.last_updated ? new Date(filter.last_updated).toLocaleString('pt-PT') : 'nunca'} · ${filter.url}`;
 
 export async function overview(target: AdguardTarget): Promise<string> {
-  const [status, stats, filtering] = await Promise.all([
+  const [status, stats, filtering, statsHours] = await Promise.all([
     target.client.status(),
     target.client.stats(),
     target.client.filteringStatus(),
+    target.client.statsHours(),
   ]);
   const filters = filtering.filters ?? [];
   const paused = status.protection_disabled_duration
@@ -102,7 +104,7 @@ export async function overview(target: AdguardTarget): Promise<string> {
   return [
     `${accountLabel(target.account)} — versão ${status.version}, ${status.running ? 'a correr' : 'PARADO'}.`,
     `Proteção: ${status.protection_enabled ? 'ligada' : `DESLIGADA${paused}`}. Filtragem: ${filtering.enabled ? 'ligada' : 'desligada'}, ${filtering.interval ? `listas atualizadas de ${filtering.interval} em ${filtering.interval} h` : 'listas sem atualização automática'}.`,
-    `Últimas 24 h: ${stats.num_dns_queries} pedidos, ${stats.num_blocked_filtering} bloqueados (${percent(stats.num_blocked_filtering, stats.num_dns_queries)}), tempo médio ${stats.avg_processing_time ? `${(stats.avg_processing_time * 1000).toFixed(1)} ms` : '?'}.`,
+    `${adguardStatsPeriod(statsHours)}: ${stats.num_dns_queries} pedidos, ${stats.num_blocked_filtering} bloqueados (${percent(stats.num_blocked_filtering, stats.num_dns_queries)}), tempo médio ${stats.avg_processing_time ? `${(stats.avg_processing_time * 1000).toFixed(1)} ms` : '?'}.`,
     `Mais pedidos: ${topList(stats.top_queried_domains)}.`,
     `Mais bloqueados: ${topList(stats.top_blocked_domains)}.`,
     `Clientes mais ativos: ${topList(stats.top_clients)}.`,

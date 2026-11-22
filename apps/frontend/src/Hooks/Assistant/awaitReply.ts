@@ -52,5 +52,5 @@ export const awaitReply = async (conversationId: string | null, text: string, as
       if (!isCutOff(error)) throw error;
     }
   }
-  throw new Error('timeout');
+  throw Object.assign(new Error('AI_REPLY_TIMEOUT'), { code: 'AI_REPLY_TIMEOUT' });
 };

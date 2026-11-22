@@ -1,8 +1,8 @@
 import { ServerCommand } from 'src/generated/prisma/client/client';
 import { AgentContext } from '../agents/agent-context';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
-const when = (date: Date | null) =>
-  date ? date.toISOString().replace('T', ' ').slice(0, 16) : '—';
+const when = (date: Date | null) => lisbonStamp(date);
 
 function describeResult(row: ServerCommand): string {
   const output = row.output?.trim() || '(sem saída)';

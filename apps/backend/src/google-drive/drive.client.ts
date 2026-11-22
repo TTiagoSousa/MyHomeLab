@@ -4,6 +4,8 @@
  * Nunca apaga nem partilha: isso não está aqui.
  */
 
+import { GOOGLE_TIMEOUT_MS } from 'src/connected-account/google/google-oauth.client';
+
 const DRIVE = 'https://www.googleapis.com/drive/v3';
 const UPLOAD = 'https://www.googleapis.com/upload/drive/v3';
 
@@ -33,6 +35,10 @@ export interface DriveRevision {
   exportLinks?: Record<string, string>;
 }
 
+/** O máximo que se descarrega ou exporta de uma vez (fica todo em memória). */
+export const MAX_DOWNLOAD_MB = 20;
+const MAX_DOWNLOAD = MAX_DOWNLOAD_MB * 1024 * 1024;
+
 const FILE_FIELDS =
   'id,name,mimeType,parents,modifiedTime,size,webViewLink,trashed,lastModifyingUser(displayName,emailAddress),owners(displayName,emailAddress)';
 
@@ -44,12 +50,19 @@ async function call<T>(
   const response = await fetch(url, {
     ...init,
     headers: { Authorization: `Bearer ${token}`, ...(init.headers ?? {}) },
+    signal: AbortSignal.timeout(GOOGLE_TIMEOUT_MS),
   });
   if (!response.ok) {
     const text = await response.text().catch(() => '');
-    const reason =
-      (JSON.parse(text || '{}') as { error?: { message?: string } }).error
-        ?.message ?? text.slice(0, 200);
+    // Um erro pode vir em HTML (um proxy, um 502 do Google): fica o status e o início.
+    let reason = text.slice(0, 200);
+    try {
+      reason =
+        (JSON.parse(text || '{}') as { error?: { message?: string } }).error
+          ?.message ?? reason;
+    } catch {
+      reason = `${response.statusText || 'erro'} (a resposta não é JSON)`;
+    }
     throw new Error(
       response.status === 404
         ? 'esse ficheiro não existe no Drive (ou a conta não o vê)'
@@ -67,12 +80,36 @@ async function bytes(
 ): Promise<{ data: Buffer; type: string }> {
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
+    // Até 20 MB: o dobro do tempo dos outros pedidos (o corpo também conta).
+    signal: AbortSignal.timeout(2 * GOOGLE_TIMEOUT_MS),
   });
   if (!response.ok) {
     throw new Error(`o Google respondeu ${response.status} ao descarregar`);
   }
+  // Tudo vai para a memória: um vídeo de gigas deitava o backend abaixo.
+  const tooBig = () =>
+    new Error(
+      `o ficheiro passa de ${MAX_DOWNLOAD_MB} MB: grande demais para ler por aqui. Abre-o no Drive.`,
+    );
+  if (Number(response.headers.get('content-length') ?? 0) > MAX_DOWNLOAD) {
+    await response.body?.cancel().catch(() => undefined);
+    throw tooBig();
+  }
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  const reader = response.body?.getReader();
+  for (;;) {
+    const chunk = reader ? await reader.read() : { done: true as const };
+    if (chunk.done) break;
+    total += chunk.value.length;
+    if (total > MAX_DOWNLOAD) {
+      await reader?.cancel().catch(() => undefined);
+      throw tooBig();
+    }
+    chunks.push(chunk.value);
+  }
   return {
-    data: Buffer.from(await response.arrayBuffer()),
+    data: Buffer.concat(chunks),
     type: response.headers.get('content-type') ?? '',
   };
 }

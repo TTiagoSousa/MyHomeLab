@@ -1,4 +1,5 @@
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import { describeFetchError, parseAppJson } from 'src/integrations/app-fetch';
 
 // O Gitea Mirror (espelha repositórios do GitHub no Gitea/Forgejo): a API JSON em
 // <endereço>/api/…, com a chave de API (Configuração → Autenticação → Chaves de API, "gm_…")
@@ -73,7 +74,7 @@ async function request<T>(
   } catch (error) {
     throw new AppIntegrationError(
       'APP_UNREACHABLE',
-      `Não foi possível falar com o Gitea Mirror (${what}): ${error instanceof Error ? error.message : String(error)}`,
+      `Não foi possível falar com o Gitea Mirror (${what}): ${describeFetchError(error)}`,
     );
   }
   const text = await response.text();
@@ -105,6 +106,8 @@ async function request<T>(
       `o Gitea Mirror respondeu ${response.status} (${what}): ${detail}`,
     );
   }
+  // Uma página de login (SSO) ou de proxy chegava aqui como {} e passava por sucesso.
+  body = parseAppJson<Record<string, unknown>>(text, 'Gitea Mirror', what);
   if (body.success === false) {
     throw new Error(
       `o Gitea Mirror não fez (${what}): ${typeof body.error === 'string' ? body.error : typeof body.message === 'string' ? body.message : ''}`,

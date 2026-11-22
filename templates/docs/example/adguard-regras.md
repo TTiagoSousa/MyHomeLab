@@ -9,7 +9,7 @@ apps: [ADGUARD]
 ## Estudar uma atualização
 
 > **Quando usar:** uma tarefa "Atualizar AdGuard X → Y" em Study (o pedido de estudo do MyHomeLab).
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" (o caminho e o que decides sozinho). **Depois:** "AdGuard – instalar uma atualização". **No dia a dia:** "AdGuard – como se mexe no DNS".
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" (o caminho e o que decides sozinho). **Depois:** "Instalar uma atualização", mais abaixo. **No dia a dia:** "AdGuard – como se mexe no DNS".
 
 No estudo só se lê e mede. Nada se instala, reinicia ou apaga.
 
@@ -21,7 +21,7 @@ No estudo só se lê e mede. Nada se instala, reinicia ou apaga.
 - **Instalação:** binário em `/opt/AdGuardHome/AdGuardHome` (instalado por community-script), serviço systemd `AdGuardHome`, configuração `/opt/AdGuardHome/AdGuardHome.yaml` (`schema_version: 34` a 13/11/2026), dados (estatísticas, registo de pedidos, listas descarregadas) em `/opt/AdGuardHome/data`. O atualizador do próprio AdGuard guarda a versão anterior em `/opt/AdGuardHome/agh-backup`. Uso normal: ~110 MB de memória.
 - **O papel:** é **o DNS da rede inteira e do próprio CT 210** (nameserver 192.168.1.21). Se parar, a casa fica sem internet (nada resolve nomes) e o CT também não descarrega nada. Por isso **descarrega-se tudo antes de parar**, e a paragem dura só segundos.
 - **Versão e releases:** o MyHomeLab lê a versão na API (`/control/status`); as releases e o CHANGELOG estão em https://github.com/AdguardTeam/AdGuardHome/releases.
-- **Backup do MyHomeLab:** um JSON com as definições que a API mostra (DNS, listas, reescritas, clientes, acessos, serviços bloqueados, proteções, registos e estatísticas, DHCP). Ficam de fora os certificados TLS, a password do painel, as estatísticas e o histórico de pedidos.
+- **Backups:** o do CT 210 no Proxmox (vzdump, pve_backup_now pelo Operador Proxmox) e o snapshot que o update_run tira antes de instalar. O MyHomeLab já não faz backups das apps.
 - **A configuração:** o `AdGuardHome.yaml` tem um `schema_version`. Uma versão nova pode migrá-lo ao arrancar, e a migração não se desfaz: voltar atrás é pelo snapshot.
 
 ### O que ler
@@ -40,7 +40,7 @@ No estudo só se lê e mede. Nada se instala, reinicia ou apaga.
 - [ ] 🤖 **Sem passos à mão:** nenhuma chave do `AdGuardHome.yaml` nem do compose que tenha de mudar à mão; se a configuração migra (`schema_version`), diz-se — prova: as notas e as chaves vistas (ou os passos)
 - [ ] 🤖 **A ligação do MyHomeLab continua:** nada nas notas muda o login do painel nem as rotas da API que se usam (`/control/status`, `/filtering/*`, `/rewrite/*`, `/querylog`, `/stats`) — prova: as notas (ou o que muda)
 - [ ] 🤖 **Há um plano B para o DNS:** os aparelhos têm um DNS secundário (o router ou outro servidor) ou não; sem ele, a instalação deixa a casa sem internet uns segundos, o que se diz no relatório — prova: o que se sabe (ou "por confirmar por mim")
-- [ ] 🤖 **O backup do AdGuard está ativo** (list_backups): ligado, com destino e sem erro — prova: o backup, o destino e o estado
+- [ ] 🤖 **Há caminho de volta:** o update_run tira o snapshot do CT 210 antes de instalar, e há um backup do CT no Proxmox com menos de 24 h (ou faz-se antes de instalar) — prova: o último backup (`pvesm list <storage> --content backup --vmid 210`) ou "faz-se antes de instalar"
 - [ ] 🤖 **Salto de versão major** (ex.: 0.107 → 0.108 ou → 1.0): diz-se no resumo e na recomendação, com o que muda. Não é uma pergunta — prova: "major" com o que muda, ou "não é major"
 
 ### Decidir (next do update_save_study)
@@ -63,7 +63,7 @@ O resumo na forma de "Atualizações das apps e do Proxmox – como funcionam" (
 ## Instalar uma atualização
 
 > **Quando usar:** uma atualização do AdGuard em Ready to update (eu pus lá, ou o estudo com install) ou um pedido direto meu. Instala-se logo, a qualquer hora.
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("AdGuard – estudar uma atualização").
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("Estudar uma atualização", mais acima).
 
 Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto major.
 
@@ -79,14 +79,13 @@ Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto
 - **Instalação:** binário em `/opt/AdGuardHome/AdGuardHome` (instalado por community-script), serviço systemd `AdGuardHome`, configuração `/opt/AdGuardHome/AdGuardHome.yaml` (`schema_version: 34` a 13/11/2026), dados (estatísticas, registo de pedidos, listas descarregadas) em `/opt/AdGuardHome/data`. O atualizador do próprio AdGuard guarda a versão anterior em `/opt/AdGuardHome/agh-backup`. Uso normal: ~110 MB de memória.
 - **O papel:** é **o DNS da rede inteira e do próprio CT 210** (nameserver 192.168.1.21). Se parar, a casa fica sem internet (nada resolve nomes) e o CT também não descarrega nada. Por isso **descarrega-se tudo antes de parar**, e a paragem dura só segundos.
 - **Versão e releases:** o MyHomeLab lê a versão na API (`/control/status`); as releases e o CHANGELOG estão em https://github.com/AdguardTeam/AdGuardHome/releases.
-- **Backup do MyHomeLab:** um JSON com as definições que a API mostra (DNS, listas, reescritas, clientes, acessos, serviços bloqueados, proteções, registos e estatísticas, DHCP). Ficam de fora os certificados TLS, a password do painel, as estatísticas e o histórico de pedidos.
+- **Backups:** o do CT 210 no Proxmox (vzdump, pve_backup_now pelo Operador Proxmox) e o snapshot que o update_run tira antes de instalar. O MyHomeLab já não faz backups das apps.
 - **A configuração:** o `AdGuardHome.yaml` tem um `schema_version`. Uma versão nova pode migrá-lo ao arrancar, e a migração não se desfaz: voltar atrás é pelo snapshot.
 
 ### Antes de instalar
 - [ ] 🤖 Está em Ready to update: eu pus lá, ou o estudo (install) — prova: o histórico
 - [ ] 🤖 A instalação é a deste documento: `pct exec 210 -- systemctl is-active AdGuardHome` diz active e o binário está em `/opt/AdGuardHome` — prova: o que se viu
-- [ ] 🤖 O backup do AdGuard está ativo: ligado, com destino e sem erro (list_backups). Se não estiver, não se configura: pergunta-se — prova: o backup, o destino e o estado
-- [ ] 🤖 Há um backup do AdGuard feito pelo MyHomeLab **há menos de 1 hora**, sem erro e **sem nada "de fora"** inesperado; se não, corre-o (run_backup) e espera que acabe — prova: a hora, o ficheiro e o tamanho
+- [ ] 🤖 Há um backup do CT 210 no Proxmox com menos de 24 h e sem erro (`pvesm list <storage> --content backup --vmid 210`); se não, faz-se um (pve_backup_now, pelo Operador Proxmox) e espera-se que acabe bem. O snapshot de antes é o do update_run — prova: a hora e o ficheiro do backup
 - [ ] 🤖 Antes, para comparar depois: adguard_overview e adguard_get_settings rewrites (quantas listas e regras, as reescritas, os clientes) — prova: os números
 - [ ] 🤖 O disco do CT 210 está abaixo de 85% (`pct exec 210 -- df -h /`; o arquivo e o binário novo ocupam ~70 MB) e a memória não está cheia — prova: as percentagens
 - [ ] 🤖 O AdGuard responde na versão de partida e o DNS resolve (`pct exec 210 -- nslookup google.com 127.0.0.1`) — prova: a versão e a resposta
@@ -121,8 +120,6 @@ A rede fica sem DNS só entre o `stop` e o `start` (segundos). A cópia `AdGuard
 - [ ] 🤖 O registo de pedidos recebe pedidos novos (adguard_query_log dos últimos minutos) — prova: as linhas
 - [ ] 🤖 Sem erros novos no log desde o arranque (`pct exec 210 -- journalctl -u AdGuardHome --since "-15 min" --no-pager`) — prova: as linhas ou "nenhuma"
 - [ ] 🤖 A memória do serviço está normal (abaixo de ~300 MB; `systemctl status AdGuardHome`) — prova: a memória
-- [ ] 🤖 Correu um backup novo pelo MyHomeLab, sem erro — prova: a hora, o tamanho e o resultado
-
 ### Se falhar
 
 Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam": a atualização fica em In progress, investiga-se, e o que é simples e seguro corrige-se e corre-se outra vez no mesmo processo (até 3 corridas). O que é desta app:
@@ -133,7 +130,7 @@ Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam
 
 ### Nunca
 
-- Instalar sem o backup da última hora, sem o snapshot do CT 210 ou sem a cópia do `AdGuardHome.yaml`.
+- Instalar sem o backup do CT das últimas 24 h, sem o snapshot do CT 210 ou sem a cópia do `AdGuardHome.yaml`.
 - Parar o AdGuard antes de o binário novo estar descarregado e verificado.
 - Mexer no `AdGuardHome.yaml` à mão durante a atualização.
 - Apagar `/opt/AdGuardHome/data` ou `agh-backup`.

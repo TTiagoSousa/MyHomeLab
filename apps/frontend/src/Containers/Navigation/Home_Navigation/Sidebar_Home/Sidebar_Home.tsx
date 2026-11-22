@@ -9,7 +9,11 @@ import { useNotificationCount } from '../../../../Hooks/Notifications/useNotific
 import * as Icon from '../../../../Imports/icons';
 import './Sidebar_Home.scss';
 
-export const Sidebar_Home: React.FC = () => {
+interface Sidebar_Home_Props {
+  open?: boolean;
+}
+
+export const Sidebar_Home: React.FC<Sidebar_Home_Props> = ({ open = false }) => {
   const { t } = useTranslation('nav');
   const location = useLocation();
   const { mode, handleDarkMode, handleLightMode } = useTheme();
@@ -41,7 +45,7 @@ export const Sidebar_Home: React.FC = () => {
       .sort((a, b) => b.path!.length - a.path!.length)[0];
     if (mainItem) return mainItem.id;
 
-    return 'dashboard';
+    return 'today';
   };
 
   const activeItem = getActiveItem();
@@ -57,7 +61,7 @@ export const Sidebar_Home: React.FC = () => {
   };
 
   return (
-    <div className="Sidebar_Home">
+    <div className={`Sidebar_Home${open ? ' open' : ''}`}>
 
       <div className="Sidebar_Brand">
         <div className="Icon_Box">
@@ -123,7 +127,13 @@ export const Sidebar_Home: React.FC = () => {
       <div className="Sidebar_Bottom">
         <div className="Sidebar_Divider"></div>
 
-        <div className="Sidebar_Bottom_Item Theme_Toggle_Item" onClick={toggleTheme}>
+        <div
+          className="Sidebar_Bottom_Item Theme_Toggle_Item"
+          role="button"
+          tabIndex={0}
+          onClick={toggleTheme}
+          onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleTheme()}
+        >
           <div className="Icon_Box">
             {mode === 'dark' ? <Icon.Sun /> : <Icon.Moon />}
           </div>

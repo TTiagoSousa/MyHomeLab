@@ -1,6 +1,7 @@
 import { Readable } from 'stream';
 import type { ReadableStream as WebReadableStream } from 'stream/web';
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import { describeFetchError } from 'src/integrations/app-fetch';
 
 // O Dispatcharr (gere listas IPTV, canais, EPG e o proxy dos streams): a API REST (Django) em
 // <endereço>/api/…, com a chave de API pessoal (desde a v0.20: o utilizador → API & XC →
@@ -184,7 +185,7 @@ async function send(
   } catch (error) {
     throw new AppIntegrationError(
       'APP_UNREACHABLE',
-      `Não foi possível falar com o Dispatcharr (${what}): ${error instanceof Error ? error.message : String(error)}`,
+      `Não foi possível falar com o Dispatcharr (${what}): ${describeFetchError(error)}`,
     );
   }
   if (response.ok) return response;

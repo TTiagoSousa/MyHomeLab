@@ -1,8 +1,11 @@
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import { describeFetchError } from 'src/integrations/app-fetch';
 import {
   AppRelease,
   cleanVersion,
   compareVersions,
+  githubHeaders,
+  rememberRelease,
 } from 'src/integrations/releases';
 
 // O ClickHouse pela interface HTTP (porta 8123, ou 8443 com TLS; muitas vezes atrás de um
@@ -109,7 +112,7 @@ export function createClickhouseClient(
     } catch (error) {
       throw new AppIntegrationError(
         'APP_UNREACHABLE',
-        `Não foi possível falar com o ClickHouse: ${error instanceof Error ? error.message : String(error)}`,
+        `Não foi possível falar com o ClickHouse: ${describeFetchError(error)}`,
       );
     }
     const text = await response.text();
@@ -158,8 +161,14 @@ export function createClickhouseClient(
         (error as { clickhouseCode?: number }).clickhouseCode !== READONLY_CODE
       )
         throw error;
+      // Sem max_result_rows, o ClickHouse mandava a tabela inteira e só se cortava aqui
+      // (memória do backend). Um SELECT/WITH vai dentro de um LIMIT, como no Postgres; os
+      // SHOW/DESCRIBE não cabem numa subconsulta, mas são pequenos.
+      const limited = /^(select|with)\b/i.test(statement)
+        ? `SELECT * FROM (\n${statement}\n) LIMIT ${Math.max(1, Math.floor(maxRows))}`
+        : statement;
       const result = parse(
-        await send(statement, { default_format: 'JSON' }, 75_000),
+        await send(limited, { default_format: 'JSON' }, 75_000),
       );
       return { ...result, data: result.data.slice(0, maxRows) };
     }
@@ -226,19 +235,17 @@ export function clickhouseVersion(
  * "v25.8.11.66-lts", e saem correções de linhas antigas depois das novas: escolhe a versão mais
  * alta entre as stable/lts e não a última publicada.
  */
-let cachedRelease: { at: number; release: AppRelease | null } | null = null;
-export async function latestClickhouseRelease(): Promise<AppRelease | null> {
-  if (cachedRelease && Date.now() - cachedRelease.at < 60 * 60_000)
-    return cachedRelease.release;
+export function latestClickhouseRelease(): Promise<AppRelease | null> {
+  return rememberRelease(
+    `github:${CLICKHOUSE_REPOSITORY}:stable`,
+    fetchClickhouseRelease,
+  );
+}
+
+async function fetchClickhouseRelease(): Promise<AppRelease | null> {
   const response = await fetch(
     `https://api.github.com/repos/${CLICKHOUSE_REPOSITORY}/releases?per_page=30`,
-    {
-      headers: {
-        Accept: 'application/vnd.github+json',
-        'User-Agent': 'MyHomeLab',
-      },
-      signal: AbortSignal.timeout(15_000),
-    },
+    { headers: githubHeaders(), signal: AbortSignal.timeout(15_000) },
   );
   if (!response.ok) throw new Error(`O GitHub respondeu ${response.status}`);
   const releases = (await response.json()) as {
@@ -259,6 +266,5 @@ export async function latestClickhouseRelease(): Promise<AppRelease | null> {
       url: item.html_url,
     }))
     .sort((a, b) => compareVersions(b.version, a.version))[0];
-  cachedRelease = { at: Date.now(), release: best ?? null };
-  return cachedRelease.release;
+  return best ?? null;
 }

@@ -86,9 +86,21 @@ new version detected ──► available (no task yet)
    point (fixing what the rules allow, e.g. taking a Proxmox backup of the CT/VM), then
    `update_run`: snapshot of the CT/VM, the update steps, a version check, and rollback to
    the snapshot on failure. A point that cannot be validated closes the attempt and puts
-   the update back in *Waiting for reply* with a precise question.
+   the update back in *Waiting for reply* with a precise question. A Home Assistant component
+   (add-on, HACS, firmware) has no steps or snapshot: the agent installs it through Home
+   Assistant with `ha_update_install` (`install`, plus `check_config` and `restart` when the
+   update asks for it), a narrow tool the infrastructure template has instead of the smart-home
+   controls.
 5. **Verify.** In `VERIFYING`, the agent checks the "after" points with `update_verify` and
    marks it `DONE`.
+
+Each preparation opens a new attempt: an install that went back to *Waiting for reply* or
+*Ready to update* closes its attempt (only an install paused while *In progress* continues the
+same one). A newer version released during the study drops what was prepared (commands, spec):
+the old study is refused and `update_run` refuses an attempt for another version. A study run
+that fails before starting (no agent, no AI) counts as a failed attempt and waits 3 hours. On
+restart: an install requested but not started goes to *Waiting for reply*, a verification is
+resumed only once, and attempts still validating are stopped.
 
 ### Proxmox VE hosts
 

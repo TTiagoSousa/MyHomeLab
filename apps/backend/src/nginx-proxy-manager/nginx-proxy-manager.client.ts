@@ -1,4 +1,9 @@
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import {
+  describeFetchError,
+  htmlResponseError,
+  looksLikeHtml,
+} from 'src/integrations/app-fetch';
 
 // O Nginx Proxy Manager: a API JSON em <endereço>/api/… (o mesmo endereço do painel, muitas
 // vezes http://<ip>:81). Não tem tokens de API: entra-se com o email e a password de um
@@ -144,21 +149,31 @@ export type NginxProxyHostInput = Partial<{
   enabled: boolean;
 }>;
 
+/** O pedido passou do tempo: do lado do NPM pode ainda estar a correr. */
+export class NginxTimeoutError extends AppIntegrationError {}
+
 async function request<T>(
   url: string,
   init: RequestInit,
   what: string,
+  timeoutMs = 30_000,
 ): Promise<T> {
   let response: Response;
   try {
     response = await fetch(url, {
       ...init,
-      signal: AbortSignal.timeout(30_000),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   } catch (error) {
+    if (error instanceof Error && error.name === 'TimeoutError') {
+      throw new NginxTimeoutError(
+        'APP_UNREACHABLE',
+        `O Nginx Proxy Manager não respondeu em ${Math.round(timeoutMs / 1000)} s (${what}).`,
+      );
+    }
     throw new AppIntegrationError(
       'APP_UNREACHABLE',
-      `Não foi possível falar com o Nginx Proxy Manager (${what}): ${error instanceof Error ? error.message : String(error)}`,
+      `Não foi possível falar com o Nginx Proxy Manager (${what}): ${describeFetchError(error)}`,
     );
   }
   const text = await response.text();
@@ -196,6 +211,10 @@ async function request<T>(
         ? `o Nginx Proxy Manager não encontrou isso (${what})`
         : `o Nginx Proxy Manager respondeu ${response.status} (${what}): ${message}`,
     );
+  }
+  // Uma página de login (SSO) ou de proxy chegava aqui como texto e passava por resultado.
+  if (typeof body === 'string' && looksLikeHtml(body)) {
+    throw htmlResponseError('Nginx Proxy Manager', what);
   }
   return body as T;
 }
@@ -294,7 +313,7 @@ export function createNginxProxyManagerClient(
   const call = async <T>(
     path: string,
     what: string,
-    init: { method?: string; body?: unknown } = {},
+    init: { method?: string; body?: unknown; timeoutMs?: number } = {},
     retry = true,
   ): Promise<T> => {
     const jwt = await token();
@@ -312,6 +331,7 @@ export function createNginxProxyManagerClient(
           body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
         },
         what,
+        init.timeoutMs,
       );
     } catch (error) {
       if (
@@ -384,7 +404,8 @@ export function createNginxProxyManagerClient(
       call<NginxCertificate>(
         `/nginx/certificates/${encodeURIComponent(String(id))}/renew`,
         'renovar o certificado',
-        { method: 'POST', body: {} },
+        // O desafio do Let's Encrypt (sobretudo o DNS) leva perto de 2 minutos.
+        { method: 'POST', body: {}, timeoutMs: 5 * 60_000 },
       ),
     auditLog: () =>
       call<NginxAuditEntry[]>(

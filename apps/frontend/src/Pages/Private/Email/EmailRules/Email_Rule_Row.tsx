@@ -33,7 +33,7 @@ const Email_Rule_Row = ({ rule, hits, terms, field, accountLabel, onEdit, onChan
         {rule.isActive ? t('rules.active') : t('rules.inactive')}
       </button>
 
-      <div className='EmailRules_row_info' onClick={onEdit}>
+      <div className='EmailRules_row_info' role='button' tabIndex={0} onClick={onEdit} onKeyDown={(e) => e.key === 'Enter' && onEdit()}>
         <span className='EmailRules_row_name'>
           <Highlight_Text text={rule.name} terms={field === 'all' || field === 'name' ? terms : []} />
           {rule.mailKind !== 'ANY' && (
@@ -63,11 +63,11 @@ const Email_Rule_Row = ({ rule, hits, terms, field, accountLabel, onEdit, onChan
           ))}
       </div>
 
-      <button className='EmailRules_row_edit' onClick={onEdit}>
+      <button className='EmailRules_row_edit' onClick={onEdit} aria-label={t('common:actions.edit')}>
         <Icon.Pencil />
       </button>
 
-      <button className='EmailRules_row_delete' onClick={remove}>
+      <button className='EmailRules_row_delete' onClick={remove} aria-label={t('common:actions.delete')}>
         <Icon.Close />
       </button>
     </div>

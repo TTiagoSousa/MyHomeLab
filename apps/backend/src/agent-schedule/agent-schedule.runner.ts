@@ -126,6 +126,16 @@ export class AgentScheduleRunner implements OnApplicationBootstrap {
         tokensOut: result.tokensOut,
         docsUsed: result.docsUsed,
       });
+      // Correu bem: o "Não correu" de uma vez anterior deixa de valer.
+      if (!notice && !(schedule.toChat && schedule.notify)) {
+        await this.notifications
+          .resolveUserSubject(
+            schedule.userId,
+            `schedule:${schedule.id}`,
+            NotificationKind.AGENT_NOTICE,
+          )
+          .catch(() => undefined);
+      }
       if (schedule.toChat && result.reply.trim()) {
         // A resposta vai para uma conversa nova do Jarvis, e avisa-se que chegou.
         await this.assistant.postScheduledReply(schedule, result.reply);

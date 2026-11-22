@@ -50,9 +50,10 @@ const DOCS_READ = [
 ];
 
 /**
- * Os agentes do site. Uma instalação nova começa só com o CEO; os outros ficam aqui
- * para os agentes que já existem com este template, que continuam a apontar para as
- * instruções daqui enquanto não as editar, para receber as melhorias do site.
+ * Os agentes do site. Uma instalação nova começa só com o CEO; os outros criam-se a
+ * partir daqui (create_agent com template, ou POST /agents com template) e, tal como os
+ * que já existem com este template, apontam para as instruções daqui enquanto não as
+ * editar, para receber as melhorias do site.
  */
 const TEMPLATES: AgentTemplate[] = [
   {
@@ -120,8 +121,16 @@ const TEMPLATES: AgentTemplate[] = [
         'schedules',
         'board',
         'todos',
-      ),
+        // Decidir as propostas de documentos é do CEO, com o sim dele.
+      ).filter((tool) => tool !== 'docs_decide'),
+      // As atualizações do Home Assistant (ler e instalar), sem o controlo da casa.
+      'ha_overview',
       'ha_list_updates',
+      'ha_list_entities',
+      'ha_get_entity',
+      'ha_list_configs',
+      'ha_system_log',
+      'ha_update_install',
       'disk_alert_get',
       'disk_alert_save_study',
       'disk_alert_grow',
@@ -144,7 +153,10 @@ const TEMPLATES: AgentTemplate[] = [
       'list_servers',
       'list_proxmox_guests',
       'get_guest_status',
-      ...toolsOf('serverControl'),
+      // Os avisos de disco são do Engenheiro (vê por SSH o que ocupa o espaço).
+      ...toolsOf('serverControl').filter(
+        (tool) => !tool.startsWith('disk_alert_'),
+      ),
       ...DOCS_READ,
     ],
     reportsTo: 'infra',

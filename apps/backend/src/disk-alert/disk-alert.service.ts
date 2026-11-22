@@ -11,6 +11,7 @@ import { NotificationService } from 'src/notification/notification.service';
 import { ServerConnectionService } from 'src/server-connection/server-connection.service';
 import {
   AgentScheduleRepeat,
+  AgentScheduleRunStatus,
   DiskAlert,
   DiskAlertStatus,
   DocLinkType,
@@ -130,21 +131,48 @@ export class DiskAlertService implements OnModuleInit {
       else await this.openAlert(userId, serverId, conn.name, disk, options);
     }
     // Os que baixaram por outro motivo (ex.: ele limpou) fecham-se sozinhos; os que o
-    // agente está a corrigir ficam para o disk_alert_done.
+    // agente está a corrigir ficam para o disk_alert_done. Um agente que parou sem o
+    // disk_alert_done (reinício, acabou sem chamar) deixava o aviso preso em FIXING, e o
+    // disco nunca mais avisava: sem nenhum disparo ativo, fecha ou passa a esperar por ele.
+    let present: Set<number> | null = null;
     for (const alert of open) {
       const disk = reading.disks.find((entry) => same(alert, entry));
-      if (
-        !disk ||
-        disk.percent >= options.thresholdPercent ||
-        alert.status === DiskAlertStatus.FIXING
-      )
+      if (!disk) {
+        // Desligada fica como está; apagada do servidor fecha.
+        present ??= new Set(
+          (await client.clusterResources()).flatMap(
+            (entry) => entry.vmid ?? [],
+          ),
+        );
+        if (present.size && !present.has(alert.vmid)) {
+          await this.close(
+            alert,
+            DiskAlertStatus.CANCELLED,
+            '🗑 A máquina já não existe no servidor: fechada.',
+          );
+        }
         continue;
-      await this.close(
-        alert,
-        DiskAlertStatus.DONE,
-        `✅ Baixou para ${disk.percent}% (abaixo de ${options.thresholdPercent}%): fechada.`,
-        disk,
-      );
+      }
+      const working =
+        alert.status === DiskAlertStatus.STUDY ||
+        alert.status === DiskAlertStatus.FIXING;
+      const busy = working && (await this.agentBusy(alert));
+      if (alert.status === DiskAlertStatus.FIXING && busy) continue;
+      if (disk.percent < options.thresholdPercent) {
+        await this.close(
+          alert,
+          DiskAlertStatus.DONE,
+          `✅ Baixou para ${disk.percent}% (abaixo de ${options.thresholdPercent}%): fechada.`,
+          disk,
+        );
+        continue;
+      }
+      if (working && !busy) {
+        await this.ask(
+          alert,
+          `O agente parou sem acabar (o disco continua a ${disk.percent}%). Queres que estude outra vez (passa para In progress) ou deixamos (Cancelled)?`,
+        );
+      }
     }
     return {
       count: over.length,
@@ -326,9 +354,27 @@ export class DiskAlertService implements OnModuleInit {
     );
   }
 
+  /** Há um disparo da tarefa à espera de correr ou a correr (do aviso ou de um comentário dele). */
+  private async agentBusy(alert: DiskAlert) {
+    if (!alert.boardTaskId) return false;
+    const active = await this.prisma.agentSchedule.count({
+      where: {
+        linkType: DocLinkType.TASK,
+        targetId: alert.boardTaskId,
+        OR: [
+          { enabled: true, nextRunAt: { not: null } },
+          { runs: { some: { status: AgentScheduleRunStatus.RUNNING } } },
+        ],
+      },
+    });
+    return active > 0;
+  }
+
   /** Chama o agente da tarefa (um disparo para agora, ligado à tarefa). */
   private async dispatch(alert: DiskAlert, title: string, instruction: string) {
     if (!alert.agentKey) return;
+    // O "sim" num comentário e o mover para In progress chamavam dois agentes para o mesmo aviso.
+    if (await this.agentBusy(alert)) return;
     const task = alert.boardTaskId
       ? await this.prisma.boardTask.findUnique({
           where: { id: alert.boardTaskId },

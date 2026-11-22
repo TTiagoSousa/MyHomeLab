@@ -35,7 +35,7 @@ const Postgres_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('POSTGRES');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('POSTGRES');
   const { status, loading: checking, error, fetchStatus } = usePostgresStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<Postgres_Panel | null>(null);
@@ -71,7 +71,7 @@ const Postgres_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.postgres.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.postgres.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Summary

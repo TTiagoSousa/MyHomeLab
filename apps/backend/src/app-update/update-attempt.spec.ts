@@ -250,3 +250,37 @@ describe('uma tentativa que pára guarda o porquê', () => {
     );
   });
 });
+
+describe('uma instalação nova nunca reaproveita a anterior', () => {
+  const prepare = (service: UpdateAttemptService, status: string) =>
+    service.open({ ...update, status } as unknown as AppUpdate, {
+      title: 'Forgejo 15.0.0 → 17.0.1',
+      before: RULES,
+      after: [],
+      measured: [],
+      docs: [],
+      fresh: true,
+      kind: UpdateAttemptKind.UPDATE,
+    });
+
+  it('a verificação que volta a Waiting fecha a tentativa e a preparação seguinte abre outra', async () => {
+    const { prisma } = fakePrisma();
+    const service = new UpdateAttemptService(prisma);
+    const first = await prepare(service, 'READY');
+    await service.follow({ ...update, status: 'VERIFYING' } as never);
+    await service.follow({ ...update, status: 'WAITING' } as never);
+    expect(await service.current('up1')).toBeNull();
+    const second = await prepare(service, 'READY');
+    expect(second.id).not.toBe(first.id);
+    expect(second.number).toBe(2);
+  });
+
+  it('a instalação parada a meio (In progress) continua a mesma', async () => {
+    const { prisma } = fakePrisma();
+    const service = new UpdateAttemptService(prisma);
+    const first = await prepare(service, 'READY');
+    await service.follow({ ...update, status: 'IN_PROGRESS' } as never);
+    const again = await prepare(service, 'IN_PROGRESS');
+    expect(again.id).toBe(first.id);
+  });
+});

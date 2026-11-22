@@ -46,7 +46,7 @@ export function buildAdguardTools(context: AgentContext): AgentTool[] {
     {
       name: 'adguard_overview',
       description:
-        'Resumo do AdGuard Home: versão, se a proteção está ligada, pedidos e bloqueados das últimas 24 h, os domínios e clientes com mais pedidos e as listas. Bom ponto de partida.',
+        'Resumo do AdGuard Home: versão, se a proteção está ligada, pedidos e bloqueados do período das estatísticas escolhido no AdGuard (24 h, 7, 30 ou 90 dias — vem indicado), os domínios e clientes com mais pedidos e as listas. Bom ponto de partida.',
       inputSchema: { type: 'object', properties: { account: ACCOUNT } },
       handler: run((target) => overview(target)),
     },

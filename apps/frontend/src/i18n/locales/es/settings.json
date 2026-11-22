@@ -44,7 +44,8 @@
       "AI_NO_CREDIT": "Tu suscripción de Claude no permite continuar ahora.",
       "AI_RATE_LIMITED": "Tu suscripción de Claude llegó al límite. Vuelve a funcionar cuando se renueve el límite (mira en claude.ai → Ajustes → Uso).",
       "AI_UNAVAILABLE": "Claude Code no responde (o no está instalado). Inténtalo en un momento.",
-      "AI_REQUEST_REFUSED": "Claude rechazó la petición. Comprueba en Ajustes → IA → Modelos que el modelo elegido existe."
+      "AI_REQUEST_REFUSED": "Claude rechazó la petición. Comprueba en Ajustes → IA → Modelos que el modelo elegido existe.",
+      "AI_REPLY_TIMEOUT": "La respuesta tardó demasiado y se dejó de esperar. Abre la conversación dentro de un rato: si Jarvis termina, la respuesta aparecerá allí."
     },
     "models": "Modelos",
     "modelsSummary": "Jarvis: {{main}} · agentes: {{agent}}",

@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaConnectedAccountRepository } from '../repositories/prisma/prisma-connected-account-repository';
 import {
@@ -16,12 +16,25 @@ const PROVIDERS: Record<GoogleConnectionKind, ConnectionProvider> = {
   drive: ConnectionProvider.GOOGLE_DRIVE,
 };
 
+/** Como acabou a ligação: o browser volta à página de origem com `?google=<error>` quando falha. */
+export interface GoogleCallbackResult {
+  kind: GoogleConnectionKind;
+  error: 'cancelled' | 'failed' | null;
+}
+
+const logger = new Logger('GoogleCallback');
+
+/**
+ * O regresso do consentimento do Google. Carregar em "Cancelar" lá traz ?error=access_denied
+ * e nenhum code: antes dava 500 em JSON; agora volta-se à página com a razão.
+ */
 export async function handleGoogleCallback(
-  code: string,
-  state: string,
+  code: string | undefined,
+  state: string | undefined,
+  providerError: string | undefined,
   stateJwt: JwtService,
   repository: PrismaConnectedAccountRepository,
-): Promise<GoogleConnectionKind> {
+): Promise<GoogleCallbackResult> {
   let userId: string;
   let kind: GoogleConnectionKind;
   try {
@@ -29,15 +42,42 @@ export async function handleGoogleCallback(
     const payload = stateJwt.verify<{
       userId?: unknown;
       kind?: GoogleConnectionKind;
-    }>(state, { audience: GOOGLE_OAUTH_STATE_AUDIENCE });
+    }>(state ?? '', { audience: GOOGLE_OAUTH_STATE_AUDIENCE });
     if (typeof payload.userId !== 'string' || !payload.userId) {
       throw new Error('state sem utilizador');
     }
     userId = payload.userId;
     kind = googleKind(payload.kind);
   } catch {
-    throw new BadRequestException('State inválido ou expirado');
+    // Sem um state válido não se sabe de quem é: não se liga nada.
+    return { kind: 'gmail', error: 'failed' };
   }
+  if (providerError || !code) {
+    return {
+      kind,
+      error:
+        !providerError || providerError === 'access_denied'
+          ? 'cancelled'
+          : 'failed',
+    };
+  }
+  try {
+    await saveGoogleTokens(code, userId, kind, repository);
+    return { kind, error: null };
+  } catch (error) {
+    logger.warn(
+      `Falha ao ligar a conta Google (${kind}): ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return { kind, error: 'failed' };
+  }
+}
+
+async function saveGoogleTokens(
+  code: string,
+  userId: string,
+  kind: GoogleConnectionKind,
+  repository: PrismaConnectedAccountRepository,
+): Promise<void> {
   const provider = PROVIDERS[kind];
 
   const tokens = await exchangeGoogleCode(code);
@@ -62,7 +102,8 @@ export async function handleGoogleCallback(
       isActive: true,
       disconnectedAt: null,
     });
-    return kind;
+    await repository.resolveNeedsReconnect(existing);
+    return;
   }
 
   await repository.create({
@@ -74,5 +115,4 @@ export async function handleGoogleCallback(
     tokenExpiresAt,
     scopes,
   });
-  return kind;
 }

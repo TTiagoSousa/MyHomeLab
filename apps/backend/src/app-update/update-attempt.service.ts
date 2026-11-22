@@ -32,6 +32,12 @@ const FOLLOW: Partial<Record<AppUpdateStatus, UpdateAttemptStatus>> = {
   [AppUpdateStatus.STUDY]: UpdateAttemptStatus.STOPPED,
 };
 
+/** Voltar a estes estados depois de instalar fecha a tentativa da instalação. */
+const LEFT_INSTALL: AppUpdateStatus[] = [
+  AppUpdateStatus.WAITING,
+  AppUpdateStatus.READY,
+];
+
 const FINISHED: UpdateAttemptStatus[] = [
   UpdateAttemptStatus.DONE,
   UpdateAttemptStatus.FAILED,
@@ -144,7 +150,13 @@ export class UpdateAttemptService {
    */
   async open(update: AppUpdate, input: OpenInput): Promise<AttemptWithChecks> {
     let current = await this.current(update.id);
-    if (current && current.status !== UpdateAttemptStatus.CHECKING)
+    // Uma preparação nova nunca reaproveita uma instalação antiga (os vistos dela
+    // pareciam novos); só uma instalação parada a meio (In progress) continua a mesma.
+    if (
+      current &&
+      current.status !== UpdateAttemptStatus.CHECKING &&
+      (!input.fresh || update.status === AppUpdateStatus.IN_PROGRESS)
+    )
       return current;
     const kind = input.kind ?? UpdateAttemptKind.UPDATE;
     if (current && (input.fresh || current.kind !== kind)) {
@@ -374,6 +386,18 @@ export class UpdateAttemptService {
     return `Tentativa ${attempt.number} fechada e guardada (falhou: ${why}). A próxima update_prepare abre a tentativa ${attempt.number + 1}.`;
   }
 
+  /** Ao arrancar: as validações a meio morreram com o reinício (ficavam no "Precisa de ti"). */
+  async stopInterrupted(): Promise<void> {
+    await this.prisma.updateAttempt.updateMany({
+      where: { status: UpdateAttemptStatus.CHECKING },
+      data: {
+        status: UpdateAttemptStatus.STOPPED,
+        finishedAt: new Date(),
+        result: 'Interrompida: o MyHomeLab reiniciou a meio da validação.',
+      },
+    });
+  }
+
   /** O estudo acabou: a tentativa de estudo fica guardada com a recomendação e o que faltou. */
   async finishStudy(updateId: string, recommendation: string): Promise<void> {
     const attempt = await this.current(updateId);
@@ -428,10 +452,17 @@ export class UpdateAttemptService {
    * (reinício, "ver mais tarde", cancelada) guarda o porquê (o evento do histórico).
    */
   async follow(update: AppUpdate, reason?: string): Promise<void> {
-    const next = FOLLOW[update.status];
-    if (!next) return;
     const attempt = await this.current(update.id);
-    if (!attempt || attempt.status === next) return;
+    if (!attempt) return;
+    // Uma instalação que voltou a Waiting/Ready (verificação com problema, parada) já
+    // acabou: ficava em Verifying e era reaproveitada na instalação seguinte.
+    const next =
+      FOLLOW[update.status] ??
+      (attempt.status !== UpdateAttemptStatus.CHECKING &&
+      LEFT_INSTALL.includes(update.status)
+        ? UpdateAttemptStatus.STOPPED
+        : undefined);
+    if (!next || attempt.status === next) return;
     const finished = FINISHED.includes(next);
     await this.prisma.updateAttempt.update({
       where: { id: attempt.id },

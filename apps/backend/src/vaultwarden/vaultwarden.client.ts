@@ -1,4 +1,5 @@
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import { describeFetchError } from 'src/integrations/app-fetch';
 
 // O Vaultwarden (servidor compatível com o Bitwarden). Os cofres vêm cifrados de ponta a ponta
 // com a password mestra de cada pessoa: o servidor não os sabe ler, e o MyHomeLab também não
@@ -135,7 +136,7 @@ async function send(url: string, init: RequestInit, what: string) {
   } catch (error) {
     throw new AppIntegrationError(
       'APP_UNREACHABLE',
-      `Não foi possível falar com o Vaultwarden (${what}): ${error instanceof Error ? error.message : String(error)}`,
+      `Não foi possível falar com o Vaultwarden (${what}): ${describeFetchError(error)}`,
     );
   }
 }

@@ -64,10 +64,15 @@ export function buildTeamTools(context: AgentContext): AgentTool[] {
     {
       name: 'create_agent',
       description:
-        'Propõe um agente novo na equipa, já com tudo: nome, descrição, instruções completas, modelo, esforço, ferramentas e a quem responde (por omissão, a ti). Não cria logo: aparece-lhe um cartão no chat e só fica criado quando ele aprova.',
+        'Propõe um agente novo na equipa, já com tudo: nome, descrição, instruções completas, modelo, esforço, ferramentas e a quem responde (por omissão, a ti). Para um dos agentes do site (a lista no fim de list_available_tools), passa só template: vem com as instruções, as ferramentas, o modelo e o chefe do site, e o que passares a mais substitui. Não cria logo: aparece-lhe um cartão no chat e só fica criado quando ele aprova.',
       inputSchema: {
         type: 'object',
         properties: {
+          template: {
+            type: 'string',
+            description:
+              'A chave de um agente do site (ex.: "infra", "admin", "proxmox"). Com ela, o resto é opcional.',
+          },
           name: { type: 'string', description: 'Ex.: "Gestor Financeiro".' },
           description: {
             type: 'string',
@@ -88,7 +93,7 @@ export function buildTeamTools(context: AgentContext): AgentTool[] {
               'A chave ou o nome do chefe. Omite para responder a ti.',
           },
         },
-        required: ['name', 'description', 'prompt', 'tools'],
+        required: [],
       },
       handler: (input: Record<string, unknown>) =>
         proposeChange('create', input, context),

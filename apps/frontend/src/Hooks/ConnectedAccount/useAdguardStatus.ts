@@ -8,6 +8,7 @@ export interface AdguardStatus {
   protectionEnabled: boolean;
   queries: number;
   blocked: number;
+  statsHours: number | null;
   filters: number;
   enabledFilters: number;
   rules: number;

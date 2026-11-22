@@ -1,4 +1,5 @@
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import { describeFetchError, parseAppJson } from 'src/integrations/app-fetch';
 
 // O Plane (gestão de projetos): a API pública em <endereço>/api/v1/workspaces/<slug>/…, com o
 // token pessoal (Definições do perfil → Personal Access Tokens) no cabeçalho "X-API-Key".
@@ -139,7 +140,7 @@ async function request<T>(
   } catch (error) {
     throw new AppIntegrationError(
       'APP_UNREACHABLE',
-      `Não foi possível falar com o Plane (${what}): ${error instanceof Error ? error.message : String(error)}`,
+      `Não foi possível falar com o Plane (${what}): ${describeFetchError(error)}`,
     );
   }
   const text = await response.text();
@@ -173,7 +174,7 @@ async function request<T>(
         : `o Plane respondeu ${response.status} (${what}): ${detail}`,
     );
   }
-  return (text ? JSON.parse(text) : {}) as T;
+  return parseAppJson<T>(text, 'Plane', what);
 }
 
 /** A instância (sem token): a versão e o nome. */

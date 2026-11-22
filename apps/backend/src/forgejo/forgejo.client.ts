@@ -1,3 +1,5 @@
+import { describeFetchError } from 'src/integrations/app-fetch';
+
 /** Uma instância Forgejo (ou Gitea, que tem a mesma API) e o token de quem a liga. */
 export interface ForgejoConnection {
   baseUrl: string;
@@ -123,6 +125,11 @@ export function createForgejoClient({ baseUrl, token }: ForgejoConnection) {
       },
       body: init.body ? JSON.stringify(init.body) : undefined,
       signal: AbortSignal.timeout(15_000),
+    }).catch((error: unknown) => {
+      throw new ForgejoError(
+        0,
+        `Não foi possível falar com o Forgejo: ${describeFetchError(error)}`,
+      );
     });
     if (!response.ok) {
       let detail = '';
@@ -152,20 +159,24 @@ export function createForgejoClient({ baseUrl, token }: ForgejoConnection) {
       .map((part) => encodeURIComponent(part))
       .join('/')}`;
 
-  /** Todas as páginas de uma lista (a API devolve no máximo 50 de cada vez). */
+  /**
+   * Todas as páginas de uma lista. Pede 50 de cada vez, mas o Forgejo pode devolver
+   * menos (MAX_RESPONSE_ITEMS): só pára numa página vazia (ou ao fim de 200 páginas).
+   */
   async function all<T>(
     path: string,
     query: Record<string, string | number | undefined> = {},
     unwrap: (page: unknown) => T[] = (page) => page as T[],
   ): Promise<T[]> {
     const items: T[] = [];
-    for (let page = 1; ; page++) {
+    for (let page = 1; page <= 200; page++) {
       const batch = unwrap(
         await request<unknown>(path, { query: { ...query, limit: 50, page } }),
       );
+      if (!batch.length) break;
       items.push(...batch);
-      if (batch.length < 50) return items;
     }
+    return items;
   }
 
   return {
@@ -234,8 +245,7 @@ export function createForgejoClient({ baseUrl, token }: ForgejoConnection) {
         query: { limit: 50 },
       }),
 
-    repos: () =>
-      request<ForgejoRepo[]>('/user/repos', { query: { limit: 50 } }),
+    repos: () => all<ForgejoRepo>('/user/repos'),
 
     issues: (
       repo: string,

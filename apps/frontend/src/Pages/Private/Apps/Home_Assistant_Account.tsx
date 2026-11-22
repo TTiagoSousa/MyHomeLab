@@ -20,7 +20,7 @@ const Home_Assistant_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('HOME_ASSISTANT');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('HOME_ASSISTANT');
   const { status, loading: checking, error, fetchStatus } = useHomeAssistantStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
 
@@ -53,7 +53,7 @@ const Home_Assistant_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.homeAssistant.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.homeAssistant.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Account

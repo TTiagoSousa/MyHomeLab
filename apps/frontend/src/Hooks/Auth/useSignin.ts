@@ -4,6 +4,11 @@ import http from "../../Service/httpService";
 import { useAlert } from "../../Contexts/Alert_Context";
 import i18n from "../../i18n";
 
+const returnPath = () => {
+  const from = new URLSearchParams(window.location.search).get('from') ?? '';
+  return from.startsWith('/MyHomeLab') ? from : '/MyHomeLab/Today';
+};
+
 export const useSignin = () => {
   const [signInEmail, setSignInEmail] = useState('');
   const [signInpassword, setSignInpassword] = useState('');
@@ -36,7 +41,7 @@ export const useSignin = () => {
       });
 
       setTimeout(() => {
-        window.location.href = '/MyHomeLab/Today';
+        window.location.href = returnPath();
       }, 300);
 
     } catch (error: any) {
@@ -47,7 +52,6 @@ export const useSignin = () => {
         message: msg,
         type: 'error',
       });
-    } finally {
       setLoading(false);
     }
   };

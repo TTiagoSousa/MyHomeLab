@@ -30,6 +30,16 @@ export class CreateAgentDto {
   @MaxLength(20000)
   prompt!: string;
 
+  /**
+   * A chave de um dos agentes do site (ex.: "infra"): fica com as instruções do site
+   * (prompt vazio ou igual) e, se estiver livre, com a chave dele — as ligações dos
+   * documentos iniciais ("Regras gerais do servidor" → infra) apontam para ela.
+   */
+  @IsOptional()
+  @IsString()
+  @MaxLength(40)
+  template?: string | null;
+
   @IsOptional()
   @IsString()
   @MaxLength(4000)

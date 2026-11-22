@@ -70,7 +70,16 @@ if [ "${MYHOMELAB_STAGE:-1}" = 1 ]; then
 
   # One update (or restore) at a time; the lock is inherited by stage 2.
   exec 9>"$STATE_DIR/.lock"
-  flock -n 9 || die "Another update or restore is already running."
+  if ! flock -n 9; then
+    # An app request while a restore runs: drop it (while it exists the .path unit keeps
+    # re-triggering) and tell the app, unless it is our own update that is running.
+    if [ "${1:-}" = "--from-request" ] && ! grep -q '"state":"running"' "$STATE_DIR/status.json" 2>/dev/null; then
+      rm -f "$REQUESTS_DIR/request"
+      STARTED_AT="$(date -Is)"
+      status failed request "Another update or restore is running. Ask again when it finishes."
+    fi
+    die "Another update or restore is already running."
+  fi
 
   TARGET="${1:-latest}"
   if [ "$TARGET" = "--from-request" ]; then
@@ -97,9 +106,11 @@ if [ "${MYHOMELAB_STAGE:-1}" = 1 ]; then
   FROM_LABEL="$(installed_label)"
   TARGET_LABEL="$TARGET"
   status running fetch "Fetching releases"
-  # Nothing has changed yet at this stage — just record the failure for the app.
+  # Only the checkout can have changed at this stage: put it back (a new tag left in
+  # HEAD made the next try say "Already up to date" without building) and record it.
   set -E
-  trap 'status failed fetch "Could not fetch or check out ${TARGET_LABEL} (see update.log)"' ERR
+  trap '[ -z "${BEFORE:-}" ] || as_app git checkout --quiet --force "$BEFORE" || true
+    status failed fetch "Could not fetch or check out ${TARGET_LABEL} (see update.log)"' ERR
   trap '[ -z "${UPDATE_WORK:-}" ] || rm -rf "$UPDATE_WORK"' EXIT
 
   msg "Fetching from origin…"
@@ -111,7 +122,17 @@ if [ "${MYHOMELAB_STAGE:-1}" = 1 ]; then
   fi
   TARGET_LABEL="$TARGET"
 
+  # What is really running: the commit of the last update that finished. HEAD is not
+  # enough — an update cut off after the checkout (power loss) left it on the new tag
+  # with the old build, and the next run would skip the build.
   BEFORE="$(as_app git rev-parse HEAD)"
+  installed="$(head -c 64 "$STATE_DIR/installed-commit" 2>/dev/null | tr -d '[:space:]' || true)"
+  if [[ "$installed" =~ ^[0-9a-f]{40}$ ]] && [ "$installed" != "$BEFORE" ] \
+      && as_app git cat-file -e "$installed^{commit}" 2>/dev/null; then
+    warn "The last update did not finish (code at $(as_app git rev-parse --short HEAD), last good install $(as_app git rev-parse --short "$installed")): building again."
+    BEFORE="$installed"
+    FROM_LABEL="$(as_app git describe --tags --exact-match --match 'v*' "$installed" 2>/dev/null || as_app git rev-parse --short "$installed")"
+  fi
   if [[ "$TARGET" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     as_app git rev-parse -q --verify "refs/tags/$TARGET" >/dev/null \
       || { status failed fetch "Release $TARGET does not exist"; die "Release $TARGET does not exist."; }
@@ -165,6 +186,7 @@ AFTER="$(as_app git rev-parse HEAD)"
 
 if [ "$BEFORE" = "$AFTER" ] && [ "${FORCE:-}" != "1" ]; then
   msg "Already up to date (${TARGET_LABEL}). To rebuild anyway: FORCE=1 myhomelab-update"
+  printf '%s\n' "$AFTER" | write_state_file installed-commit
   status success "done" "Already on $TARGET_LABEL"
   exit 0
 fi
@@ -194,6 +216,7 @@ rollback() {
   fi
   if $restored && as_app git checkout --quiet --force "$BEFORE" \
       && build_app && publish_frontend && restore_system "$SNAPSHOT" && restart_backend; then
+    printf '%s\n' "$BEFORE" | write_state_file installed-commit
     status failed "$failed_step" "Update to $TARGET_LABEL failed at '$failed_step'. Still running $FROM_LABEL."
   else
     status failed "$failed_step" "Update failed at '$failed_step' and the rollback failed too. Check update.log."
@@ -224,6 +247,8 @@ install_claude_code
 step restart "Restarting the backend";                 restart_backend
 
 trap - ERR
+# Only now is the new version the installed one (the app reads it instead of HEAD).
+printf '%s\n' "$AFTER" | write_state_file installed-commit
 status success "done" "Updated to $TARGET_LABEL"
 # The new backend reads the new folders; the old one is no longer needed.
 if [ -n "${LEGACY_STATUS:-}" ]; then

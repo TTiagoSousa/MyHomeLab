@@ -13,6 +13,7 @@ import {
   PaperlessObjectKind,
 } from 'src/paperless/paperless.client';
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const normalize = (text: string) =>
   text.normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
@@ -364,7 +365,7 @@ export function listTasks(
       .slice(0, limit)
       .map(
         (task) =>
-          `- ${task.task_file_name ?? task.type} · ${task.status} · ${task.date_created.slice(0, 16).replace('T', ' ')}${task.related_document ? ` · documento ${task.related_document}` : ''}${task.result && task.status !== 'SUCCESS' ? ` · ${task.result.slice(0, 200)}` : ''}`,
+          `- ${task.task_file_name ?? task.type} · ${task.status} · ${lisbonStamp(task.date_created)}${task.related_document ? ` · documento ${task.related_document}` : ''}${task.result && task.status !== 'SUCCESS' ? ` · ${task.result.slice(0, 200)}` : ''}`,
       )
       .join('\n');
   });

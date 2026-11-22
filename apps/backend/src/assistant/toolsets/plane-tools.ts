@@ -15,6 +15,7 @@ import {
   PlaneWorkItem,
   PlaneWorkItemInput,
 } from 'src/plane/plane.client';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const fold = (text: string) =>
   text.normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
@@ -436,7 +437,7 @@ export function buildPlaneTools(context: AgentContext): AgentTool[] {
           `Estado: ${states.find((state) => state.id === item.state)?.name ?? '?'} · prioridade ${item.priority}`,
           `Responsáveis: ${item.assignees.map((id) => people.get(id) ?? '?').join(', ') || 'ninguém'}`,
           `Etiquetas: ${item.labels.map((id) => labels.find((label) => label.id === id)?.name ?? '?').join(', ') || 'nenhuma'}`,
-          `Datas: início ${item.start_date ?? '—'}, prazo ${item.target_date ?? '—'} · criada ${item.created_at.slice(0, 10)}, mudou ${item.updated_at.slice(0, 16).replace('T', ' ')}`,
+          `Datas: início ${item.start_date ?? '—'}, prazo ${item.target_date ?? '—'} · criada ${item.created_at.slice(0, 10)}, mudou ${lisbonStamp(item.updated_at)}`,
           '',
           item.description_stripped?.trim() ||
             strip(item.description_html) ||
@@ -446,7 +447,7 @@ export function buildPlaneTools(context: AgentContext): AgentTool[] {
             ? `Comentários:\n${comments
                 .map(
                   (comment) =>
-                    `- ${comment.created_at.slice(0, 16).replace('T', ' ')} ${people.get(comment.actor ?? comment.created_by ?? '') ?? ''}: ${comment.comment_stripped?.trim() || strip(comment.comment_html)}`,
+                    `- ${lisbonStamp(comment.created_at)} ${people.get(comment.actor ?? comment.created_by ?? '') ?? ''}: ${comment.comment_stripped?.trim() || strip(comment.comment_html)}`,
                 )
                 .join('\n')}`
             : 'Sem comentários.',

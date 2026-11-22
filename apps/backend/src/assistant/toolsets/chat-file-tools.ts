@@ -11,6 +11,7 @@ import {
 } from 'src/chat-file/helpers/fileContent';
 import { queryTable } from 'src/chat-file/helpers/queryTable';
 import { Table, fold, renderRows } from 'src/chat-file/helpers/sheetTable';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const FILE = {
   type: 'string' as const,
@@ -241,7 +242,7 @@ export function buildChatFileTools(context: AgentContext): AgentTool[] {
               detail = ' — não se consegue abrir';
             }
             lines.push(
-              `- ${fileLine(info)}, enviado ${info.createdAt.toISOString().slice(0, 16).replace('T', ' ')}${detail}`,
+              `- ${fileLine(info)}, enviado ${lisbonStamp(info.createdAt)}${detail}`,
             );
           }
           return lines.join('\n');

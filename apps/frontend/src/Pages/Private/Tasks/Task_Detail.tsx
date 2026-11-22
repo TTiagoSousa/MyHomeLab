@@ -22,7 +22,7 @@ import './Tasks.scss';
 const TABS = ['comments', 'links', 'relations', 'triggers', 'activity'] as const;
 type DetailTab = (typeof TABS)[number];
 
-const Task_Detail = () => {
+const Task_Detail_Content = () => {
   const { t } = useTranslation('tasks');
   const { taskId } = useParams();
   const navigate = useNavigate();
@@ -298,6 +298,11 @@ const Task_Detail = () => {
       )}
     </div>
   );
+};
+
+const Task_Detail = () => {
+  const { taskId } = useParams();
+  return <Task_Detail_Content key={taskId} />;
 };
 
 export default Task_Detail;

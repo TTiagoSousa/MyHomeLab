@@ -2,7 +2,30 @@ import type Anthropic from '@anthropic-ai/sdk';
 import type { Message } from '@anthropic-ai/sdk/resources/messages';
 import { AiClient, DEFAULT_MODELS } from 'src/ai-credential/ai-client';
 import { structuredSchema } from 'src/ai-credential/claudeApiClient';
-import { runApiAgent } from './apiAgent';
+import { apiMessages, runApiAgent } from './apiAgent';
+
+describe('apiMessages', () => {
+  it('passa a nota "system" para texto marcado, junto da mensagem dele', () => {
+    const messages = [
+      { role: 'assistant', content: 'olá' },
+      { role: 'user', content: 'aprovo' },
+      { role: 'system', content: 'Há 1 proposta por decidir.' },
+    ] as unknown as Parameters<typeof apiMessages>[0];
+    expect(apiMessages(messages)).toEqual([
+      { role: 'assistant', content: 'olá' },
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'aprovo' },
+          {
+            type: 'text',
+            text: '[Nota do MyHomeLab]\nHá 1 proposta por decidir.',
+          },
+        ],
+      },
+    ]);
+  });
+});
 
 const reply = (
   content: Message['content'],
@@ -96,8 +119,12 @@ describe('runApiAgent', () => {
         { type: 'tool_result', tool_use_id: 'toolu_1', content: 'viagens: 2' },
       ],
     });
-    const first = requests[0] as { system: { cache_control?: unknown }[] };
+    const first = requests[0] as {
+      system: { cache_control?: unknown }[];
+      cache_control?: unknown;
+    };
     expect(first.system[0].cache_control).toEqual({ type: 'ephemeral' });
+    expect(first.cache_control).toEqual({ type: 'ephemeral' });
   });
 
   it('uma ferramenta que falha volta como erro e o agente continua', async () => {

@@ -63,7 +63,7 @@ const Destination_Row = ({ destination, confirmingRemove, checkDestination, onEd
           {t('backups.confirmRemove')}
         </button>
       ) : (
-        <button type='button' className='Apps_pair_delete' onClick={onRemove}>
+        <button type='button' className='Apps_pair_delete' onClick={onRemove} aria-label={t('common:actions.delete')}>
           <Icon.Close />
         </button>
       )}

@@ -254,3 +254,98 @@ describe('DiskAlertService — os travões do aumento', () => {
     );
   });
 });
+
+describe('DiskAlertService — o check() não deixa avisos presos', () => {
+  const row = (patch: Partial<DiskAlert>): DiskAlert =>
+    ({
+      id: 'a1',
+      userId: 'u1',
+      serverConnectionId: 's1',
+      node: 'pve',
+      guestKind: 'lxc',
+      vmid: 114,
+      guestName: 'myhomelab',
+      target: 'rootfs',
+      status: DiskAlertStatus.FIXING,
+      usedBytes: 15 * GIB,
+      totalBytes: 16 * GIB,
+      firstPercent: 93.8,
+      percent: 93.8,
+      boardTaskId: 't1',
+      agentKey: 'infra',
+      question: null,
+      ...patch,
+    }) as DiskAlert;
+
+  const setup = (alert: DiskAlert, activeRuns: number, used: number) => {
+    const updates: Record<string, unknown>[] = [];
+    const resources = [
+      {
+        type: 'lxc',
+        node: 'pve',
+        vmid: 114,
+        name: 'myhomelab',
+        status: 'running',
+        disk: used * GIB,
+        maxdisk: 16 * GIB,
+      },
+    ];
+    jest
+      .spyOn(
+        jest.requireActual<typeof import('src/proxmox/proxmox.client')>(
+          'src/proxmox/proxmox.client',
+        ),
+        'createProxmoxClient',
+      )
+      .mockReturnValue({
+        clusterResources: () => Promise.resolve(resources),
+      } as never);
+    const prisma = {
+      diskAlert: {
+        findMany: () => Promise.resolve([alert]),
+        update: ({ data }: { data: Record<string, unknown> }) => {
+          updates.push(data);
+          return Promise.resolve({ ...alert, ...data });
+        },
+      },
+      agentSchedule: { count: () => Promise.resolve(activeRuns) },
+      serverConnection: { findUnique: () => Promise.resolve({ name: 'pve' }) },
+    };
+    const board = {
+      onStateChange: jest.fn(),
+      comment: jest.fn().mockResolvedValue(undefined),
+      updateTask: jest.fn().mockResolvedValue(undefined),
+      askUser: jest.fn().mockResolvedValue(undefined),
+    };
+    const service = new DiskAlertService(
+      prisma as never,
+      board as never,
+      { resolveUserSubject: jest.fn() } as never,
+      { connectionById: () => Promise.resolve({ name: 'pve' }) } as never,
+    );
+    return { service, updates };
+  };
+  const options = diskAlertOptions({ thresholdPercent: 90 }, true);
+
+  it('em FIXING sem nenhum agente a correr passa a esperar por ele', async () => {
+    const { service, updates } = setup(row({}), 0, 15);
+    await service.check('u1', 's1', options);
+    expect(
+      updates.some((data) => data.status === DiskAlertStatus.WAITING),
+    ).toBe(true);
+  });
+
+  it('em FIXING com o agente a correr não mexe', async () => {
+    const { service, updates } = setup(row({}), 1, 15);
+    await service.check('u1', 's1', options);
+    expect(updates.some((data) => 'status' in data)).toBe(false);
+  });
+
+  it('em FIXING sem agente e já abaixo do limite fecha', async () => {
+    const { service, updates } = setup(row({}), 0, 8);
+    await service.check('u1', 's1', options);
+    expect(updates.some((data) => data.status === DiskAlertStatus.DONE)).toBe(
+      true,
+    );
+  });
+});

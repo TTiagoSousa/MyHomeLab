@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,6 +12,7 @@ import {
   DocLink,
   DocLinkType,
   DocOwner,
+  DocProposal,
   DocProposalAction,
   DocProposalStatus,
   NotificationKind,
@@ -631,6 +633,52 @@ export class DocsService {
 
   async approve(userId: string, proposalId: string, content?: string) {
     const proposal = await this.findProposal(userId, proposalId);
+    await this.claimProposal(userId, proposal.id);
+    try {
+      return await this.applyProposal(userId, proposal, content);
+    } catch (error) {
+      // Não ficou aplicada: volta a poder ser decidida.
+      await this.prisma.docProposal
+        .updateMany({
+          where: { id: proposal.id, status: DocProposalStatus.PENDING },
+          data: { decidedAt: null },
+        })
+        .catch(() => undefined);
+      throw error;
+    }
+  }
+
+  /**
+   * Agarra a proposta antes de a aplicar: duas aprovações seguidas (o botão no chat e o
+   * docs_decide, ou dois cliques) aplicavam-na duas vezes (texto repetido, dois documentos).
+   * O decidedAt de uma PENDING é a marca de "a aplicar"; uma que ficou presa (reinício a
+   * meio) liberta-se passados 5 minutos.
+   */
+  private async claimProposal(userId: string, id: string) {
+    const claimed = await this.prisma.docProposal.updateMany({
+      where: {
+        id,
+        userId,
+        status: DocProposalStatus.PENDING,
+        OR: [
+          { decidedAt: null },
+          { decidedAt: { lt: new Date(Date.now() - 5 * 60_000) } },
+        ],
+      },
+      data: { decidedAt: new Date() },
+    });
+    if (claimed.count !== 1) {
+      throw new ConflictException(
+        'Esta proposta já está a ser aplicada: espera um momento e atualiza a página.',
+      );
+    }
+  }
+
+  private async applyProposal(
+    userId: string,
+    proposal: DocProposal,
+    content?: string,
+  ) {
     const text = content ?? proposal.content;
     const organize = this.organizeOf(proposal);
     let doc: DocWithLinks;
@@ -721,6 +769,8 @@ export class DocsService {
 
   async reject(userId: string, proposalId: string): Promise<void> {
     const proposal = await this.findProposal(userId, proposalId);
+    // Só se ainda ninguém a está a aplicar (ver claimProposal).
+    await this.claimProposal(userId, proposal.id);
     await this.prisma.docProposal.update({
       where: { id: proposal.id },
       data: { status: DocProposalStatus.REJECTED, decidedAt: new Date() },

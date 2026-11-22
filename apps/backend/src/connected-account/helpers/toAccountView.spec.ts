@@ -64,6 +64,7 @@ describe('toAccountView', () => {
       id: 'acc-1',
       displayName: 'Router',
       appHost: '192.168.1.1',
+      appBaseUrl: 'http://192.168.1.1',
       caldavHost: 'cloud.example',
       username: 'admin',
     });

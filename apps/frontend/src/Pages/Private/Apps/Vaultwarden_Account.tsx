@@ -34,7 +34,7 @@ const Vaultwarden_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('VAULTWARDEN');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('VAULTWARDEN');
   const { status, loading: checking, error, fetchStatus } = useVaultwardenStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<Vaultwarden_Panel | null>(null);
@@ -44,7 +44,7 @@ const Vaultwarden_Account = () => {
   const account = connectedAccounts.find((item) => item.id === accountId);
   const name = account?.displayName ?? t('apps.vaultwarden.title');
   const label = account?.displayName ? `Vaultwarden · ${account.displayName}` : 'Vaultwarden';
-  const baseUrl = account?.appHost ? `https://${account.appHost}` : '';
+  const baseUrl = account?.appBaseUrl ?? '';
   const state = !account?.isActive ? 'off' : error ? 'error' : checking && !status ? 'checking' : status ? 'ok' : 'unknown';
 
   const disconnect = async () => {
@@ -70,7 +70,7 @@ const Vaultwarden_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.vaultwarden.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.vaultwarden.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Summary

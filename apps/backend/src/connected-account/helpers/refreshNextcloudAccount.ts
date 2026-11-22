@@ -38,8 +38,9 @@ export async function refreshNextcloudAccount(
   const client = nextcloudForAccount(account);
   try {
     const [status, user] = await Promise.all([client.status(), client.me()]);
+    // isAdmin null (os grupos não responderam): fica o que estava guardado.
     const current =
-      user.isAdmin !== account.isAdmin
+      user.isAdmin !== null && user.isAdmin !== account.isAdmin
         ? await repository.update(account.id, { isAdmin: user.isAdmin })
         : account;
     const apps = user.isAdmin ? await client.apps() : [];
@@ -50,7 +51,7 @@ export async function refreshNextcloudAccount(
       account: current,
       login: user.id,
       displayName: user.displayName,
-      isAdmin: user.isAdmin,
+      isAdmin: user.isAdmin ?? current.isAdmin,
       maintenance: status.maintenance,
       needsDbUpgrade: status.needsDbUpgrade,
       apps: apps.length,

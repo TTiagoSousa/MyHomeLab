@@ -34,7 +34,7 @@ const Coolify_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('COOLIFY');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('COOLIFY');
   const { status, loading: checking, error, fetchStatus } = useCoolifyStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<Coolify_Panel | null>(null);
@@ -44,7 +44,7 @@ const Coolify_Account = () => {
   const account = connectedAccounts.find((item) => item.id === accountId);
   const name = account?.displayName ?? t('apps.coolify.title');
   const label = account?.displayName ? `Coolify · ${account.displayName}` : 'Coolify';
-  const baseUrl = account?.appHost ? `https://${account.appHost}` : '';
+  const baseUrl = account?.appBaseUrl ?? '';
   const state = !account?.isActive ? 'off' : error ? 'error' : checking && !status ? 'checking' : status ? 'ok' : 'unknown';
 
   const disconnect = async () => {
@@ -70,7 +70,7 @@ const Coolify_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.coolify.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.coolify.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Summary

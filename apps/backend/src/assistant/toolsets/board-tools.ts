@@ -1,6 +1,7 @@
 import { AgentTool } from '../claude-agent.client';
 import { AgentContext } from '../agents/agent-context';
 import { TaskPriority } from 'src/generated/prisma/client/client';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const TASK = {
   type: 'string' as const,
@@ -250,7 +251,7 @@ export function buildBoardTools(context: AgentContext): AgentTool[] {
                 .slice(-30)
                 .map(
                   (comment) =>
-                    `  [${comment.createdAt.toISOString().slice(0, 16).replace('T', ' ')}] ${comment.author === 'user' ? 'ELE' : comment.author}: ${comment.body}`,
+                    `  [${lisbonStamp(comment.createdAt)}] ${comment.author === 'user' ? 'ELE' : comment.author}: ${comment.body}`,
                 )
                 .join('\n')}`
             : '\nSem comentários.',

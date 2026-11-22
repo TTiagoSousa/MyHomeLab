@@ -9,7 +9,7 @@ apps: [OPENGYM]
 ## Estudar uma atualização
 
 > **Quando usar:** uma tarefa "Atualizar openGym X → Y" em Study (o pedido de estudo do MyHomeLab).
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" (o caminho e o que decides sozinho). **Depois:** "openGym – instalar uma atualização".
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" (o caminho e o que decides sozinho). **Depois:** "Instalar uma atualização", mais abaixo.
 
 No estudo só se lê e mede. Nada se instala, reinicia ou apaga.
 
@@ -37,7 +37,7 @@ No estudo só se lê e mede. Nada se instala, reinicia ou apaga.
 - [ ] 🤖 **Sem issues graves abertas** na versão nova (perda de dados, sincronização, login ou passkeys, o emparelhamento da app, a importação) — prova: os links vistos ou "nenhuma"
 - [ ] 🤖 **Sem passos à mão:** nenhuma chave do `.env` nem do `docker-compose.yml` que tenha de mudar à mão (as do compose vêm com o `git pull`, quando a pasta é um clone) — prova: as notas e as chaves vistas (ou os passos)
 - [ ] 🤖 **A ligação do MyHomeLab continua:** nada nas notas muda o `/api/pair`, o `/api/me` ou o `/api/data` (os tokens emparelhados e o formato das rotinas) — prova: as notas (ou o que muda)
-- [ ] 🤖 **O backup do openGym está ativo** (list_backups): ligado, com destino e sem erro — prova: o backup, o destino e o estado
+- [ ] 🤖 **Há caminho de volta:** o update_run tira o snapshot do CT 215 antes de instalar, e há um backup do CT no Proxmox com menos de 24 h (ou faz-se antes de instalar) — prova: o último backup (`pvesm list <storage> --content backup --vmid 215`) ou "faz-se antes de instalar"
 - [ ] 🤖 **Salto de versão major** (ex.: 1 → 2): diz-se no resumo e na recomendação, com o que muda. Não é uma pergunta — prova: "major" com o que muda, ou "não é major"
 
 ### Decidir (next do update_save_study)
@@ -59,7 +59,7 @@ O resumo na forma de "Atualizações das apps e do Proxmox – como funcionam" (
 ## Instalar uma atualização
 
 > **Quando usar:** uma atualização do openGym em Ready to update (eu pus lá, ou o estudo com install) ou um pedido direto meu. Instala-se logo, a qualquer hora.
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("openGym – estudar uma atualização").
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("Estudar uma atualização", mais acima).
 
 Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto major.
 
@@ -77,8 +77,7 @@ Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto
 ### Antes de instalar
 - [ ] 🤖 Está em Ready to update: eu pus lá, ou o estudo (install) — prova: o histórico
 - [ ] 🤖 A pasta do projeto: `pct exec 215 -- docker compose ls` mostra o openGym, e é a do estudo — prova: a pasta e os serviços (api e web a correr)
-- [ ] 🤖 O backup do openGym está ativo: ligado, com destino e sem erro (list_backups). Se não estiver, não se configura: pergunta-se — prova: o backup, o destino e o estado
-- [ ] 🤖 Há um backup do openGym feito pelo MyHomeLab **há menos de 1 hora**, sem erro e **sem nada "de fora"**; se não, corre-o (run_backup) e espera que acabe — prova: a hora, o ficheiro e o tamanho
+- [ ] 🤖 Há um backup do CT 215 no Proxmox com menos de 24 h e sem erro (`pvesm list <storage> --content backup --vmid 215`); se não, faz-se um (pve_backup_now, pelo Operador Proxmox) e espera-se que acabe bem. O snapshot de antes é o do update_run — prova: a hora e o ficheiro do backup
 - [ ] 🤖 O disco do CT 215 está abaixo de 90% (`pct exec 215 -- df -h /`): as imagens novas ocupam espaço até as antigas saírem. Acima disso, pergunta-se (apagar imagens ou aumentar o disco é com o meu sim) — prova: a percentagem
 - [ ] 🤖 A memória do CT 215 não está cheia — prova: a percentagem
 - [ ] 🤖 O openGym responde na versão de partida (o `/api/health` ok e writable, e a versão da página) e não há outra atualização a correr no servidor — prova: a versão e o que está a correr
@@ -103,8 +102,6 @@ Nunca `docker compose restart`: não lê o `.env` outra vez (o guia do openGym d
 - [ ] 🤖 Os dois serviços estão a correr: `pct exec 215 -- bash -lc 'cd <pasta> && docker compose ps'` — prova: o estado do api e do web
 - [ ] 🤖 Sem erros novos no log desde o arranque (`pct exec 215 -- bash -lc 'cd <pasta> && docker compose logs --since 15m --no-color api'`) — prova: as linhas ou "nenhuma"
 - [ ] 🤖 A ligação do MyHomeLab continua e os dados estão lá: opengym_overview mostra as mesmas rotinas e os mesmos treinos de antes — prova: os números antes e depois
-- [ ] 🤖 Correu um backup novo pelo MyHomeLab, sem nada "de fora" — prova: a hora, o tamanho e o resultado
-
 ### Se falhar
 
 Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam": a atualização fica em In progress, investiga-se, e o que é simples e seguro corrige-se e corre-se outra vez no mesmo processo (até 3 corridas). O que é desta app:
@@ -114,7 +111,7 @@ Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam
 
 ### Nunca
 
-- Instalar sem o backup da última hora ou sem o snapshot.
+- Instalar sem o backup do CT das últimas 24 h ou sem o snapshot.
 - Apagar a pasta `data` (nem o `data/secret`), volumes ou imagens.
 - Mexer no `.env` ou no `docker-compose.yml` à mão durante a atualização.
 - `docker compose down -v` ou outro comando que apague volumes.

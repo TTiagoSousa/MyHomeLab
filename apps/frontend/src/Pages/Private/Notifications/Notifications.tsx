@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import './Notifications.scss';
 import { useNotifications, type AppNotification, type NotificationKind } from '../../../Hooks/Notifications/useNotifications';
-import { useServiceMonitors } from '../../../Hooks/ServiceMonitors/useServiceMonitors';
+import { useCheckMonitor } from '../../../Hooks/ServiceMonitors/useCheckMonitor';
 import { dateLocale } from '../../../i18n';
 import { SUMMARY_PREFIX, askPage, isAsk, appPage } from '../../../Hooks/Notifications/notificationPage';
 import Agent_Summary from './Agent_Summary';
@@ -24,7 +24,7 @@ const Notifications = () => {
   const { t } = useTranslation('notifications');
   const navigate = useNavigate();
   const { active, resolved, loading, clearResolved, dismiss } = useNotifications();
-  const { checkingId, checkMonitor } = useServiceMonitors();
+  const { checkingId, checkMonitor } = useCheckMonitor();
   const [showResolved, setShowResolved] = useState(false);
 
   const asks = active.filter(isAsk);

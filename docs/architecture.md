@@ -156,7 +156,10 @@ and tools.
   cleanup, or growing a CT disk up to a maximum, a step at a time, never leaving the storage below
   a minimum free) or Waiting for reply otherwise (always for VMs) → Verifying (MyHomeLab measures
   again) → Done. A "yes" on the task or moving it to In progress approves; an alert closes by itself
-  when the disk drops below the limit.
+  when the disk drops below the limit. If the agent stops without `disk_alert_done` (restart, or it
+  ended without calling it), the next measurement closes the alert (below the limit) or moves it to
+  Waiting for reply; an alert of a machine removed from the server closes. Only one agent run per
+  alert at a time.
 - **Claude Code turns**: every Claude Code run starts `claude` processes (hundreds of MB each),
   so each user runs at most N jobs at once in Claude Code (Settings → AI, 1–6, default 2) and
   the rest wait their turn. Only the top of a chain takes a turn (or the first Claude Code run
@@ -252,7 +255,12 @@ A service that goes down also opens a task on its server board ("Service X faile
 server agent is asked to study it. When it comes back the task moves to Verifying, and once it has been
 stable for 10 minutes MyHomeLab closes it as Done — unless someone moved it (for example to Waiting for
 reply). A failure during an update of that app (or of the server's Proxmox) opens no task: it is noted on
-the update's task instead.
+the update's task instead, and if the service is still down after the update a task opens. Services of the
+same server that go down within 5 minutes share one task and one agent (the task only moves to Verifying
+when all of them are back). A service that goes down again less than 6 hours after its task closed
+reopens it (with how many times it fell in 24 hours) without calling another agent; one that falls again
+while its task is in Verifying goes back to In progress and the agent is called again (at most once every
+6 hours). A service that is no longer monitored closes its open task.
 
 ## Internationalisation
 

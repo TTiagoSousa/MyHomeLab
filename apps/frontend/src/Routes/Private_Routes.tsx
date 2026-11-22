@@ -1,12 +1,14 @@
 import { Suspense } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import * as Private_Page from '../Imports/privatePages';
+import * as Intermediate_Pages from '../Imports/intermediaryPages';
 import Admin_Check from '../Authentication/Admin_Check';
 import Legacy_Board_Redirect from './Legacy_Board_Redirect';
 import Tasks_Entry from './Tasks_Entry';
 
 const Private_Routes = () => {
   return (
+    <Suspense fallback={<Intermediate_Pages.Loading_Page />}>
     <Routes>
       <Route index element={ <Private_Page.Today /> } />
       <Route path='MyHomeLab' element={ <Private_Page.Today /> } />
@@ -19,31 +21,31 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Email/:accountId' element={ <Private_Page.LegacyEmailRedirect to='rules' /> } />
       <Route path='MyHomeLab/Email/:accountId/proposals' element={ <Private_Page.LegacyEmailRedirect to='proposals' /> } />
       <Route path='MyHomeLab/Health' element={ <Private_Page.Health /> } />
-      <Route path='MyHomeLab/Health/Sleep' element={ <Suspense fallback={null}><Private_Page.Sleep /></Suspense> } />
-      <Route path='MyHomeLab/Health/Heart' element={ <Suspense fallback={null}><Private_Page.Heart /></Suspense> } />
-      <Route path='MyHomeLab/Health/Skin' element={ <Suspense fallback={null}><Private_Page.Skin /></Suspense> } />
-      <Route path='MyHomeLab/Health/Oxygen' element={ <Suspense fallback={null}><Private_Page.Oxygen /></Suspense> } />
-      <Route path='MyHomeLab/Health/Stress' element={ <Suspense fallback={null}><Private_Page.Stress /></Suspense> } />
-      <Route path='MyHomeLab/Health/Steps' element={ <Suspense fallback={null}><Private_Page.Steps /></Suspense> } />
-      <Route path='MyHomeLab/Health/Exercise' element={ <Suspense fallback={null}><Private_Page.Exercise /></Suspense> } />
-      <Route path='MyHomeLab/Health/Exercise/:workoutId' element={ <Suspense fallback={null}><Private_Page.Workout /></Suspense> } />
-      <Route path='MyHomeLab/Health/Weight' element={ <Suspense fallback={null}><Private_Page.Weight /></Suspense> } />
-      <Route path='MyHomeLab/Health/Water' element={ <Suspense fallback={null}><Private_Page.Water /></Suspense> } />
-      <Route path='MyHomeLab/Health/Labs' element={ <Suspense fallback={null}><Private_Page.Labs /></Suspense> } />
-      <Route path='MyHomeLab/Health/Labs/:reportId' element={ <Suspense fallback={null}><Private_Page.LabReport /></Suspense> } />
-      <Route path='MyHomeLab/Health/Medication' element={ <Suspense fallback={null}><Private_Page.Medication /></Suspense> } />
-      <Route path='MyHomeLab/Health/Diary' element={ <Suspense fallback={null}><Private_Page.Diary /></Suspense> } />
-      <Route path='MyHomeLab/Health/Profile' element={ <Suspense fallback={null}><Private_Page.HealthProfile /></Suspense> } />
-      <Route path='MyHomeLab/Health/Nutrition' element={ <Suspense fallback={null}><Private_Page.Nutrition /></Suspense> } />
-      <Route path='MyHomeLab/Health/Body' element={ <Suspense fallback={null}><Private_Page.Body /></Suspense> } />
-      <Route path='MyHomeLab/Health/Intakes' element={ <Suspense fallback={null}><Private_Page.Intakes /></Suspense> } />
-      <Route path='MyHomeLab/Health/Wellbeing' element={ <Suspense fallback={null}><Private_Page.Wellbeing /></Suspense> } />
-      <Route path='MyHomeLab/Health/Mood' element={ <Suspense fallback={null}><Private_Page.Mood /></Suspense> } />
-      <Route path='MyHomeLab/Health/Fasting' element={ <Suspense fallback={null}><Private_Page.Fasting /></Suspense> } />
+      <Route path='MyHomeLab/Health/Sleep' element={ <Private_Page.Sleep /> } />
+      <Route path='MyHomeLab/Health/Heart' element={ <Private_Page.Heart /> } />
+      <Route path='MyHomeLab/Health/Skin' element={ <Private_Page.Skin /> } />
+      <Route path='MyHomeLab/Health/Oxygen' element={ <Private_Page.Oxygen /> } />
+      <Route path='MyHomeLab/Health/Stress' element={ <Private_Page.Stress /> } />
+      <Route path='MyHomeLab/Health/Steps' element={ <Private_Page.Steps /> } />
+      <Route path='MyHomeLab/Health/Exercise' element={ <Private_Page.Exercise /> } />
+      <Route path='MyHomeLab/Health/Exercise/:workoutId' element={ <Private_Page.Workout /> } />
+      <Route path='MyHomeLab/Health/Weight' element={ <Private_Page.Weight /> } />
+      <Route path='MyHomeLab/Health/Water' element={ <Private_Page.Water /> } />
+      <Route path='MyHomeLab/Health/Labs' element={ <Private_Page.Labs /> } />
+      <Route path='MyHomeLab/Health/Labs/:reportId' element={ <Private_Page.LabReport /> } />
+      <Route path='MyHomeLab/Health/Medication' element={ <Private_Page.Medication /> } />
+      <Route path='MyHomeLab/Health/Diary' element={ <Private_Page.Diary /> } />
+      <Route path='MyHomeLab/Health/Profile' element={ <Private_Page.HealthProfile /> } />
+      <Route path='MyHomeLab/Health/Nutrition' element={ <Private_Page.Nutrition /> } />
+      <Route path='MyHomeLab/Health/Body' element={ <Private_Page.Body /> } />
+      <Route path='MyHomeLab/Health/Intakes' element={ <Private_Page.Intakes /> } />
+      <Route path='MyHomeLab/Health/Wellbeing' element={ <Private_Page.Wellbeing /> } />
+      <Route path='MyHomeLab/Health/Mood' element={ <Private_Page.Mood /> } />
+      <Route path='MyHomeLab/Health/Fasting' element={ <Private_Page.Fasting /> } />
       <Route path='MyHomeLab/Servers' element={ <Private_Page.Servers /> } />
-      <Route path='MyHomeLab/Docs' element={ <Suspense fallback={null}><Private_Page.Docs /></Suspense> } />
-      <Route path='MyHomeLab/Docs/:docId' element={ <Suspense fallback={null}><Private_Page.Docs /></Suspense> } />
-      <Route path='MyHomeLab/Docs/attempts/:attemptId' element={ <Suspense fallback={null}><Private_Page.Docs /></Suspense> } />
+      <Route path='MyHomeLab/Docs' element={ <Private_Page.Docs /> } />
+      <Route path='MyHomeLab/Docs/:docId' element={ <Private_Page.Docs /> } />
+      <Route path='MyHomeLab/Docs/attempts/:attemptId' element={ <Private_Page.Docs /> } />
       <Route path='MyHomeLab/Tasks' element={ <Tasks_Entry /> } />
       <Route path='MyHomeLab/Tasks/:taskId' element={ <Legacy_Board_Redirect /> } />
       <Route path='MyHomeLab/Projects' element={ <Private_Page.Tasks /> } />
@@ -122,11 +124,13 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Apps/Gmail/:accountId/proposals' element={ <Private_Page.RuleProposals /> } />
       <Route path='MyHomeLab/Addons' element={ <Navigate to='/MyHomeLab/Apps' replace /> } />
       <Route path='MyHomeLab/Admin' element={ <Admin_Check><Private_Page.Admin /></Admin_Check> } />
-      <Route path='MyHomeLab/Defeniçoes' element={ <Private_Page.Settings /> } />
+      <Route path='MyHomeLab/Settings' element={ <Private_Page.Settings /> } />
+      <Route path='MyHomeLab/Defeniçoes' element={ <Navigate to='/MyHomeLab/Settings' replace /> } />
       <Route path='MyHomeLab/Admin/Status' element={ <Admin_Check><Private_Page.SystemStatus /></Admin_Check> } />
       <Route path='MyHomeLab/Admin/Versions' element={ <Admin_Check><Private_Page.Versions /></Admin_Check> } />
       <Route path='*' element={ <Navigate to='/MyHomeLab' replace /> } />
     </Routes>
+    </Suspense>
   );
 };
 

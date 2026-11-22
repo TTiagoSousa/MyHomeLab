@@ -10,6 +10,7 @@ export { default as Settings } from '../Assets/Icons/Settings/Settings';
 export { default as Star } from '../Assets/Icons/Star/Star';
 export { default as Plus } from '../Assets/Icons/Plus/Plus';
 export { default as Close } from '../Assets/Icons/Close/Close';
+export { default as Menu } from '../Assets/Icons/Menu/Menu';
 export { default as Chat } from '../Assets/Icons/Chat/Chat';
 export { default as Send } from '../Assets/Icons/Send/Send';
 export { default as Paperclip } from '../Assets/Icons/Paperclip/Paperclip';

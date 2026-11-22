@@ -14,6 +14,7 @@ import {
   JellyfinUser,
   jellyfinDuration,
 } from 'src/jellyfin/jellyfin.client';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const fold = (text: string) => text.trim().toLowerCase();
 
@@ -36,8 +37,7 @@ const ITEM_TYPES = [
   'Playlist',
 ];
 
-const when = (iso?: string | null) =>
-  iso ? iso.slice(0, 16).replace('T', ' ') : 'nunca';
+const when = (iso?: string | null) => lisbonStamp(iso, 'nunca');
 
 /** O Jellyfin a usar: o único, ou o que bate com o nome ou o endereço. */
 export async function jellyfinTarget(

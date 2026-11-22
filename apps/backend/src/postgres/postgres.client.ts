@@ -1,15 +1,14 @@
 import { Client, ClientConfig, QueryConfig, QueryResult } from 'pg';
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
 import { readOnlyStatementProblem } from './helpers/readOnlyStatement';
-import { AppRelease, compareVersions } from 'src/integrations/releases';
 
 // O PostgreSQL ligado diretamente (pacote pg), sem API nem MCP no meio: o servidor tem de ser
 // alcançável a partir do MyHomeLab no host e na porta (5432) — não serve o endereço de uma
 // interface web como o pgAdmin ou o Adminer. Em baseUrl fica "postgres://host:porta/base
 // ?sslmode=…" (nunca a password), o utilizador em username e a password cifrada em
 // accessToken. Cada pedido abre uma ligação curta e fecha-a, com statement_timeout.
-// O PostgreSQL não publica releases no GitHub: a versão mais recente vem do versions.json
-// do site oficial.
+// Não tem aviso de versão nova (não está em VERSION_SOURCES): o PostgreSQL não publica
+// releases no GitHub nem no Codeberg, de onde vêm as notas das atualizações.
 
 export type PostgresSsl = 'off' | 'on' | 'no-verify';
 
@@ -216,75 +215,4 @@ export async function readOnlyQuery(
   } finally {
     await client.query('ROLLBACK').catch(() => undefined);
   }
-}
-
-/** A versão do servidor ("16.4"), para as atualizações. */
-export function postgresVersion(
-  baseUrl: string,
-  user: string,
-  password: string,
-) {
-  return withPostgres({ baseUrl, user, password }, async (client) => {
-    const { rows } = await client.query<{ server_version: string }>(
-      'SHOW server_version',
-    );
-    const version = rows[0]?.server_version?.split(' ')[0];
-    if (!version) throw new Error('O PostgreSQL não disse a versão.');
-    return version;
-  });
-}
-
-interface PostgresVersionEntry {
-  major: string;
-  latestMinor: string;
-  current: boolean;
-  supported: boolean;
-}
-
-let cachedVersions: { at: number; entries: PostgresVersionEntry[] } | null =
-  null;
-
-async function postgresVersions(): Promise<PostgresVersionEntry[]> {
-  if (cachedVersions && Date.now() - cachedVersions.at < 60 * 60_000)
-    return cachedVersions.entries;
-  const response = await fetch('https://www.postgresql.org/versions.json', {
-    headers: { Accept: 'application/json', 'User-Agent': 'MyHomeLab' },
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!response.ok)
-    throw new Error(`o postgresql.org respondeu ${response.status}`);
-  const entries = (await response.json()) as PostgresVersionEntry[];
-  cachedVersions = { at: Date.now(), entries };
-  return entries;
-}
-
-const release = (entry: PostgresVersionEntry): AppRelease => {
-  const version = `${entry.major}.${entry.latestMinor}`;
-  return {
-    version,
-    url: `https://www.postgresql.org/docs/release/${version}/`,
-  };
-};
-
-/** A versão mais recente do PostgreSQL (a do major atual, ex.: "18.1"). */
-export async function latestPostgresRelease(): Promise<AppRelease | null> {
-  const supported = (await postgresVersions()).filter(
-    (entry) => entry.supported,
-  );
-  const current =
-    supported.find((entry) => entry.current) ??
-    supported.sort((a, b) => compareVersions(b.major, a.major))[0];
-  return current ? release(current) : null;
-}
-
-/** A correção mais recente do mesmo major que está instalado (16.4 → "16.10"), e se ainda é suportado. */
-export async function latestPostgresMinor(
-  installed: string,
-): Promise<(AppRelease & { supported: boolean }) | null> {
-  const major =
-    Number(installed.split('.')[0]) >= 10
-      ? installed.split('.')[0]
-      : installed.split('.').slice(0, 2).join('.');
-  const entry = (await postgresVersions()).find((item) => item.major === major);
-  return entry ? { ...release(entry), supported: entry.supported } : null;
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { PrismaConnectedAccountRepository } from '../repositories/prisma/prisma-connected-account-repository';
 import { CreateHomeAssistantAccountDto } from '../dto/create-home-assistant-account.dto';
 import { ConnectionProvider } from 'src/generated/prisma/client/client';
@@ -40,8 +40,16 @@ export async function createHomeAssistantAccount(
   const existing = (
     await repository.findAllByUser(userId, ConnectionProvider.HOME_ASSISTANT)
   ).find((account) => account.baseUrl === baseUrl);
+  // O mesmo Home Assistant fica com o token novo (o histórico e a VM ficam na conta).
   if (existing) {
-    throw new ConflictException('Este Home Assistant já está ligado');
+    return repository.update(existing.id, {
+      accessToken: token,
+      username: user.name,
+      isActive: true,
+      ...(dto.displayName?.trim()
+        ? { displayName: dto.displayName.trim() }
+        : {}),
+    });
   }
 
   return repository.create({

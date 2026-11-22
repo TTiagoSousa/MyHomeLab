@@ -14,6 +14,6 @@ export function newUpdatesText(updates: UpdateWithAccount[]): string {
           'As peças (apps dentro do Nextcloud, add-ons do Home Assistant…) são atualizações à parte: cada uma conta como uma app própria, por isso uma atualização da app (ou de outra peça) em aberto não as faz esperar.',
         ]
       : []),
-    'Segue "Atualizações das apps e do Proxmox – como funcionam" (O disparo "Abrir cada update novo"): para cada uma, abre-a com update_start (passa para Espera por estudo e o estudo corre sozinho) ou diz porque não.',
+    'Segue "Atualizações das apps e do Proxmox – como funcionam" (a secção "Abrir cada update novo", se existir): para cada uma, abre-a com update_start (passa para Espera por estudo e o estudo corre sozinho) ou diz porque não.',
   ].join('\n');
 }

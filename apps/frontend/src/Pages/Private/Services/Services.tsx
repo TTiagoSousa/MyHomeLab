@@ -145,7 +145,13 @@ interface Static_Service_Card_Props {
 }
 
 const Static_Service_Card = ({ service, isEditMode, onOpen, onEdit, onToggleFavorite }: Static_Service_Card_Props) => (
-  <div className='Services_service' onClick={() => !isEditMode && onOpen()}>
+  <div
+    className='Services_service'
+    role={isEditMode ? undefined : 'button'}
+    tabIndex={isEditMode ? undefined : 0}
+    onClick={() => !isEditMode && onOpen()}
+    onKeyDown={(e) => !isEditMode && e.target === e.currentTarget && e.key === 'Enter' && onOpen()}
+  >
     <Service_Card_Body service={service} isEditMode={isEditMode} onEdit={onEdit} onToggleFavorite={onToggleFavorite} />
   </div>
 );

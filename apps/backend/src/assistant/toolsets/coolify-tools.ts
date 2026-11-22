@@ -12,6 +12,7 @@ import {
   CoolifyServer,
   createCoolifyClient,
 } from 'src/coolify/coolify.client';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const fold = (text: string) => text.trim().toLowerCase();
 
@@ -35,8 +36,7 @@ const KIND_NAME: Record<CoolifyKind, string> = {
   databases: 'base de dados',
 };
 
-const when = (iso?: string | null) =>
-  iso ? iso.slice(0, 16).replace('T', ' ') : '—';
+const when = (iso?: string | null) => lisbonStamp(iso);
 
 const reachable = (server: CoolifyServer) =>
   server.is_reachable ?? server.settings?.is_reachable;

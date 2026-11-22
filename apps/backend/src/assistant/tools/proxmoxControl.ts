@@ -5,6 +5,7 @@ import {
   ProxmoxConnection,
   ProxmoxGuestRef,
 } from 'src/proxmox/proxmox.client';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 export interface GuestTarget {
   server: ProxmoxConnection;
@@ -111,7 +112,7 @@ export async function listSnapshots(target: GuestTarget): Promise<string> {
   return snapshots
     .map(
       (snapshot) =>
-        `${snapshot.name}${snapshot.snaptime ? ` — ${new Date(snapshot.snaptime * 1000).toISOString().replace('T', ' ').slice(0, 16)}` : ''}` +
+        `${snapshot.name}${snapshot.snaptime ? ` — ${lisbonStamp(snapshot.snaptime)}` : ''}` +
         (snapshot.description?.trim()
           ? ` — ${snapshot.description.trim()}`
           : ''),

@@ -74,6 +74,22 @@ describe('clickhouse client', () => {
     ).select('SELECT 1', 1);
     expect(result.data).toEqual([{ a: 1 }]);
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls[1][1]?.body).toBe(
+      'SELECT * FROM (\nSELECT 1\n) LIMIT 1',
+    );
+  });
+
+  it('explains a self-signed certificate instead of "fetch failed"', async () => {
+    fetchMock.mockImplementationOnce(() =>
+      Promise.reject(
+        new TypeError('fetch failed', {
+          cause: { code: 'DEPTH_ZERO_SELF_SIGNED_CERT' },
+        }),
+      ),
+    );
+    await expect(
+      createClickhouseClient('https://ch.exemplo.com', 'a', 'b').version(),
+    ).rejects.toThrow(/self-signed/);
   });
 
   it('maps authentication failures', async () => {

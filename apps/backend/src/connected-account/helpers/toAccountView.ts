@@ -21,6 +21,11 @@ export function toAccountView(account: ConnectedAccount) {
     forgejoHost: account.baseUrl ? new URL(account.baseUrl).host : null,
     // Apps com endereço (Forgejo, TREK): o anfitrião, para a lista de contas.
     appHost: account.baseUrl ? new URL(account.baseUrl).host : null,
+    // O endereço tal como foi guardado (http/https, porta, subcaminho), para o modal de trocar
+    // o token o pré-preencher sem o adivinhar a partir do anfitrião. Sem utilizador:password.
+    appBaseUrl: account.baseUrl
+      ? account.baseUrl.replace(/\/\/[^/@]*@/, '//')
+      : null,
     isAdmin: account.isAdmin,
     appVersion: account.appVersion,
     appLatestVersion: account.appLatestVersion,

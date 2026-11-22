@@ -58,13 +58,13 @@ const Simple_Alert: React.FC = () => {
   if (!visible || !snapshot) return null;
 
   return (
-    <div className={`Simple_Alert Simple_Alert--${snapshot.type}${exiting ? ' Simple_Alert--exit' : ''}`}>
-      <span className="Simple_Alert__icon">{ICONS[snapshot.type]}</span>
+    <div className={`Simple_Alert Simple_Alert--${snapshot.type}${exiting ? ' Simple_Alert--exit' : ''}`} role="status" aria-live="polite">
+      <span className="Simple_Alert__icon" aria-hidden="true">{ICONS[snapshot.type]}</span>
       <div className="Simple_Alert__body">
         <span className="Simple_Alert__label">{t(LABELS[snapshot.type])}</span>
         <span className="Simple_Alert__message">{snapshot.message}</span>
       </div>
-      <button className="Simple_Alert__close" onClick={dismiss}>✕</button>
+      <button className="Simple_Alert__close" onClick={dismiss} aria-label={t('common:actions.close')}>✕</button>
       <span className="Simple_Alert__progress" />
     </div>
   );

@@ -15,7 +15,8 @@ export interface NextcloudStatus {
 export interface NextcloudUser {
   id: string;
   displayName: string | null;
-  isAdmin: boolean;
+  /** null: o pedido dos grupos falhou e não se sabe. */
+  isAdmin: boolean | null;
 }
 
 export interface NextcloudApp {
@@ -151,21 +152,31 @@ export function createNextcloudClient(
         'Este endereço não parece ser um Nextcloud.',
       );
     }
-    const groups =
-      (
-        await get<OcsResponse<{ groups?: string[] }>>(
-          `/ocs/v2.php/cloud/users/${encodeURIComponent(user.id)}/groups?format=json`,
-        ).catch(() => null)
-      )?.ocs?.data?.groups ?? [];
+    const groups = (
+      await get<OcsResponse<{ groups?: string[] }>>(
+        `/ocs/v2.php/cloud/users/${encodeURIComponent(user.id)}/groups?format=json`,
+      ).catch(() => null)
+    )?.ocs?.data?.groups;
     return {
       id: user.id,
       displayName: user.displayname ?? null,
-      isAdmin: groups.includes('admin'),
+      isAdmin: groups ? groups.includes('admin') : null,
     };
   }
 
-  /** As apps ligadas, com o nome e a versão instalada (precisa de admin). */
+  /** As apps ligadas (precisa de admin). */
   async function apps(): Promise<NextcloudApp[]> {
+    return (await appsRead()).apps;
+  }
+
+  /**
+   * As apps ligadas, com o nome e a versão instalada, e quantas não se conseguiram
+   * ler (essas ficam de fora da lista).
+   */
+  async function appsRead(): Promise<{
+    apps: NextcloudApp[];
+    unreadable: number;
+  }> {
     const ids =
       (
         await get<OcsResponse<{ apps?: string[] }>>(
@@ -173,6 +184,7 @@ export function createNextcloudClient(
         )
       ).ocs?.data?.apps ?? [];
     const result: NextcloudApp[] = [];
+    let unreadable = 0;
     // Em grupos de 8: dezenas de apps sem afogar o servidor.
     for (let index = 0; index < ids.length; index += 8) {
       const infos = await Promise.all(
@@ -193,10 +205,15 @@ export function createNextcloudClient(
             name: info.name ?? id,
             version: cleanVersion(info.version),
           });
+        } else {
+          unreadable += 1;
         }
       });
     }
-    return result.sort((a, b) => a.name.localeCompare(b.name));
+    return {
+      apps: result.sort((a, b) => a.name.localeCompare(b.name)),
+      unreadable,
+    };
   }
 
   /** A versão instalada de uma app (null se não estiver lá). */
@@ -209,7 +226,7 @@ export function createNextcloudClient(
     return info?.version ? cleanVersion(info.version) : null;
   }
 
-  return { status, me, apps, appVersion };
+  return { status, me, apps, appsRead, appVersion };
 }
 
 /** O cliente de uma conta Nextcloud ligada (já desencriptada): a raiz, o utilizador e a password de app. */

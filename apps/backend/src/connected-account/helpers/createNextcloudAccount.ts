@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Logger } from '@nestjs/common';
+import { BadRequestException, Logger } from '@nestjs/common';
 import { PrismaConnectedAccountRepository } from '../repositories/prisma/prisma-connected-account-repository';
 import { CreateNextcloudAccountDto } from '../dto/create-nextcloud-account.dto';
 import { createNextcloudFiles } from 'src/backup/helpers/nextcloudFiles';
@@ -17,8 +17,6 @@ export async function createNextcloudAccount(
     dto.caldavUrl,
     dto.caldavUsername,
   );
-  if (existing && !existing.disconnectedAt)
-    throw new ConflictException('Já tens esta conta Nextcloud ligada');
 
   // A conta serve para os backups (WebDAV): basta o Nextcloud aceitar o utilizador.
   try {
@@ -37,8 +35,8 @@ export async function createNextcloudAccount(
     );
   }
 
-  // A mesma conta desligada continua na base de dados com o que estava ligado a ela
-  // (backups) — religar revive a linha em vez de criar uma segunda.
+  // A mesma conta (ligada ou desligada) fica com a password nova: a linha guarda o
+  // que estava ligado a ela (backups, histórico) — religar não cria uma segunda.
   if (existing) {
     return repository.update(existing.id, {
       displayName: dto.displayName,

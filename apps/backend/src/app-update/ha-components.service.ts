@@ -62,7 +62,7 @@ export class HaComponentsService {
     const donePoints = afterPoints(docs);
     const steps = await this.record.stepStates(update);
     // O backup só vai onde a entidade o suporta (os add-ons); nas outras o HA recusa-o (500).
-    const install = `ha_call_service update.install {"entity_id": "${update.component}"} (+ "backup": true só se o supported_features da entidade tiver o bit 8, como nos add-ons)`;
+    const install = `ha_update_install {"action": "install", "entity_id": "${update.component}"} (+ "backup": true só se o supported_features da entidade tiver o bit 8, como nos add-ons)`;
     const measured = await commonChecks(this.prisma, update);
     const attempt = await this.attempts.open(update, {
       title: `${updateLabel(update)} ${update.fromVersion} → ${update.toVersion}`,
@@ -126,7 +126,7 @@ export class HaComponentsService {
     return (
       `A especificação ficou no registo.${checklistGaps(checks)}\n` +
       'Segue as regras: se pedirem a aprovação dele, mostra-lhe a especificação (o que é, de → para, como se instala, feito quando, riscos) e espera pelo sim numa mensagem dele. ' +
-      `Depois instala com ha_call_service (domínio update, serviço install, entity_id ${update.component}, backup true) — tu, se tens o ha_call_service, ou o agente da equipa que o tem. ` +
+      `Depois instala com ha_update_install (action install, entity_id ${update.component}; backup true só se a entidade o aceitar). ` +
       'O MyHomeLab vê a versão nova em até 10 minutos e passa a atualização a Verifying; depois verificas o "feito quando" com update_verify.'
     );
   }

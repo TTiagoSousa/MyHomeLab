@@ -120,6 +120,14 @@ export const BLOCKED_REASONS = new Set([
   'FilteredSafeSearch',
 ]);
 
+/** "Últimas 24 h", "Últimos 7 dias"… para o período das estatísticas (em horas). */
+export function adguardStatsPeriod(hours: number | null): string {
+  if (!hours) return 'No período escolhido no AdGuard';
+  if (hours === 24) return 'Últimas 24 h';
+  if (hours % 24 === 0) return `Últimos ${hours / 24} dias`;
+  return `Últimas ${Math.round(hours)} h`;
+}
+
 /**
  * A API de controlo do AdGuard Home (`/control/...`), com o utilizador e a
  * password do painel (o AdGuard não tem tokens de API).
@@ -163,6 +171,22 @@ export function createAdguardClient(
     setProtection: (enabled: boolean, duration?: number) =>
       send('/protection', duration ? { enabled, duration } : { enabled }),
     stats: () => get<AdguardStats>('/stats'),
+    /**
+     * De quantas horas são as estatísticas (o período escolhido no AdGuard). As versões
+     * novas dão o intervalo em milissegundos em /stats/config; as antigas, em dias em
+     * /stats_info. Sem resposta: null.
+     */
+    statsHours: () =>
+      get<{ interval?: number }>('/stats/config')
+        .catch(() => get<{ interval?: number }>('/stats_info'))
+        .then(({ interval }) =>
+          !interval
+            ? null
+            : interval > 1000
+              ? interval / 3_600_000
+              : interval * 24,
+        )
+        .catch(() => null),
     queryLog: (params: Record<string, unknown>) =>
       get<{ data: AdguardQueryLogEntry[] | null; oldest?: string }>(
         '/querylog',

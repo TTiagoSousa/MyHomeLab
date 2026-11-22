@@ -1,7 +1,9 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
+  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -44,11 +46,13 @@ const newCode = () =>
 
 /**
  * Os comandos por SSH (nível 2). Correm todos logo e ficam registados (os que
- * alteram também no registo do dia do servidor). O código não trava nada: o que
- * um agente pode fazer, e quando, está nas regras (documentos).
+ * alteram também no registo do dia do servidor). Aqui não se trava: sem ele a ver, o
+ * unattendedTools só deixa passar leituras e "systemctl restart"; o resto do que um
+ * agente pode fazer, e quando, está nas regras (documentos).
  */
 @Injectable()
-export class ServerCommandService {
+export class ServerCommandService implements OnApplicationBootstrap {
+  private readonly logger = new Logger(ServerCommandService.name);
   private updateRunner: UpdateRunner | null = null;
 
   constructor(
@@ -56,6 +60,24 @@ export class ServerCommandService {
     private readonly docs: DocsService,
     private readonly hostKeys: PrismaServerHostKeyRepository,
   ) {}
+
+  /** Um reinício corta os comandos que estavam a correr: ficavam em RUNNING para sempre. */
+  async onApplicationBootstrap(): Promise<void> {
+    await this.prisma.serverCommand
+      .updateMany({
+        where: { status: ServerCommandStatus.RUNNING },
+        data: {
+          status: ServerCommandStatus.FAILED,
+          output: 'Interrompido: o MyHomeLab reiniciou enquanto corria.',
+          finishedAt: new Date(),
+        },
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Comandos interrompidos: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+  }
 
   registerUpdateRunner(runner: UpdateRunner) {
     this.updateRunner = runner;

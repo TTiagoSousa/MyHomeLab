@@ -13,7 +13,7 @@ const Admin_Check = ({ children }: AdminCheckProps) => {
 
   useEffect(() => {
     if (!isLoading && role !== 'ADMIN') {
-      navigate('/MyHomeLab');
+      navigate('/MyHomeLab', { replace: true });
     }
   }, [isLoading, role, navigate]);
 

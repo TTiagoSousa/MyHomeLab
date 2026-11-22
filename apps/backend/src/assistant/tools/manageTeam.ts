@@ -5,6 +5,7 @@ import {
   AgentModel,
 } from 'src/generated/prisma/client/client';
 import { TOOL_CATALOG } from 'src/agent/tool-catalog';
+import { AGENT_TEMPLATES } from 'src/agent/agent-templates';
 import { createTeamAgent } from 'src/agent/helpers/createTeamAgent';
 import { updateTeamAgent } from 'src/agent/helpers/updateTeamAgent';
 import { deleteTeamAgent } from 'src/agent/helpers/deleteTeamAgent';
@@ -88,16 +89,57 @@ export function listTeam(context: TeamContext): string {
     .join('\n');
 }
 
+/** Os agentes do site que se podem criar (todos menos o CEO). */
+const SITE_AGENTS = AGENT_TEMPLATES.filter((template) => template.reportsTo);
+
 export function listAvailableTools(): string {
-  return GROUPS.map(
-    (group) =>
-      `${group}: ${TOOL_CATALOG.filter((entry) => entry.group === group)
-        .map(
-          (entry) =>
-            `${entry.name} (${entry.access === 'read' ? 'lê' : 'altera'}: ${entry.action.replace(/^a /, '')})`,
-        )
-        .join('; ')}`,
-  ).join('\n');
+  const siteAgents =
+    '\n\nAgentes do site (create_agent com template: já vêm com as instruções, as ferramentas e o chefe do site):\n' +
+    SITE_AGENTS.map(
+      (template) =>
+        `${template.key} — ${template.name} (responde a ${template.reportsTo}): ${template.description}`,
+    ).join('\n');
+  return (
+    GROUPS.map(
+      (group) =>
+        `${group}: ${TOOL_CATALOG.filter((entry) => entry.group === group)
+          .map(
+            (entry) =>
+              `${entry.name} (${entry.access === 'read' ? 'lê' : 'altera'}: ${entry.action.replace(/^a /, '')})`,
+          )
+          .join('; ')}`,
+    ).join('\n') + siteAgents
+  );
+}
+
+/**
+ * Um agente do site (input.template): o que não vier no pedido sai do template, e o
+ * chefe é o agente da equipa com a chave (ou o template) do chefe do site, se existir.
+ */
+function withTemplate(
+  input: CreateInput,
+  context: TeamContext,
+): CreateInput | string {
+  if (!input.template) return input;
+  const template = SITE_AGENTS.find((entry) => entry.key === input.template);
+  if (!template) {
+    return `Não há o agente do site "${input.template}". Os que há: ${SITE_AGENTS.map((entry) => entry.key).join(', ')}.`;
+  }
+  const boss = context.team.find(
+    (member) =>
+      member.key === template.reportsTo ||
+      member.template === template.reportsTo,
+  );
+  return {
+    ...input,
+    name: input.name?.trim() || template.name,
+    description: input.description?.trim() || template.description,
+    prompt: input.prompt?.trim() || template.prompt,
+    model: input.model ?? template.model,
+    effort: input.effort ?? template.effort,
+    tools: input.tools?.length ? input.tools : template.tools,
+    reports_to: input.reports_to ?? boss?.key,
+  };
 }
 
 /** As ferramentas depois de uma mudança (todas, acrescentar, tirar); undefined = ficam. */
@@ -129,6 +171,8 @@ interface AgentInput {
   tools?: string[];
   reports_to?: string;
   active?: boolean;
+  /** A chave de um agente do site (ex.: "infra"). */
+  template?: string;
 }
 
 export async function createAgent(
@@ -149,6 +193,7 @@ export async function createAgent(
         name: input.name,
         description: input.description,
         prompt: input.prompt,
+        template: input.template,
         model: input.model ?? 'SONNET',
         effort: input.effort ?? 'LOW',
         tools,
@@ -258,20 +303,25 @@ export function planAgentChange(
   context: TeamContext,
 ): AgentChangePayload | string {
   if (action === 'create') {
-    const create = input as unknown as CreateInput;
+    const create = withTemplate(input as unknown as CreateInput, context);
+    if (typeof create === 'string') return create;
     const tools = resolveTools(create.tools ?? []);
     if (typeof tools === 'string') return tools;
     const boss = create.reports_to
       ? findAgent(context, create.reports_to)
       : null;
     if (typeof boss === 'string') return boss;
-    if (!create.name?.trim() || !create.prompt?.trim()) {
-      return 'Um agente novo precisa de nome e de instruções.';
+    if (
+      !create.name?.trim() ||
+      !create.description?.trim() ||
+      !create.prompt?.trim()
+    ) {
+      return 'Um agente novo precisa de nome, descrição e instruções (ou de template, para um agente do site).';
     }
     return {
       action,
       agentName: create.name.trim(),
-      input,
+      input: create as unknown as Record<string, unknown>,
       addedTools: tools.map(toolChange),
       removedTools: [],
       promptAfter: create.prompt,

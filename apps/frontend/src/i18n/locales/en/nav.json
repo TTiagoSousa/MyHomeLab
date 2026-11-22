@@ -18,7 +18,9 @@
   "sidebar": {
     "theme": "Theme",
     "profile": "Profile",
-    "logout": "Log out"
+    "logout": "Log out",
+    "openMenu": "Open the menu",
+    "closeMenu": "Close the menu"
   },
   "groups": {
     "daily": "Day to day",

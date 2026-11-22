@@ -100,12 +100,12 @@ export const menuItems: MenuItem[] = [
     path: '/MyHomeLab/Health'
   },
   {
-    id: 'defenições',
+    id: 'settings',
     labelKey: 'menu.settings',
     hintKey: 'hints.settings',
     group: 'system',
     icon: Icon.Settings,
-    path: '/MyHomeLab/Defeniçoes'
+    path: '/MyHomeLab/Settings'
   },
   {
     id: 'admin',

@@ -499,6 +499,7 @@
       "ha_get_config": "Leer una automatización o script",
       "ha_system_log": "Leer el registro",
       "ha_call_service": "Controlar dispositivos",
+      "ha_update_install": "Instalar actualizaciones de Home Assistant",
       "ha_save_config": "Crear y cambiar automatizaciones y scripts",
       "ha_delete_config": "Borrar automatizaciones y scripts",
       "ha_update_entity": "Cambiar entidades",

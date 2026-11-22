@@ -5,7 +5,12 @@ import {
   TaskListNotFoundError,
 } from '../remote/taskRemote';
 
+import { GOOGLE_TIMEOUT_MS } from 'src/connected-account/google/google-oauth.client';
+
 const GOOGLE_TASKS_API_BASE = 'https://tasks.googleapis.com/tasks/v1';
+
+const tasksFetch = (url: string, init: RequestInit = {}) =>
+  fetch(url, { ...init, signal: AbortSignal.timeout(GOOGLE_TIMEOUT_MS) });
 
 export type GoogleTaskList = RemoteTaskList;
 export type GoogleTaskInput = RemoteTaskInput;
@@ -37,7 +42,7 @@ export async function listTaskLists(
   do {
     const params = new URLSearchParams({ maxResults: '100' });
     if (pageToken) params.set('pageToken', pageToken);
-    const response = await fetch(
+    const response = await tasksFetch(
       `${GOOGLE_TASKS_API_BASE}/users/@me/lists?${params.toString()}`,
       { headers: { Authorization: `Bearer ${accessToken}` } },
     );
@@ -58,14 +63,17 @@ export async function createTaskList(
   accessToken: string,
   title: string,
 ): Promise<GoogleTaskList> {
-  const response = await fetch(`${GOOGLE_TASKS_API_BASE}/users/@me/lists`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
+  const response = await tasksFetch(
+    `${GOOGLE_TASKS_API_BASE}/users/@me/lists`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title }),
     },
-    body: JSON.stringify({ title }),
-  });
+  );
   if (!response.ok)
     throw await failure(response, 'Falha ao criar a lista no Google Tasks');
   const list = (await response.json()) as GoogleTaskList;
@@ -112,7 +120,7 @@ export async function listTasks(
       showHidden: 'true',
     });
     if (pageToken) params.set('pageToken', pageToken);
-    const response = await fetch(
+    const response = await tasksFetch(
       `${GOOGLE_TASKS_API_BASE}/lists/${taskListId}/tasks?${params.toString()}`,
       { headers: { Authorization: `Bearer ${accessToken}` } },
     );
@@ -151,7 +159,7 @@ export async function insertTask(
 ): Promise<GoogleTask> {
   const params = new URLSearchParams();
   if (parentId) params.set('parent', parentId);
-  const response = await fetch(
+  const response = await tasksFetch(
     `${GOOGLE_TASKS_API_BASE}/lists/${taskListId}/tasks?${params.toString()}`,
     {
       method: 'POST',
@@ -173,7 +181,7 @@ export async function patchTask(
   taskId: string,
   task: GoogleTaskInput,
 ): Promise<GoogleTask> {
-  const response = await fetch(
+  const response = await tasksFetch(
     `${GOOGLE_TASKS_API_BASE}/lists/${taskListId}/tasks/${taskId}`,
     {
       method: 'PATCH',
@@ -197,7 +205,7 @@ export async function deleteTask(
   taskListId: string,
   taskId: string,
 ): Promise<void> {
-  const response = await fetch(
+  const response = await tasksFetch(
     `${GOOGLE_TASKS_API_BASE}/lists/${taskListId}/tasks/${taskId}`,
     { method: 'DELETE', headers: { Authorization: `Bearer ${accessToken}` } },
   );

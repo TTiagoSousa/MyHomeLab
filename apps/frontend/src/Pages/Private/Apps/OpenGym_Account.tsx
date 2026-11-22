@@ -39,7 +39,7 @@ const OpenGym_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('OPENGYM');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('OPENGYM');
   const { status, loading: checking, error, fetchStatus } = useOpenGymStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<OpenGym_Panel | null>(null);
@@ -50,7 +50,7 @@ const OpenGym_Account = () => {
   const account = connectedAccounts.find((item) => item.id === accountId);
   const name = account?.displayName ?? t('apps.openGym.title');
   const label = account?.displayName ? `openGym · ${account.displayName}` : 'openGym';
-  const baseUrl = account?.appHost ? `https://${account.appHost}` : '';
+  const baseUrl = account?.appBaseUrl ?? '';
   const state = !account?.isActive ? 'off' : error ? 'error' : checking && !status ? 'checking' : status ? 'ok' : 'unknown';
   const expires = dayOf(status?.tokenExpiresAt ?? account?.tokenExpiresAt);
   const mcp = status?.mcp;
@@ -96,7 +96,7 @@ const OpenGym_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.openGym.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.openGym.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Summary

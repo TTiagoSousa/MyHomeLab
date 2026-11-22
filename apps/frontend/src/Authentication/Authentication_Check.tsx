@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import * as Intermediate_Pages from '../Imports/intermediaryPages';
 import { useAuth } from '../Contexts/Auth_Context';
 
@@ -10,10 +10,11 @@ interface AuthenticationCheckProps {
 const AuthenticationCheck = ({ children }: AuthenticationCheckProps) => {
   const { authenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!isLoading && !authenticated) {
-      navigate('/');
+      navigate(`/?from=${encodeURIComponent(location.pathname + location.search)}`, { replace: true });
     }
   }, [isLoading, authenticated, navigate]);
 

@@ -25,6 +25,10 @@ export function newerVersion(open: AppUpdate, latest: string) {
       studyError: null,
       studyRetries: 0,
       recheckAt: null,
+      // O que estava preparado era para a versão antiga: o update_run não o pode usar.
+      commands: [],
+      spec: null,
+      installStartedAt: null,
     },
     text: `Saiu a versão ${latest}: a tarefa passa a ser para ela e volta ao estudo.`,
   };

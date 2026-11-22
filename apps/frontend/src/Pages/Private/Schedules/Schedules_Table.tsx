@@ -34,7 +34,12 @@ const Schedules_Table = ({ schedules, agents, onOpen, onRun }: Schedules_Table_P
             const running = last?.status === 'RUNNING';
             const state = scheduleState(schedule);
             return (
-              <tr key={schedule.id} onClick={() => onOpen(schedule)}>
+              <tr
+                key={schedule.id}
+                tabIndex={0}
+                onClick={() => onOpen(schedule)}
+                onKeyDown={(e) => e.target === e.currentTarget && e.key === 'Enter' && onOpen(schedule)}
+              >
                 <td className='Schedules_Table_Name'>
                   <span className='Schedules_Table_Title' title={schedule.title}>
                     {schedule.title}

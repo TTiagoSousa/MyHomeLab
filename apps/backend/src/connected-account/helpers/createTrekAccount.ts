@@ -1,4 +1,3 @@
-import { ConflictException } from '@nestjs/common';
 import { PrismaConnectedAccountRepository } from '../repositories/prisma/prisma-connected-account-repository';
 import { CreateTrekAccountDto } from '../dto/create-trek-account.dto';
 import { ConnectionProvider } from 'src/generated/prisma/client/client';
@@ -39,8 +38,19 @@ export async function createTrekAccount(
   const existing = (
     await repository.findAllByUser(userId, ConnectionProvider.TREK)
   ).find((account) => account.baseUrl === baseUrl);
+  // O mesmo TREK fica com as credenciais novas (o histórico e o CT ficam na conta).
   if (existing) {
-    throw new ConflictException('Este TREK já está ligado');
+    return repository.update(existing.id, {
+      username: email,
+      appPassword: dto.password,
+      isActive: true,
+      ...(dto.displayName?.trim()
+        ? { displayName: dto.displayName.trim() }
+        : {}),
+      ...(clientId && clientSecret
+        ? { apiClientId: clientId, apiClientSecret: clientSecret }
+        : {}),
+    });
   }
 
   return repository.create({

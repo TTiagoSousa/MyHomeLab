@@ -34,7 +34,7 @@ const Gitea_Mirror_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('GITEA_MIRROR');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('GITEA_MIRROR');
   const { status, loading: checking, error, fetchStatus } = useGiteaMirrorStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<Gitea_Mirror_Panel | null>(null);
@@ -44,7 +44,7 @@ const Gitea_Mirror_Account = () => {
   const account = connectedAccounts.find((item) => item.id === accountId);
   const name = account?.displayName ?? t('apps.giteaMirror.title');
   const label = account?.displayName ? `Gitea Mirror · ${account.displayName}` : 'Gitea Mirror';
-  const baseUrl = account?.appHost ? `https://${account.appHost}` : '';
+  const baseUrl = account?.appBaseUrl ?? '';
   const state = !account?.isActive ? 'off' : error ? 'error' : checking && !status ? 'checking' : status ? 'ok' : 'unknown';
 
   const disconnect = async () => {
@@ -70,7 +70,7 @@ const Gitea_Mirror_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.giteaMirror.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.giteaMirror.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Summary

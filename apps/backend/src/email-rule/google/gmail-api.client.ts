@@ -1,5 +1,6 @@
 import { EmailRule, LabelMode } from 'src/generated/prisma/client/client';
 import { RunScope } from '../dto/run-email-rule.dto';
+import { GOOGLE_TIMEOUT_MS } from 'src/connected-account/google/google-oauth.client';
 
 export const GMAIL_API_BASE = 'https://gmail.googleapis.com/gmail/v1/users/me';
 
@@ -27,7 +28,10 @@ export async function gmailFetch(
   init?: RequestInit,
 ): Promise<Response> {
   for (let attempt = 0; ; attempt += 1) {
-    const response = await fetch(url, init);
+    const response = await fetch(url, {
+      ...init,
+      signal: AbortSignal.timeout(GOOGLE_TIMEOUT_MS),
+    });
 
     const retryable =
       response.status === 429 ||
@@ -70,11 +74,18 @@ function orGroup(operator: string, values: string[]): string | null {
 export function buildGmailQuery(rule: EmailRule, scope: RunScope): string {
   const clauses: string[] = [];
 
-  const fromClause = orGroup('from', rule.fromContains);
-  if (fromClause) clauses.push(fromClause);
+  // A pesquisa do Gmail não percebe regex: `from:^.*@amazon\.com$` devolvia zero emails e a
+  // regra "corria sem erro" e nunca apanhava nada. Com REGEX, remetente e assunto ficam
+  // fora da pesquisa (vêm os candidatos da caixa, até ao limite por regra) e o padrão é
+  // testado email a email no runEmailRules. Nota: com a lógica ANY e palavras-chave, as
+  // palavras-chave continuam a filtrar a pesquisa, por isso passam a ser obrigatórias.
+  if (rule.matchType !== 'REGEX') {
+    const fromClause = orGroup('from', rule.fromContains);
+    if (fromClause) clauses.push(fromClause);
 
-  const subjectClause = orGroup('subject', rule.subjectContains);
-  if (subjectClause) clauses.push(subjectClause);
+    const subjectClause = orGroup('subject', rule.subjectContains);
+    if (subjectClause) clauses.push(subjectClause);
+  }
 
   const keywords = rule.keywords.map(keywordTerm).filter(Boolean);
   if (keywords.length > 0) {

@@ -2,6 +2,22 @@ const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 
+// Um pedido ao Google pendurado segurava o cron das regras (e a página) para sempre.
+export const GOOGLE_TIMEOUT_MS = 30_000;
+
+/**
+ * O Google retirou o acesso (invalid_grant): o refresh token foi revogado ou expirou — numa
+ * app OAuth em modo "Testing" acontece de 7 em 7 dias. Só se resolve voltando a ligar.
+ */
+export class GoogleAccessRevokedError extends Error {
+  constructor() {
+    super(
+      'O Google retirou o acesso a esta conta (revogado ou expirado). Volta a ligá-la em Apps.',
+    );
+    this.name = 'GoogleAccessRevokedError';
+  }
+}
+
 /** O que se liga com uma conta Google: o Gmail, o Google Tasks ou o Drive (cada um a sua conta). */
 export type GoogleConnectionKind = 'gmail' | 'tasks' | 'drive';
 
@@ -84,6 +100,7 @@ export async function exchangeGoogleCode(
       grant_type: 'authorization_code',
       code,
     }),
+    signal: AbortSignal.timeout(GOOGLE_TIMEOUT_MS),
   });
 
   if (!response.ok) {
@@ -114,10 +131,17 @@ export async function refreshGoogleAccessToken(
       refresh_token: refreshToken,
       grant_type: 'refresh_token',
     }),
+    signal: AbortSignal.timeout(GOOGLE_TIMEOUT_MS),
   });
 
   if (!response.ok) {
-    throw new Error(`Falha ao renovar o token Google: ${response.status}`);
+    const body = (await response.json().catch(() => ({}))) as {
+      error?: string;
+    };
+    if (body.error === 'invalid_grant') throw new GoogleAccessRevokedError();
+    throw new Error(
+      `Falha ao renovar o token Google: ${response.status}${body.error ? ` (${body.error})` : ''}`,
+    );
   }
 
   return response.json() as Promise<GoogleRefreshResponse>;
@@ -128,6 +152,7 @@ export async function fetchGoogleEmailAddress(
 ): Promise<string> {
   const response = await fetch(GOOGLE_USERINFO_URL, {
     headers: { Authorization: `Bearer ${accessToken}` },
+    signal: AbortSignal.timeout(GOOGLE_TIMEOUT_MS),
   });
 
   if (!response.ok) {

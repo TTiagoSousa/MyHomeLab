@@ -156,6 +156,60 @@ export function buildHomeAssistantTools(context: AgentContext): AgentTool[] {
       handler: run(callService),
     },
     {
+      name: 'ha_update_install',
+      description:
+        'Só para as atualizações do Home Assistant (sem controlar a casa): install instala uma entidade update.* (backup true só onde a entidade o aceita, como nos add-ons e no OS); check_config valida a configuração; restart reinicia o Home Assistant (só quando a atualização o pede, depois do check_config).',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          account: ACCOUNT,
+          action: {
+            type: 'string',
+            enum: ['install', 'check_config', 'restart'],
+          },
+          entity_id: {
+            type: 'string',
+            description:
+              'Em install: a entidade da atualização, ex.: update.mushroom_update.',
+          },
+          backup: {
+            type: 'boolean',
+            description: 'Em install: true para o HA guardar uma cópia antes.',
+          },
+        },
+        required: ['action'],
+      },
+      handler: run(
+        (
+          target,
+          input: {
+            action: 'install' | 'check_config' | 'restart';
+            entity_id?: string;
+            backup?: boolean;
+          },
+        ) => {
+          if (input.action !== 'install') {
+            return callService(target, {
+              domain: 'homeassistant',
+              service: input.action,
+            });
+          }
+          const entity = input.entity_id?.trim() ?? '';
+          if (!entity.startsWith('update.')) {
+            return Promise.resolve(
+              'Recusado: install só aceita uma entidade update.* (a da atualização).',
+            );
+          }
+          return callService(target, {
+            domain: 'update',
+            service: 'install',
+            entity_id: entity,
+            data: input.backup ? { backup: true } : undefined,
+          });
+        },
+      ),
+    },
+    {
       name: 'ha_list_configs',
       description:
         'Lista as automações, os scripts ou as cenas: entidade, nome, estado, o id da configuração e a última vez que correram.',

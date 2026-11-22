@@ -465,6 +465,13 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'a controlar o Home Assistant',
   ),
   tool(
+    'ha_update_install',
+    'homeAssistant',
+    'homeAssistant',
+    'write',
+    'a instalar uma atualização do Home Assistant',
+  ),
+  tool(
     'ha_save_config',
     'homeAssistant',
     'homeAssistant',

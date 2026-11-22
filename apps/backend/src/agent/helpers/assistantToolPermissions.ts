@@ -127,6 +127,7 @@ const FIXED: Record<string, Requirement> = {
   ha_get_config: read('homeAssistant'),
   ha_system_log: read('homeAssistant'),
   ha_call_service: write('homeAssistant'),
+  ha_update_install: write('homeAssistant'),
   ha_save_config: write('homeAssistant'),
   ha_delete_config: write('homeAssistant'),
   ha_update_entity: write('homeAssistant'),

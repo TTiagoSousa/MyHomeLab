@@ -1,4 +1,10 @@
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import {
+  describeFetchError,
+  htmlResponseError,
+  isVersionString,
+  looksLikeHtml,
+} from 'src/integrations/app-fetch';
 
 // O Coolify (v4, auto-alojamento de apps, serviços e bases de dados): a API REST em
 // <endereço>/api/v1/…, com um token de Keys & Tokens → API tokens no cabeçalho
@@ -124,10 +130,15 @@ async function request<T>(
   } catch (error) {
     throw new AppIntegrationError(
       'APP_UNREACHABLE',
-      `Não foi possível falar com o Coolify (${what}): ${error instanceof Error ? error.message : String(error)}`,
+      `Não foi possível falar com o Coolify (${what}): ${describeFetchError(error)}`,
     );
   }
   const text = await response.text();
+  // Atrás de um SSO ou com o endereço errado, o fetch segue o redirect até à página de
+  // login (200): o HTML ficava guardado como versão e abria uma "atualização" de lixo.
+  if (response.ok && looksLikeHtml(text)) {
+    throw htmlResponseError('Coolify', what);
+  }
   let body: unknown = text;
   try {
     body = text ? JSON.parse(text) : {};
@@ -181,14 +192,20 @@ export async function coolifyVersion(baseUrl: string, token: string) {
     },
     'a versão',
   );
-  const version =
+  const version = (
     typeof body === 'string'
       ? body
       : typeof body === 'number'
         ? String(body)
-        : '';
-  if (!version.trim()) throw new Error('O Coolify não disse a versão.');
-  return `v${version.trim().replace(/^v/, '')}`;
+        : ''
+  ).trim();
+  if (!isVersionString(version)) {
+    const answer = typeof body === 'string' ? body.trim().slice(0, 40) : '';
+    throw new Error(
+      `O Coolify não disse a versão${answer ? ` (respondeu "${answer}")` : ''}.`,
+    );
+  }
+  return `v${version.replace(/^v/, '')}`;
 }
 
 /** As respostas do MCP vêm em JSON ou em Server-Sent Events ("data: {…}"). */

@@ -27,15 +27,47 @@ const textOf = (message: Message) =>
     .join('')
     .trim();
 
-const clip = (text: string) =>
+/** Corta o resultado de uma ferramenta (também na ponte MCP do Claude Code). */
+export const clip = (text: string) =>
   text.length > MAX_RESULT_CHARS
     ? `${text.slice(0, MAX_RESULT_CHARS)}\n\n[… cortado: a resposta tinha ${text.length} caracteres]`
     : text;
 
 /**
+ * A API só aceita user e assistant nas mensagens: uma nota com papel "system" (o estado
+ * da volta, que o assistant.service põe no fim) passa a texto marcado, junto da mensagem
+ * dele quando a anterior é dele. No Claude Code a mesma nota vira "[Nota do sistema]".
+ */
+export function apiMessages(messages: MessageParam[]): MessageParam[] {
+  const result: MessageParam[] = [];
+  for (const message of messages) {
+    if ((message.role as string) !== 'system') {
+      result.push(message);
+      continue;
+    }
+    const note = {
+      type: 'text' as const,
+      text: `[Nota do MyHomeLab]\n${typeof message.content === 'string' ? message.content : message.content.map((block) => (block.type === 'text' ? block.text : '')).join('\n')}`,
+    };
+    const previous = result.at(-1);
+    if (previous?.role === 'user') {
+      const blocks =
+        typeof previous.content === 'string'
+          ? [{ type: 'text' as const, text: previous.content }]
+          : previous.content;
+      result[result.length - 1] = { role: 'user', content: [...blocks, note] };
+    } else {
+      result.push({ role: 'user', content: [note] });
+    }
+  }
+  return result;
+}
+
+/**
  * Corre um agente pela API da Anthropic: o mesmo prompt, a mesma conversa e as mesmas
  * ferramentas (já com as permissões aplicadas) que no Claude Code, mas o ciclo das
- * ferramentas é este. O prompt e as ferramentas vão em cache, que se repetem a cada volta.
+ * ferramentas é este. O prompt, as ferramentas e a conversa vão em cache, que se repetem a
+ * cada volta.
  * Os servidores MCP diretos (ex.: o do TREK) não existem aqui: ficam as ferramentas do
  * MyHomeLab que fazem o mesmo.
  */
@@ -55,7 +87,7 @@ export async function runApiAgent(
     description: tool.description,
     input_schema: tool.inputSchema,
   }));
-  const conversation: MessageParam[] = [...messages];
+  const conversation: MessageParam[] = apiMessages(messages);
   const replies: string[] = [];
   let jsonRetries = 0;
 
@@ -66,6 +98,10 @@ export async function runApiAgent(
         .stream({
           model: client.pick(options.model ?? AGENT_MODEL),
           max_tokens: MAX_TOKENS,
+          // Dois pontos de cache (de 4): o automático, no fim da conversa (anda com ela a
+          // cada volta, e o histórico e os resultados das ferramentas leem-se da cache), e o
+          // do system, que serve outras conversas com as mesmas instruções.
+          cache_control: { type: 'ephemeral' },
           system: [
             {
               type: 'text',

@@ -20,11 +20,16 @@ export const useNotificationCount = () => {
   useEffect(() => {
     fetchCount();
 
-    const timer = setInterval(fetchCount, REFRESH_MS);
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') fetchCount();
+    };
+    const timer = setInterval(refreshIfVisible, REFRESH_MS);
     window.addEventListener(NOTIFICATIONS_CHANGED, fetchCount);
+    document.addEventListener('visibilitychange', refreshIfVisible);
     return () => {
       clearInterval(timer);
       window.removeEventListener(NOTIFICATIONS_CHANGED, fetchCount);
+      document.removeEventListener('visibilitychange', refreshIfVisible);
     };
   }, []);
 

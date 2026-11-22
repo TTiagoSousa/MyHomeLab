@@ -18,6 +18,7 @@ export interface ConnectedAccount {
   username?: string | null;
   forgejoHost?: string | null;
   appHost?: string | null;
+  appBaseUrl?: string | null;
   isAdmin?: boolean;
   appWorkspace?: string | null;
   appVersion?: string | null;

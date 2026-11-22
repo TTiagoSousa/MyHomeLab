@@ -10,17 +10,17 @@ agents: [infra]
 > **Quando usar:** sempre que se estuda, instala ou verifica uma atualização de uma app ligada (Forgejo, Nextcloud e as apps lá dentro, openGym, TREK, AdGuard, Home Assistant e as peças lá dentro) ou do host Proxmox.
 > **Não serve para:** mexer nas máquinas (CT e VM) por outras razões, nem para escrever o guia do servidor.
 
-Este documento manda no caminho e nas decisões. Os pormenores de cada app (onde corre, comandos, o que verificar) estão no "estudar" e no "instalar" dela, e seguem-se à letra.
+Este documento manda no caminho e nas decisões. Os pormenores de cada app (onde corre, comandos, o que verificar) estão no documento de regras dela, nas secções "Estudar uma atualização" e "Instalar uma atualização", e seguem-se à letra.
 
-| App | Estudar | Instalar |
-|---|---|---|
-| Forgejo | "Forgejo – estudar uma atualização" | "Forgejo – instalar uma atualização" |
-| Nextcloud (o servidor e as apps lá dentro) | "Nextcloud – estudar uma atualização" | "Nextcloud – instalar uma atualização" |
-| openGym | "openGym – estudar uma atualização" | "openGym – instalar uma atualização" |
-| TREK | "TREK – estudar uma atualização" | "TREK – instalar uma atualização" |
-| AdGuard Home (o DNS da casa) | "AdGuard – estudar uma atualização" | "AdGuard – instalar uma atualização" |
-| Home Assistant (o Core e as peças) | "Home Assistant – estudar uma atualização" | "Home Assistant – instalar uma atualização" |
-| Proxmox (o host) | "Proxmox – estudar uma atualização" | "Proxmox – instalar uma atualização" |
+| App | O documento |
+|---|---|
+| Forgejo | "Forgejo – regras" |
+| Nextcloud (o servidor e as apps lá dentro) | "Nextcloud – regras" |
+| openGym | "openGym – regras" |
+| TREK | "TREK – regras" |
+| AdGuard Home (o DNS da casa) | "AdGuard – regras" |
+| Home Assistant (o Core e as peças) | "Home Assistant – regras" |
+| Proxmox (o host) | "Proxmox – regras" |
 
 🤖 o agente faz · 👤 só eu decido · "prova:" é o que serve de prova
 
@@ -44,6 +44,10 @@ Todo ──👤──→ Espera por estudo → Study ─┬→ Ready to update �
 3. **Instalar.** 🤖 Com o "instalar" da app: update_prepare → update_check em cada ponto, com prova → update_prepare com checklist [] → update_run. Depois, update_status até acabar (espera sozinho até um minuto por chamada); não se acaba a tarefa com os comandos a correr.
 4. **Verificar.** 🤖 Em Verifying, os pontos de "Depois de instalar" (update_verify). Se tudo estiver bem, passa a Done e chega-me "Instalado". Se houver um problema (ou a verificação não acabar), passa a Waiting for reply com o que se viu e chega-me a pergunta: não fica em Verifying, que pára a fila das outras.
 5. **Se falhar:** ver "Quando falha".
+
+### Abrir cada update novo
+
+Uma versão nova fica primeiro só disponível (sem tarefa nem registo): abro-a eu, ou um disparo "quando aparece uma atualização nova", se eu o criei. Nesse disparo, o agente recebe a lista (update_list_new mostra-a também) e, para cada uma, abre-a com update_start (passa a Espera por estudo e o estudo corre sozinho) ou diz porque não a abre (ex.: já há outra aberta da mesma app, ou é uma versão que eu disse para ignorar).
 
 ## Instalar ou não
 
@@ -97,8 +101,8 @@ No campo `summary` vai isto. Os pormenores (o que se leu, os links, as mediçõe
 
 **Pode, sem me perguntar:**
 - Estudar, instalar e verificar tudo o que a tabela manda instalar.
-- Correr o backup do MyHomeLab (run_backup), tirar o snapshot (update_run) e limpar as caches e as imagens antigas que o documento da app autoriza.
-- Resolver um ponto de "Antes de instalar" que falha, quando a solução é segura: correr o backup que falta, libertar espaço apagando caches ou imagens antigas, aumentar 10% o disco ou a memória de uma máquina acima do limite, esperar que a app acabe de arrancar.
+- Pedir um backup do CT/VM no Proxmox (pve_backup_now, pelo Operador Proxmox), tirar o snapshot (update_run) e limpar as caches e as imagens antigas que o documento da app autoriza.
+- Resolver um ponto de "Antes de instalar" que falha, quando a solução é segura: fazer o backup do CT/VM que falta, libertar espaço apagando caches ou imagens antigas, aumentar 10% o disco ou a memória de uma máquina acima do limite, esperar que a app acabe de arrancar.
 - Contornar uma falha da instalação, como diz "Quando falha".
 - Corrigir no documento da app um comando, um caminho ou um formato que se provou estar errado (docs_write, fica a versão anterior), e dizer-mo no relatório.
 - Marcar como "não se aplica" um ponto que nenhuma ferramenta consegue ver, com o porquê.
@@ -159,8 +163,8 @@ Estudos, esperas, tentativas e verificações ficam só na tarefa.
 
 ## Backups e snapshots
 
-- **Apps:** antes de instalar, o backup do MyHomeLab da app em dia e o snapshot da máquina (update_run com snapshot). Se a instalação falhar, o MyHomeLab volta sozinho a esse snapshot: faz parte da instalação.
-- **Peças do Home Assistant:** sem snapshot; o backup do Home Assistant em dia.
+- **Apps:** antes de instalar, um backup do CT/VM no Proxmox com menos de 24 h (pve_backup_now, pelo Operador Proxmox) e o snapshot da máquina (update_run com snapshot). O MyHomeLab já não faz backups das apps. Se a instalação falhar, o MyHomeLab volta sozinho a esse snapshot: faz parte da instalação.
+- **Peças do Home Assistant:** sem snapshot do update_run; o `backup` do próprio HA onde a entidade o aceita, ou um snapshot da VM tirado antes (pve_create_snapshot, pelo Operador Proxmox).
 - **Proxmox:** sem snapshot; o backup da configuração é obrigatório.
 
 ## Nunca

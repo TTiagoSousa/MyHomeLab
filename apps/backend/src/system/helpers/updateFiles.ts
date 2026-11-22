@@ -52,6 +52,42 @@ const IDLE: UpdateStatus = {
   log: [],
 };
 
+/** Uma atualização nunca demora isto; "running" mais antigo é uma que foi cortada. */
+const STALE_RUNNING_MS = 60 * 60_000;
+
+/**
+ * Há uma reposição de um backup pedida ou a correr (o restore.sh usa o mesmo cadeado:
+ * um pedido de atualização no meio ficava na fila para sempre).
+ */
+export async function restoreBusy(): Promise<boolean> {
+  const dir = updatesDir();
+  if (!dir) return false;
+  const pending = await fs
+    .stat(join(requestsDir(dir), 'restore-request'))
+    .then(() => true)
+    .catch(() => false);
+  if (pending) return true;
+  const raw = await fs
+    .readFile(join(stateDir(dir), 'restore-status.json'), 'utf8')
+    .catch(() => '');
+  return /"state"\s*:\s*"running"/.test(raw);
+}
+
+/**
+ * O commit da última atualização que acabou bem (o update.sh escreve-o no fim). O HEAD
+ * do git não serve: o checkout da versão nova acontece antes do build, e uma atualização
+ * cortada a meio deixava-o na versão nova com o código antigo a correr.
+ */
+export async function readInstalledCommit(): Promise<string | null> {
+  const dir = updatesDir();
+  if (!dir) return null;
+  const raw = await fs
+    .readFile(join(stateDir(dir), 'installed-commit'), 'utf8')
+    .catch(() => '');
+  const commit = raw.trim();
+  return /^[0-9a-f]{7,40}$/.test(commit) ? commit : null;
+}
+
 // Códigos de cor do terminal que o update.sh escreve no log.
 const ESC = String.fromCharCode(27);
 const ANSI_COLOURS = new RegExp(`${ESC}\\[[0-9;]*m`, 'g');
@@ -77,6 +113,20 @@ export async function readUpdateStatus(logLines = 40): Promise<UpdateStatus> {
     } catch {
       // ficheiro a meio de ser escrito: fica o estado anterior na próxima leitura
     }
+  }
+
+  // A correr há mais de 1 hora: o update.sh foi cortado (falta de luz, reinício do CT) e
+  // nunca escreveu o fim. Sem isto ficava "em curso" para sempre e não deixava pedir outra.
+  if (
+    status.state === 'running' &&
+    status.startedAt &&
+    Date.now() - new Date(status.startedAt).getTime() > STALE_RUNNING_MS
+  ) {
+    status = {
+      ...status,
+      state: 'failed',
+      message: `A atualização foi interrompida a meio (passo ${status.step ?? '?'}). Podes pedi-la outra vez.`,
+    };
   }
 
   // Pedido escrito mas o atualizador ainda não lhe pegou.

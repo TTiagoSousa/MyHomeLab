@@ -10,6 +10,7 @@ import { RUN_FREQUENCY_INTERVAL_MS } from '@myhomelab/shared';
 @Injectable()
 export class EmailRuleScheduler {
   private readonly logger = new Logger(EmailRuleScheduler.name);
+  private running = false;
 
   constructor(
     private readonly emailRuleRepository: PrismaEmailRuleRepository,
@@ -22,6 +23,18 @@ export class EmailRuleScheduler {
   // é filtrado logo a seguir pelo lastRunAt.
   @Cron('0 */15 * * * *', { name: 'Regras do Gmail' })
   async handleScheduledRuns() {
+    // Uma corrida lenta (Google lento, muitos emails) não pode ter outra por cima a mexer
+    // nos mesmos emails e a gastar a quota.
+    if (this.running) return;
+    this.running = true;
+    try {
+      await this.runDueAccounts();
+    } finally {
+      this.running = false;
+    }
+  }
+
+  private async runDueAccounts() {
     // Só contas Gmail: as regras de email contra outras contas falhavam sempre e
     // reescreviam o lastRunAt delas.
     const accounts = (
@@ -51,14 +64,14 @@ export class EmailRuleScheduler {
             ),
         );
       } catch (error) {
+        // Sem escrever o lastRunAt: a página dizia "correu há 5 min" quando tinha falhado. O
+        // runEmailRules só o escreve no fim de uma corrida bem feita; a que falhou volta a
+        // tentar no próximo quarto de hora. Uma conta com o acesso revogado fica inativa
+        // (ensureFreshAccessToken) e sai desta lista, por isso não fica a falhar em ciclo.
         this.logger.error(
           `Falha ao executar regras da conta ${account.id}`,
           error instanceof Error ? error.stack : undefined,
         );
-      } finally {
-        await this.connectedAccountRepository.update(account.id, {
-          lastRunAt: new Date(),
-        });
       }
     }
   }

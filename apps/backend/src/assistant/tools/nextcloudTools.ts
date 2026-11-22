@@ -56,7 +56,7 @@ export async function overview(account: ConnectedAccount): Promise<string> {
   const lines = [
     `${accountLabel(account)}: versão ${status.version}${account.appLatestVersion ? ` (há a ${account.appLatestVersion})` : ''}.`,
     `Manutenção: ${status.maintenance ? 'LIGADA' : 'não'}${status.needsDbUpgrade ? ' · falta atualizar a base de dados (occ upgrade)' : ''}.`,
-    `Conta: ${user.id}${user.isAdmin ? ' (administrador)' : ' (sem administrador: as apps não se veem)'}.`,
+    `Conta: ${user.id}${user.isAdmin ? ' (administrador)' : user.isAdmin === null ? ' (não consegui ver se é administrador: o pedido dos grupos falhou)' : ' (sem administrador: as apps não se veem)'}.`,
   ];
   if (user.isAdmin) {
     const apps = await client.apps();
@@ -79,11 +79,18 @@ export async function listApps(
 ): Promise<string> {
   const client = nextcloudForAccount(account);
   const [status, user] = await Promise.all([client.status(), client.me()]);
-  if (!user.isAdmin) {
+  if (user.isAdmin === false) {
     return 'A conta ligada não é administradora: o Nextcloud não diz as apps. Liga com a password de app de uma conta admin.';
   }
-  const apps = await client.apps();
+  const { apps, unreadable } = await client.appsRead();
   const store = await nextcloudStoreApps(status.version).catch(() => null);
+  const missed = unreadable
+    ? ` ${unreadable} app(s) não se conseguiram ler e ficaram de fora.`
+    : '';
+  // Sem a App Store não se sabe se há versões novas: nunca dizer que não há.
+  if (input.only_updates && !store) {
+    return `A App Store do Nextcloud não respondeu: não consegui ver se há versões novas das ${apps.length} app(s). Tenta mais tarde.${missed}`;
+  }
   const newer = new Map(
     (store ? nextcloudAppUpdates(apps, store) : []).map((update) => [
       update.id,
@@ -95,11 +102,11 @@ export async function listApps(
     : apps;
   if (!shown.length) {
     return input.only_updates
-      ? 'Nenhuma app tem versão nova na App Store.'
-      : 'Não há apps ligadas.';
+      ? `Nenhuma app tem versão nova na App Store.${missed}`
+      : `Não há apps ligadas.${missed}`;
   }
   return [
-    `Nextcloud ${status.version} — ${shown.length} app(s)${store ? '' : ' (a App Store não respondeu: sem versões novas)'}:`,
+    `Nextcloud ${status.version} — ${shown.length} app(s)${store ? '' : ' (a App Store não respondeu: não sei se há versões novas)'}:${missed}`,
     ...shown.map(
       (app) =>
         `- ${app.name} (${app.id}) ${app.version}${newer.has(app.id) ? ` → ${newer.get(app.id)} disponível` : ''}`,

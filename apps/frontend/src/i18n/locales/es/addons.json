@@ -1,4 +1,10 @@
 {
+  "google": {
+    "cancelled": "Cancelaste la conexión con Google: no ha cambiado nada.",
+    "failed": "No se pudo conectar la cuenta de Google. Inténtalo de nuevo.",
+    "reconnectChip": "Google retiró el acceso",
+    "reconnect": "Volver a conectar"
+  },
   "page": {
     "title": "Apps conectadas",
     "description": "Las apps y cuentas que usa MyHomeLab. Conecta una cuenta y, en sus ajustes, eliges lo que pueden ver los agentes y dónde se ejecuta.",
@@ -930,7 +936,11 @@
       "protection": "Protección",
       "protectionOn": "Activada",
       "protectionOff": "Desactivada",
-      "queries": "Últimas 24 h",
+      "queriesPeriod": "En el periodo de AdGuard",
+      "queriesDays_one": "Últimas 24 h",
+      "queriesDays_other": "Últimos {{count}} días",
+      "queriesHours_one": "Última hora",
+      "queriesHours_other": "Últimas {{count}} h",
       "queriesValue": "{{queries}} consultas, {{blocked}} bloqueadas ({{share}}%)",
       "filters": "Listas",
       "filtersValue": "{{enabled}} de {{total}} activas, {{rules}} reglas",

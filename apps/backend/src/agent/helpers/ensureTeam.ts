@@ -6,7 +6,8 @@ import { PrismaAgentSettingRepository } from '../repositories/prisma/prisma-agen
 
 /**
  * A equipa do utilizador; na primeira vez cria só o CEO (o Jarvis). O resto da
- * equipa é ele que a monta, na página Workflow ou a pedir ao Jarvis. As instruções
+ * equipa é ele que a monta, na página Workflow ou a pedir ao Jarvis (create_agent com
+ * template cria um dos agentes do site, com as instruções e a chave dele). As instruções
  * extra que tinha escrito nos agentes antigos passam para o CEO, para não se perderem.
  */
 export async function ensureTeam(

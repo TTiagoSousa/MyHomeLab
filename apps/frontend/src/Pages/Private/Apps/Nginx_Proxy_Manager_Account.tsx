@@ -34,7 +34,7 @@ const Nginx_Proxy_Manager_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('NGINX_PROXY_MANAGER');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('NGINX_PROXY_MANAGER');
   const { status, loading: checking, error, fetchStatus } = useNginxProxyManagerStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<Nginx_Proxy_Manager_Panel | null>(null);
@@ -68,7 +68,7 @@ const Nginx_Proxy_Manager_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.nginxProxyManager.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.nginxProxyManager.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Summary

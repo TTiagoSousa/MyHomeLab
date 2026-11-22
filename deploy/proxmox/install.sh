@@ -179,6 +179,8 @@ configure_service
 configure_updater
 restart_backend
 configure_nginx
+# A versão instalada que a app mostra e de onde o myhomelab-update parte (ver update.sh).
+as_app git -C "$APP_DIR" rev-parse HEAD | write_state_file installed-commit
 
 # --- comandos de manutenção e backups ------------------------------------------------
 

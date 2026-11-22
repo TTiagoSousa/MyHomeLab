@@ -60,4 +60,6 @@ export interface ConnectedAccountRepository {
     }>,
   ): Promise<ConnectedAccount>;
   disconnect(id: string): Promise<void>;
+  markNeedsReconnect(account: ConnectedAccount, message: string): Promise<void>;
+  resolveNeedsReconnect(account: ConnectedAccount): Promise<void>;
 }

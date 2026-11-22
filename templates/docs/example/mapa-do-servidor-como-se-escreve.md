@@ -10,7 +10,7 @@ server: true
 > **Quando usar:** quando eu peço "estuda o servidor" ou "atualiza o mapa do <nome>", ou quando um mapa falta ou está desatualizado.
 > **Não serve para:** atualizações (essas seguem "Atualizações das apps e do Proxmox – como funcionam").
 
-Como o agente lê um servidor e escreve o mapa dele ("Mapa do servidor <nome>"). Não é sobre atualizações: essas seguem "Atualizações das apps e do Proxmox – como funcionam" e o "Proxmox – estudar uma atualização". Vale quando eu peço "estuda o servidor", "atualiza o mapa do <nome>" ou quando um mapa falta ou está desatualizado.
+Como o agente lê um servidor e escreve o mapa dele ("Mapa do servidor <nome>"). Não é sobre atualizações: essas seguem "Atualizações das apps e do Proxmox – como funcionam" e o "Proxmox – regras". Vale quando eu peço "estuda o servidor", "atualiza o mapa do <nome>" ou quando um mapa falta ou está desatualizado.
 
 **O mapa descreve como o servidor está montado e como funciona.** É um mapa, não uma auditoria: não aponta problemas, não dá notas nem recomenda correções. Os números ficam como estão (ex.: "disco 30 GiB, 25 usados"), sem juízos como "quase cheio" ou "em risco".
 

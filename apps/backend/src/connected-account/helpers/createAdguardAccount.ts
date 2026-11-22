@@ -1,4 +1,3 @@
-import { ConflictException } from '@nestjs/common';
 import { PrismaConnectedAccountRepository } from '../repositories/prisma/prisma-connected-account-repository';
 import { CreateAdguardAccountDto } from '../dto/create-adguard-account.dto';
 import { ConnectionProvider } from 'src/generated/prisma/client/client';
@@ -30,8 +29,16 @@ export async function createAdguardAccount(
   const existing = (
     await repository.findAllByUser(userId, ConnectionProvider.ADGUARD)
   ).find((account) => account.baseUrl === baseUrl);
+  // O mesmo AdGuard fica com as credenciais novas (o histórico e o CT ficam na conta).
   if (existing) {
-    throw new ConflictException('Este AdGuard já está ligado');
+    return repository.update(existing.id, {
+      username,
+      appPassword: dto.password,
+      isActive: true,
+      ...(dto.displayName?.trim()
+        ? { displayName: dto.displayName.trim() }
+        : {}),
+    });
   }
 
   return repository.create({

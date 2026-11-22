@@ -10,7 +10,9 @@ import { join } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { decryptToken, encryptToken } from 'src/utils/crypto/token-cipher';
 import { getInstalledVersion } from 'src/system/helpers/getInstalledVersion';
+import { findRunningWork } from 'src/system/helpers/findRunningWork';
 import {
+  readUpdateStatus,
   requestsDir,
   stateDir,
   updatesDir,
@@ -150,15 +152,19 @@ export class InstanceBackupService {
       if (status.state === 'queued' || status.state === 'running') {
         throw new ConflictException('Já há uma reposição em curso.');
       }
-      const update = await fs
-        .readFile(join(stateDir(dir), 'status.json'), 'utf8')
-        .catch(() => '');
-      if (
-        update.includes('"state":"running"') ||
-        update.includes('"state": "running"')
-      ) {
+      // Pedida ou a correr: os dois usam o mesmo cadeado e um pedido no meio ficava
+      // na fila para sempre (e o .zip e a password no disco).
+      const update = await readUpdateStatus(0);
+      if (update.state === 'queued' || update.state === 'running') {
         throw new ConflictException(
-          'Há uma atualização a correr. Espera que acabe.',
+          'Há uma atualização do MyHomeLab pedida ou a correr. Espera que acabe.',
+        );
+      }
+      // A reposição pára o backend: o que estava a correr ficava a meio.
+      const running = await findRunningWork(this.prisma);
+      if (running.length) {
+        throw new ConflictException(
+          `Espera que acabe o que está a correr: ${running.join(', ')}. Depois repõe outra vez.`,
         );
       }
 

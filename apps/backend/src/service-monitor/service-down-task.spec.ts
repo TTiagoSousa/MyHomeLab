@@ -29,8 +29,11 @@ const at = new Date('2026-11-02T14:05:00Z');
 
 const openTask = (key = 'new') => ({
   id: 't1',
+  number: 9,
+  title: 'Serviço Forgejo falhou',
   createdAt: new Date('2026-11-02T14:02:00Z'),
   state: { key },
+  project: { identifier: 'ATU' },
 });
 
 const setup = (
@@ -48,13 +51,21 @@ const setup = (
     serverConnection: {
       findUnique: jest.fn().mockResolvedValue({ name: 'pve' }),
     },
-    serviceMonitor: { update: jest.fn() },
+    serviceMonitor: {
+      update: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
+      count: jest.fn().mockResolvedValue(0),
+    },
+    boardTaskComment: { count: jest.fn().mockResolvedValue(0) },
     agent: {
       findFirst: jest
         .fn()
         .mockResolvedValue({ key: 'engenheiro-de-servidores' }),
     },
-    agentSchedule: { create: jest.fn() },
+    agentSchedule: {
+      create: jest.fn(),
+      count: jest.fn().mockResolvedValue(0),
+    },
   };
   const board = {
     createTask: jest
@@ -263,6 +274,73 @@ describe('ServiceDownTaskService', () => {
     const { service, board } = setup(openTask());
     await service.cameBack(monitor({ status: 'UP', downTaskId: 't1' }), up, at);
     expect(board.comment).not.toHaveBeenCalled();
+  });
+
+  it('em baixo durante a atualização esquece a queda antiga (a seguinte abre tarefa)', async () => {
+    const { service, prisma } = setup(null, { id: 'up1', boardTaskId: null });
+    await service.wentDown(
+      monitor({ status: 'UP', downTaskId: 'antiga' }),
+      down,
+      at,
+    );
+    expect(prisma.serviceMonitor.update).toHaveBeenCalledWith({
+      where: { id: 'm1' },
+      data: { downTaskId: null },
+    });
+  });
+
+  it('volta a cair em Verifying: passa a In progress e chama o agente outra vez', async () => {
+    const { service, prisma, board } = setup(openTask('verifying'));
+    await service.wentDown(
+      monitor({ status: 'UP', downTaskId: 't1' }),
+      down,
+      at,
+    );
+    expect(board.updateTask).toHaveBeenCalledWith(
+      'u1',
+      't1',
+      { stateKey: 'in_progress' },
+      'MyHomeLab',
+    );
+    expect(prisma.agentSchedule.create).toHaveBeenCalled();
+  });
+
+  it('outro serviço do mesmo servidor caiu agora: junta-se à tarefa dele, sem outro agente', async () => {
+    const { service, prisma, board } = setup(openTask());
+    prisma.serviceMonitor.findMany.mockResolvedValue([{ downTaskId: 't1' }]);
+    await service.wentDown(monitor({ name: 'Nextcloud' }), down, at);
+    expect(board.createTask).not.toHaveBeenCalled();
+    expect(prisma.agentSchedule.create).not.toHaveBeenCalled();
+    expect(prisma.serviceMonitor.update).toHaveBeenCalledWith({
+      where: { id: 'm1' },
+      data: { downTaskId: 't1' },
+    });
+    expect(board.comment).toHaveBeenCalledWith(
+      'u1',
+      't1',
+      expect.stringContaining('Também deixou de responder'),
+      'MyHomeLab',
+    );
+  });
+
+  it('cai outra vez menos de 6 h depois de fechada: reabre a tarefa sem chamar o agente', async () => {
+    const { service, prisma, board } = setup(null);
+    prisma.boardTask.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({ id: 'antiga' });
+    await service.wentDown(
+      monitor({ status: 'UP', downTaskId: 'antiga' }),
+      down,
+      at,
+    );
+    expect(board.createTask).not.toHaveBeenCalled();
+    expect(prisma.agentSchedule.create).not.toHaveBeenCalled();
+    expect(board.updateTask).toHaveBeenCalledWith(
+      'u1',
+      'antiga',
+      { stateKey: 'new' },
+      'MyHomeLab',
+    );
   });
 });
 

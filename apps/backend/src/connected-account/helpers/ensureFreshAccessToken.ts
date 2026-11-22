@@ -1,6 +1,13 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaConnectedAccountRepository } from '../repositories/prisma/prisma-connected-account-repository';
-import { refreshGoogleAccessToken } from '../google/google-oauth.client';
+import {
+  GoogleAccessRevokedError,
+  refreshGoogleAccessToken,
+} from '../google/google-oauth.client';
+import {
+  AppIntegrationError,
+  toHttpError,
+} from 'src/integrations/app-integration.error';
 
 const REFRESH_BUFFER_MS = 2 * 60 * 1000;
 
@@ -25,7 +32,16 @@ export async function ensureFreshAccessToken(
     );
   }
 
-  const refreshed = await refreshGoogleAccessToken(account.refreshToken);
+  let refreshed: Awaited<ReturnType<typeof refreshGoogleAccessToken>>;
+  try {
+    refreshed = await refreshGoogleAccessToken(account.refreshToken);
+  } catch (error) {
+    if (!(error instanceof GoogleAccessRevokedError)) throw error;
+    await repository.markNeedsReconnect(account, error.message);
+    throw toHttpError(
+      new AppIntegrationError('APP_AUTH_FAILED', error.message),
+    );
+  }
 
   await repository.update(accountId, {
     accessToken: refreshed.access_token,

@@ -15,8 +15,10 @@ import {
   NginxProxyManagerClient,
   NginxRedirectionHost,
   NginxStream,
+  NginxTimeoutError,
   nginxProxyManagerHealth,
 } from 'src/nginx-proxy-manager/nginx-proxy-manager.client';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const fold = (text: string) => text.trim().toLowerCase();
 
@@ -534,7 +536,7 @@ export function buildNginxProxyManagerTools(
     {
       name: 'nginx_proxy_manager_renew_certificate',
       description:
-        "Renova agora um certificado Let's Encrypt do Nginx Proxy Manager (pelo id ou por um domínio). Os carregados à mão não se renovam assim. Pode demorar um minuto. Faz só quando ele pedir.",
+        "Renova agora um certificado Let's Encrypt do Nginx Proxy Manager (pelo id ou por um domínio). Os carregados à mão não se renovam assim. Pode demorar uns minutos (espero até 5); se disser que ainda pode estar a correr, não repitas: vê a validade mais tarde. Faz só quando ele pedir.",
       inputSchema: {
         type: 'object',
         properties: {
@@ -554,7 +556,16 @@ export function buildNginxProxyManagerTools(
         if (!found) return `Não há o certificado «${input.certificate}».`;
         if (found.provider !== 'letsencrypt')
           return `O certificado ${found.id} (${certificateName(found)}) foi carregado à mão: renova-o carregando um novo.`;
-        const renewed = await npm.renewCertificate(found.id);
+        let renewed: NginxCertificate;
+        try {
+          renewed = await npm.renewCertificate(found.id);
+        } catch (error) {
+          // A renovação pode continuar no NPM: repetir já pode bater no limite do Let's Encrypt.
+          if (error instanceof NginxTimeoutError) {
+            return `O Nginx Proxy Manager ainda não respondeu à renovação de ${certificateName(found)}: pode ainda estar a correr. Não tentes outra vez já (o Let's Encrypt tem limite de tentativas); vê a validade com nginx_proxy_manager_certificates daqui a uns minutos.`;
+          }
+          throw error;
+        }
         return `Renovei ${certificateName(found)}: expira agora ${day(renewed.expires_on ?? found.expires_on)}.`;
       }),
     },
@@ -602,7 +613,7 @@ export function buildNginxProxyManagerTools(
               : typeof meta.name === 'string'
                 ? ` ${meta.name}`
                 : '';
-            return `- ${entry.created_on.slice(0, 16).replace('T', ' ')} ${entry.user?.name ?? '?'} ${entry.action} ${entry.object_type} ${entry.object_id}${domains}`;
+            return `- ${lisbonStamp(entry.created_on)} ${entry.user?.name ?? '?'} ${entry.action} ${entry.object_type} ${entry.object_id}${domains}`;
           })
           .join('\n');
       }),

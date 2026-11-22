@@ -12,6 +12,7 @@ import {
   readOnlyQuery,
   withPostgres,
 } from 'src/postgres/postgres.client';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const fold = (text: string) => text.trim().toLowerCase();
 
@@ -58,10 +59,7 @@ const cell = (value: unknown) => {
   return text.replace(/\s+/g, ' ').slice(0, 120);
 };
 
-const when = (value: Date | string | null) =>
-  value
-    ? new Date(value).toISOString().slice(0, 16).replace('T', ' ')
-    : 'nunca';
+const when = (value: Date | string | null) => lisbonStamp(value, 'nunca');
 
 /** O resultado como uma tabela de texto compacta (cabeçalho e linhas separadas por " | "). */
 export function resultTable(result: QueryResult, truncated: boolean): string {

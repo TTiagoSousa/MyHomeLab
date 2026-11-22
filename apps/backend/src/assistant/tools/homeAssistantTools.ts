@@ -14,6 +14,7 @@ import {
   HaUpdateGroup,
   haUpdates,
 } from 'src/home-assistant/helpers/haUpdates';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const normalize = (text: string) =>
   text.normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
@@ -237,7 +238,7 @@ export async function getEntity(
   const entry = data.entries.get(entityId);
   const device = entry?.device_id ? data.devices.get(entry.device_id) : null;
   return [
-    `${entityId} "${friendlyName(state)}" = ${state.state} (desde ${state.last_changed.replace('T', ' ').slice(0, 19)})`,
+    `${entityId} "${friendlyName(state)}" = ${state.state} (desde ${lisbonStamp(state.last_changed)})`,
     entry
       ? `Registo: nome ${entry.name ? `"${entry.name}"` : `de origem "${entry.original_name ?? '—'}"`}, ícone ${entry.icon ?? 'por omissão'}, ` +
         `área ${data.areaOf(entityId)?.name ?? 'nenhuma'}${entry.area_id ? '' : ' (do dispositivo)'}, integração ${entry.platform}` +
@@ -343,9 +344,7 @@ export async function listConfigs(
       return (
         `${state.entity_id} "${friendlyName(state)}" — ${state.state}` +
         (id ? `, id ${id}` : ', sem id (vem do YAML, não se edita por aqui)') +
-        (typeof last === 'string'
-          ? `, última vez ${last.replace('T', ' ').slice(0, 16)}`
-          : '')
+        (typeof last === 'string' ? `, última vez ${lisbonStamp(last)}` : '')
       );
     })
     .join('\n');
@@ -467,7 +466,7 @@ export async function systemLog(
   return entries
     .map(
       (entry) =>
-        `${new Date(entry.timestamp * 1000).toISOString().replace('T', ' ').slice(0, 19)} ${entry.level} ${entry.name}` +
+        `${lisbonStamp(entry.timestamp)} ${entry.level} ${entry.name}` +
         `${entry.count > 1 ? ` (${entry.count}×)` : ''}: ${entry.message.join(' | ').slice(0, 500)}`,
     )
     .join('\n');

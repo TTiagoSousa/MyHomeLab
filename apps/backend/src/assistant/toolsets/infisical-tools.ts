@@ -12,6 +12,7 @@ import {
   InfisicalSecret,
   infisicalUpdate,
 } from 'src/infisical/infisical.client';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const fold = (text: string) => text.trim().toLowerCase();
 
@@ -285,7 +286,7 @@ export function buildInfisicalTools(context: AgentContext): AgentTool[] {
           return [
             `${secret.secretKey} (${where(project, place)}) = ${secret.secretValue ?? ''}`,
             secret.secretComment ? `Comentário: ${secret.secretComment}` : '',
-            `Versão ${secret.version ?? '?'}, mudou ${secret.updatedAt?.slice(0, 16).replace('T', ' ') ?? '?'}.`,
+            `Versão ${secret.version ?? '?'}, mudou ${lisbonStamp(secret.updatedAt, '?')}.`,
           ]
             .filter(Boolean)
             .join('\n');

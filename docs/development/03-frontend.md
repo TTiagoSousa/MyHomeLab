@@ -28,8 +28,27 @@ apps/frontend/src/
 ```
 
 Private pages render inside `Main`, which draws the sidebar and wraps the routes in an
-error boundary, so a crash in one page shows a retry message instead of a blank app. Pages
-that use ECharts (health dashboards) are lazy-loaded to keep the main bundle small.
+error boundary, so a crash in one page shows a retry message instead of a blank app. The
+heavier pages (health dashboards, Docs, Todos, Assistant, Workflow, Admin and all the Apps
+pages) are lazy-loaded behind one `Suspense` in `Private_Routes`, to keep the main bundle
+small. After an update, an open tab asking for a chunk that no longer exists reloads itself
+once (`vite:preloadError` in `main.tsx`, at most once every 10 seconds).
+
+Below 900 px wide the sidebar becomes a drawer: a top bar with a menu button opens it over
+the page, and it closes when you navigate or tap outside. Wide tables scroll inside their
+own box instead of the page.
+
+Pages use a few small rules so stale answers never win:
+
+- Hooks that load something per id or filter (conversation, server, doc search, agent logs)
+  keep the answer together with the id it belongs to and only apply it while that id is
+  still the current one — no `AbortController`.
+- A route that changes id without remounting (`/MyHomeLab/Projects/:taskId`) is keyed by
+  the id, so drafts never carry over to another task.
+- Polling (notification count, service monitors, server dashboard) skips hidden tabs and
+  refreshes when the tab becomes visible again.
+- A `401` outside `/auth/*` means the session expired: the app goes to the login page with
+  `?from=<path>` and, after signing in, returns there (only `/MyHomeLab…` paths).
 
 ## Talking to the API
 
@@ -98,6 +117,8 @@ The interface ships in **pt-PT** (source), **en** and **es**, using i18next.
 - Outside components: `i18n.t('<ns>:key')` (import from `src/i18n`).
 - Dates: `toLocaleDateString(dateLocale())`.
 - The language is chosen in Settings → Language and stored in the browser, like the theme.
+  Only the active language is downloaded (the app renders once it is loaded); pt-PT, the
+  fallback, follows in the background, and switching language loads the new one first.
 - API error messages and assistant replies come from the backend in Portuguese; where the
   backend sends an error `code`, translate the code instead of showing the message.
 

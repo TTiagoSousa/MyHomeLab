@@ -226,9 +226,14 @@ export function withTplinkRouter<T>(
     if (waiting || (link.state === 'failed' && !options.force)) {
       throw new TplinkOfflineError(connectionOf(link));
     }
+    // O relógio da saída por inatividade pára enquanto há trabalho: só recomeça no fim
+    // (touch), senão uma leitura que começa aos 85 s levava logout a meio.
+    if (link.idleTimer) clearTimeout(link.idleTimer);
+    link.idleTimer = null;
     for (let attempt = 0; ; attempt += 1) {
+      let session: TplinkSession | null = null;
       try {
-        const session = await sessionFor(link);
+        session = await sessionFor(link);
         const result = await work(
           new TplinkRouterApi(session, link, link.kind),
         );
@@ -246,6 +251,17 @@ export function withTplinkRouter<T>(
           link.session = null;
           if (attempt === 0) continue;
           setState(link, 'disconnected', error.message);
+          throw new TplinkOfflineError(connectionOf(link));
+        }
+        // Falhou a entrar (ex.: o router a arrancar responde coisas estranhas): é a ligação,
+        // não o pedido — fica desligado e tenta outra vez daqui a 5 min, não a cada minuto.
+        if (!session) {
+          link.session = null;
+          setState(
+            link,
+            'disconnected',
+            error instanceof Error ? error.message : String(error),
+          );
           throw new TplinkOfflineError(connectionOf(link));
         }
         touch(link);

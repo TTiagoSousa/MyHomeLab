@@ -499,6 +499,7 @@
       "ha_get_config": "Read an automation or script",
       "ha_system_log": "Read the log",
       "ha_call_service": "Control devices",
+      "ha_update_install": "Install Home Assistant updates",
       "ha_save_config": "Create and change automations and scripts",
       "ha_delete_config": "Delete automations and scripts",
       "ha_update_entity": "Change entities",

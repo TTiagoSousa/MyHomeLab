@@ -35,7 +35,7 @@ const Stirling_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('STIRLING_PDF');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('STIRLING_PDF');
   const { status, loading: checking, error, fetchStatus } = useStirlingStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<Stirling_Panel | null>(null);
@@ -45,7 +45,7 @@ const Stirling_Account = () => {
   const account = connectedAccounts.find((item) => item.id === accountId);
   const name = account?.displayName ?? t('apps.stirling.title');
   const label = account?.displayName ? `Stirling-PDF · ${account.displayName}` : 'Stirling-PDF';
-  const baseUrl = account?.appHost ? `https://${account.appHost}` : '';
+  const baseUrl = account?.appBaseUrl ?? '';
   const state = !account?.isActive ? 'off' : error ? 'error' : checking && !status ? 'checking' : status ? 'ok' : 'unknown';
 
   const disconnect = async () => {
@@ -80,7 +80,7 @@ const Stirling_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.stirling.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.stirling.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Summary

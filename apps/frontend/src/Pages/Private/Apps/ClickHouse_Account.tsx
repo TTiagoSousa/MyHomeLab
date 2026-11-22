@@ -36,7 +36,7 @@ const ClickHouse_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('CLICKHOUSE');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('CLICKHOUSE');
   const { status, loading: checking, error, fetchStatus } = useClickHouseStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<ClickHouse_Panel | null>(null);
@@ -46,7 +46,7 @@ const ClickHouse_Account = () => {
   const account = connectedAccounts.find((item) => item.id === accountId);
   const name = account?.displayName ?? t('apps.clickhouse.title');
   const label = account?.displayName ? `ClickHouse · ${account.displayName}` : 'ClickHouse';
-  const baseUrl = account?.appHost ? `https://${account.appHost}` : '';
+  const baseUrl = account?.appBaseUrl ?? '';
   const state = !account?.isActive ? 'off' : error ? 'error' : checking && !status ? 'checking' : status ? 'ok' : 'unknown';
 
   const disconnect = async () => {
@@ -72,7 +72,7 @@ const ClickHouse_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.clickhouse.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.clickhouse.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Summary

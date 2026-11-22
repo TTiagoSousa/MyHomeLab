@@ -7,7 +7,8 @@ import { docErrorMessage } from "./docErrorMessage";
 import type { Doc, DocFilters, DocPayload, DocSummary } from "./docTypes";
 
 export const useDocs = (filters: DocFilters) => {
-  const [docs, setDocs] = useState<DocSummary[]>([]);
+  const filtersKey = JSON.stringify([filters.search, filters.kind, filters.linkType, filters.targetId, filters.owner, filters.sort]);
+  const [result, setResult] = useState<{ filtersKey: string; docs: DocSummary[] }>({ filtersKey, docs: [] });
   const [loading, setLoading] = useState(true);
   const [creatingStarter, setCreatingStarter] = useState(false);
   const [refreshingMaps, setRefreshingMaps] = useState(false);
@@ -27,7 +28,7 @@ export const useDocs = (filters: DocFilters) => {
         },
         withCredentials: true,
       });
-      setDocs(response.data);
+      setResult((current) => (current.filtersKey === filtersKey ? { filtersKey, docs: response.data } : current));
       setError('');
     } catch (error: any) {
       setError(docErrorMessage(error));
@@ -37,8 +38,9 @@ export const useDocs = (filters: DocFilters) => {
   };
 
   useEffect(() => {
+    setResult((current) => ({ filtersKey, docs: current.docs }));
     fetchDocs();
-  }, [filters.search, filters.kind, filters.linkType, filters.targetId, filters.owner, filters.sort]);
+  }, [filtersKey]);
 
   const createDoc = async (payload: DocPayload): Promise<Doc | null> => {
     try {
@@ -99,5 +101,5 @@ export const useDocs = (filters: DocFilters) => {
     }
   };
 
-  return { docs, loading, error, creatingStarter, refreshingMaps, fetchDocs, createDoc, createStarterDocs, createFromTemplate, refreshMaps };
+  return { docs: result.docs, loading, error, creatingStarter, refreshingMaps, fetchDocs, createDoc, createStarterDocs, createFromTemplate, refreshMaps };
 };

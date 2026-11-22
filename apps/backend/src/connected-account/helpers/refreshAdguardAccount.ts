@@ -4,7 +4,7 @@ import { adguardClientFor } from './adguardClientFor';
 
 /**
  * O estado do AdGuard, visto agora: se a proteção está ligada, os pedidos e os
- * bloqueados das últimas 24 h, as listas (e de quantas em quantas horas se
+ * bloqueados do período das estatísticas (statsHours), as listas (e de quantas em quantas horas se
  * atualizam, e quando foi a última) e as regras próprias.
  */
 export async function refreshAdguardAccount(
@@ -14,11 +14,12 @@ export async function refreshAdguardAccount(
 ) {
   const { account, client } = await adguardClientFor(id, userId, repository);
   try {
-    const [status, stats, filtering, rewrites] = await Promise.all([
+    const [status, stats, filtering, rewrites, statsHours] = await Promise.all([
       client.status(),
       client.stats(),
       client.filteringStatus(),
       client.rewrites(),
+      client.statsHours(),
     ]);
     const filters = filtering.filters ?? [];
     return {
@@ -27,6 +28,8 @@ export async function refreshAdguardAccount(
       protectionEnabled: status.protection_enabled,
       queries: stats.num_dns_queries,
       blocked: stats.num_blocked_filtering,
+      // De quantas horas são os pedidos e os bloqueados (o período do AdGuard).
+      statsHours,
       filters: filters.length,
       enabledFilters: filters.filter((filter) => filter.enabled).length,
       rules: filters.reduce(

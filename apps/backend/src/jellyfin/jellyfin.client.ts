@@ -1,4 +1,5 @@
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import { describeFetchError } from 'src/integrations/app-fetch';
 
 // O Jellyfin (servidor de filmes, séries e música): a API REST em <endereço>/…, com uma chave
 // de API (Painel de controlo → Chaves de API) no cabeçalho Authorization: MediaBrowser
@@ -224,7 +225,7 @@ async function request<T>(
   } catch (error) {
     throw new AppIntegrationError(
       'APP_UNREACHABLE',
-      `Não foi possível falar com o Jellyfin (${what}): ${error instanceof Error ? error.message : String(error)}`,
+      `Não foi possível falar com o Jellyfin (${what}): ${describeFetchError(error)}`,
     );
   }
   const text = await response.text();

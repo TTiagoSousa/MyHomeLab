@@ -34,7 +34,7 @@ export interface ClaudeCodeStatus {
 }
 
 export const aiErrorMessage = (error: any): string => {
-  const code = error?.response?.data?.code;
+  const code = error?.response?.data?.code ?? error?.code;
   const group = error?.response?.data?.provider === 'claude-api' ? 'apiErrors' : 'errors';
   if (code && i18n.exists(`settings:ai.${group}.${code}`)) return i18n.t(`settings:ai.${group}.${code}`);
   return error?.response?.data?.message || error?.message || i18n.t('common:errors.generic');

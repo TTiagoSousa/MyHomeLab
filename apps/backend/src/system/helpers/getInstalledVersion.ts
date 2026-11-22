@@ -1,5 +1,6 @@
 import { git } from './git';
 import { isVersion } from './semver';
+import { readInstalledCommit } from './updateFiles';
 
 export interface InstalledVersion {
   /** vX.Y.Z quando o código instalado é exatamente uma release; null se não. */
@@ -17,15 +18,17 @@ export interface InstalledVersion {
  * (vX.Y.Z); em desenvolvimento ou num branch fica a release em que assenta.
  */
 export async function getInstalledVersion(): Promise<InstalledVersion> {
-  const commit = await git(['rev-parse', '--short', 'HEAD']).catch(() => '');
-  const date = await git(['log', '-1', '--format=%cI']).catch(() => '');
+  // No servidor vale o commit da última atualização que acabou bem (ver readInstalledCommit).
+  const ref = (await readInstalledCommit()) ?? 'HEAD';
+  const commit = await git(['rev-parse', '--short', ref]).catch(() => '');
+  const date = await git(['log', '-1', '--format=%cI', ref]).catch(() => '');
   const exact = await git([
     'describe',
     '--tags',
     '--exact-match',
     '--match',
     'v*',
-    'HEAD',
+    ref,
   ]).catch(() => '');
   const base = await git([
     'describe',
@@ -33,7 +36,7 @@ export async function getInstalledVersion(): Promise<InstalledVersion> {
     '--abbrev=0',
     '--match',
     'v*',
-    'HEAD',
+    ref,
   ]).catch(() => '');
   const branch = await git(['rev-parse', '--abbrev-ref', 'HEAD']).catch(
     () => '',

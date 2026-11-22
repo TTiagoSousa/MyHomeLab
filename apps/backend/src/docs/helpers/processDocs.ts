@@ -19,7 +19,7 @@ const TEAM: StarterDoc = {
 - Cada agente só mexe na sua área, com as ferramentas que tem.
 
 ## Os documentos
-- **Regras** — o que se pode fazer e como se faz. São minhas: os agentes seguem-nas e, quando falta ou está errada uma regra, propõem a mudança (docs_propose) e eu aprovo em Documentos.
+- **Regras** — o que se pode fazer e como se faz. São minhas: os agentes seguem-nas e, quando falta ou está errada uma regra, propõem a mudança (docs_propose) e eu aprovo em Documentos ou no cartão do chat.
 - **Mapa** — o que existe num servidor ou numa app (máquinas, versões, portas, add-ons). É dos agentes: mantêm-no em dia sempre que estudam ou mudam alguma coisa.
 - **Registo** — o que se fez (estudos, instalações, comandos). Escrito pelos agentes, fica no Histórico.
 - Entre dois documentos ganha o mais específico (o de uma app ao geral). Se se contradizem, diz-mo.
@@ -65,12 +65,15 @@ Todo ──👤──→ Espera por estudo → Study ─┬→ Ready to update �
 3. **Instalar.** 🤖 update_prepare → update_check em cada ponto, com prova → update_prepare com checklist [] → update_run. Acompanha com update_status até acabar.
 4. **Verificar.** 🤖 Em Verifying, os pontos de "Depois de instalar" (update_verify). Tudo bem → Done. Um problema → Waiting for reply com o que se viu.
 
+### Abrir cada update novo
+Uma versão nova fica primeiro só disponível, sem tarefa: abro-a eu, ou um disparo "quando aparece uma atualização nova", se eu o criei. Nesse disparo, abre-se cada uma com update_start (passa a Espera por estudo) ou diz-se porque não.
+
 ## Instalar ou não
 
 O estudo responde a três perguntas, com prova:
 1. **O que ganhamos?** Correções de segurança, bugs que nos afetam, coisas que usamos — ou "nada que nos sirva".
 2. **O que pode partir para nós?** Só o que toca no que temos: mudanças incompatíveis, issues graves abertas, passos à mão.
-3. **Se correr mal, volta-se atrás?** Com snapshot e backup em dia, sim.
+3. **Se correr mal, volta-se atrás?** Com o snapshot do update_run e o backup do CT/VM em dia, sim.
 
 | Situação | Fica em |
 |---|---|

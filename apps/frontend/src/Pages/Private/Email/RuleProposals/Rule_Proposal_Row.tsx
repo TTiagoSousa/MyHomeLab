@@ -52,7 +52,13 @@ const Rule_Proposal_Row = ({ proposal, busy, onImplement, onEdit, onDismiss, onR
         <span className={`RuleProposals_status ${proposal.status.toLowerCase()}`}>{t(`proposals.status.${proposal.status}`)}</span>
       )}
 
-      <div className='EmailRules_row_info' onClick={onEdit}>
+      <div
+        className='EmailRules_row_info'
+        role={onEdit ? 'button' : undefined}
+        tabIndex={onEdit ? 0 : undefined}
+        onClick={onEdit}
+        onKeyDown={(e) => e.key === 'Enter' && onEdit?.()}
+      >
         <span className='EmailRules_row_name'>{rule.name || t('proposals.unnamed')}</span>
         <span className='RuleProposals_reason'>{proposal.reason}</span>
         <span className='EmailRules_row_summary'>

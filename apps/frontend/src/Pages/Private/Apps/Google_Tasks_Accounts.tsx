@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useConnectedAccounts } from '../../../Hooks/ConnectedAccount/useConnectedAccounts';
 import { useConnectedAccount } from '../../../Hooks/ConnectedAccount/useConnectedAccount';
+import { useGoogleConnectResult } from '../../../Hooks/ConnectedAccount/useGoogleConnectResult';
 import { Apps_Account_Card, Apps_Empty_Card, Apps_Page } from './appsShared';
 
 const Google_Tasks_Accounts = () => {
@@ -12,6 +13,7 @@ const Google_Tasks_Accounts = () => {
   const { connectedAccounts, fetchConnectedAccounts } = useConnectedAccounts('GOOGLE_TASKS');
   const { connectGoogleTasksAccount, deleteConnectedAccount, loading } = useConnectedAccount();
   const [confirming, setConfirming] = useState('');
+  useGoogleConnectResult();
 
   const disconnect = async (id: string) => {
     if (confirming !== id) {
@@ -42,10 +44,18 @@ const Google_Tasks_Accounts = () => {
             avatar={account.emailAddress ?? 'GT'}
             title={account.emailAddress ?? t('apps.googleTasks.title')}
             meta={t('apps.googleTasks.meta')}
+            chips={!account.isActive && <span className='Apps_chip off'>{t('google.reconnectChip')}</span>}
             actions={
-              <button type='button' className={confirming === account.id ? 'danger' : ''} disabled={loading} onClick={() => void disconnect(account.id)}>
-                {confirming === account.id ? t('apps.googleTasks.confirmDisconnect') : t('apps.googleTasks.disconnect')}
-              </button>
+              <>
+                {!account.isActive && (
+                  <button type='button' className='danger' onClick={connectGoogleTasksAccount}>
+                    {t('google.reconnect')}
+                  </button>
+                )}
+                <button type='button' className={confirming === account.id ? 'danger' : ''} disabled={loading} onClick={() => void disconnect(account.id)}>
+                  {confirming === account.id ? t('apps.googleTasks.confirmDisconnect') : t('apps.googleTasks.disconnect')}
+                </button>
+              </>
             }
             onOpen={() => navigate('/MyHomeLab/Tasks?sync=1')}
           />

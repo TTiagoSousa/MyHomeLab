@@ -59,9 +59,11 @@ export interface ServerDashboard {
 const REFRESH_MS = 30_000;
 
 export const useServerDashboard = (serverId: string | null) => {
-  const [dashboard, setDashboard] = useState<ServerDashboard | null>(null);
+  const [view, setView] = useState<{ serverId: string | null; dashboard: ServerDashboard | null; error: string }>({ serverId, dashboard: null, error: '' });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+
+  const showForServer = (requestedId: string, next: { dashboard?: ServerDashboard; error: string }) =>
+    setView((current) => (current.serverId === requestedId ? { ...current, ...next } : current));
 
   const fetchDashboard = async () => {
     if (!serverId) return;
@@ -69,24 +71,29 @@ export const useServerDashboard = (serverId: string | null) => {
     setLoading(true);
     try {
       const response = await http.get(End_Points.Server_Dashboard_Endpoint(serverId), { withCredentials: true });
-      setDashboard(response.data);
-      setError('');
+      showForServer(serverId, { dashboard: response.data, error: '' });
     } catch (error: any) {
       const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
-      setError(msg);
+      showForServer(serverId, { error: msg });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    setDashboard(null);
-    setError('');
+    setView({ serverId, dashboard: null, error: '' });
     fetchDashboard();
 
-    const timer = setInterval(fetchDashboard, REFRESH_MS);
-    return () => clearInterval(timer);
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') fetchDashboard();
+    };
+    const timer = setInterval(refreshIfVisible, REFRESH_MS);
+    document.addEventListener('visibilitychange', refreshIfVisible);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', refreshIfVisible);
+    };
   }, [serverId]);
 
-  return { dashboard, loading, error, fetchDashboard };
+  return { dashboard: view.dashboard, loading, error: view.error, fetchDashboard };
 };

@@ -174,6 +174,43 @@ describe('withTplinkRouter (firmware 1.11, sem cifra)', () => {
     expect(tplinkConnection(account).state).toBe('connected');
   });
 
+  it('não sai por inatividade a meio de um trabalho que começa perto dos 90 s', async () => {
+    jest.useFakeTimers();
+    try {
+      await withTplinkRouter(account, (router) => router.firmware());
+      jest.advanceTimersByTime(85_000);
+      let finish: () => void = () => undefined;
+      const slow = withTplinkRouter(account, async (router) => {
+        await new Promise<void>((resolve) => (finish = resolve));
+        return router.firmware();
+      });
+      await Promise.resolve();
+      await Promise.resolve();
+      jest.advanceTimersByTime(10_000);
+      const logouts = () =>
+        post.mock.calls.filter(([url]) => url.includes('form=logout')).length;
+      expect(logouts()).toBe(0);
+      finish();
+      await slow;
+      jest.advanceTimersByTime(91_000);
+      expect(logouts()).toBe(1);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('um erro ao entrar (router a arrancar) fica "desligado" com a próxima daqui a 5 min', async () => {
+    post.mockImplementation(() => reply('<html>a arrancar</html>', 200));
+    await expect(
+      withTplinkRouter(account, (router) => router.firmware()),
+    ).rejects.toBeInstanceOf(TplinkOfflineError);
+    const connection = tplinkConnection(account);
+    expect(connection.state).toBe('disconnected');
+    expect(Date.parse(connection.nextRetryAt!) - Date.now()).toBeGreaterThan(
+      4 * 60_000,
+    );
+  });
+
   it('palavra-passe errada fica "falhou" e não volta a tentar sozinha', async () => {
     post.mockImplementation((url: string) => {
       if (url.includes('form=keys')) {

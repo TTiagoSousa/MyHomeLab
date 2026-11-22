@@ -9,7 +9,7 @@ agents: [infra]
 # AdGuard – como se mexe no DNS
 
 > **Quem:** o Engenheiro de Servidores (as ferramentas `adguard_*`), e quem mais mexer no AdGuard.
-> **Quando:** sempre que se vê ou muda o AdGuard fora de uma atualização (as atualizações seguem "AdGuard – estudar/instalar uma atualização").
+> **Quando:** sempre que se vê ou muda o AdGuard fora de uma atualização (as atualizações seguem "AdGuard – regras").
 
 O AdGuard (CT 210, 192.168.1.21, https://adguard.example.com) é **o DNS da rede inteira**: um erro deixa a casa sem internet ou desbloqueia publicidade e sites perigosos em todos os aparelhos. Muda-se pouco, de propósito, e confirma-se a seguir.
 

@@ -5,7 +5,45 @@ export interface AppRelease {
 
 /** Guarda-se a resposta uma hora: várias contas da mesma app fazem um só pedido. */
 const CACHE_MS = 60 * 60_000;
-const cache = new Map<string, { at: number; release: AppRelease | null }>();
+// As falhas também se guardam (15 min): sem Internet ou com o limite do GitHub esgotado,
+// cada página de app esperava 15 s e voltava a perguntar, o que mantinha o limite esgotado.
+const FAILURE_CACHE_MS = 15 * 60_000;
+const cache = new Map<
+  string,
+  { at: number; release: AppRelease | null; error?: Error }
+>();
+
+/** A release mais recente de `key`, da cache (incluindo uma falha recente) ou do `load`. */
+export async function rememberRelease(
+  key: string,
+  load: () => Promise<AppRelease | null>,
+): Promise<AppRelease | null> {
+  const hit = cache.get(key);
+  if (hit) {
+    const age = Date.now() - hit.at;
+    if (hit.error && age < FAILURE_CACHE_MS) throw hit.error;
+    if (!hit.error && age < CACHE_MS) return hit.release;
+  }
+  try {
+    const release = await load();
+    cache.set(key, { at: Date.now(), release });
+    return release;
+  } catch (error) {
+    const failure = error instanceof Error ? error : new Error(String(error));
+    cache.set(key, { at: Date.now(), release: null, error: failure });
+    throw failure;
+  }
+}
+
+/** Os cabeçalhos para a API do GitHub; com GITHUB_TOKEN no .env o limite passa de 60 a 5000 pedidos/h. */
+export function githubHeaders(): Record<string, string> {
+  const token = process.env.GITHUB_TOKEN?.trim();
+  return {
+    Accept: 'application/vnd.github+json',
+    'User-Agent': 'MyHomeLab',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
 
 /** "v4.3.3" → "4.3.3"; "13.0.1+gitea-1.22.0" → "13.0.1". */
 export const cleanVersion = (version: string) =>
@@ -31,12 +69,13 @@ export function compareVersions(a: string, b: string): number {
  * Forgejo). Escolhe a versão mais alta e não a última publicada: uma correção
  * a uma versão LTS antiga pode sair depois da versão nova.
  */
-export async function latestCodebergRelease(
+export function latestCodebergRelease(
   repo: string,
 ): Promise<AppRelease | null> {
-  const cached = cache.get(repo);
-  if (cached && Date.now() - cached.at < CACHE_MS) return cached.release;
+  return rememberRelease(repo, () => fetchCodebergRelease(repo));
+}
 
+async function fetchCodebergRelease(repo: string): Promise<AppRelease | null> {
   const response = await fetch(
     `https://codeberg.org/api/v1/repos/${repo}/releases?limit=20&draft=false&pre-release=false`,
     {
@@ -56,33 +95,23 @@ export async function latestCodebergRelease(
   const stable = releases
     .filter((release) => !release.prerelease && !release.draft)
     .sort((a, b) => compareVersions(b.tag_name, a.tag_name))[0];
-  const release = stable
+  return stable
     ? { version: cleanVersion(stable.tag_name), url: stable.html_url }
     : null;
-  cache.set(repo, { at: Date.now(), release });
-  return release;
 }
 
 /**
  * A release estável mais recente de um repositório do GitHub (ignora pré-versões
  * e rascunhos). Sem token, o GitHub aceita 60 pedidos por hora — daí a cache.
  */
-export async function latestGithubRelease(
-  repo: string,
-): Promise<AppRelease | null> {
-  const key = `github:${repo}`;
-  const cached = cache.get(key);
-  if (cached && Date.now() - cached.at < CACHE_MS) return cached.release;
+export function latestGithubRelease(repo: string): Promise<AppRelease | null> {
+  return rememberRelease(`github:${repo}`, () => fetchGithubRelease(repo));
+}
 
+async function fetchGithubRelease(repo: string): Promise<AppRelease | null> {
   const response = await fetch(
     `https://api.github.com/repos/${repo}/releases?per_page=10`,
-    {
-      headers: {
-        Accept: 'application/vnd.github+json',
-        'User-Agent': 'MyHomeLab',
-      },
-      signal: AbortSignal.timeout(15_000),
-    },
+    { headers: githubHeaders(), signal: AbortSignal.timeout(15_000) },
   );
   if (!response.ok) {
     throw new Error(`O GitHub respondeu ${response.status}`);
@@ -93,14 +122,19 @@ export async function latestGithubRelease(
     prerelease: boolean;
     draft: boolean;
   }[];
-  const stable = releases.find(
+  const published = releases.filter(
     (release) => !release.prerelease && !release.draft,
   );
-  const release = stable
+  // A versão mais alta e não a última publicada (como no Codeberg): o Nextcloud, por
+  // exemplo, publica três ramos no mesmo dia. Só entre as versões só com números — com
+  // sufixos ("4.0.0-beta.420") fica a última publicada, como antes.
+  const numeric = published
+    .filter((release) => /^\d+(\.\d+)*$/.test(cleanVersion(release.tag_name)))
+    .sort((a, b) => compareVersions(b.tag_name, a.tag_name));
+  const stable = numeric[0] ?? published[0];
+  return stable
     ? { version: cleanVersion(stable.tag_name), url: stable.html_url }
     : null;
-  cache.set(key, { at: Date.now(), release });
-  return release;
 }
 
 /** Onde vivem as releases de uma app. */
@@ -125,11 +159,10 @@ export interface KnownIssue {
   labels: string[];
 }
 
-const jsonHeaders = (host: ReleaseRepository['host']) => ({
-  Accept:
-    host === 'github' ? 'application/vnd.github+json' : 'application/json',
-  'User-Agent': 'MyHomeLab',
-});
+const jsonHeaders = (host: ReleaseRepository['host']) =>
+  host === 'github'
+    ? githubHeaders()
+    : { Accept: 'application/json', 'User-Agent': 'MyHomeLab' };
 
 async function getJson<T>(
   host: ReleaseRepository['host'],

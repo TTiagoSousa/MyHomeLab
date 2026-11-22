@@ -15,7 +15,7 @@ const App_Row = ({ icon, name, description, hosting, status, connected, onOpen }
   const { t } = useTranslation('addons');
 
   return (
-    <div className='Apps_app' onClick={onOpen}>
+    <div className='Apps_app' role='button' tabIndex={0} onClick={onOpen} onKeyDown={(e) => e.target === e.currentTarget && e.key === 'Enter' && onOpen()}>
       <div className='Apps_app_icon'>{icon}</div>
 
       <div className='Apps_app_info'>

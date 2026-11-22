@@ -40,15 +40,18 @@ const chatBody = (conversationId: string | null, text: string, files: File[]) =>
 };
 
 export const useAssistant = (conversationId: string | null, onConversation: (id: string) => void) => {
-  const [messages, setMessages] = useState<AssistantMessage[]>([]);
+  const [chat, setChat] = useState<{ conversationId: string | null; messages: AssistantMessage[] }>({ conversationId, messages: [] });
   const [loading, setLoading] = useState(false);
   const { setAlert } = useAlert();
+
+  const setMessages = (update: (previous: AssistantMessage[]) => AssistantMessage[]) =>
+    setChat((current) => (current.conversationId === conversationId ? { conversationId, messages: update(current.messages) } : current));
 
   const showError = (error: any) => setAlert({ open: true, message: aiErrorMessage(error), type: 'error' });
 
   const fetchMessages = async (pendingText?: string) => {
     if (!conversationId) {
-      setMessages(pendingText ? [userMessage(pendingText)] : []);
+      setMessages(() => (pendingText ? [userMessage(pendingText)] : []));
       return;
     }
     try {
@@ -56,7 +59,7 @@ export const useAssistant = (conversationId: string | null, onConversation: (id:
         withCredentials: true,
       });
       const saved = response.data.map((entry): AssistantMessage => ({ id: entry.id, role: entry.role, text: entry.content, docsUsed: entry.docsUsed, files: entry.files }));
-      setMessages(pendingText ? [...saved, userMessage(pendingText)] : saved);
+      setMessages(() => (pendingText ? [...saved, userMessage(pendingText)] : saved));
     } catch (error: any) {
       showError(error);
     }
@@ -84,6 +87,7 @@ export const useAssistant = (conversationId: string | null, onConversation: (id:
   );
 
   useEffect(() => {
+    setChat((current) => ({ conversationId, messages: current.conversationId ? [] : current.messages }));
     const ask = pendingAsk(conversationId);
     if (ask && !ask.done) {
       setLoading(true);
@@ -116,5 +120,5 @@ export const useAssistant = (conversationId: string | null, onConversation: (id:
     startPendingAsk(conversationId, text, request);
   };
 
-  return { messages, loading, sendMessage };
+  return { messages: chat.messages, loading, sendMessage };
 };

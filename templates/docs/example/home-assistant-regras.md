@@ -12,7 +12,7 @@ apps: [HOME_ASSISTANT]
 > - **o Core** ("Atualizar Home Assistant X → Y"), que é a própria app;
 > - **uma peça lá dentro** ("Atualizar Home Assistant · <nome> X → Y"): o Supervisor, o OS, um add-on, um repositório do HACS, o firmware de um dispositivo ou outra integração com atualização própria.
 >
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam". **Depois:** "Home Assistant – instalar uma atualização".
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam". **Depois:** "Instalar uma atualização", mais abaixo.
 
 No estudo só se lê e mede. Os pontos **Só Core** ou **Só peças** valem só para esse tipo; no outro marcam-se "não se aplica". Cada peça é uma atualização à parte, com a sua tarefa e a sua decisão, como as apps do Nextcloud.
 
@@ -52,7 +52,7 @@ No estudo só se lê e mede. Os pontos **Só Core** ou **Só peças** valem só 
 - [ ] 🤖 **Só peças · aceita o Core instalado** (versão mínima do Home Assistant nas notas, no manifest ou na ficha do add-on) — prova: a versão do Core e o que a peça pede
 - [ ] 🤖 **Só peças · quem a usa:** as automações, os scripts, os painéis ou os dispositivos que dependem dela (ha_list_entities, ha_list_configs) — prova: os nomes (ou "nada")
 - [ ] 🤖 **Sem passos à mão** (mudar YAML, refazer uma integração, emparelhar dispositivos de novo) — prova: as notas lidas (ou os passos)
-- [ ] 🤖 **O backup do Home Assistant está ativo** (list_backups): ligado, com destino e sem erro — prova: o backup e o estado
+- [ ] 🤖 **Há caminho de volta:** no Core, o update_run tira o snapshot da VM 212; nas peças, o `backup` do próprio HA (onde a entidade o aceita) ou um snapshot da VM 212 tirado antes (pve_create_snapshot, pelo Operador Proxmox) — prova: qual vai servir
 - [ ] 🤖 **Salto de versão major** (Core: uma série nova com muitas mudanças incompatíveis; peças: 1.x → 2.0): diz-se no resumo e na recomendação. Não é uma pergunta — prova: "major" com o que muda, ou "não é major"
 
 ### Decidir (next do update_save_study)
@@ -80,7 +80,7 @@ O resumo na forma de "Atualizações das apps e do Proxmox – como funcionam" (
 ## Instalar uma atualização
 
 > **Quando usar:** uma atualização do Home Assistant (o Core ou uma peça lá dentro) em Ready to update (eu pus lá, ou o estudo com install) ou um pedido direto meu.
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("Home Assistant – estudar uma atualização").
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("Estudar uma atualização", mais acima).
 
 Estar em Ready to update é a aprovação: não se pede outro sim. Os pontos **Só Core** ou **Só peças** valem só para esse tipo; no outro marcam-se "não se aplica".
 
@@ -93,13 +93,13 @@ Estar em Ready to update é a aprovação: não se pede outro sim. Os pontos **S
 **Uma peça** (Supervisor, OS, add-on, HACS, firmware, outra integração) instala-se pelo próprio Home Assistant, sem comandos no servidor e sem snapshot:
 
 1. **update_prepare** com os pontos de "Antes de instalar" provados.
-2. **ha_call_service** `update.install`, com o `backup` só onde a entidade o suporta (o `supported_features` da entidade, em ha_get_entity, tem o bit 8):
-   - **Add-ons** (ex.: `supported_features` 29) e **o OS** (`supported_features` 27): `{"entity_id": "<a entidade da tarefa>", "backup": true}`. O Home Assistant guarda uma cópia antes.
-   - **HACS, firmware e as outras peças** (ex.: `supported_features` 23): só `{"entity_id": "<a entidade da tarefa>"}`, **sem** `backup`. Com ele, o Home Assistant recusa com o erro 500 "Backup is not supported for update.…" (visto a 14/11/2026 no Bubble Card, no Mushroom, no Sonoff LAN e no Tapo). A cópia que conta é o backup do MyHomeLab de menos de 2 horas.
+2. **ha_update_install** (action `install`, a entidade `update.*` da tarefa), com o `backup` só onde a entidade o suporta (o `supported_features` da entidade, em ha_get_entity, tem o bit 8):
+   - **Add-ons** (ex.: `supported_features` 29) e **o OS** (`supported_features` 27): `{"action": "install", "entity_id": "<a entidade da tarefa>", "backup": true}`. O Home Assistant guarda uma cópia antes.
+   - **HACS, firmware e as outras peças** (ex.: `supported_features` 23): só `{"action": "install", "entity_id": "<a entidade da tarefa>"}`, **sem** `backup`. Com ele, o Home Assistant recusa com o erro 500 "Backup is not supported for update.…" (visto a 14/11/2026 no Bubble Card, no Mushroom, no Sonoff LAN e no Tapo). A cópia que conta é um snapshot da VM 212 de menos de 2 horas (pve_create_snapshot, pelo Operador Proxmox).
    - A chamada pode dar timeout (20 s) enquanto o HA faz o backup: não é erro, acompanha-se o `in_progress` da entidade.
 3. **Integrações do HACS** (as `custom_components`, não os cartões do painel): depois de instalar, o `release_summary` da entidade diz "Restart of Home Assistant required". Faz parte da atualização:
-   - primeiro `homeassistant.check_config` e ha_system_log sem erros novos de configuração;
-   - depois `homeassistant.restart`. A chamada pode dar timeout e a API responde 502 durante 1 a 3 minutos: espera-se que volte (ha_overview).
+   - primeiro ha_update_install `check_config` e ha_system_log sem erros novos de configuração;
+   - depois ha_update_install `restart`. A chamada pode dar timeout e a API responde 502 durante 1 a 3 minutos: espera-se que volte (ha_overview).
 4. **O OS (Home Assistant Operating System):** o Supervisor descarrega e grava a versão nova no outro slot, mas **não reinicia sozinho** (log do Supervisor: "Install of Home Assistant Operating System X success; reboot required"; cria a reparação `reboot_required`). A entidade passa logo a mostrar a versão nova, mas a VM continua na antiga até reiniciar. Prova da versão que corre: `qm agent 212 get-osinfo` (`version-id`).
    - 👤 **O reinício da VM 212 para ativar o OS é com o meu sim**, num pedido à parte: um arranque de um kernel novo pode falhar ou, numa VM KVM, bloquear o host Proxmox inteiro (ex.: a issue #5129 da 18.4). Fica em Waiting for reply com a pergunta, e diz-se se o estudo viu issues de arranque.
    - Se não arrancar, o HAOS volta sozinho ao slot anterior.
@@ -115,14 +115,14 @@ Estar em Ready to update é a aprovação: não se pede outro sim. Os pontos **S
 qm guest exec 212 --timeout 1200 -- docker exec hassio_cli ha core update --version <v>
 ```
 
-  O `--timeout 1200` porque o download da imagem e o arranque do Core podem levar vários minutos (o `qm guest exec` desiste aos 30 s sem ele). O backup do Home Assistant não se pede aqui: conta o do MyHomeLab e o snapshot do update_run. A saída tem de ter `exitcode 0`; depois o update_run espera que o Core responda na versão nova.
+  O `--timeout 1200` porque o download da imagem e o arranque do Core podem levar vários minutos (o `qm guest exec` desiste aos 30 s sem ele). O backup do Home Assistant não se pede aqui: conta o snapshot do update_run. A saída tem de ter `exitcode 0`; depois o update_run espera que o Core responda na versão nova.
 - **Ler o estado durante e depois** (só leitura): `qm guest exec 212 --timeout 60 -- docker exec hassio_cli ha core info --raw-json`, `qm guest exec 212 --timeout 60 -- docker exec hassio_cli ha jobs info --raw-json` e, no OS, `... ha os info --raw-json` (`version_pending`) e `qm guest exec 212 --timeout 60 -- docker logs --tail 40 hassio_supervisor`. Atenção: o MyHomeLab conta o `qm guest exec` como alteração e tira antes um snapshot da VM 212; `qm agent 212 get-osinfo` não.
 - **Alternativa no Home Assistant OS:** `update.install` em `update.home_assistant_core_update`. Só com o meu sim, porque sem update_run não há snapshot nem volta atrás automática.
 
 ### Antes de instalar
 - [ ] 🤖 Está em Ready to update: eu pus lá, ou o estudo (install) — prova: o histórico
 - [ ] 🤖 Não há outra atualização do Home Assistant (Core ou peça) a correr — prova: o que está a correr, e ha_list_updates sem nada "em curso"
-- [ ] 🤖 Há um backup do Home Assistant feito pelo MyHomeLab **há menos de 2 horas** e sem erro; se não, corre-o (run_backup) e espera que acabe bem — prova: a hora e o ficheiro
+- [ ] 🤖 **Só peças sem `backup`** (HACS, firmware, as outras): há um snapshot da VM 212 **de menos de 2 horas**; se não, pede-se ao Operador Proxmox (pve_create_snapshot) e espera-se que acabe. No Core e nas peças com `backup: true`, "não se aplica" — prova: o nome e a hora do snapshot
 - [ ] 🤖 O Home Assistant responde e a peça (ou o Core) está na versão de partida (ha_list_updates) — se já estiver na versão nova, não há nada a instalar: passa-se à verificação — prova: as versões
 - [ ] 🤖 A versão que vai entrar é a estudada (o "latest" em ha_list_updates). Se for uma correção mais nova da mesma linha, instala-se na mesma; se for outra linha ou major, pergunta-se — prova: as versões
 - [ ] 🤖 Os erros de antes: ha_system_log, para comparar depois — prova: o número e os principais (ou "sem erros")
@@ -134,17 +134,15 @@ qm guest exec 212 --timeout 1200 -- docker exec hassio_cli ha core update --vers
 - [ ] 🤖 Sem erros novos em ha_system_log desde a atualização, sobretudo da peça ou das integrações carregadas — prova: as linhas novas ou "nenhuma"
 - [ ] 🤖 As integrações carregadas são as mesmas de antes (ha_overview) — prova: as que faltam ou "todas"
 - [ ] 🤖 O que a usa continua a funcionar: as automações dela estão ligadas (ha_list_configs) e as entidades dela têm estado recente, não "unavailable" (ha_list_entities) — prova: o que se viu
-- [ ] 🤖 **Só Core:** correu um backup novo pelo MyHomeLab — prova: a hora e o resultado
-
 ### Se falhar
 
 Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam": a atualização fica em In progress, investiga-se, e o que é simples e seguro corrige-se e corre-se outra vez no mesmo processo (até 3 corridas). O que é desta app:
 
 - **Onde ver:** ha_system_log, o estado da peça em ha_list_updates e se as entidades dela estão "unavailable". No Core também `qm guest exec 212 --timeout 60 -- docker exec hassio_cli ha core logs` (só as últimas linhas, sem segredos).
 - **Core:** diz-se se o MyHomeLab voltou ao snapshot e se o HA responde (o arranque pode levar alguns minutos).
-- **"Backup is not supported"** (500) no `update.install`: a entidade não aceita `backup`; repete-se sem ele (o backup do MyHomeLab de menos de 2 horas já cobre).
+- **"Backup is not supported"** (500) no `update.install`: a entidade não aceita `backup`; repete-se sem ele (cobre-o o snapshot da VM 212 de menos de 2 horas).
 - **"Open the Marketplace and read the warning first"** (500) no `update.install` de uma peça do HACS: o Marketplace tem um aviso por aceitar e só eu o aceito na interface (visto a 14/11/2026 no Ookla, no TP-Link Router e no UI Lovelace Minimalist). Não se contorna nem se repete: update_attempt_close e Waiting for reply, a pedir que o aceite. Enquanto não o aceitar, nenhuma peça do HACS se instala: as outras em Ready to update ficam à espera com a mesma pergunta, sem tentar.
-- **Peça:** não há volta atrás automática. Uma peça do HACS que não carrega costuma resolver-se recarregando a integração (ha_call_service `homeassistant.reload_config_entry`), e isso pode fazer-se. Voltar à versão anterior ou restaurar um backup é comigo.
+- **Peça:** não há volta atrás automática. Uma peça do HACS que não carrega costuma resolver-se recarregando a integração (`homeassistant.reload_config_entry`, com o ha_call_service do Engenheiro de Smart Home): diz-se no relatório, para o chefe lho pedir. Voltar à versão anterior ou restaurar um backup é comigo.
 
 ### Nunca
 

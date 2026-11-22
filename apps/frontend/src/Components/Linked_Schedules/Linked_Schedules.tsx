@@ -54,7 +54,12 @@ const Linked_Schedules = ({ type, targetId, label }: Linked_Schedules_Props) => 
                   const last = schedule.runs[0];
                   const running = last?.status === 'RUNNING';
                   return (
-                    <tr key={schedule.id} onClick={() => navigate(`/MyHomeLab/Schedules/${schedule.id}`)}>
+                    <tr
+                      key={schedule.id}
+                      tabIndex={0}
+                      onClick={() => navigate(`/MyHomeLab/Schedules/${schedule.id}`)}
+                      onKeyDown={(e) => e.target === e.currentTarget && e.key === 'Enter' && navigate(`/MyHomeLab/Schedules/${schedule.id}`)}
+                    >
                       <td className='name'>
                         <span className={`Linked_Schedules_Dot ${state}`} title={t(`state.${state}`)} />
                         <span className='Linked_Schedules_Title' title={schedule.instruction}>

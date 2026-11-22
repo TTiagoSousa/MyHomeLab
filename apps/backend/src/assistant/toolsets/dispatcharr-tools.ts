@@ -13,6 +13,7 @@ import {
   DispatcharrRecording,
   dispatcharrVersionInfo,
 } from 'src/dispatcharr/dispatcharr.client';
+import { lisbonStamp, parseLisbonDate } from 'src/utils/lisbonTime';
 
 const fold = (text: string) => text.trim().toLowerCase();
 
@@ -21,8 +22,7 @@ const ACCOUNT = {
   description: 'O Dispatcharr (nome ou endereço). Omite quando só há um.',
 };
 
-const when = (iso?: string | null) =>
-  iso ? iso.slice(0, 16).replace('T', ' ') : 'nunca';
+const when = (iso?: string | null) => lisbonStamp(iso, 'nunca');
 
 const duration = (seconds?: number) => {
   if (!seconds) return '';
@@ -443,9 +443,13 @@ export function buildDispatcharrTools(context: AgentContext): AgentTool[] {
         ) => {
           if (input.target === 'm3u') {
             const result = await dispatcharr.refreshM3u(input.id);
+            if (result.success === false)
+              return `O Dispatcharr não começou a atualizar as M3U${result.message ? `: ${result.message}` : '.'}`;
             return `Comecei a atualizar ${input.id ? `a conta M3U ${input.id}` : 'todas as contas M3U'}${result.message ? ` (${result.message})` : ''}.`;
           }
           const result = await dispatcharr.refreshEpg(input.id, input.force);
+          if (result.success === false)
+            return `O Dispatcharr não começou a atualizar o EPG${result.message ? `: ${result.message}` : '.'}`;
           return `Comecei a atualizar ${input.id ? `a fonte de EPG ${input.id}` : 'todas as fontes de EPG'}${result.message ? ` (${result.message})` : ''}.`;
         },
       ),
@@ -498,7 +502,7 @@ export function buildDispatcharrTools(context: AgentContext): AgentTool[] {
     {
       name: 'dispatcharr_recordings',
       description:
-        'As gravações do DVR do Dispatcharr (feitas e agendadas, com o canal e o programa). Com action schedule, agenda uma gravação num canal entre start e end (ISO 8601 com fuso); com action delete, apaga uma gravação (id) — confirma com ele antes. schedule e delete só quando ele pedir.',
+        'As gravações do DVR do Dispatcharr (feitas e agendadas, com o canal e o programa). Com action schedule, agenda uma gravação num canal entre start e end ("AAAA-MM-DD HH:mm" à hora de Lisboa, ou ISO 8601 com fuso); com action delete, apaga uma gravação (id) — confirma com ele antes. schedule e delete só quando ele pedir.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -528,10 +532,10 @@ export function buildDispatcharrTools(context: AgentContext): AgentTool[] {
           if (input.action === 'schedule') {
             if (!input.channel || !input.start || !input.end)
               return 'Diz o canal, o início e o fim.';
-            const start = new Date(input.start);
-            const end = new Date(input.end);
-            if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()))
-              return 'O início ou o fim não são datas válidas (ISO 8601).';
+            const start = parseLisbonDate(input.start);
+            const end = parseLisbonDate(input.end);
+            if (!start || !end)
+              return 'O início ou o fim não são datas válidas (usa "AAAA-MM-DD HH:mm", hora de Lisboa).';
             if (end <= start) return 'O fim tem de ser depois do início.';
             const channel = await findChannel(dispatcharr, input.channel);
             const created = await dispatcharr.createRecording({

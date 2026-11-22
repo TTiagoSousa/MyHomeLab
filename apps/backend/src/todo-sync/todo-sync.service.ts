@@ -166,7 +166,7 @@ export class TodoSyncService {
       create: { userId, ...input },
       update: input,
     });
-    if (input.enabled && !before?.enabled) void this.runUser(userId);
+    if (input.enabled && !before?.enabled) this.runInBackground(userId);
     return this.overview(userId);
   }
 
@@ -211,8 +211,15 @@ export class TodoSyncService {
     const setting = await this.prisma.todoSyncSetting.findUnique({
       where: { userId },
     });
-    if (setting?.enabled) void this.runUser(userId);
+    if (setting?.enabled) this.runInBackground(userId);
     return this.overview(userId);
+  }
+
+  /** Uma volta sem esperar por ela: uma falha (ex.: da base de dados) fica no registo em vez de derrubar o Node. */
+  private runInBackground(userId: string) {
+    void this.runUser(userId).catch((error: unknown) =>
+      this.logger.warn(`Sincronização das tarefas: ${errorText(error)}`),
+    );
   }
 
   /**

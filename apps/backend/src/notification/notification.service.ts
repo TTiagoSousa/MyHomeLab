@@ -97,22 +97,27 @@ export class NotificationService {
     title: string;
     message: string;
   }): Promise<void> {
-    const existing = await this.prisma.notification.findFirst({
-      where: {
-        userId: input.userId,
-        subject: input.subject,
-        kind: input.kind,
-        resolvedAt: null,
-      },
-    });
-    if (existing) {
-      await this.prisma.notification.update({
-        where: { id: existing.id },
-        data: { title: input.title, message: input.message },
+    // Dois crons ao mesmo tempo não criam dois avisos iguais: o bloqueio (até ao fim da
+    // transação) põe-nos em fila para o mesmo utilizador, assunto e tipo.
+    await this.prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`${input.userId}|${input.subject}|${input.kind}`}))`;
+      const existing = await tx.notification.findFirst({
+        where: {
+          userId: input.userId,
+          subject: input.subject,
+          kind: input.kind,
+          resolvedAt: null,
+        },
       });
-      return;
-    }
-    await this.prisma.notification.create({ data: input });
+      if (existing) {
+        await tx.notification.update({
+          where: { id: existing.id },
+          data: { title: input.title, message: input.message },
+        });
+        return;
+      }
+      await tx.notification.create({ data: input });
+    });
   }
 
   async resolveUserSubject(

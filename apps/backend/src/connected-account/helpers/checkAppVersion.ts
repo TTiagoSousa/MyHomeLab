@@ -67,6 +67,7 @@ import {
   vaultwardenVersion,
 } from 'src/vaultwarden/vaultwarden.client';
 import { NotificationService } from 'src/notification/notification.service';
+import { isVersionString } from 'src/integrations/app-fetch';
 import { PrismaConnectedAccountRepository } from '../repositories/prisma/prisma-connected-account-repository';
 
 interface VersionSource {
@@ -220,12 +221,39 @@ export const VERSION_SOURCES: Partial<
 
 const updateSubject = (account: ConnectedAccount) => `update:${account.id}`;
 
+// As páginas de estado esperam pela verificação, mas só até aqui: sem Internet ou com o
+// limite do GitHub esgotado ficavam 15 s à espera. Passado isto, responde-se com a versão
+// guardada e a verificação acaba em segundo plano (e grava o que encontrar).
+const PAGE_WAIT_MS = 4_000;
+
 /**
  * Vê a versão instalada de uma app ligada e a mais recente publicada; guarda as
  * duas e abre (ou mexe n')a atualização (AppUpdate). Se a app ou as releases não
- * responderem, não mexe em nada — não se sabe se já há versão nova.
+ * responderem, não mexe em nada — não se sabe se já há versão nova. Com `waitMs`
+ * finito, devolve a conta como estava se a verificação demorar mais do que isso.
  */
 export async function checkAppVersion(
+  account: ConnectedAccount,
+  repository: PrismaConnectedAccountRepository,
+  notifications: NotificationService,
+  updates?: { onVersionChecked(account: ConnectedAccount): Promise<void> },
+  waitMs = PAGE_WAIT_MS,
+): Promise<ConnectedAccount> {
+  const check = runVersionCheck(account, repository, notifications, updates);
+  if (!Number.isFinite(waitMs)) return check;
+  check.catch(() => undefined);
+  let timer: NodeJS.Timeout | undefined;
+  const late = new Promise<ConnectedAccount>((resolve) => {
+    timer = setTimeout(() => resolve(account), waitMs);
+  });
+  try {
+    return await Promise.race([check, late]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function runVersionCheck(
   account: ConnectedAccount,
   repository: PrismaConnectedAccountRepository,
   notifications: NotificationService,
@@ -238,7 +266,14 @@ export async function checkAppVersion(
     source.installed(account).then(cleanVersion, () => null),
     source.latest().catch(() => null),
   ]);
-  if (!installed || !latest) return account;
+  // Uma página de login (SSO) ou de proxy no lugar da versão abria uma "atualização" de
+  // lixo e punha um agente a estudá-la: só se guarda o que parece mesmo uma versão.
+  if (
+    !isVersionString(installed) ||
+    !latest ||
+    !isVersionString(latest.version)
+  )
+    return account;
 
   const updateAvailable = compareVersions(latest.version, installed) > 0;
   const updated = await repository.update(account.id, {

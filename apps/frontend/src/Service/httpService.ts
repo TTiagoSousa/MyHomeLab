@@ -12,9 +12,11 @@ http.interceptors.response.use(
     const status = error.response?.status;
     const fullUrl = error.config?.url || '';
     const normalizedUrl = fullUrl.replace(BASE_URL, '');
+    const sessionExpired = status === 401 && !normalizedUrl.startsWith('/auth/') && window.location.pathname !== '/';
 
-    if (status === 401 && normalizedUrl === '/auth/me') {
-      return Promise.reject(error);
+    if (sessionExpired) {
+      const from = window.location.pathname + window.location.search;
+      window.location.replace(`/?from=${encodeURIComponent(from)}`);
     }
 
     return Promise.reject(error);

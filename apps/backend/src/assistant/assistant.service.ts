@@ -602,8 +602,8 @@ ${reply.trim()}`,
 
     // Estado que muda de volta para volta entra aqui, no fim das mensagens — e
     // nunca no system prompt, que tem de ficar byte a byte igual para a cache
-    // valer. Uma mensagem de sistema a meio da conversa carrega a mesma
-    // autoridade sem tocar no prefixo.
+    // valer. Vai com papel "system": no Claude Code vira "[Nota do sistema]" e na
+    // API (que só aceita user/assistant) o apiMessages junta-a à mensagem dele.
     const notice = [
       taskNotice,
       describePendingProposals(context).trim(),
@@ -897,12 +897,17 @@ ${pending}`
       where: { id: userId },
       select: { id: true, username: true, role: true },
     });
-    const ai = await this.aiCredentials.requireClient(
-      userId,
-      schedule.updateId && schedule.title.startsWith('Estudar')
-        ? 'study'
-        : 'schedule',
-    );
+    const ai = await this.aiCredentials
+      .requireClient(
+        userId,
+        schedule.updateId && schedule.title.startsWith('Estudar')
+          ? 'study'
+          : 'schedule',
+      )
+      .catch(async (error: unknown) => {
+        await this.failStudyStart(schedule.updateId, error);
+        throw error;
+      });
     const team = await this.team(userId);
     const usage = { input: 0, output: 0 };
     const context: AgentContext = {
@@ -942,11 +947,18 @@ ${pending}`
           member.isActive && member.tools.includes('update_save_study'),
       );
       if (!agent) {
-        throw new Error(
+        const error = new Error(
           'Nenhum agente tem a ferramenta update_save_study: a atualização voltou ao estudo, mas ninguém a estuda.',
         );
+        await this.failStudyStart(update.id, error);
+        throw error;
       }
-      request = await this.updates.studyBrief(update);
+      request = await this.updates
+        .studyBrief(update)
+        .catch(async (error: unknown) => {
+          await this.failStudyStart(update.id, error);
+          throw error;
+        });
       studyId = update.id;
       await this.updates.markStudy(update.id, true);
     } else {
@@ -988,6 +1000,31 @@ ${extra}`
       }
       throw error;
     }
+  }
+
+  /**
+   * O "Estudar …" (ou o "rever mais tarde") falhou antes de o estudo começar (sem
+   * agente, sem IA, o pedido falhou): conta como tentativa falhada e só volta daqui a
+   * 3 horas. Sem isto ficava em Espera por estudo sem hora de início e voltava a
+   * disparar de minuto a minuto.
+   */
+  private async failStudyStart(
+    updateId: string | null,
+    error: unknown,
+  ): Promise<void> {
+    if (!updateId) return;
+    // Um "rever mais tarde" que chegou ao dia também volta a disparar: passa ao estudo.
+    const queued = await (async () =>
+      (await this.updates.recheckNow(updateId)) ??
+      (await this.updates.studyQueued(updateId)))().catch(() => null);
+    if (!queued) return;
+    await this.updates
+      .markStudy(
+        updateId,
+        false,
+        `O estudo não arrancou: ${error instanceof Error ? error.message : String(error)}`,
+      )
+      .catch(() => undefined);
   }
 
   /**

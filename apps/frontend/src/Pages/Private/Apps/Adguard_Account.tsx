@@ -22,7 +22,7 @@ const Adguard_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('ADGUARD');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('ADGUARD');
   const { status, loading: checking, error, fetchStatus } = useAdguardStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
 
@@ -30,6 +30,12 @@ const Adguard_Account = () => {
   const name = account?.displayName ?? account?.appHost ?? 'AdGuard';
   const label = account?.displayName ? `AdGuard · ${account.displayName}` : 'AdGuard';
   const blockedShare = status && status.queries ? ((status.blocked / status.queries) * 100).toFixed(1) : '0';
+  const statsHours = status?.statsHours ?? null;
+  const queriesLabel = !statsHours
+    ? t('apps.adguard.queriesPeriod')
+    : statsHours % 24 === 0
+      ? t('apps.adguard.queriesDays', { count: statsHours / 24 })
+      : t('apps.adguard.queriesHours', { count: Math.round(statsHours) });
 
   const disconnect = async () => {
     if (account && (await deleteConnectedAccount(account.id))) navigate('/MyHomeLab/Apps/AdGuard');
@@ -54,7 +60,7 @@ const Adguard_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.adguard.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.adguard.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Account
@@ -79,7 +85,7 @@ const Adguard_Account = () => {
                 <>
                   <dt>{t('apps.adguard.protection')}</dt>
                   <dd>{status.protectionEnabled ? t('apps.adguard.protectionOn') : t('apps.adguard.protectionOff')}</dd>
-                  <dt>{t('apps.adguard.queries')}</dt>
+                  <dt>{queriesLabel}</dt>
                   <dd>{t('apps.adguard.queriesValue', { queries: status.queries, blocked: status.blocked, share: blockedShare })}</dd>
                   <dt>{t('apps.adguard.filters')}</dt>
                   <dd>{t('apps.adguard.filtersValue', { enabled: status.enabledFilters, total: status.filters, rules: status.rules })}</dd>

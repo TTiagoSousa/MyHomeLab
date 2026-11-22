@@ -264,4 +264,17 @@
   @media (prefers-reduced-motion: reduce){
     .Menu_Container .Menu_Item::before{ transition: none; }
   }
+
+  @media (max-width: 900px){
+    top: 0;
+    width: min(280px, 85vw);
+    height: 100dvh;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+
+    &.open{
+      transform: none;
+      box-shadow: 0 0 40px rgba(0, 0, 0, .5);
+    }
+  }
 }

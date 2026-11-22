@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID, timingSafeEqual } from 'crypto';
 import type { AgentTool } from 'src/assistant/claude-agent.client';
+import { clip } from 'src/assistant/apiAgent';
 
 /** O nome do servidor MCP do MyHomeLab: as ferramentas chegam como mcp__myhomelab__<nome>. */
 export const BRIDGE_SERVER = 'myhomelab';
@@ -97,7 +98,7 @@ async function answer(bridge: Bridge, request: RpcRequest) {
     // Uma ferramenta que rebenta é um facto (serviço em baixo, credenciais más):
     // volta ao modelo como resultado, para ele explicar o que se passou.
     try {
-      const text = await tool.handler(params?.arguments ?? {});
+      const text = clip(await tool.handler(params?.arguments ?? {}));
       return reply(id, { content: [{ type: 'text', text }] });
     } catch (error) {
       return reply(id, {

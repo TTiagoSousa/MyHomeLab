@@ -76,6 +76,7 @@ import { addDays, day, lisbon, now } from './helpers/updateDates';
 import { installRequest } from './helpers/installRequest';
 import {
   cleanList,
+  historyOf,
   howToUpdate,
   isAvailable,
   isHaComponent,
@@ -105,6 +106,10 @@ const STATUS_POLL_MS = 5_000;
 import { releaseNotes } from './helpers/releaseNotes';
 import { knownIssues } from './helpers/knownIssues';
 import { readSetting } from './helpers/readSetting';
+
+/** O histórico de uma verificação reposta no arranque (só se repõe uma vez por instalação). */
+const VERIFY_RESUMED =
+  '🔁 O MyHomeLab reiniciou a meio da verificação: volta a verificar.';
 
 /** Uma atualização do host a correr ou por verificar: a verificação dos servidores não lhe mexe. */
 const HOST_BUSY: AppUpdateStatus[] = [
@@ -209,14 +214,58 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
           `O MyHomeLab reiniciou a meio da instalação: confirma o estado da app${update.snapshotName ? ` (o snapshot antes de instalar é ${update.snapshotName})` : ''} e volta a pô-la em Ready to update quando quiseres tentar outra vez.`,
         );
       }
-      await this.prisma.appUpdate.updateMany({
+      // A instalação pedida ao agente quando o MyHomeLab reiniciou: ninguém a fazia e,
+      // 20 horas depois, instalava-se sozinha a uma hora que ele não esperava. Fica à
+      // espera dele, como uma instalação que não avançou (repô-la logo podia fazer um
+      // ciclo de reinícios, se foi ela que esgotou a memória).
+      const requested = await this.prisma.appUpdate.findMany({
+        where: {
+          status: AppUpdateStatus.READY,
+          installStartedAt: { not: null },
+        },
+      });
+      for (const update of requested) {
+        await this.record.save(
+          update,
+          {
+            status: AppUpdateStatus.WAITING,
+            installStartedAt: null,
+            question:
+              'O MyHomeLab reiniciou quando ia instalar esta atualização. Escolhe: Ready to update (tenta outra vez já), Recheck later ou Cancelled.',
+          },
+          '⚠ O MyHomeLab reiniciou quando ia instalar: não instalou nada. Fica à espera de ti.',
+        );
+      }
+      // Uma verificação reposta a cada arranque fazia um ciclo se fosse ela a derrubar o
+      // MyHomeLab: só se repõe uma vez (a segunda passa a esperar por ele).
+      const verifying = await this.prisma.appUpdate.findMany({
         where: {
           status: AppUpdateStatus.VERIFYING,
           afterChecks: { equals: Prisma.DbNull },
           verifyStartedAt: { not: null },
         },
-        data: { verifyStartedAt: null },
       });
+      for (const update of verifying) {
+        const resumed = historyOf(update).some(
+          (entry) =>
+            entry.text === VERIFY_RESUMED &&
+            (!update.startedAt || new Date(entry.at) >= update.startedAt),
+        );
+        if (resumed) {
+          await this.verifyStalled(
+            update.id,
+            'o MyHomeLab reiniciou duas vezes a meio da verificação',
+          );
+          continue;
+        }
+        await this.record.save(
+          update,
+          { verifyStartedAt: null },
+          VERIFY_RESUMED,
+        );
+      }
+      // As validações que estavam a meio morreram com o reinício.
+      await this.attempts.stopInterrupted();
       const withoutTask = await this.prisma.appUpdate.findMany({
         where: { boardTaskId: null, status: { in: OPEN } },
       });
@@ -621,7 +670,7 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
       return;
     }
     if (update.status !== AppUpdateStatus.READY) return;
-    // Uma peça do Home Assistant instala-se pelo próprio HA (ha_call_service): antes de
+    // Uma peça do Home Assistant instala-se pelo próprio HA (ha_update_install): antes de
     // dizer que não avançou, vê-se já se a versão nova entrou (passa a Verifying).
     if (update.component && update.spec) {
       await this.haComponents.checkPreparedComponents().catch(() => undefined);
@@ -642,6 +691,9 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
   async afterStudy(id: string, error?: string) {
     const update = await this.prisma.appUpdate.findUnique({ where: { id } });
     if (!update || update.studiedAt) return;
+    // Voltou à fila a meio (saiu uma versão mais nova): o estudo novo não espera 3 horas.
+    if (update.status === AppUpdateStatus.STUDY && !update.studyStartedAt)
+      return;
     await this.markStudy(
       id,
       false,
@@ -808,6 +860,18 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
     // tarde, aprovada, a instalar ou já instalada).
     if (!STUDY_SAVE_FROM.includes(update.status)) {
       return `A atualização mudou para ${STATUS_NAMES[update.status]} enquanto estudavas: o estudo não foi gravado. Não mudes o estado; diz ao utilizador o que encontraste.`;
+    }
+    // Saiu uma versão mais nova a meio do estudo (volta à fila sem hora de início): o
+    // estudo que chega é o da antiga e não pode ficar como sendo da nova.
+    if (update.status === AppUpdateStatus.STUDY && !update.studyStartedAt) {
+      const last = await this.prisma.updateAttempt.findFirst({
+        where: { updateId: update.id, kind: UpdateAttemptKind.STUDY },
+        orderBy: { startedAt: 'desc' },
+        select: { toVersion: true },
+      });
+      if (last && last.toVersion !== update.toVersion) {
+        return `Saiu a versão ${update.toVersion} enquanto estudavas a ${last.toVersion}: o estudo não foi gravado. O estudo da versão nova já está na fila; não mudes o estado.`;
+      }
     }
     if (input.next === 'waiting' && !input.question?.trim()) {
       return 'Para pôr em Waiting tens de escrever a pergunta ao utilizador (question).';
@@ -1192,7 +1256,7 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
     by: { agentKey: string; turnId: string },
   ): Promise<string> {
     if (isHaComponent(update)) {
-      return 'É uma peça do Home Assistant: instala-se pelo próprio Home Assistant, com ha_call_service update.install (backup: true só nos add-ons) (o agente da equipa que tem o ha_call_service).';
+      return 'É uma peça do Home Assistant: instala-se pelo próprio Home Assistant, com ha_update_install (action install, a entidade da tarefa; backup true só nos add-ons e no OS).';
     }
     const paused = await pausedInstall(this.prisma, update);
     if (paused && paused.runs >= INSTALL_RUNS) {
@@ -1208,6 +1272,10 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
       !update.commands.length
     ) {
       return 'Ainda não foi preparada (falta a máquina e os comandos): usa update_prepare.';
+    }
+    const attempt = await this.attempts.current(update.id);
+    if (attempt && attempt.toVersion !== update.toVersion) {
+      return `Saiu a versão ${update.toVersion} entretanto (a preparação era para a ${attempt.toVersion}): prepara outra vez com update_prepare.`;
     }
     const server = await this.prisma.serverConnection.findUnique({
       where: { id: update.serverConnectionId },

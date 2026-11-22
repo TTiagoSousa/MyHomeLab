@@ -9,7 +9,7 @@ server: true
 ## Estudar uma atualização
 
 > **Quando usar:** uma tarefa "Atualizar Proxmox VE · <servidor> X → Y" em Study: uma versão nova do Proxmox VE ou, sem ela, os pacotes do sistema (Debian) por atualizar no host.
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam". **Depois:** "Proxmox – instalar uma atualização".
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam". **Depois:** "Instalar uma atualização", mais abaixo.
 > **Não serve para:** as máquinas (CT e VM) nem as apps lá dentro.
 
 No estudo só se lê e mede. **No host não há snapshot:** se algo correr mal não há volta atrás automática, por isso o estudo é cuidadoso e diz sempre se pede reinício.
@@ -58,7 +58,7 @@ O resumo na forma de "Atualizações das apps e do Proxmox – como funcionam" (
 ## Instalar uma atualização
 
 > **Quando usar:** uma atualização do host Proxmox em Ready to update (eu pus lá, ou o estudo com install, que no host só vale com risco baixo) ou um pedido direto meu. Instala-se logo, a qualquer hora, **sem reiniciar**.
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("Proxmox – estudar uma atualização").
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("Estudar uma atualização", mais acima).
 
 🤖 o agente verifica · 👤 só eu decido · "prova:" é o que serve de prova
 

@@ -1,4 +1,5 @@
 import { CellValue, Sheet } from 'src/chat-file/helpers/readWorkbook';
+import { GOOGLE_TIMEOUT_MS } from 'src/connected-account/google/google-oauth.client';
 
 /**
  * A API das Folhas do Google (v4): as folhas (separadores) de um ficheiro, ler os valores,
@@ -28,6 +29,7 @@ async function call<T>(
       'Content-Type': 'application/json',
       ...(init.headers ?? {}),
     },
+    signal: AbortSignal.timeout(GOOGLE_TIMEOUT_MS),
   });
   if (!response.ok) {
     const text = await response.text().catch(() => '');

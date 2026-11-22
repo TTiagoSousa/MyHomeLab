@@ -170,6 +170,18 @@ How it works:
    migrations had started), checks out the previous version, rebuilds, puts back the units,
    the nginx site, the cron and `/usr/local/lib/myhomelab` as they were, and restarts — the
    app keeps running on the version it had.
+5. **Installed version**: only an update that finishes (or a rollback that works) writes
+   `state/installed-commit`, and the app shows that commit's version instead of git's `HEAD`.
+   An update cut off half-way (power loss) leaves `HEAD` on the new tag with the old build:
+   the next run starts from the recorded commit and builds again instead of saying "Already up
+   to date". A `running` status older than 1 hour is shown as interrupted, and a new update
+   can be requested. A failure before stage 2 puts the old checkout back.
+
+The app refuses to update or restore MyHomeLab while an app update is installing or
+verifying, an agent run is in progress, or (for an update) a restore is requested or running
+— the message lists what is running. If the updater or the restorer still finds the lock
+taken, it removes the request (and, for a restore, the zip and the password) and writes a
+`failed` status, so the request does not stay queued.
 
 `/var/lib/myhomelab-updates` belongs to root. `requests/` (myhomelab, 750) only holds the
 requests; `state/` (root:myhomelab, 750) holds the status, logs and lock, written with

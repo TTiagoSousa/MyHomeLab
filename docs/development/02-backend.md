@@ -132,6 +132,24 @@ for (const account of dueAccounts) {
 The `finally` matters: a failing account must not retry in a tight loop. Filter by provider
 before the loop. Schedulers assume a single backend instance (no distributed lock).
 
+Exception: the Gmail rules scheduler only records `lastRunAt` after a successful run (so the
+page never says "ran 5 min ago" when it failed) and skips a tick while the previous one is
+still running. A Google account whose access was revoked (`invalid_grant`) is set inactive
+with a "reconnect" notification, so it leaves the loop instead of failing forever. Every
+request to Google has a 30 s timeout.
+
+## External app clients
+
+Shared helpers for the `fetch`-based app clients live in `src/integrations/app-fetch.ts`:
+`describeFetchError` turns undici's bare "fetch failed" into the real cause (self-signed
+certificate, closed port, unknown host, timeout), `parseAppJson`/`looksLikeHtml` reject a 2xx
+HTML page (an SSO login or proxy in front) instead of treating it as data, and
+`isVersionString` keeps anything that is not a version out of the update checks. The
+`fetch` clients do not accept self-signed certificates: use the LAN `http://` address, a valid
+certificate, or add your CA with `NODE_EXTRA_CA_CERTS` in the backend's service environment.
+Release lookups are cached for an hour and failures for 15 minutes; an optional
+`GITHUB_TOKEN` raises GitHub's limit from 60 to 5000 requests per hour.
+
 ## Bootstrap notes
 
 - No global route prefix; nginx owns `/api` in production.

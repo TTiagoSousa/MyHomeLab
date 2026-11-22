@@ -10,6 +10,9 @@ interface Error_Boundary_State {
   error: Error | null;
 }
 
+const isStaleChunk = (error: Error) =>
+  /dynamically imported module|module script failed|Unable to preload CSS/i.test(error.message);
+
 class Error_Boundary extends Component<Error_Boundary_Props, Error_Boundary_State> {
   state: Error_Boundary_State = { error: null };
 
@@ -30,7 +33,7 @@ class Error_Boundary extends Component<Error_Boundary_Props, Error_Boundary_Stat
         <span className='Error_Boundary_title'>{i18n.t('common:errors.pageTitle')}</span>
         <span className='Error_Boundary_text'>{i18n.t('common:errors.pageText')}</span>
         <code>{error.message}</code>
-        <button type='button' onClick={() => this.setState({ error: null })}>
+        <button type='button' onClick={() => (isStaleChunk(error) ? window.location.reload() : this.setState({ error: null }))}>
           {i18n.t('common:errors.retry')}
         </button>
       </div>

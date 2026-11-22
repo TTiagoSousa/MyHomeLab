@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { PrismaConnectedAccountRepository } from '../repositories/prisma/prisma-connected-account-repository';
 import { CreateForgejoAccountDto } from '../dto/create-forgejo-account.dto';
 import { ConnectionProvider } from 'src/generated/prisma/client/client';
@@ -37,8 +37,16 @@ export async function createForgejoAccount(
   ).find(
     (account) => account.baseUrl === baseUrl && account.username === user.login,
   );
+  // A mesma conta fica com o token novo (o histórico e o CT ficam na conta).
   if (existing) {
-    throw new ConflictException('Já tens esta conta Forgejo ligada');
+    return repository.update(existing.id, {
+      accessToken: token,
+      isAdmin: user.is_admin,
+      isActive: true,
+      ...(dto.displayName?.trim()
+        ? { displayName: dto.displayName.trim() }
+        : {}),
+    });
   }
 
   return repository.create({

@@ -9,7 +9,7 @@ apps: [NEXTCLOUD]
 ## Estudar uma atualização
 
 > **Quando usar:** uma tarefa "Atualizar Nextcloud X → Y" (o servidor) ou "Atualizar Nextcloud · <app> X → Y" (uma app lá dentro: Calendar, Contacts, Mail, Tables, Assistant…) em Study.
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam". **Depois:** "Nextcloud – instalar uma atualização".
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam". **Depois:** "Instalar uma atualização", mais abaixo.
 
 No estudo só se lê e mede. Os pontos **Só servidor** ou **Só apps** valem só para esse tipo; no outro marcam-se "não se aplica".
 
@@ -20,7 +20,7 @@ No estudo só se lê e mede. Os pontos **Só servidor** ou **Só apps** valem s�
 - **Onde:** VM 211 `nextcloud-vm`, servidor HomeLab, https://nextcloud.example.com. Comandos pelo agente QEMU: `qm guest exec 211 --timeout <s> -- <comando>`.
 - **occ como www-data:** a VM **não tem `sudo`**: `qm guest exec 211 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ <comando>`.
 - **Pastas:** código em `/var/www/nextcloud`, dados e log em `/var/www/nextcloud-data` (`nextcloud.log`). Base de dados MySQL/MariaDB, PHP 8.4.
-- **Para que serve:** os meus ficheiros, Calendar e Contacts (CalDAV/CardDAV), Mail, e é o **destino dos backups** das outras apps.
+- **Para que serve:** os meus ficheiros, Calendar e Contacts (CalDAV/CardDAV), Mail, e é o **destino do backup** do próprio MyHomeLab.
 - **Atenção:** o upgrade do servidor atualiza também as apps da App Store que tenham versão nova. Por isso, no estudo do servidor, as apps com versão nova estudam-se também.
 
 ### O que ler
@@ -44,7 +44,7 @@ No estudo só se lê e mede. Os pontos **Só servidor** ou **Só apps** valem s�
 - [ ] 🤖 **Só servidor · as apps que vêm junto:** as que têm versão nova na App Store, cada uma com a versão e se tem issues graves — prova: a lista (ou "nenhuma")
 - [ ] 🤖 **Só servidor · o PHP chega** para a versão nova — prova: a versão do PHP e o que pedem as notas
 - [ ] 🤖 **Só apps · aceita o Nextcloud instalado** (a versão do servidor está no intervalo da App Store) — prova: a versão do servidor e o intervalo da app
-- [ ] 🤖 **O backup do Nextcloud está ativo** (list_backups): ligado, com destino e sem erro — prova: o backup e o estado
+- [ ] 🤖 **Há caminho de volta:** o update_run tira o snapshot da VM 211 antes de instalar, e há um backup da VM no Proxmox com menos de 24 h (ou faz-se antes de instalar) — prova: o último backup (`pvesm list <storage> --content backup --vmid 211`) ou "faz-se antes de instalar"
 - [ ] 🤖 **Salto de versão major** (servidor 35 → 36, ou app 5.x → 6.0): diz-se no resumo e na recomendação, com o que muda. Não é uma pergunta — prova: "major" com o que muda, ou "não é major"
 
 ### Decidir (next do update_save_study)
@@ -70,7 +70,7 @@ O resumo na forma de "Atualizações das apps e do Proxmox – como funcionam" (
 ## Instalar uma atualização
 
 > **Quando usar:** uma atualização do Nextcloud (o servidor ou uma app lá dentro) em Ready to update (eu pus lá, ou o estudo com install) ou um pedido direto meu. Instala-se logo, a qualquer hora.
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("Nextcloud – estudar uma atualização").
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("Estudar uma atualização", mais acima).
 
 Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto major. Os pontos **Só servidor** ou **Só apps** valem só para esse tipo; no outro marcam-se "não se aplica".
 
@@ -84,7 +84,7 @@ Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto
 - **occ como www-data:** a VM **não tem `sudo`**; o agente QEMU corre como root, por isso: `runuser -u www-data -- php /var/www/nextcloud/occ …`.
 - **O tempo:** o `qm guest exec` desiste aos 30 s se não se disser outro. Sempre `--timeout`: 300 numa app, 1200 no servidor.
 - **Pastas:** código em `/var/www/nextcloud`, updater em `/var/www/nextcloud/updater/updater.phar`, dados e log em `/var/www/nextcloud-data`.
-- **Destino dos backups** das outras apps: se o Nextcloud cai, os backups deixam de ter onde ir.
+- **Destino do backup** do próprio MyHomeLab (list_backups): se o Nextcloud cai, esse backup deixa de ter onde ir.
 
 ### Como corre a instalação
 
@@ -96,7 +96,7 @@ Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto
 ### Antes de instalar
 - [ ] 🤖 Está em Ready to update: eu pus lá, ou o estudo (install) — prova: o histórico
 - [ ] 🤖 Não há outra atualização do Nextcloud (servidor ou app) a correr — prova: o que está a correr
-- [ ] 🤖 Há um backup do Nextcloud feito pelo MyHomeLab **há menos de 24 horas** e sem erro; se não, corre-o (run_backup) e espera que acabe bem — prova: a hora e o ficheiro
+- [ ] 🤖 Há um backup da VM 211 no Proxmox com menos de 24 h e sem erro (`pvesm list <storage> --content backup --vmid 211`); se não, faz-se um (pve_backup_now, pelo Operador Proxmox) e espera-se que acabe bem. O snapshot de antes é o do update_run — prova: a hora e o ficheiro do backup
 - [ ] 🤖 O Nextcloud responde, sem manutenção (`/status.php`), e está na versão de partida (o servidor no status, a app em nextcloud_list_apps). **Só apps:** se a app já estiver na versão nova (veio com o servidor), não há nada a instalar: passa-se à verificação — prova: o JSON e a versão
 - [ ] 🤖 O `occ` corre como www-data: `qm guest exec 211 --timeout 60 -- runuser -u www-data -- php /var/www/nextcloud/occ status` dá código 0 e mostra a versão — prova: a saída
 - [ ] 🤖 **Só apps:** a versão que vai entrar é a estudada. O `occ app:update` instala sempre a mais recente: `qm guest exec 211 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ app:update --showonly`. Se for uma versão de correção mais nova da mesma linha, instala-se na mesma; se for outra linha ou major, pergunta-se — prova: a linha da app
@@ -133,10 +133,8 @@ O `<app>` é o id (`calendar`, `contacts`, `mail`, `tables`, `assistant`…). A 
 - [ ] 🤖 `/status.php` responde com `maintenance:false` e `needsDbUpgrade:false` (no servidor, já na versão nova) — prova: o JSON
 - [ ] 🤖 As apps estão ligadas, e a atualizada na versão nova (nextcloud_list_apps) — prova: as versões (ou as que ficaram desligadas)
 - [ ] 🤖 Sem erros novos no log desde a atualização: `qm guest exec 211 -- tail -n 50 /var/www/nextcloud-data/nextcloud.log`, só os de nível 3 e 4 — prova: as linhas ou "nenhuma"
-- [ ] 🤖 O que se vê de fora funciona: a página de login responde 200; Calendar e Contacts leem-se por CalDAV/CardDAV (o backup do MyHomeLab lê-os). Abrir a interface (ex.: o Mail) não se consegue ver: "não se aplica" — prova: os códigos e o backup
+- [ ] 🤖 O que se vê de fora funciona: a página de login responde 200; o CalDAV/CardDAV (`/remote.php/dav`) responde (401 sem login é o normal; 5xx não). Abrir a interface (ex.: o Mail) não se consegue ver: "não se aplica" — prova: os códigos
 - [ ] 🤖 **Só servidor:** o `occ db:schema:check` não tem avisos novos em relação ao de antes — prova: as diferenças (ou "igual")
-- [ ] 🤖 **Só servidor:** correu um backup novo pelo MyHomeLab — prova: a hora e o resultado
-
 ### Se falhar
 
 Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam": a atualização fica em In progress, investiga-se, e o que é simples e seguro corrige-se e corre-se outra vez no mesmo processo (até 3 corridas). O que é desta app:

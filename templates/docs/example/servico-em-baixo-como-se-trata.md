@@ -23,7 +23,7 @@ O aviso de serviço em baixo já me chega sozinho (e fecha-se quando volta). Tu 
 
 - A máquina (CT ou VM) está ligada? Reiniciou (`uptime`)? Tem memória e disco livres?
 - O serviço está ativo (`systemctl status <serviço>`)? O que dizem os logs à volta da hora da falha (`journalctl -u <serviço> --since …`, o nginx, o log da app)?
-- Havia alguma coisa a correr nessa hora: uma atualização, um backup, um snapshot, um rollback? (updates_list, list_backups, o histórico de comandos.)
+- Havia alguma coisa a correr nessa hora: uma atualização, um backup, um snapshot, um rollback? (updates_list, as tarefas do Proxmox — `pvesh get /nodes/<nó>/tasks --limit 20` mostra os vzdump e os snapshots — e o histórico de comandos.)
 
 ## 3. Resolver ou dizer
 

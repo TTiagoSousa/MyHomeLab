@@ -17,13 +17,16 @@ export interface AgentLog {
 }
 
 const PAGE_SIZE = 100;
-const MAX_LINES = 1000;
+const MAX_LINES = 2000;
+
+const withNewLine = <T extends { logs: AgentLog[]; hasOlder: boolean }>(current: T, entry: AgentLog): T => {
+  const logs = [...current.logs, entry];
+  return logs.length > MAX_LINES ? { ...current, logs: logs.slice(-MAX_LINES), hasOlder: true } : { ...current, logs };
+};
 
 export const useAgentLogs = (agent: string | null) => {
-  const [logs, setLogs] = useState<AgentLog[]>([]);
+  const [view, setView] = useState<{ agent: string | null; logs: AgentLog[]; hasOlder: boolean; error: string }>({ agent, logs: [], hasOlder: false, error: '' });
   const [loading, setLoading] = useState(false);
-  const [hasOlder, setHasOlder] = useState(false);
-  const [error, setError] = useState('');
 
   const fetchLogs = async (before?: string) => {
     setLoading(true);
@@ -33,20 +36,23 @@ export const useAgentLogs = (agent: string | null) => {
         withCredentials: true,
       });
       const page: AgentLog[] = [...response.data].reverse();
-      setLogs((current) => (before ? [...page, ...current] : page));
-      setHasOlder(response.data.length === PAGE_SIZE);
-      setError('');
+      setView((current) =>
+        current.agent === agent
+          ? { agent, logs: before ? [...page, ...current.logs] : page, hasOlder: response.data.length === PAGE_SIZE, error: '' }
+          : current,
+      );
     } catch (error: any) {
       const msg = error.response?.data?.message || error.message || i18n.t('common:errors.generic');
-      setError(msg);
+      setView((current) => (current.agent === agent ? { ...current, error: msg } : current));
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchOlder = () => fetchLogs(logs[0]?.createdAt);
+  const fetchOlder = () => fetchLogs(view.logs[0]?.createdAt);
 
   useEffect(() => {
+    setView({ agent, logs: [], hasOlder: false, error: '' });
     fetchLogs();
   }, [agent]);
 
@@ -57,8 +63,10 @@ export const useAgentLogs = (agent: string | null) => {
       try {
         const entry: AgentLog = JSON.parse(event.data);
         if (agent && entry.agent !== agent) return;
-        setLogs((current) =>
-          current.some((line) => line.id === entry.id) ? current : [...current, entry].slice(-MAX_LINES),
+        setView((current) =>
+          current.agent !== agent || current.logs.some((line) => line.id === entry.id)
+            ? current
+            : withNewLine(current, entry),
         );
       } catch {
         return;
@@ -68,5 +76,5 @@ export const useAgentLogs = (agent: string | null) => {
     return () => source.close();
   }, [agent]);
 
-  return { logs, loading, hasOlder, error, fetchOlder };
+  return { logs: view.logs, loading, hasOlder: view.hasOlder, error: view.error, fetchOlder };
 };

@@ -9,6 +9,7 @@ import {
 import {
   composeAgentPrompt,
   delegationToolName,
+  docsSection,
 } from 'src/agent/helpers/composeSystemPrompt';
 import { TOOL_CATALOG, toolAction } from 'src/agent/tool-catalog';
 import {
@@ -205,7 +206,8 @@ export async function runTeamAgent(
 
   return runAgent(
     ai,
-    composeAgentPrompt(agent, context.team, docs) +
+    // O índice dos documentos muda mais vezes: vai no fim, depois das notas dos MCP.
+    composeAgentPrompt(agent, context.team) +
       (trek
         ? `
 
@@ -234,7 +236,8 @@ O Gitea Mirror: o MCP do próprio Gitea Mirror também está ligado (mcp__${GITE
         ? `
 
 O Coolify: o MCP do próprio Coolify também está ligado (mcp__${COOLIFY_SERVER}__<nome>, ex.: mcp__${COOLIFY_SERVER}__get_infrastructure_overview). Para o resumo, os deploys, os logs e as variáveis usa as coolify_*; o MCP serve para o que só ele tenha (criar apps e bases de dados, backups das bases de dados, tarefas agendadas, proxy, DNS, rollback).`
-        : ''),
+        : '') +
+      (docs ? `\n\n${docsSection(docs)}` : ''),
     readFirst(
       guardTools(
         tools,

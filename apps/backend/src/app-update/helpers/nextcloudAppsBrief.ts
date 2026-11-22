@@ -16,7 +16,7 @@ export async function nextcloudAppsBrief(
   if (update.account?.provider !== 'NEXTCLOUD' || update.component) return '';
   try {
     const client = nextcloudForAccount(update.account);
-    if (!(await client.me()).isAdmin) {
+    if ((await client.me()).isAdmin === false) {
       return '\n\nAPPS DENTRO DO NEXTCLOUD: a conta ligada não é administradora, por isso o MyHomeLab não as vê. Diz no estudo que ficaram por ver.';
     }
     const apps = await client.apps();

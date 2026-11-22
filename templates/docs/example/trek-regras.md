@@ -9,7 +9,7 @@ apps: [TREK]
 ## Estudar uma atualização
 
 > **Quando usar:** uma tarefa "Atualizar TREK X → Y" em Study (o pedido de estudo do MyHomeLab).
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" (o caminho e o que decides sozinho). **Depois:** "TREK – instalar uma atualização".
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" (o caminho e o que decides sozinho). **Depois:** "Instalar uma atualização", mais abaixo.
 
 No estudo só se lê e mede. Nada se instala, reinicia ou apaga.
 
@@ -23,7 +23,7 @@ No estudo só se lê e mede. Nada se instala, reinicia ou apaga.
 - **Variáveis do compose:** `ALLOW_INTERNAL_NETWORK=true` (para chegar ao Immich da rede interna). Mudar outras só com o meu sim.
 - **Ligações do MyHomeLab:** a conta de admin (versão, backups) e o **cliente máquina do MCP** (`/oauth/token` + `/mcp`), que dá ao Agente de Viagens a API toda.
 - **Versão:** o MyHomeLab lê-a no TREK; as releases estão em https://github.com/liketrek/TREK/releases (o repositório passou de `mauriceboe/TREK` para `liketrek/TREK`; o GitHub redireciona).
-- **Backups:** o TREK faz os seus (`trekBackups` na página da app) e o MyHomeLab pede-lhe um zip novo (base de dados, uploads e a chave de encriptação) e guarda-o no Nextcloud, em Backups/Trek.
+- **Backups:** o TREK faz os seus (`trekBackups` na página da app; o zip traz a base de dados, os uploads e a chave de encriptação) e há o backup do CT 214 no Proxmox (pve_backup_now, pelo Operador Proxmox). O MyHomeLab já não faz backups das apps.
 
 ### O que ler
 
@@ -41,7 +41,7 @@ No estudo só se lê e mede. Nada se instala, reinicia ou apaga.
 - [ ] 🤖 **Sem passos à mão:** a imagem continua com o mesmo nome e nenhuma variável do compose tem de mudar — prova: as notas e as linhas vistas (ou os passos)
 - [ ] 🤖 **As ligações do MyHomeLab continuam:** nada nas notas muda o login de admin, os backups (`/api/backup`), o `/oauth/token` (`client_credentials`), o `/mcp` nem os escopos — prova: as notas (ou o que muda; um escopo ou ferramenta que saia é dito no relatório)
 - [ ] 🤖 **Espaço para a migração:** o TREK copia a base de dados antes de migrar; o disco do CT 214 tem de ter folga (`pct exec 214 -- df -h /` e `du -sh /opt/trek/data /opt/trek/uploads`) — prova: o livre e o tamanho dos dados
-- [ ] 🤖 **O backup do TREK está ativo** (list_backups): ligado, com destino, sem erro e **já correu bem pelo menos uma vez** — prova: o backup, o destino, a última corrida e o estado
+- [ ] 🤖 **Há caminho de volta:** o update_run tira o snapshot do CT 214 antes de instalar, e há um backup do CT no Proxmox com menos de 24 h (ou faz-se antes de instalar) — prova: o último backup (`pvesm list <storage> --content backup --vmid 214`) ou "faz-se antes de instalar"
 - [ ] 🤖 **Salto de versão major** (ex.: 4 → 5): diz-se no resumo e na recomendação, com o que muda. Não é uma pergunta — prova: "major" com o que muda, ou "não é major"
 
 ### Decidir (next do update_save_study)
@@ -63,7 +63,7 @@ O resumo na forma de "Atualizações das apps e do Proxmox – como funcionam" (
 ## Instalar uma atualização
 
 > **Quando usar:** uma atualização do TREK em Ready to update (eu pus lá, ou o estudo com install) ou um pedido direto meu. Instala-se logo, a qualquer hora.
-> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("TREK – estudar uma atualização").
+> **Antes deste:** "Atualizações das apps e do Proxmox – como funcionam" e o estudo ("Estudar uma atualização", mais acima).
 
 Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto major.
 
@@ -81,8 +81,7 @@ Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto
 - [ ] 🤖 Está em Ready to update: eu pus lá, ou o estudo (install) — prova: o histórico
 - [ ] 🤖 O projeto: `pct exec 214 -- docker compose ls` mostra o `trek` em `/opt/trek`, e o contentor está healthy — prova: a pasta e o estado
 - [ ] 🤖 A imagem no compose é a que o estudo viu, e o estudo não pediu passos à mão (ou já foram feitos com o meu sim) — prova: a linha `image:`
-- [ ] 🤖 O backup do TREK está ativo: ligado, com destino e sem erro (list_backups). Se não estiver, não se configura: pergunta-se — prova: o backup, o destino e o estado
-- [ ] 🤖 Há um backup do TREK feito pelo MyHomeLab **há menos de 1 hora**, sem erro (o zip traz a base de dados, os uploads e a chave de encriptação); se não, corre-o (run_backup) e espera que acabe — prova: a hora, o ficheiro e o tamanho
+- [ ] 🤖 Há um backup do CT 214 no Proxmox com menos de 24 h e sem erro (`pvesm list <storage> --content backup --vmid 214`; leva a base de dados, os uploads e a chave de encriptação); se não, faz-se um (pve_backup_now, pelo Operador Proxmox) e espera-se que acabe bem. O snapshot de antes é o do update_run — prova: a hora e o ficheiro do backup
 - [ ] 🤖 O disco do CT 214 está abaixo de 85% (`pct exec 214 -- df -h /`): a imagem nova e a cópia da base de dados ocupam espaço. Acima disso, pergunta-se (apagar imagens ou aumentar o disco é com o meu sim) — prova: a percentagem
 - [ ] 🤖 A memória do CT 214 não está cheia — prova: a percentagem
 - [ ] 🤖 O TREK responde na versão de partida e não há outra atualização a correr no servidor — prova: a versão e o que está a correr
@@ -107,9 +106,7 @@ Nunca `docker compose restart`: não lê o compose outra vez. Nunca `down -v`.
 - [ ] 🤖 A migração correu: sem erros no log desde o arranque (`pct exec 214 -- bash -lc 'cd /opt/trek && docker compose logs --since 15m --no-color trek'`; procurar "migration", "error", "failed") — prova: as linhas ou "nenhuma"
 - [ ] 🤖 O login de admin do MyHomeLab continua (a página da app sem erro, trek-status) — prova: o estado
 - [ ] 🤖 O MCP dos agentes continua: trek_overview mostra o MCP ligado e as ferramentas (o número pode subir; se descer, diz quais saíram) e as mesmas viagens de antes — prova: os números antes e depois
-- [ ] 🤖 Os segredos guardados lêem-se: o Immich continua "Conectado" em Definições → Integrações (sinal de que a chave de encriptação veio intacta) — prova: o teste da ligação, ou "por confirmar por mim" se não se consegue ver
-- [ ] 🤖 Correu um backup novo pelo MyHomeLab, sem erro — prova: a hora, o tamanho e o resultado
-- [ ] 🤖 Se as notas pediam um passo depois de atualizar (ex.: na 5.1, fazer uma pesquisa de sítio para registar a instalação), fez-se — prova: o passo e o resultado
+- [ ] 🤖 Os segredos guardados lêem-se: o Immich continua "Conectado" em Definições → Integrações (sinal de que a chave de encriptação veio intacta) — prova: o teste da ligação, ou "por confirmar por mim" se não se consegue ver- [ ] 🤖 Se as notas pediam um passo depois de atualizar (ex.: na 5.1, fazer uma pesquisa de sítio para registar a instalação), fez-se — prova: o passo e o resultado
 
 ### Se falhar
 
@@ -120,7 +117,7 @@ Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam
 
 ### Nunca
 
-- Instalar sem o backup da última hora ou sem o snapshot.
+- Instalar sem o backup do CT das últimas 24 h ou sem o snapshot.
 - Apagar `/opt/trek/data`, `/opt/trek/uploads`, a cópia `data.bak-*`, volumes ou imagens.
 - Mudar a imagem ou as variáveis do compose à mão sem o meu sim.
 - `docker compose down -v` ou outro comando que apague volumes.

@@ -8,6 +8,7 @@ import {
   ForgejoIssue,
   createForgejoClient,
 } from 'src/forgejo/forgejo.client';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 const day = (date: string) => date.slice(0, 10);
 
@@ -65,7 +66,12 @@ export const fullRepo = (target: ForgejoTarget, repo: string) =>
 export async function listRepos(target: ForgejoTarget): Promise<string> {
   const repos = await target.client.repos();
   if (!repos.length) return 'Não há repositórios.';
-  return repos
+  const shown = repos.slice(0, 200);
+  const cut =
+    shown.length < repos.length
+      ? `\n(mostro ${shown.length} de ${repos.length}; os outros não couberam)`
+      : '';
+  return `${repos.length} repositórios:\n${shown
     .map(
       (repo) =>
         `${repo.full_name}${repo.private ? ' (privado)' : ''}${repo.archived ? ' (arquivado)' : ''}: ` +
@@ -73,7 +79,7 @@ export async function listRepos(target: ForgejoTarget): Promise<string> {
         `ramo ${repo.default_branch}, atualizado a ${day(repo.updated_at)}` +
         (repo.description ? ` — ${repo.description}` : ''),
     )
-    .join('\n');
+    .join('\n')}${cut}`;
 }
 
 const issueLine = (issue: ForgejoIssue) =>
@@ -217,7 +223,7 @@ export async function listActionRuns(
   return runs
     .map(
       (run) =>
-        `#${run.run_number} ${run.name} — ${run.status}, ${run.event} em ${run.head_branch}, ${run.created_at.replace('T', ' ').slice(0, 16)}` +
+        `#${run.run_number} ${run.name} — ${run.status}, ${run.event} em ${run.head_branch}, ${lisbonStamp(run.created_at)}` +
         (run.display_title ? ` — ${run.display_title}` : ''),
     )
     .join('\n');

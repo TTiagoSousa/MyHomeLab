@@ -4,6 +4,8 @@ import http from "../../Service/httpService";
 import { useAlert } from "../../Contexts/Alert_Context";
 import i18n from "../../i18n";
 import { announceNotificationsChanged } from "../Notifications/useNotifications";
+import { useCheckMonitor } from "./useCheckMonitor";
+import { monitorErrorMessage } from "./monitorErrorMessage";
 
 export type MonitorKind = 'HTTP' | 'TCP';
 export type MonitorStatus = 'UNKNOWN' | 'UP' | 'DOWN';
@@ -38,35 +40,39 @@ export interface ServiceMonitorPayload {
 
 const REFRESH_MS = 30_000;
 
-const monitorErrorMessage = (error: any): string => {
-  const message = error?.response?.data?.message;
-  if (Array.isArray(message)) return message.join(' ');
-  return message || error?.message || i18n.t('common:errors.generic');
-};
-
 export const useServiceMonitors = () => {
   const [monitors, setMonitors] = useState<ServiceMonitor[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [checkingId, setCheckingId] = useState<string | null>(null);
+  const [error, setError] = useState('');
   const { setAlert } = useAlert();
 
   const fetchMonitors = async () => {
     try {
       const response = await http.get(End_Points.Service_Monitors_Endpoint(), { withCredentials: true });
       setMonitors(response.data);
-    } catch {
-      setMonitors([]);
+      setError('');
+    } catch (error: any) {
+      setError(monitorErrorMessage(error));
     } finally {
       setLoading(false);
     }
   };
 
+  const { checkingId, checkMonitor } = useCheckMonitor(fetchMonitors);
+
   useEffect(() => {
     fetchMonitors();
 
-    const timer = setInterval(fetchMonitors, REFRESH_MS);
-    return () => clearInterval(timer);
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') fetchMonitors();
+    };
+    const timer = setInterval(refreshIfVisible, REFRESH_MS);
+    document.addEventListener('visibilitychange', refreshIfVisible);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', refreshIfVisible);
+    };
   }, []);
 
   const saveMonitor = async (payload: ServiceMonitorPayload, id?: string): Promise<string | null> => {
@@ -98,18 +104,5 @@ export const useServiceMonitors = () => {
     }
   };
 
-  const checkMonitor = async (id: string) => {
-    setCheckingId(id);
-    try {
-      await http.post(End_Points.Service_Monitor_Check_Endpoint(id), {}, { withCredentials: true });
-      await fetchMonitors();
-      announceNotificationsChanged();
-    } catch (error: any) {
-      setAlert({ open: true, message: monitorErrorMessage(error), type: 'error' });
-    } finally {
-      setCheckingId(null);
-    }
-  };
-
-  return { monitors, loading, saving, checkingId, fetchMonitors, saveMonitor, removeMonitor, checkMonitor };
+  return { monitors, loading, error, saving, checkingId, fetchMonitors, saveMonitor, removeMonitor, checkMonitor };
 };

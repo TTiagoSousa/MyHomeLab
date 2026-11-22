@@ -1,5 +1,6 @@
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
-import { AppRelease, cleanVersion } from 'src/integrations/releases';
+import { describeFetchError, parseAppJson } from 'src/integrations/app-fetch';
+import { cleanVersion } from 'src/integrations/releases';
 
 // O Infisical (gestor de segredos, instalado em casa). Entra-se com uma Machine Identity por
 // Universal Auth: POST /api/v1/auth/universal-auth/login {clientId, clientSecret} devolve um
@@ -9,7 +10,8 @@ import { AppRelease, cleanVersion } from 'src/integrations/releases';
 // Os segredos: /api/v4/secrets (projectId); as versões mais antigas só têm /api/v3/secrets/raw
 // (workspaceId), usado quando a rota nova não existe. As pastas: /api/v2/folders (ou /api/v1).
 // O Infisical não diz a versão instalada pela API: só /api/v1/admin/config diz
-// latestAvailableVersion quando há uma mais recente do que a instalada.
+// latestAvailableVersion quando há uma mais recente do que a instalada. Por isso não está nos
+// avisos de versão (VERSION_SOURCES).
 // O MCP oficial é um programa npm à parte (stdio): não se usa; ficam as infisical_*.
 
 export const INFISICAL_REPOSITORY = 'Infisical/infisical';
@@ -30,36 +32,6 @@ export function infisicalTagVersion(tag: string): string | null {
     tag.trim(),
   );
   return match ? cleanVersion(match[1]) : null;
-}
-
-/**
- * A release mais recente da plataforma no GitHub. O repositório também publica releases da
- * CLI, do operador do Kubernetes, etc. (com outro prefixo): ficam de fora.
- */
-export async function latestInfisicalRelease(): Promise<AppRelease | null> {
-  const response = await fetch(
-    `https://api.github.com/repos/${INFISICAL_REPOSITORY}/releases?per_page=30`,
-    {
-      headers: {
-        Accept: 'application/vnd.github+json',
-        'User-Agent': 'MyHomeLab',
-      },
-      signal: AbortSignal.timeout(15_000),
-    },
-  );
-  if (!response.ok) throw new Error(`O GitHub respondeu ${response.status}`);
-  const releases = (await response.json()) as {
-    tag_name: string;
-    html_url: string;
-    prerelease: boolean;
-    draft: boolean;
-  }[];
-  for (const release of releases) {
-    if (release.prerelease || release.draft) continue;
-    const version = infisicalTagVersion(release.tag_name);
-    if (version) return { version, url: release.html_url };
-  }
-  return null;
 }
 
 export interface InfisicalEnvironment {
@@ -138,7 +110,7 @@ async function request<T>(
   } catch (error) {
     throw new AppIntegrationError(
       'APP_UNREACHABLE',
-      `Não foi possível falar com o Infisical (${what}): ${error instanceof Error ? error.message : String(error)}`,
+      `Não foi possível falar com o Infisical (${what}): ${describeFetchError(error)}`,
     );
   }
   const text = await response.text();
@@ -176,7 +148,8 @@ async function request<T>(
         : `o Infisical respondeu ${response.status} (${what}): ${message}`,
     );
   }
-  return body as T;
+  // Uma página de login (SSO) ou de proxy chegava aqui como {} e passava por sucesso.
+  return parseAppJson<T>(text, 'Infisical', what);
 }
 
 /** O estado da instância (sem token). */

@@ -134,6 +134,7 @@ export class ServiceMonitorService {
           'Este serviço vem de uma app ligada: para deixar de o vigiar, tira-lhe o servidor em Apps ligadas.',
       });
     }
+    await this.downTasks.closeRemoved(monitor).catch(() => undefined);
     await this.prisma.serviceMonitor.delete({ where: { id } });
   }
 
@@ -202,12 +203,18 @@ export class ServiceMonitorService {
         );
       }
     }
-    await this.prisma.serviceMonitor.deleteMany({
-      where: {
-        ...(userId ? { userId } : {}),
-        accountId: { not: null, notIn: kept },
-      },
+    const removed = {
+      ...(userId ? { userId } : {}),
+      accountId: { not: null, notIn: kept },
+    };
+    // A tarefa da falha de uma app que deixou de ser vigiada ficava aberta para sempre.
+    const withTask = await this.prisma.serviceMonitor.findMany({
+      where: { ...removed, downTaskId: { not: null } },
     });
+    for (const monitor of withTask) {
+      await this.downTasks.closeRemoved(monitor).catch(() => undefined);
+    }
+    await this.prisma.serviceMonitor.deleteMany({ where: removed });
   }
 
   /** Para o agendador: os serviços cujo intervalo já passou. */

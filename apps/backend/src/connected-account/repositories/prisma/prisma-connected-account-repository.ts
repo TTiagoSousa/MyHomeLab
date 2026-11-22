@@ -6,6 +6,7 @@ import {
   ConnectionProvider,
   DocKind,
   DocLinkType,
+  NotificationKind,
   RunFrequency,
 } from 'src/generated/prisma/client/client';
 import { encryptToken, decryptToken } from 'src/utils/crypto/token-cipher';
@@ -304,4 +305,54 @@ export class PrismaConnectedAccountRepository implements ConnectedAccountReposit
       },
     });
   }
+
+  /**
+   * O Google retirou o acesso (invalid_grant): a conta sai do trabalho automático
+   * (isActive false — a lista mostra "Volta a ligar") e abre-se um aviso, um só por conta.
+   * Antes continuava "ligada", as regras davam 500 e a página dizia "correu há 5 min".
+   */
+  async markNeedsReconnect(
+    account: ConnectedAccount,
+    message: string,
+  ): Promise<void> {
+    await this.prisma.connectedAccount.update({
+      where: { id: account.id },
+      data: { isActive: false, accessToken: null, tokenExpiresAt: null },
+    });
+    const subject = reconnectSubject(account.id);
+    const open = await this.prisma.notification.findFirst({
+      where: { userId: account.userId, subject, resolvedAt: null },
+    });
+    if (open) return;
+    const app =
+      account.provider === ConnectionProvider.GOOGLE_TASKS
+        ? 'Google Tasks'
+        : account.provider === ConnectionProvider.GOOGLE_DRIVE
+          ? 'Google Drive'
+          : 'Gmail';
+    await this.prisma.notification.create({
+      data: {
+        userId: account.userId,
+        subject,
+        connectedAccountId: account.id,
+        kind: NotificationKind.APP_PROBLEM,
+        title: `${app}${account.emailAddress ? ` (${account.emailAddress})` : ''}: volta a ligar a conta`,
+        message,
+      },
+    });
+  }
+
+  /** Religou-se a conta: fecha o aviso "volta a ligar". */
+  async resolveNeedsReconnect(account: ConnectedAccount): Promise<void> {
+    await this.prisma.notification.updateMany({
+      where: {
+        userId: account.userId,
+        subject: reconnectSubject(account.id),
+        resolvedAt: null,
+      },
+      data: { resolvedAt: new Date() },
+    });
+  }
 }
+
+const reconnectSubject = (accountId: string) => `reconnect:${accountId}`;

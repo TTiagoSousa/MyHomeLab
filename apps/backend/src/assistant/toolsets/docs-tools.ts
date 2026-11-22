@@ -13,6 +13,7 @@ import {
   ProposalOrganize,
 } from 'src/docs/helpers/proposalOrganize';
 import { DOC_THING_LINK_TYPES, docAutoGroup } from '@myhomelab/shared';
+import { lisbonStamp } from 'src/utils/lisbonTime';
 
 /** Onde o utilizador vê o documento na página Documentos (a mesma regra da página). */
 function placeOf(
@@ -108,7 +109,7 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
           `${describeDoc(doc)}\n` +
           `Na página Documentos aparece ${placeOf(doc, section?.name ?? null)}.\n` +
           `Dono: ${doc.owner === DocOwner.USER ? 'o utilizador (não escreves; propões com docs_propose)' : 'os agentes (podes reescrever com docs_write)'}. ` +
-          `Atualizado a ${doc.updatedAt.toISOString().slice(0, 16).replace('T', ' ')} por ${doc.updatedBy ?? '—'}.\n\n` +
+          `Atualizado a ${lisbonStamp(doc.updatedAt)} por ${doc.updatedBy ?? '—'}.\n\n` +
           (doc.content.trim() || '(vazio)')
         );
       },

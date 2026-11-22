@@ -96,7 +96,17 @@ merge_env_keys() {
 ensure_update_dirs
 # Uma coisa de cada vez: o mesmo cadeado das atualizações.
 exec 9>"$STATE_DIR/.lock"
-flock -n 9 || die "An update or a restore is already running."
+if ! flock -n 9; then
+  # Pedido da app com uma atualização a correr: sai o pedido (senão a unit .path volta a
+  # disparar) e o .zip e a password (não ficam no disco), e a app vê a falha. Uma
+  # reposição a correr usa estes ficheiros: aí não se lhes mexe.
+  if [ "${1:-}" = "--from-request" ] && ! grep -q '"state":"running"' "$STATE_DIR/restore-status.json" 2>/dev/null; then
+    rm -f "$REQUESTS_DIR/restore-request"
+    as_app rm -rf "$REQUEST_DIR" || true
+    status failed request "An update or another restore is running. Try again when it finishes."
+  fi
+  die "An update or a restore is already running."
+fi
 
 # WORK: do root (a cópia do .env). APP_WORK: do utilizador da app, onde o backup-tool
 # escreve as chaves (e, à mão, a cópia do .zip que ele vai ler).

@@ -9,7 +9,7 @@ const EXPANDED_KEY = 'servers.monitorsExpanded';
 
 const Service_Monitors = () => {
   const { t } = useTranslation('servers');
-  const { monitors, saving, checkingId, saveMonitor, removeMonitor, checkMonitor } = useServiceMonitors();
+  const { monitors, loading, error, saving, checkingId, saveMonitor, removeMonitor, checkMonitor } = useServiceMonitors();
   const [expanded, setExpanded] = useState(localStorage.getItem(EXPANDED_KEY) === 'true');
   const [editing, setEditing] = useState<ServiceMonitor | null>(null);
   const [creating, setCreating] = useState(false);
@@ -55,7 +55,10 @@ const Service_Monitors = () => {
 
       <div className='Servers_collapse_body'>
         <div className='Servers_collapse_inner'>
-          {monitors.length === 0 && <p className='Servers_card_empty'>{t('monitors.empty')}</p>}
+          {error && <p className='Servers_card_empty error'>{error}</p>}
+          {!error && monitors.length === 0 && (
+            <p className='Servers_card_empty'>{loading ? t('common:state.loading') : t('monitors.empty')}</p>
+          )}
 
           {monitors.map((monitor) => (
             <Service_Monitor_Row

@@ -446,18 +446,18 @@ ${rules.never.map((item) => `- ${item}`).join('\n')}
 `;
 }
 
-/** As atualizações dentro do Home Assistant (add-ons, HACS, firmware): sem snapshot, com o backup do HA. */
+/** As atualizações dentro do Home Assistant (add-ons, HACS, firmware): o backup do HA ou um snapshot da VM antes. */
 export function homeAssistantPartsContent(label: string): string {
   return `# ${label} – peças (add-ons, HACS, firmware)
 
 Para as atualizações **dentro** do Home Assistant: add-ons, HACS (integrações e cards), firmware e outras integrações. O Core e o OS seguem as regras do Home Assistant.
 
-**Como atualizar:** pelo próprio Home Assistant, \`update.install\` com \`backup: true\`. Sem snapshot da VM: chega o backup do Home Assistant. Se correr mal, volta-se à versão anterior ou ao backup (dizer-me antes de restaurar).
+**Como atualizar:** pelo próprio Home Assistant, com ha_update_install (\`install\`). Com \`backup: true\` onde a entidade o aceita (add-ons, o OS); nas outras (HACS, firmware) o HA recusa o \`backup\`, e a cópia é um snapshot da VM tirado antes (pve_create_snapshot, pelo Operador Proxmox). Se correr mal, volta-se à versão anterior, ao backup ou ao snapshot (dizer-me antes de restaurar).
 
 ${CHECK_LEGEND}
 
 ## Antes de atualizar
-- [ ] 🤖 A atualização vai com \`backup: true\` (o Home Assistant faz o backup dele antes de instalar) — prova: o pedido feito
+- [ ] 🤖 Há caminho de volta: \`backup: true\` (a entidade aceita-o) ou um snapshot da VM do Home Assistant de menos de 2 horas — prova: o pedido feito ou o nome do snapshot
 - [ ] 🤖 Li as notas entre a versão instalada e a nova — prova: as versões lidas
 - [ ] 🤖 Não há issues graves abertas que nos afetem — prova: os links vistos
 - [ ] 👤 Se é um salto de versão major, eu disse que sim — prova: a minha resposta ou "não é major"
@@ -537,7 +537,7 @@ export function starterDocs(
         kind: DocKind.RULES,
         tags: ['atualizacao', 'home assistant', 'pecas'],
         summary:
-          'As atualizações dentro do Home Assistant (add-ons, HACS, firmware): com o backup do próprio HA (backup: true), sem snapshot da VM.',
+          'As atualizações dentro do Home Assistant (add-ons, HACS, firmware): com ha_update_install, o backup do próprio HA onde a entidade o aceita ou um snapshot da VM antes.',
         links,
         content: homeAssistantPartsContent(app.label),
       });

@@ -78,7 +78,7 @@ there too.
 
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
-| GET | `/connected-account` | JWT | List connected apps (optional `?provider=`); never returns secrets. The create (`POST /connected-account/<app>`) and `PATCH` routes return the same secret-free view |
+| GET | `/connected-account` | JWT | List connected apps (optional `?provider=`); never returns secrets. Each account carries `appHost` and `appBaseUrl` (the address as saved, without any `user:password@`). The create (`POST /connected-account/<app>`) and `PATCH` routes return the same secret-free view. Creating an account that already exists (same address, and for Forgejo the same user) updates its credentials instead of returning 409, so its history and machine link are kept |
 | GET | `/connected-account/google/connect` | JWT | Redirect to Google consent (`?kind=gmail\|tasks\|drive`) |
 | GET | `/google-drive/:accountId/links` | JWT | Drive folders and files linked to projects (Jarvis only changes these) |
 | POST | `/google-drive/:accountId/links` | JWT | Link a Drive folder or file (`target`: link or id) to a project |
@@ -112,21 +112,21 @@ there too.
 | GET | `/connected-account/:id/jellyfin-status` | JWT | Jellyfin server, libraries, item counts, users, who is playing, pending restart and version |
 | POST | `/connected-account/dispatcharr` | JWT | Connect Dispatcharr with an admin's API key |
 | GET | `/connected-account/:id/dispatcharr-status` | JWT | Dispatcharr user, channel and stream counts, M3U accounts, EPG sources, live channels, clients and version |
-| `POST` | `/connected-accounts/coolify` | Connect a Coolify instance (`baseUrl`, `apiToken`, optional `displayName` and location) |
-| `GET` | `/connected-accounts/:id/coolify-status` | Current Coolify state: team, servers and unreachable ones, projects, resource counts, unhealthy resources, MCP tool count, version |
-| `POST` | `/connected-accounts/nginx-proxy-manager` | Connect a Nginx Proxy Manager (`baseUrl`, `email`, `password`, optional `displayName` and location) |
-| `GET` | `/connected-accounts/:id/nginx-proxy-manager-status` | Current state: user, host counts, disabled and nginx-error hosts, certificates and those expiring within 30 days, version |
-| `POST` | `/connected-accounts/tplink-router` | Connect a TP-Link router (Archer) with the local management password (`baseUrl`, optional `username` — default `admin` —, `password`, optional `displayName` and location); detects the login scheme and reads the model and firmware |
-| `GET` | `/connected-accounts/:id/tplink-router-status` | `{ connection, router, version }` (`connection.kind` and `router.kind`: `router` or `extender`; `router.repeater` is an extender's backhaul to the main router, `null` on a router): `connection.state` is `connected`, `disconnected` (session interrupted or router unreachable — not an error, retried every 5 minutes, `nextRetryAt`) or `failed` (password refused); `router` has firmware, WAN/LAN, CPU and memory, Wi-Fi networks, devices, ports, mesh, DHCP leases and reservations, port forwards and access control (`null` when not connected). `?force=1` tries right away |
-| `POST` | `/connected-accounts/:id/tplink-router-action` | An action: `wifi`, `block`, `unblock`, `accessControl`, `reservationAdd`, `reservationDelete`, `portForwardAdd`, `portForwardDelete`, `wanRenew`, `reboot` → `{ ok, message, connection }` (`ok: false` = disconnected, not an error) |
-| POST | `/connected-account/clickhouse` | Connect a ClickHouse (`baseUrl`, `username`, `password`, optional `displayName`, `serverConnectionId`, `guestVmid`) |
-| GET | `/connected-account/:id/clickhouse-status` | Current ClickHouse status (user, uptime, databases, tables, rows, bytes, disk, running queries, version) |
-| POST | `/connected-account/postgres` | Connect a PostgreSQL server (`host`, `port`, `database`, `username`, `password`, `ssl` = `off`/`on`/`no-verify`, optional `displayName`, `serverConnectionId`, `guestVmid`) |
-| GET | `/connected-account/:id/postgres-status` | Current PostgreSQL status (user, superuser, database, SSL, uptime, connections/limit, standby, databases with sizes, version) |
-| POST | `/api/connected-accounts/vaultwarden` | Connect a Vaultwarden (address + admin token) |
-| GET | `/api/connected-accounts/:id/vaultwarden-status` | Users, invited/disabled/without 2FA, organizations, database and version |
-| POST | `/api/connected-accounts/infisical` | Connect an Infisical (address + Machine Identity client ID and secret) |
-| GET | `/api/connected-accounts/:id/infisical-status` | Projects and environments the identity sees, and whether an update is available |
+| POST | `/connected-account/coolify` | JWT | Connect a Coolify instance (`baseUrl`, `apiToken`, optional `displayName` and location) |
+| GET | `/connected-account/:id/coolify-status` | JWT | Current Coolify state: team, servers and unreachable ones, projects, resource counts, unhealthy resources, MCP tool count, version |
+| POST | `/connected-account/nginx-proxy-manager` | JWT | Connect a Nginx Proxy Manager (`baseUrl`, `email`, `password`, optional `displayName` and location) |
+| GET | `/connected-account/:id/nginx-proxy-manager-status` | JWT | Current state: user, host counts, disabled and nginx-error hosts, certificates and those expiring within 30 days, version |
+| POST | `/connected-account/tplink-router` | JWT | Connect a TP-Link router (Archer) with the local management password (`baseUrl`, optional `username` — default `admin` —, `password`, optional `displayName` and location); detects the login scheme and reads the model and firmware |
+| GET | `/connected-account/:id/tplink-router-status` | JWT | `{ connection, router, version }` (`connection.kind` and `router.kind`: `router` or `extender`; `router.repeater` is an extender's backhaul to the main router, `null` on a router): `connection.state` is `connected`, `disconnected` (session interrupted or router unreachable — not an error, retried every 5 minutes, `nextRetryAt`) or `failed` (password refused); `router` has firmware, WAN/LAN, CPU and memory, Wi-Fi networks, devices, ports, mesh, DHCP leases and reservations, port forwards and access control (`null` when not connected). `?force=1` tries right away |
+| POST | `/connected-account/:id/tplink-router-action` | JWT | An action: `wifi`, `block`, `unblock`, `accessControl`, `reservationAdd`, `reservationDelete`, `portForwardAdd`, `portForwardDelete`, `wanRenew`, `reboot` → `{ ok, message, connection }` (`ok: false` = disconnected, not an error) |
+| POST | `/connected-account/clickhouse` | JWT | Connect a ClickHouse (`baseUrl`, `username`, `password`, optional `displayName`, `serverConnectionId`, `guestVmid`) |
+| GET | `/connected-account/:id/clickhouse-status` | JWT | Current ClickHouse status (user, uptime, databases, tables, rows, bytes, disk, running queries, version) |
+| POST | `/connected-account/postgres` | JWT | Connect a PostgreSQL server (`host`, `port`, `database`, `username`, `password`, `ssl` = `off`/`on`/`no-verify`, optional `displayName`, `serverConnectionId`, `guestVmid`) |
+| GET | `/connected-account/:id/postgres-status` | JWT | Current PostgreSQL status (user, superuser, database, SSL, uptime, connections/limit, standby, databases with sizes, version) |
+| POST | `/connected-account/vaultwarden` | JWT | Connect a Vaultwarden (address + admin token) |
+| GET | `/connected-account/:id/vaultwarden-status` | JWT | Users, invited/disabled/without 2FA, organizations, database and version |
+| POST | `/connected-account/infisical` | JWT | Connect an Infisical (address + Machine Identity client ID and secret) |
+| GET | `/connected-account/:id/infisical-status` | JWT | Projects and environments the identity sees, and whether an update is available |
 | GET | `/connected-account/:id/trek-tools` | JWT | Tools exposed by TREK's MCP server |
 | POST | `/connected-account/home-assistant` | JWT | Connect Home Assistant (admin token) |
 | GET | `/connected-account/:id/home-assistant-status` | JWT | Entities, automations, pending updates and version |
@@ -175,7 +175,7 @@ there too.
 |---|---|---|
 | GET | `/agent` | The user's agent team with live status (created on first call) |
 | GET | `/agent/tools` | Tool catalogue: name, group, read/write |
-| POST | `/agent` | Create an agent |
+| POST | `/agent` | Create an agent. With `template` (the key of a built-in agent, e.g. `infra`) it keeps the built-in instructions (empty `prompt`, or the same text) and, when free, the template's key, so the starter documents linked to that key find it |
 | PATCH | `/agent/:id` | Update an agent (the CEO cannot be deactivated or re-parented) |
 | DELETE | `/agent/:id` | Delete an agent (not the CEO); its reports move to its manager |
 | GET | `/agent/access` | Per-agent access level for an app or server (`?type=APP\|SERVER&targetId=`) |
@@ -214,7 +214,10 @@ there too.
 | PUT | `/ai/providers/claude-api` | Save an Anthropic API key (tested first) |
 | DELETE | `/ai/providers/claude-api` | Remove the API key (back to Claude Code if it was in use) |
 | GET / PUT | `/ai/providers/claude-api/models` | Models for the API provider |
+| GET / PUT | `/ai/providers/:provider/models` | The same for either provider (`claude-code` or `claude-api`): the models to choose from, and save the main and agent models |
 | PUT | `/ai/providers/:provider/active` | Put `claude-code` or `claude-api` in use |
+| GET | `/ai/providers/routing` | Mixed mode: which provider runs each kind of work (`chat`, `study`, `install`, `schedule`, `delegation`) and the Claude Code concurrency limit |
+| PUT | `/ai/providers/routing` | `{ mixed?, routes?: { chat?, study?, install?, schedule?, delegation? }, maxClaudeCodeRuns? (1–6) }`; what is left out stays as it was |
 | GET | `/ai/usage` | Token usage and estimated cost for a month, by agent, source and day |
 | PUT | `/ai/usage/budget` | Set or clear the monthly budget (alerts at 80% and 100%) |
 
@@ -289,7 +292,7 @@ SSH uses trust on first use: the first connection stores the server's host key f
 | GET | `/docs/targets` | Things a document can be linked to |
 | GET | `/docs/linked` | Documents linked to a target (`?type=&targetId=`) |
 | GET | `/docs/proposals` | Pending agent proposals, each with `changes` (title, section, links and tags it would change); `?conversationId=` keeps only those made in that chat conversation |
-| POST | `/docs/proposals/:id/approve` | Approve a proposal (optionally edited) |
+| POST | `/docs/proposals/:id/approve` | Approve a proposal (optionally edited); 409 while another approval of it is being applied |
 | POST | `/docs/proposals/:id/reject` | Reject a proposal |
 | GET | `/chat-approvals?conversationId=` | Pending chat cards of a conversation: an email to send, a team change or an update to install, waiting for the user's yes |
 | POST | `/chat-approvals/:id/approve` | Approve a card: sends the email, applies the team change or puts the update in Ready to update (`status` FAILED with `result` when it fails) |

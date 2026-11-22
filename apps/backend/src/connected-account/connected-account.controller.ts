@@ -78,22 +78,28 @@ export class ConnectedAccountController {
 
   @Get('google/callback')
   async googleCallback(
-    @Query('code') code: string,
-    @Query('state') state: string,
+    @Query('code') code: string | undefined,
+    @Query('state') state: string | undefined,
+    @Query('error') providerError: string | undefined,
     @Res() res: Response,
   ) {
-    const kind = await this.connectedAccountService.handleGoogleCallback(
-      code,
-      state,
-    );
-    // Volta à página de onde se ligou: a do Gmail, a do Google Tasks ou a do Drive.
+    const { kind, error } =
+      await this.connectedAccountService.handleGoogleCallback(
+        code,
+        state,
+        providerError,
+      );
+    // Volta à página de onde se ligou: a do Gmail, a do Google Tasks ou a do Drive
+    // (com ?google=cancelled|failed quando não ficou ligada, para a página o dizer).
     const page =
       kind === 'tasks'
         ? 'GoogleTasks'
         : kind === 'drive'
           ? 'GoogleDrive'
           : 'Gmail';
-    res.redirect(`${process.env.FRONTEND_URL}/MyHomeLab/Apps/${page}`);
+    res.redirect(
+      `${process.env.FRONTEND_URL}/MyHomeLab/Apps/${page}${error ? `?google=${error}` : ''}`,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

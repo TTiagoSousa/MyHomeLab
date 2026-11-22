@@ -37,7 +37,7 @@ const Trek_Account = () => {
   const { t } = useTranslation('addons');
   const { accountId } = useParams();
   const navigate = useNavigate();
-  const { connectedAccounts, loading, fetchConnectedAccounts } = useConnectedAccounts('TREK');
+  const { connectedAccounts, loading, error: accountsError, fetchConnectedAccounts } = useConnectedAccounts('TREK');
   const { status, loading: checking, error, fetchStatus } = useTrekStatus(accountId);
   const { deleteConnectedAccount, loading: removing } = useConnectedAccount();
   const [panel, setPanel] = useState<Trek_Panel | null>(null);
@@ -92,7 +92,7 @@ const Trek_Account = () => {
       />
 
       {!account ? (
-        <p className='Apps_intro'>{loading ? t('apps.loading') : t('apps.trek.notFound')}</p>
+        <p className='Apps_intro'>{accountsError || (loading ? t('apps.loading') : t('apps.trek.notFound'))}</p>
       ) : (
         <div className='Apps_list'>
           <App_Summary
