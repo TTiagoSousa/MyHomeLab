@@ -7,6 +7,17 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.11.0] — 2026-11-22
+
+### Features
+- **agents**: approve emails, team changes and installs with chat cards, limit unattended runs to a safe allowlist, mark external text as data, keep postgres_query read-only, reserve agent keys, bound schedules to the team, let agents install safe updates on their own and add migration:new, CI lint, pinned actions and foreign key indexes
+- **tplink-router**: connect TP-Link Archer routers and RE extenders with status, Wi-Fi, devices, DHCP, port forwards, access control and agent tools, reconnecting every 5 minutes when the session is taken, and approve doc proposals from the chat with a card or by asking Jarvis
+
+### Fixes
+- **audit**: stop stuck and repeated update, study and disk alert flows, block MyHomeLab updates while work runs, dedupe notices with an advisory lock, show real connection errors, disable revoked Google accounts, fix regex rules, Lisbon times and token changes, add the ha_update_install tool and agent tool migration, cache prompts, fix system notes mid-conversation, add the mobile drawer, stale-response guards, lazy routes and per-language loading
+- **security**: reject OAuth state tokens as sessions and check sessions against the database, stop returning account secrets, throttle logins per client IP behind trusted proxies, verify SSH host keys on first use, harden the LXC scripts run by root, add nginx security headers and tighten GCM tags, regex rules and read-only commands
+
+
 ## [1.10.0] — 2026-11-20
 
 ### Changes
@@ -140,3 +151,4 @@ First public release of MyHomeLab.
 [1.8.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.8.1
 [1.9.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.9.0
 [1.10.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.10.0
+[1.11.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.11.0
