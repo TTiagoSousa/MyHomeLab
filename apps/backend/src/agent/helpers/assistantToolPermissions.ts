@@ -1,6 +1,7 @@
 import { AssistantAccess, assistantPermissionKey } from '@myhomelab/shared';
 import { AgentTool } from 'src/assistant/claude-agent.client';
 import { AccessTarget, appAccessBlock } from './appAccess';
+import { unattendedBlock } from './unattendedTools';
 
 type Requirement = [area: string, access: AssistantAccess];
 
@@ -13,6 +14,12 @@ const FIXED: Record<string, Requirement> = {
   search_emails: read('email'),
   list_connected_emails: read('email'),
   analyze_inbox: read('email'),
+  read_email: read('email'),
+  read_email_attachment: read('email'),
+  modify_email: write('email'),
+  trash_email: write('email'),
+  draft_email: write('emailSend'),
+  send_email_draft: write('emailSend'),
   list_email_rules: read('emailRules'),
   get_proposal_settings: read('emailRules'),
   list_email_proposals: read('emailRules'),
@@ -64,6 +71,10 @@ const FIXED: Record<string, Requirement> = {
   docs_log: write('docs'),
   docs_propose: write('docs'),
   docs_decide: write('docs'),
+  chat_files_list: read('chatFiles'),
+  chat_file_read: read('chatFiles'),
+  chat_file_query: read('chatFiles'),
+  chat_file_ask: read('chatFiles'),
 
   updates_list: read('updates'),
   update_status: read('updates'),
@@ -386,18 +397,29 @@ export function toolRequirements(
 
 /**
  * Tira ao modelo o que o utilizador desligou em Assistente → Definições →
- * Permissões. As definições das ferramentas ficam iguais (a cache vive do
- * prefixo); só o handler passa a recusar, e o modelo explica-o.
+ * Permissões e, fora do chat (`source`), o que só se faz com ele a ver. As
+ * definições das ferramentas ficam iguais (a cache vive do prefixo); só o handler
+ * passa a recusar, e o modelo explica-o.
  */
 export function guardTools(
   tools: AgentTool[],
   denied: string[],
   access?: { agentKey: string; targets: () => Promise<AccessTarget[]> },
+  source?: string,
 ): AgentTool[] {
-  if (!denied.length && !access) return tools;
+  if (!denied.length && !access && !source) return tools;
   return tools.map((tool) => ({
     ...tool,
     handler: async (input: unknown) => {
+      const unattended = unattendedBlock(
+        tool.name,
+        input,
+        source,
+        toolRequirements(tool.name, input).some(
+          ([, needed]) => needed === 'write',
+        ),
+      );
+      if (unattended) return unattended;
       if (access) {
         const blocked = appAccessBlock(
           tool.name,
@@ -421,4 +443,10 @@ export function guardTools(
       return tool.handler(input);
     },
   }));
+}
+
+/** A ferramenta altera alguma coisa (escrita numa área), com qualquer pedido. */
+export function isWriteTool(toolName: string): boolean {
+  if (toolName === 'health_log' || toolName === 'health_change') return true;
+  return FIXED[toolName]?.[1] === 'write';
 }

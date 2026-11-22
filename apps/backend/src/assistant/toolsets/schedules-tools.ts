@@ -1,4 +1,5 @@
 import { AgentTool } from '../claude-agent.client';
+import { withinReach } from 'src/agent/helpers/teamReach';
 import { AgentContext } from '../agents/agent-context';
 import {
   AgentScheduleRepeat,
@@ -146,6 +147,18 @@ const failure = (error: unknown) =>
 
 export function buildSchedulesTools(context: AgentContext): AgentTool[] {
   const agentKey = context.agentKey ?? 'ceo';
+  const reachBlock = (target?: string) =>
+    !target || withinReach(context.team, agentKey, target)
+      ? null
+      : `Recusado: só agendas trabalho para ti e para quem te responde (não para "${target}").`;
+  // Os disparos dele só se mudam com ele presente (no chat); os de outro agente, só
+  // os de quem está abaixo de quem pede.
+  const changeBlock = (schedule: { createdBy: string; agentKey: string }) => {
+    if (schedule.createdBy === 'user' && context.source !== 'chat') {
+      return 'Recusado: este agendamento foi criado por ele e só muda com ele no chat. Propõe-lhe a mudança no aviso.';
+    }
+    return reachBlock(schedule.agentKey);
+  };
 
   return [
     {
@@ -177,6 +190,8 @@ export function buildSchedulesTools(context: AgentContext): AgentTool[] {
       handler: async (input: ToolInput) => {
         const data = toInput({ agent: agentKey, ...input });
         if (typeof data === 'string') return data;
+        const outOfReach = reachBlock(data.agentKey);
+        if (outOfReach) return outOfReach;
         try {
           const schedule = await context.schedules.create(
             context.userId,
@@ -204,13 +219,18 @@ export function buildSchedulesTools(context: AgentContext): AgentTool[] {
           input.schedule ?? '',
         );
         if (typeof found === 'string') return found;
+        const blocked = changeBlock(found);
+        if (blocked) return blocked;
         const data = toInput(input);
         if (typeof data === 'string') return data;
+        const outOfReach = data.agentKey ? reachBlock(data.agentKey) : null;
+        if (outOfReach) return outOfReach;
         try {
           const schedule = await context.schedules.update(
             context.userId,
             found.id,
             data,
+            agentKey,
           );
           return `Mudado: ${scheduleLine(schedule)}`;
         } catch (error) {
@@ -232,6 +252,8 @@ export function buildSchedulesTools(context: AgentContext): AgentTool[] {
           input.schedule,
         );
         if (typeof found === 'string') return found;
+        const blocked = changeBlock(found);
+        if (blocked) return blocked;
         await context.schedules.remove(context.userId, found.id);
         return `Apagado o agendamento "${found.title}".`;
       },

@@ -11,7 +11,8 @@ export async function createService(
   categoryRepository: PrismaCategoryRepository,
 ) {
   const category = await categoryRepository.findById(dto.categoryId);
-  if (!category || category.userId !== userId) throw new NotFoundException('Categoria não encontrada');
+  if (!category || category.userId !== userId)
+    throw new NotFoundException('Categoria não encontrada');
 
   const order = await serviceRepository.countByCategory(dto.categoryId);
 

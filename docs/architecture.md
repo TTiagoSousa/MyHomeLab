@@ -202,7 +202,8 @@ Proxmox VE hosts. A new version becomes an **available** update; an agent opens 
 moves through the update project on the board:
 
 ```
-available → Waiting for study → Study → Waiting for reply ──(user approves)──► Ready to update
+available → Waiting for study → Study ─(safe: agent installs)─────────────────► Ready to update
+                                   ├──► Waiting for reply ──(user approves)──────────►
                                    │                                                │
                                    └── Recheck later                                ▼
                                                               In progress → Verifying → Done
@@ -211,9 +212,10 @@ available → Waiting for study → Study → Waiting for reply ──(user appr
 
 1. **Study** — an agent reads the release notes and known issues, checks the rules for that
    app and records a study with a risk and a recommendation.
-2. **Approval** — the study ends in *Waiting for reply*. Only the user moves it to
-   *Ready to update* (drag on the board, "Yes, install" on the task, or saying so in chat);
-   that move is the approval.
+2. **Decision** — a safe update (not a major jump, not high risk, no manual steps, the host
+   only when low risk) goes straight to *Ready to update*. The rest, and anything the agent
+   judges important, waits in *Waiting for reply* until the user moves it to *Ready to
+   update* (drag on the board, "Yes, install" on the task, or the chat card).
 3. **Install** — the installer picks up ready updates, **one at a time** per user, and asks
    an agent to prepare (validate the "before" points of the rules), snapshot and run it, with
    rollback if it fails.

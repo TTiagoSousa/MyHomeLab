@@ -164,10 +164,12 @@ export class AgentScheduleService {
     });
   }
 
+  /** `changedBy`: o agente que o muda (fica como autor: o pedido passa a dizer quem foi). */
   async update(
     userId: string,
     id: string,
     input: ScheduleInput,
+    changedBy?: string,
   ): Promise<ScheduleWithRuns> {
     const current = await this.get(userId, id);
     if (current.updateId) {
@@ -200,6 +202,7 @@ export class AgentScheduleService {
           instruction: instruction ?? current.instruction,
           tags: input.tags ? cleanScheduleTags(input.tags) : current.tags,
           nextRunAt: enabled ? runAt : null,
+          ...(changedBy ? { createdBy: changedBy } : {}),
         },
         include: withAllRuns,
       });
@@ -224,6 +227,7 @@ export class AgentScheduleService {
         linkType: data.linkType,
         targetId: data.targetId,
         targetLabel: data.targetLabel,
+        ...(changedBy ? { createdBy: changedBy } : {}),
       },
       include: withAllRuns,
     });

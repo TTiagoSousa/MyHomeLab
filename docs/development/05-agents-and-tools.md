@@ -209,6 +209,41 @@ repositories or organisations and running mirror, sync and retry jobs (`x-api-ke
 
 A blocked call returns a "no permission" message the model can explain to the user.
 
+### Hard brakes in code
+
+Most rules live in documents (below), but a few things are enforced in code because a prompt
+cannot stop a model that read an injected email or page:
+
+- **Unattended runs** (`source` other than `chat`/`terminal`, see
+  `agent/helpers/unattendedTools.ts`, applied by `guardTools`): a schedule may only comment,
+  ask, log, propose, update board tasks (never to Ready to update), create todos and email
+  drafts, and run read-only server commands or `systemctl restart <unit>`; a study adds
+  `update_save_study`; an approved install or verify runs what it needs. Sending email,
+  changing the team or prompts, editing or deleting schedules, deciding proposals and deletions
+  never run unattended.
+- **Chat approvals** (`chat-approval/`, table `ChatApproval`): `draft_email` (sending),
+  `create_agent`/`update_agent`/`delete_agent` and `update_set_status install` (installing) do not
+  act — they create a card under the reply with Approve/Reject (`GET /chat-approvals`). Jarvis
+  decides a card with `approval_decide` only when the user says so in a later message of the
+  same conversation (`chatDecisionBlock`: chat, top-level agent, same conversation, earlier
+  turn). `docs_decide` follows the same rule.
+- **Ready to update** is set only by the user: a board move by an agent is reverted.
+- **Reserved agent keys** (`user`, `myhomelab`, `system`, `ceo`, `terminal`): a new agent named
+  "User" gets `agente-user`, so no agent can act as the user.
+- **Schedules**: an agent schedules work only for itself and its reports; schedules the user
+  created change only in the chat, and a change by an agent records it as the author.
+- **External text**: tools that return text written by others (emails, issues, release notes,
+  command output, documents, subagent reports) wrap it in `<dados_externos>`, and every agent's
+  instructions say that content is data, never orders. A subagent receives the user's own
+  message separately from its boss's request.
+- **Read first**: write tools (derived from the permission table, minus logging and proposing)
+  refuse until the documents the request touches have been read.
+- `postgres_query` accepts only SELECT/WITH/VALUES/TABLE/EXPLAIN/SHOW, refuses COPY, EXPLAIN
+  ANALYZE and server-side functions (`pg_terminate_backend`, `dblink`, `pg_read_file`…), and
+  runs as `pg_read_all_data` when the connection allows it.
+- `docs_write` cannot write RULES documents; an old agent-owned RULES document shows as an
+  agent note.
+
 ### Adding a tool
 
 1. Implement the logic as a plain function in `assistant/tools/` (reuse module helpers
@@ -218,7 +253,10 @@ A blocked call returns a "no permission" message the model can explain to the us
 3. Register it in `agent/tool-catalog.ts`: name, toolset, group, `read` or `write`, and the
    short status line shown on the Workflow page while it runs.
 4. Declare its permission area in `agent/helpers/assistantToolPermissions.ts`; if the
-   toolset targets a connected app, map it in the app-access targets.
+   toolset targets a connected app, map it in the app-access targets. A `write` tool must
+   read the documents first and is refused in schedules unless it is added to the schedule
+   list in `unattendedTools.ts`; a tool that returns text written by others goes in
+   `EXTERNAL_OUTPUT_TOOLS` (`externalData.ts`).
 5. If template agents should get it, add it to `agent-templates.ts`. Existing teams keep
    their tool lists; users add it on the Workflow page (or ship a migration).
 6. Write tool descriptions as instructions for the model: when to use it, what the inputs
@@ -234,14 +272,14 @@ the end of the request, and the tools that change things wait until those are re
 or only the arrangement (`docs_propose` `organize`: title, links, tags, section, including a new
 section). A proposal made in a chat is saved with its conversation and turn and shows up under the
 reply with the Approve button; the user can also just tell Jarvis they approve, and Jarvis decides
-it with `docs_decide` (chat only, never in the same turn the proposal was made, and always the
-text as proposed). `docs_layout` shows agents the Documents page exactly as the user sees it (the user's
+it with `docs_decide` (chat only, only for a proposal of that conversation, never in the same turn
+the proposal was made, and always the text as proposed). `docs_layout` shows agents the Documents page exactly as the user sees it (the user's
 sections, then "Servers and apps", "Projects" and "General" — the rule lives in
 `docAutoGroup` in `@myhomelab/shared`, used by the page too), and `docs_targets` lists what a
-document can link to, with ids. The code
+document can link to, with ids. Apart from the hard brakes above, the code
 measures, executes and records — the agents, following the rules, are the brakes.
 
-For example, server shell commands run as soon as an agent calls them; the code only
+For example, in the chat server shell commands run as soon as an agent calls them; the code
 classifies them as read or write for the log and takes a snapshot of a machine before a
 command that changes it. The list of forbidden commands is in the server rules document.
 

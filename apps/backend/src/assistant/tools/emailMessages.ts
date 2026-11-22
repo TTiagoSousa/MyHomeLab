@@ -2,6 +2,7 @@ import { PrismaConnectedAccountRepository } from 'src/connected-account/reposito
 import { ensureFreshAccessToken } from 'src/connected-account/helpers/ensureFreshAccessToken';
 import {
   listLabels,
+  listMessageIds,
   loadLabelCache,
   modifyMessage,
   resolveLabelIds,
@@ -290,15 +291,50 @@ export interface DraftInput {
   includeAttachments?: boolean;
 }
 
+/** O rascunho criado: o que o cartão do chat mostra antes de ele o mandar. */
+export interface DraftCreated {
+  accountEmail: string;
+  draftId: string;
+  mode: DraftInput['mode'];
+  to: string;
+  cc?: string;
+  subject: string;
+  text: string;
+  attachments: string[];
+  skipped: string[];
+  /** Destinatários com quem a conta nunca trocou emails. */
+  newRecipients: string[];
+}
+
+/** Quem nunca trocou emails com esta conta (o cartão avisa "endereço novo"). */
+async function unknownRecipients(
+  token: string,
+  own: string,
+  addresses: string[],
+): Promise<string[]> {
+  const unknown: string[] = [];
+  for (const address of [...new Set(addresses.map(emailOf))]) {
+    if (!address || address === own) continue;
+    const seen = await listMessageIds(
+      token,
+      `from:${address} OR to:${address}`,
+      1,
+    ).catch(() => ['?']);
+    if (!seen.length) unknown.push(address);
+  }
+  return unknown;
+}
+
 /**
  * Um rascunho no Gmail: novo, resposta (no mesmo fio) ou reencaminhado (com os
- * anexos do original). Não envia: fica nos Rascunhos até send_email_draft.
+ * anexos do original). Não envia: só sai quando ele aprova o cartão do chat.
+ * Devolve o rascunho, ou o que falta (texto para o modelo).
  */
 export async function draftEmail(
   input: DraftInput,
   repository: Repo,
   userId: string,
-): Promise<string> {
+): Promise<DraftCreated | string> {
   const { account, token } = await openAccount(
     input.accountEmail,
     repository,
@@ -306,6 +342,28 @@ export async function draftEmail(
   );
   const own = (account.emailAddress ?? '').toLowerCase();
   if (!input.text?.trim()) return 'Falta o texto do email.';
+  const created = async (
+    draftId: string,
+    to: string,
+    subject: string,
+    cc: string | undefined,
+    attachments: string[] = [],
+    skipped: string[] = [],
+  ): Promise<DraftCreated> => ({
+    accountEmail: account.emailAddress ?? own,
+    draftId,
+    mode: input.mode,
+    to,
+    cc,
+    subject,
+    text: input.text,
+    attachments,
+    skipped,
+    newRecipients: await unknownRecipients(token, own, [
+      ...addressesOf(to),
+      ...addressesOf(cc ?? ''),
+    ]),
+  });
 
   if (input.mode === 'new') {
     if (!input.to?.trim() || !input.subject?.trim()) {
@@ -320,7 +378,7 @@ export async function draftEmail(
         text: input.text,
       }),
     );
-    return draftReport(draft.id, input.to, input.subject, input.text, input.cc);
+    return created(draft.id, input.to, input.subject, input.cc);
   }
 
   if (!input.messageId) return 'Falta o messageId do email original.';
@@ -352,7 +410,7 @@ export async function draftEmail(
       }),
       original.threadId,
     );
-    return draftReport(draft.id, to, subject, input.text, cc);
+    return created(draft.id, to, subject, cc);
   }
 
   if (!input.to?.trim()) return 'Para reencaminhar falta o destinatário (to).';
@@ -385,31 +443,37 @@ export async function draftEmail(
       files,
     }),
   );
+  return created(
+    draft.id,
+    input.to,
+    subject,
+    input.cc,
+    files.map((file) => file.filename),
+    skipped,
+  );
+}
+
+/** O que o modelo lê depois de criar o rascunho. */
+export function draftReport(draft: DraftCreated, approvalId?: string) {
   return (
-    draftReport(draft.id, input.to, subject, input.text, input.cc) +
-    (files.length
-      ? `\nAnexos: ${files.map((file) => file.filename).join(', ')}.`
+    `Rascunho criado no Gmail (draftId: ${draft.draftId}). Ainda não foi enviado.\n` +
+    `Para: ${draft.to}${draft.cc ? `\nCc: ${draft.cc}` : ''}\nAssunto: ${draft.subject}\n\n${draft.text}` +
+    (draft.attachments.length
+      ? `\n\nAnexos: ${draft.attachments.join(', ')}.`
       : '') +
-    (skipped.length
-      ? `\nFicaram de fora por serem grandes demais: ${skipped.join(', ')}.`
-      : '')
+    (draft.skipped.length
+      ? `\nFicaram de fora por serem grandes demais: ${draft.skipped.join(', ')}.`
+      : '') +
+    (draft.newRecipients.length
+      ? `\n⚠ Endereço novo (a conta nunca trocou emails com): ${draft.newRecipients.join(', ')}.`
+      : '') +
+    (approvalId
+      ? `\n\nAparece-lhe um cartão no chat (${approvalId}) com este email e o botão Enviar: só sai quando ele carrega. Diz-lhe numa frase que o email está pronto no cartão.`
+      : '\n\nFica nos Rascunhos do Gmail: num disparo não se envia, ele envia-o de lá se quiser. Diz-lho no aviso.')
   );
 }
 
-function draftReport(
-  draftId: string,
-  to: string,
-  subject: string,
-  text: string,
-  cc?: string,
-) {
-  return (
-    `Rascunho criado no Gmail (draftId: ${draftId}). Ainda não foi enviado.\n` +
-    `Para: ${to}${cc ? `\nCc: ${cc}` : ''}\nAssunto: ${subject}\n\n${text}\n\n` +
-    'Mostra-lhe este texto tal como está e pergunta se envia. Só envias (send_email_draft) depois de ele dizer que sim a este rascunho.'
-  );
-}
-
+/** Envia um rascunho. Só o ChatApprovalService o chama, depois do sim dele. */
 export async function sendEmailDraft(
   input: { accountEmail?: string; draftId: string },
   repository: Repo,

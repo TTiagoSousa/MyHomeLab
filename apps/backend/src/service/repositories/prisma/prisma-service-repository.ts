@@ -8,7 +8,10 @@ export class PrismaServiceRepository implements ServiceRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(id: string): Promise<ServiceWithCategory | null> {
-    return this.prisma.service.findUnique({ where: { id }, include: { category: true } });
+    return this.prisma.service.findUnique({
+      where: { id },
+      include: { category: true },
+    });
   }
 
   async findAllByUser(userId: string): Promise<ServiceWithCategory[]> {
@@ -50,7 +53,11 @@ export class PrismaServiceRepository implements ServiceRepository {
       order: number;
     }>,
   ): Promise<ServiceWithCategory> {
-    return this.prisma.service.update({ where: { id }, data, include: { category: true } });
+    return this.prisma.service.update({
+      where: { id },
+      data,
+      include: { category: true },
+    });
   }
 
   async delete(id: string): Promise<void> {
@@ -64,7 +71,11 @@ export class PrismaServiceRepository implements ServiceRepository {
     });
   }
 
-  async reorder(categoryId: string, userId: string, orderedIds: string[]): Promise<void> {
+  async reorder(
+    categoryId: string,
+    userId: string,
+    orderedIds: string[],
+  ): Promise<void> {
     await this.prisma.$transaction(
       orderedIds.map((id, index) =>
         this.prisma.service.updateMany({

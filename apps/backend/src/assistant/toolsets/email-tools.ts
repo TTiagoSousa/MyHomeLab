@@ -22,7 +22,7 @@ import {
   readEmail,
   readEmailAttachment,
   draftEmail,
-  sendEmailDraft,
+  draftReport,
   modifyEmails,
   trashEmails,
   type DraftInput,
@@ -267,7 +267,7 @@ export function buildEmailTools(context: AgentContext): AgentTool[] {
         'Cria um rascunho no Gmail, sem enviar: um email novo (mode "new": to, subject, text), ' +
         'uma resposta no mesmo fio (mode "reply": messageId e text; replyAll para responder a todos) ' +
         'ou um reencaminhamento com os anexos do original (mode "forward": messageId, to, text). ' +
-        'Devolve o draftId e o texto: mostra-o ao utilizador tal como está e só envia com o sim dele.',
+        'Não envia: no chat aparece-lhe um cartão com o email e o botão Enviar; num disparo fica nos Rascunhos do Gmail.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -309,14 +309,32 @@ export function buildEmailTools(context: AgentContext): AgentTool[] {
         },
         required: ['mode', 'text'],
       },
-      handler: async (input: DraftInput) =>
-        draftEmail(input, connectedAccountRepository, userId),
+      handler: async (input: DraftInput) => {
+        const draft = await draftEmail(
+          input,
+          connectedAccountRepository,
+          userId,
+        );
+        if (typeof draft === 'string') return draft;
+        if (context.source !== 'chat' || !context.conversationId) {
+          return draftReport(draft);
+        }
+        const { skipped: _skipped, ...payload } = draft;
+        const approval = await context.approvals.create(
+          userId,
+          'EMAIL_SEND',
+          context.agentKey ?? 'admin',
+          payload,
+          { conversationId: context.conversationId, turnId: context.turnId },
+        );
+        return draftReport(draft, approval.id);
+      },
     },
     {
       name: 'send_email_draft',
       description:
-        'Envia um rascunho criado com draft_email. Só depois de o utilizador ter visto o texto e ' +
-        'dito que sim a esse rascunho nesta conversa (um "envia" ou "sim").',
+        'Já não envia sozinho: um email só sai quando ele carrega em Enviar no cartão do chat, ou quando diz ' +
+        '"envia" numa mensagem nova e o Jarvis decide o cartão com approval_decide. Devolve o cartão desse rascunho.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -325,8 +343,17 @@ export function buildEmailTools(context: AgentContext): AgentTool[] {
         },
         required: ['draftId'],
       },
-      handler: async (input: { accountEmail?: string; draftId: string }) =>
-        sendEmailDraft(input, connectedAccountRepository, userId),
+      handler: async (input: { accountEmail?: string; draftId: string }) => {
+        const open = await context.approvals.pending(userId);
+        const card = open.find(
+          (row) =>
+            row.kind === 'EMAIL_SEND' &&
+            (row.payload as { draftId?: string }).draftId === input.draftId,
+        );
+        return card
+          ? `O email espera pelo sim dele no cartão ${card.id}. Ele carrega em Enviar, ou diz "envia" numa mensagem nova e o Jarvis decide com approval_decide.`
+          : 'Não há nenhum cartão para esse rascunho: cria-o com draft_email numa conversa com ele (num disparo, fica nos Rascunhos do Gmail).';
+      },
     },
     {
       name: 'modify_email',

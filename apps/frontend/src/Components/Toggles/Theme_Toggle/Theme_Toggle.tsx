@@ -6,7 +6,8 @@ const Theme_Toggle = () => {
   const { mode, handleDarkMode, handleLightMode } = useTheme();
 
   const toggle = () => {
-    mode === 'dark' ? handleLightMode() : handleDarkMode();
+    if (mode === 'dark') handleLightMode();
+    else handleDarkMode();
   };
 
   return (

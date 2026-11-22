@@ -24,6 +24,7 @@ import { AgentScheduleService } from 'src/agent-schedule/agent-schedule.service'
 import { TodoService } from 'src/todo/todo.service';
 import { ChatFileService } from 'src/chat-file/chat-file.service';
 import { DriveService } from 'src/google-drive/drive.service';
+import { ChatApprovalService } from 'src/chat-approval/chat-approval.service';
 
 /**
  * O que qualquer agente precisa de ter à mão. Passa-se um objeto só em vez de uma lista
@@ -86,6 +87,8 @@ export interface AgentContext {
   chatFiles: ChatFileService;
   /** O Google Drive (a conta, as ligações a projetos e a regra de só mudar o que está ligado). */
   drive: DriveService;
+  /** O que só acontece com o sim dele: enviar um email, mudar a equipa, instalar (os cartões do chat). */
+  approvals: ChatApprovalService;
   /** A conversa desta volta (as ferramentas chat_file_* veem os ficheiros dela). */
   conversationId?: string;
   /** Ele mandou ficheiros nesta mensagem: o Jarvis pensa mais para os analisar. */
@@ -108,6 +111,10 @@ export interface AgentContext {
 
   /** O agente que está a correr (cada um recebe a sua cópia do contexto). */
   agentKey?: string;
+  /** 0 = o agente de topo (o que fala com ele); um subagente recebe o pedido do chefe. */
+  depth?: number;
+  /** No chat, o que ele escreveu nesta volta, tal e qual (os subagentes também o veem). */
+  userMessage?: string;
 
   /**
    * De onde vem esta volta: "chat" (ele escreveu agora) ou um disparo (study,

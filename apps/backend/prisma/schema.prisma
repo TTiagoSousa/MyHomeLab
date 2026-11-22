@@ -162,6 +162,7 @@ model User {
   todoSyncGroups      TodoSyncGroup[]
   todoSyncLinks       TodoSyncLink[]
   docProposals        DocProposal[]
+  chatApprovals       ChatApproval[]
   appUpdates          AppUpdate[]
   updateSetting       UpdateWorkflowSetting?
   agentSchedules      AgentSchedule[]
@@ -287,6 +288,7 @@ model ConnectedAccount {
   driveLinks         DriveLink[]
 
   @@index([userId])
+  @@index([serverConnectionId])
 }
 
 model EmailRule {
@@ -351,19 +353,20 @@ model EmailRuleLabelPath {
 // Uma conversa com o assistente (a barra lateral da página do Jarvis). A app continua
 // a mais recente; o resumo da manhã abre uma própria.
 model Conversation {
-  id            String        @id @default(uuid())
+  id            String         @id @default(uuid())
   userId        String
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   title         String
   /// A tarefa do quadro desta conversa ("Falar com o Jarvis" numa tarefa): uma por tarefa.
-  boardTaskId   String?       @unique
-  boardTask     BoardTask?    @relation(fields: [boardTaskId], references: [id], onDelete: SetNull)
+  boardTaskId   String?        @unique
+  boardTask     BoardTask?     @relation(fields: [boardTaskId], references: [id], onDelete: SetNull)
   messages      ChatMessage[]
   files         ChatFile[]
   docProposals  DocProposal[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  lastMessageAt DateTime      @default(now())
+  approvals     ChatApproval[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  lastMessageAt DateTime       @default(now())
 
   @@index([userId, lastMessageAt])
 }
@@ -406,6 +409,7 @@ model ChatFile {
 
   @@index([conversationId, createdAt])
   @@index([messageId])
+  @@index([userId])
 }
 
 // Legado: as instruções extra dos agentes antigos ('main', 'email', 'server', 'health',
@@ -783,6 +787,9 @@ model Notification {
   resolvedAt         DateTime?
 
   @@index([userId, resolvedAt])
+  @@index([monitorId])
+  @@index([serverConnectionId])
+  @@index([connectedAccountId])
 }
 
 /// Uma leitura por dia de cada disco físico de um nó Proxmox (a última do dia
@@ -1810,6 +1817,8 @@ model Doc {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([parentId])
+  @@index([sectionId])
 }
 
 // As secções que o utilizador cria nos Documentos ("Casa", "Casa/Rede"…), em árvore.
@@ -1871,38 +1880,39 @@ enum DocProposalStatus {
 /// Uma mudança que um agente propõe num documento do utilizador (ou um documento
 /// novo); só vale depois de o utilizador aprovar.
 model DocProposal {
-  id         String            @id @default(uuid())
-  userId     String
-  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  docId      String?
-  doc        Doc?              @relation(fields: [docId], references: [id], onDelete: Cascade)
-  action     DocProposalAction
-  title      String?
-  kind       DocKind?
-  content    String            @db.Text
-  reason     String?           @db.Text
-  links      Json? // CREATE: [{ type, targetId, label }]
+  id             String            @id @default(uuid())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  docId          String?
+  doc            Doc?              @relation(fields: [docId], references: [id], onDelete: Cascade)
+  action         DocProposalAction
+  title          String?
+  kind           DocKind?
+  content        String            @db.Text
+  reason         String?           @db.Text
+  links          Json? // CREATE: [{ type, targetId, label }]
   // CREATE: as etiquetas do documento novo
-  tags       String[]          @default([])
+  tags           String[]          @default([])
   // CREATE: os documentos que o novo junta e substitui; aprovada, apagam-se
-  replaces   String[]          @default([])
+  replaces       String[]          @default([])
   // A arrumação a aplicar ao aprovar (qualquer ação): { title?, tags?, links?, section? }.
   // section: { id } (uma secção que existe), { name } (uma nova, criada ao aprovar) ou { id: null } (sem secção).
-  organize   Json?
-  proposedBy String
+  organize       Json?
+  proposedBy     String
   // A tarefa do quadro de onde veio: a decisão aparece lá.
-  taskId     String?
+  taskId         String?
   // A conversa do chat onde foi proposta: aparece lá, com o botão de aprovar.
   conversationId String?
-  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  conversation   Conversation?     @relation(fields: [conversationId], references: [id], onDelete: SetNull)
   // A volta do chat em que foi proposta: o Jarvis só a decide numa volta seguinte, depois de ele a ver.
-  turnId     String?
-  status     DocProposalStatus @default(PENDING)
-  createdAt  DateTime          @default(now())
-  decidedAt  DateTime?
+  turnId         String?
+  status         DocProposalStatus @default(PENDING)
+  createdAt      DateTime          @default(now())
+  decidedAt      DateTime?
 
   @@index([userId, status])
   @@index([conversationId])
+  @@index([docId])
 }
 
 // ── Atualizações das apps ──────────────────────────────────────────────────
@@ -2291,6 +2301,8 @@ model BoardTask {
   @@unique([projectId, number])
   @@index([userId])
   @@index([stateId])
+  @@index([parentId])
+  @@index([cycleId])
 }
 
 /// Um ciclo (sprint) de um projeto: as tarefas para um período.
@@ -2323,6 +2335,7 @@ model BoardTaskRelation {
   createdAt DateTime         @default(now())
 
   @@unique([fromId, toId, kind])
+  @@index([toId])
 }
 
 /// Um ficheiro anexado a uma tarefa (guardado na base de dados, até 10 MB).
@@ -2479,6 +2492,8 @@ model Todo {
 
   @@unique([userId, subject])
   @@index([userId, status])
+  @@index([listId])
+  @@index([parentId])
 }
 
 // ── Sincronização das Tarefas ─────────────────────────────────────────────
@@ -2587,4 +2602,39 @@ model DriveLink {
 
   @@unique([accountId, fileId, projectId])
   @@index([userId])
+}
+
+enum ChatApprovalKind {
+  EMAIL_SEND // um rascunho do Gmail que o agente quer enviar
+  AGENT_CHANGE // criar, mudar ou apagar um agente da equipa
+  UPDATE_INSTALL // pôr uma atualização em Ready to update (instala-se)
+}
+
+enum ChatApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FAILED // aprovado, mas a ação deu erro (fica o porquê em result)
+}
+
+// O que um agente quer fazer e só acontece com o sim do utilizador: um cartão no chat
+// com [Aprovar] [Recusar], ou um "sim" dele numa mensagem seguinte da mesma conversa.
+model ChatApproval {
+  id             String             @id @default(uuid())
+  userId         String
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind           ChatApprovalKind
+  status         ChatApprovalStatus @default(PENDING)
+  proposedBy     String // a chave do agente
+  /// O que se executa ao aprovar e o que o cartão mostra (depende do kind).
+  payload        Json
+  result         String?            @db.Text
+  conversationId String?
+  conversation   Conversation?      @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  turnId         String?
+  createdAt      DateTime           @default(now())
+  decidedAt      DateTime?
+
+  @@index([userId, status])
+  @@index([conversationId])
 }

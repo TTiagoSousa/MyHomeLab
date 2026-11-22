@@ -32,6 +32,29 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
       return typeof update === 'string' ? update : work(update, input);
     };
 
+  // Pôr em Ready to update instala-se logo: só com o sim dele no cartão do chat (ou
+  // um "aprovo" dele numa mensagem nova, que o Jarvis decide com approval_decide).
+  const proposeInstall = async (
+    update: Exclude<
+      Awaited<ReturnType<typeof context.updates.findForAgent>>,
+      string
+    >,
+    comment: string,
+  ): Promise<string> => {
+    if (context.source !== 'chat' || !context.conversationId) {
+      return 'Recusado: só o utilizador aprova uma instalação ("Sim, instalar" na tarefa ou o cartão no chat). Deixa-a em waiting com a recomendação.';
+    }
+    const approval = await context.approvals.create(
+      context.userId,
+      'UPDATE_INSTALL',
+      agentKey,
+      { updateId: update.id, label: updateLabel(update), comment },
+      { conversationId: context.conversationId, turnId: context.turnId },
+      (payload) => (payload as { updateId?: string }).updateId === update.id,
+    );
+    return `Aparece-lhe um cartão no chat (${approval.id}) para instalar ${updateLabel(update)}: só passa a Ready to update quando ele carrega em Aprovar (ou diz que sim numa mensagem nova). Diz-lho numa frase.`;
+  };
+
   return [
     {
       name: 'updates_list',
@@ -149,7 +172,7 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
     {
       name: 'update_save_study',
       description:
-        'Grava o relatório de uma atualização (no registo em Documentos e na tarefa do quadro) e passa-a a TODO (pronta: aconselhas atualizar), WAITING (precisa de uma resposta do utilizador) ou LATER (arriscada agora: voltas a estudar daqui a N dias). Num novo estudo da mesma versão, reescreve o relatório com o que mudou.',
+        'Grava o relatório de uma atualização (no registo em Documentos e na tarefa do quadro) e decide o passo seguinte (next): instalar já, recomendar ao utilizador, perguntar-lhe ou voltar a estudar daqui a N dias. Num novo estudo da mesma versão, reescreve o relatório com o que mudou.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -184,9 +207,9 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
           },
           next: {
             type: 'string',
-            enum: ['install', 'todo', 'waiting', 'later'],
+            enum: ['install', 'recommend', 'waiting', 'later'],
             description:
-              'install = instalas tu, já (fica em Ready to update e o MyHomeLab pede a instalação): só quando as regras da app o deixam — risco baixo, não é major, sem passos à mão e não é o host; senão o MyHomeLab deixa-a em Waiting com a recomendação · todo = recomendas instalar mas a decisão é dele (Waiting for reply com a recomendação) · waiting = precisa de uma resposta dele antes · later = voltar a estudar daqui a recheckInDays.',
+              'install = instalas tu, já (fica em Ready to update e o MyHomeLab pede a instalação): só quando as regras da app o deixam — risco baixo, não é major, sem passos à mão e não é o host; senão o MyHomeLab deixa-a em Waiting com a recomendação · recommend = recomendas instalar mas achas importante que a decisão seja dele (Waiting for reply com a recomendação) · waiting = precisa de uma resposta dele antes · later = voltar a estudar daqui a recheckInDays.',
           },
           question: {
             type: 'string',
@@ -239,14 +262,14 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
     {
       name: 'update_set_status',
       description:
-        'Muda o estado de uma atualização (todo, waiting com a pergunta, later para voltar a estudar daqui a N dias, cancelled) e escreve o porquê no registo e na tarefa do quadro. Usa-o quando o utilizador responde (ex.: "vê daqui a uma semana" → later com 7). todo põe-na em Ready to update e instala-se logo: só vale na conversa, quando ele acabou de escrever que autoriza; num disparo é recusado (aí ele aprova na tarefa).',
+        'Muda o estado de uma atualização (install, waiting com a pergunta, later para voltar a estudar daqui a N dias, cancelled) e escreve o porquê no registo e na tarefa do quadro. Usa-o quando o utilizador responde (ex.: "vê daqui a uma semana" → later com 7). install é instalar: no chat aparece-lhe um cartão e só passa a Ready to update quando ele aprova; num disparo é recusado (aí ele aprova na tarefa).',
       inputSchema: {
         type: 'object',
         properties: {
           update: UPDATE,
           status: {
             type: 'string',
-            enum: ['todo', 'waiting', 'later', 'cancelled'],
+            enum: ['install', 'waiting', 'later', 'cancelled'],
           },
           comment: {
             type: 'string',
@@ -265,15 +288,13 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
           update,
           input: {
             update: string;
-            status: 'todo' | 'waiting' | 'later' | 'cancelled';
+            status: 'install' | 'todo' | 'waiting' | 'later' | 'cancelled';
             comment: string;
             recheckInDays?: number;
           },
         ) =>
-          input.status === 'todo' && context.source !== 'chat'
-            ? Promise.resolve(
-                'Recusado: só o utilizador aprova uma instalação ("Sim, instalar" na tarefa, arrastar para Ready to update, ou "autorizo" no chat). Deixa-a em waiting com a recomendação.',
-              )
+          input.status === 'install' || input.status === 'todo'
+            ? proposeInstall(update, input.comment)
             : context.updates.setStatus(
                 update,
                 input.status,

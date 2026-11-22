@@ -17,8 +17,8 @@ No estudo só se lê e mede. Os pontos **Só servidor** ou **Só apps** valem s�
 
 ### A app
 
-- **Onde:** VM 101 `nextcloud-vm`, servidor HomeLab, https://nextcloud.example.com. Comandos pelo agente QEMU: `qm guest exec 101 --timeout <s> -- <comando>`.
-- **occ como www-data:** a VM **não tem `sudo`**: `qm guest exec 101 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ <comando>`.
+- **Onde:** VM 211 `nextcloud-vm`, servidor HomeLab, https://nextcloud.example.com. Comandos pelo agente QEMU: `qm guest exec 211 --timeout <s> -- <comando>`.
+- **occ como www-data:** a VM **não tem `sudo`**: `qm guest exec 211 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ <comando>`.
 - **Pastas:** código em `/var/www/nextcloud`, dados e log em `/var/www/nextcloud-data` (`nextcloud.log`). Base de dados MySQL/MariaDB, PHP 8.4.
 - **Para que serve:** os meus ficheiros, Calendar e Contacts (CalDAV/CardDAV), Mail, e é o **destino dos backups** das outras apps.
 - **Atenção:** o upgrade do servidor atualiza também as apps da App Store que tenham versão nova. Por isso, no estudo do servidor, as apps com versão nova estudam-se também.
@@ -80,7 +80,7 @@ Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto
 
 ### Onde corre
 
-- **Máquina:** VM 101 `nextcloud-vm`, servidor HomeLab (https://nextcloud.example.com). Comandos pelo agente QEMU: `qm guest exec 101 --timeout <segundos> -- <comando>`.
+- **Máquina:** VM 211 `nextcloud-vm`, servidor HomeLab (https://nextcloud.example.com). Comandos pelo agente QEMU: `qm guest exec 211 --timeout <segundos> -- <comando>`.
 - **occ como www-data:** a VM **não tem `sudo`**; o agente QEMU corre como root, por isso: `runuser -u www-data -- php /var/www/nextcloud/occ …`.
 - **O tempo:** o `qm guest exec` desiste aos 30 s se não se disser outro. Sempre `--timeout`: 300 numa app, 1200 no servidor.
 - **Pastas:** código em `/var/www/nextcloud`, updater em `/var/www/nextcloud/updater/updater.phar`, dados e log em `/var/www/nextcloud-data`.
@@ -89,7 +89,7 @@ Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto
 ### Como corre a instalação
 
 1. **update_prepare** com os comandos de "Instalar o servidor" ou de "Instalar uma app", tal e qual, e os pontos de "Antes de instalar" provados.
-2. **update_run** (com snapshot) tira o snapshot da VM 101, corre os comandos um a seguir ao outro (pára no primeiro que falhar) e espera até 5 minutos que o Nextcloud responda na versão nova.
+2. **update_run** (com snapshot) tira o snapshot da VM 211, corre os comandos um a seguir ao outro (pára no primeiro que falhar) e espera até 5 minutos que o Nextcloud responda na versão nova.
 3. **Se falhar**, o MyHomeLab volta sozinho ao snapshot, liga a VM e fica em Failed. Depois disso, voltar a um snapshot à mão é com o meu sim.
 4. A VM leva 1 a 2 minutos a arrancar depois de um rollback: um 502 logo a seguir não quer dizer que ficou estragada.
 
@@ -98,11 +98,11 @@ Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto
 - [ ] 🤖 Não há outra atualização do Nextcloud (servidor ou app) a correr — prova: o que está a correr
 - [ ] 🤖 Há um backup do Nextcloud feito pelo MyHomeLab **há menos de 24 horas** e sem erro; se não, corre-o (run_backup) e espera que acabe bem — prova: a hora e o ficheiro
 - [ ] 🤖 O Nextcloud responde, sem manutenção (`/status.php`), e está na versão de partida (o servidor no status, a app em nextcloud_list_apps). **Só apps:** se a app já estiver na versão nova (veio com o servidor), não há nada a instalar: passa-se à verificação — prova: o JSON e a versão
-- [ ] 🤖 O `occ` corre como www-data: `qm guest exec 101 --timeout 60 -- runuser -u www-data -- php /var/www/nextcloud/occ status` dá código 0 e mostra a versão — prova: a saída
-- [ ] 🤖 **Só apps:** a versão que vai entrar é a estudada. O `occ app:update` instala sempre a mais recente: `qm guest exec 101 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ app:update --showonly`. Se for uma versão de correção mais nova da mesma linha, instala-se na mesma; se for outra linha ou major, pergunta-se — prova: a linha da app
+- [ ] 🤖 O `occ` corre como www-data: `qm guest exec 211 --timeout 60 -- runuser -u www-data -- php /var/www/nextcloud/occ status` dá código 0 e mostra a versão — prova: a saída
+- [ ] 🤖 **Só apps:** a versão que vai entrar é a estudada. O `occ app:update` instala sempre a mais recente: `qm guest exec 211 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ app:update --showonly`. Se for uma versão de correção mais nova da mesma linha, instala-se na mesma; se for outra linha ou major, pergunta-se — prova: a linha da app
 - [ ] 🤖 **Só servidor:** as apps que vêm junto (`occ app:update --showonly`) são as do estudo e nenhuma é major nem tem issues graves; se for, pergunta-se — prova: a lista (ou "nenhuma")
-- [ ] 🤖 **Só servidor:** o esquema da base de dados medido antes (`qm guest exec 101 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ db:schema:check`). Não trava nada: serve para comparar depois — prova: a saída (ou "sem avisos")
-- [ ] 🤖 O disco onde está o Nextcloud tem menos de 90% ocupado e a memória não está cheia (`qm guest exec 101 -- df -h /var/www/nextcloud-data` e `qm guest exec 101 -- free -m`) — prova: as percentagens
+- [ ] 🤖 **Só servidor:** o esquema da base de dados medido antes (`qm guest exec 211 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ db:schema:check`). Não trava nada: serve para comparar depois — prova: a saída (ou "sem avisos")
+- [ ] 🤖 O disco onde está o Nextcloud tem menos de 90% ocupado e a memória não está cheia (`qm guest exec 211 -- df -h /var/www/nextcloud-data` e `qm guest exec 211 -- free -m`) — prova: as percentagens
 - [ ] 🤖 Salto de versão major: se o é, já está aprovado (estar em Ready to update) — prova: "não é major", ou o histórico
 
 ### Instalar o servidor
@@ -110,10 +110,10 @@ Estar em Ready to update é a aprovação: não se pede outro sim, nem num salto
 Os comandos, por esta ordem:
 
 ```bash
-qm guest exec 101 --timeout 1200 -- runuser -u www-data -- php /var/www/nextcloud/updater/updater.phar --no-interaction
-qm guest exec 101 --timeout 1200 -- runuser -u www-data -- php /var/www/nextcloud/occ upgrade
-qm guest exec 101 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ maintenance:mode --off
-qm guest exec 101 --timeout 600 -- runuser -u www-data -- php /var/www/nextcloud/occ db:add-missing-indices
+qm guest exec 211 --timeout 1200 -- runuser -u www-data -- php /var/www/nextcloud/updater/updater.phar --no-interaction
+qm guest exec 211 --timeout 1200 -- runuser -u www-data -- php /var/www/nextcloud/occ upgrade
+qm guest exec 211 --timeout 120 -- runuser -u www-data -- php /var/www/nextcloud/occ maintenance:mode --off
+qm guest exec 211 --timeout 600 -- runuser -u www-data -- php /var/www/nextcloud/occ db:add-missing-indices
 ```
 
 O updater descarrega, liga a manutenção, troca os ficheiros, corre o upgrade e desliga a manutenção; os outros três não fazem mal se já não houver nada a fazer. Depois do upgrade, a base de dados não volta atrás sem o snapshot.
@@ -123,7 +123,7 @@ O updater descarrega, liga a manutenção, troca os ficheiros, corre o upgrade e
 Um só comando, só a app da tarefa:
 
 ```bash
-qm guest exec 101 --timeout 300 -- runuser -u www-data -- php /var/www/nextcloud/occ app:update <app>
+qm guest exec 211 --timeout 300 -- runuser -u www-data -- php /var/www/nextcloud/occ app:update <app>
 ```
 
 O `<app>` é o id (`calendar`, `contacts`, `mail`, `tables`, `assistant`…). A saída tem de dizer que a app foi atualizada. Sem manutenção.
@@ -132,7 +132,7 @@ O `<app>` é o id (`calendar`, `contacts`, `mail`, `tables`, `assistant`…). A 
 - [ ] 🤖 Cada comando acabou com código 0 (o `exitcode` na saída do `qm guest exec`, no registo) — prova: os códigos
 - [ ] 🤖 `/status.php` responde com `maintenance:false` e `needsDbUpgrade:false` (no servidor, já na versão nova) — prova: o JSON
 - [ ] 🤖 As apps estão ligadas, e a atualizada na versão nova (nextcloud_list_apps) — prova: as versões (ou as que ficaram desligadas)
-- [ ] 🤖 Sem erros novos no log desde a atualização: `qm guest exec 101 -- tail -n 50 /var/www/nextcloud-data/nextcloud.log`, só os de nível 3 e 4 — prova: as linhas ou "nenhuma"
+- [ ] 🤖 Sem erros novos no log desde a atualização: `qm guest exec 211 -- tail -n 50 /var/www/nextcloud-data/nextcloud.log`, só os de nível 3 e 4 — prova: as linhas ou "nenhuma"
 - [ ] 🤖 O que se vê de fora funciona: a página de login responde 200; Calendar e Contacts leem-se por CalDAV/CardDAV (o backup do MyHomeLab lê-os). Abrir a interface (ex.: o Mail) não se consegue ver: "não se aplica" — prova: os códigos e o backup
 - [ ] 🤖 **Só servidor:** o `occ db:schema:check` não tem avisos novos em relação ao de antes — prova: as diferenças (ou "igual")
 - [ ] 🤖 **Só servidor:** correu um backup novo pelo MyHomeLab — prova: a hora e o resultado
@@ -141,7 +141,7 @@ O `<app>` é o id (`calendar`, `contacts`, `mail`, `tables`, `assistant`…). A 
 
 Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam": a atualização fica em In progress, investiga-se, e o que é simples e seguro corrige-se e corre-se outra vez no mesmo processo (até 3 corridas). O que é desta app:
 
-- **Onde ver:** a saída do comando que falhou e `qm guest exec 101 -- tail -n 50 /var/www/nextcloud-data/nextcloud.log`.
+- **Onde ver:** a saída do comando que falhou e `qm guest exec 211 -- tail -n 50 /var/www/nextcloud-data/nextcloud.log`.
 - **Ficou em manutenção** depois de um upgrade que acabou bem (o status já diz a versão nova): pode desligar-se com `occ maintenance:mode --off`. Se o upgrade não acabou, não se desliga: fica o snapshot.
 - **Contorna-se:** um timeout do `qm guest exec` (sobe o `--timeout`), ou os índices em falta (`occ db:add-missing-indices`).
 - **Uma app desligada pelo upgrade** não se liga à sorte: diz-se no relatório.
@@ -151,6 +151,6 @@ Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam
 - Atualizar o servidor e uma app no mesmo passo, ou `occ app:update --all`.
 - Instalar, desligar ou remover apps que não são as da tarefa.
 - Mexer no `config.php`, nos utilizadores, nas partilhas ou nos ficheiros dos utilizadores.
-- Desligar o Nextcloud ou a VM 101 fora de uma atualização.
+- Desligar o Nextcloud ou a VM 211 fora de uma atualização.
 - Usar `sudo` (não existe na VM) ou correr o `occ` como root.
 - Mostrar palavras-passe, tokens, a password de app do MyHomeLab ou o conteúdo do `config.php`.

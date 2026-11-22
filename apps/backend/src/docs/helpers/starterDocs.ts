@@ -52,11 +52,11 @@ Valem para tudo o que os agentes fazem nos servidores. As regras de cada app gan
 - Confirmar que ficou a funcionar (responde, logs sem erros novos) e deixar registo.
 
 ## Horários
-- Atualizações: a qualquer hora, logo que eu a ponho em Ready to update.
+- Atualizações: a qualquer hora, logo que estejam em Ready to update.
 - Outras mudanças que podem deixar serviços em baixo: entre as 9h e as 22h, ou quando eu pedir.
 
 ## Aprovar
-- **Atualizações:** o estudo acaba sempre em **Waiting for reply** com a recomendação (ou em Recheck later). Só eu a ponho em **Ready to update**, e isso é a aprovação: instala-se logo. Se um ponto falhar, fica em Waiting com a pergunta exata (chega-me às notificações).
+- **Atualizações:** o agente decide sozinho. O que nada parte para nós e se volta atrás passa a **Ready to update** e instala-se logo; no fim diz-me o que fez. Só me pergunta (**Waiting for reply**, com a recomendação ou a pergunta exata) o que acha importante: um salto major, risco alto, passos à mão, o host sem risco baixo, ou uma escolha que só eu faço. Se um ponto falhar, fica em Waiting com a pergunta exata (chega-me às notificações).
 - **Salto de versão major:** só com o meu sim para esse salto.
 - **Sempre com snapshot.** Sem snapshot só se eu disser.
 - **Outras mudanças com risco:** dizer-me o que muda, como se confirma e como se volta atrás, e esperar pelo meu sim.
@@ -76,7 +76,7 @@ const BEFORE = [
   '🤖 Há um backup da máquina da app (CT ou VM) no Proxmox com menos de 24 h e sem erro. Se não houver, faz um (pve_backup_now, pelo Operador Proxmox) e espera que acabe bem — prova: a hora e o ficheiro do backup',
   '🤖 O disco do CT/VM está abaixo de 90% e a memória abaixo de 100%. Se não estiver, aumentar esse recurso 10% (pve_set_resources, pelo Operador Proxmox), sem me perguntar, e voltar a medir — prova: a percentagem de cada um',
   '🤖 Li as notas de todas as versões pelo meio e não há passos à mão por fazer — prova: as versões lidas',
-  '🤖 A versão saiu há pelo menos 3 dias e não há issues graves abertas — prova: a data e os links vistos',
+  '🤖 Não há issues graves abertas que nos afetem — prova: os links vistos',
   '👤 Se é um salto de versão major, eu disse que sim — prova: a minha resposta ou "não é major"',
   '🤖 A app responde na versão de partida e não há outra atualização a correr no servidor — prova: a versão e o que está a correr',
 ];
@@ -371,7 +371,7 @@ const APP_RULES: Partial<Record<ConnectionProvider, AppRules>> = {
   [ConnectionProvider.HOME_ASSISTANT]: {
     name: 'Home Assistant',
     before: [
-      '👤 Eu disse que sim a esta versão (as automações da casa dependem dele): pergunta-se no estudo; eu pô-la em Ready to update conta como sim — prova: a minha resposta',
+      '👤 Eu disse que sim a esta versão (as automações da casa dependem dele): pergunta-se no estudo; o meu "Sim, instalar" conta como sim — prova: a minha resposta',
       '🤖 Nenhuma integração que uso aparece nas "Breaking changes" — prova: as integrações vistas',
     ],
     after: [
@@ -459,7 +459,7 @@ ${CHECK_LEGEND}
 ## Antes de atualizar
 - [ ] 🤖 A atualização vai com \`backup: true\` (o Home Assistant faz o backup dele antes de instalar) — prova: o pedido feito
 - [ ] 🤖 Li as notas entre a versão instalada e a nova — prova: as versões lidas
-- [ ] 🤖 A versão saiu há pelo menos 3 dias e não há issues graves abertas — prova: a data e os links vistos
+- [ ] 🤖 Não há issues graves abertas que nos afetem — prova: os links vistos
 - [ ] 👤 Se é um salto de versão major, eu disse que sim — prova: a minha resposta ou "não é major"
 - [ ] 🤖 Sei o que usa esta peça (automações, painéis, dispositivos) — prova: os nomes ou "nada"
 
@@ -492,7 +492,7 @@ ${CHECK_LEGEND}
 
 ## Antes de atualizar
 - [ ] 🤖 Li as notas entre a versão instalada e a nova (a ficha da app na App Store e o repositório dela) — prova: as versões lidas
-- [ ] 🤖 A versão saiu há pelo menos 3 dias e não há issues graves abertas — prova: a data e os links vistos
+- [ ] 🤖 Não há issues graves abertas que nos afetem — prova: os links vistos
 - [ ] 🤖 A versão nova aceita a versão do Nextcloud instalada — prova: a versão do servidor e o que a App Store diz
 - [ ] 🤖 O Nextcloud responde e não está em manutenção — prova: o status.php
 

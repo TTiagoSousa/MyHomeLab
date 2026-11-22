@@ -19,7 +19,12 @@ export class ServiceService {
   ) {}
 
   async create(dto: CreateServiceDto, userId: string) {
-    return createService(dto, userId, this.serviceRepository, this.categoryRepository);
+    return createService(
+      dto,
+      userId,
+      this.serviceRepository,
+      this.categoryRepository,
+    );
   }
 
   async findAll(userId: string) {
@@ -31,7 +36,13 @@ export class ServiceService {
   }
 
   async update(id: string, dto: UpdateServiceDto, userId: string) {
-    return updateService(id, dto, userId, this.serviceRepository, this.categoryRepository);
+    return updateService(
+      id,
+      dto,
+      userId,
+      this.serviceRepository,
+      this.categoryRepository,
+    );
   }
 
   async remove(id: string, userId: string) {
@@ -39,6 +50,11 @@ export class ServiceService {
   }
 
   async reorder(dto: ReorderServiceDto, userId: string) {
-    return reorderServices(dto, userId, this.serviceRepository, this.categoryRepository);
+    return reorderServices(
+      dto,
+      userId,
+      this.serviceRepository,
+      this.categoryRepository,
+    );
   }
 }

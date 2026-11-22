@@ -27,7 +27,8 @@
     "docsUsed": "Documentos usados:",
     "openTask": "Abrir tarea {{key}}",
     "proposal": "Propuesta por decidir",
-    "proposalHint": "Apruébala o recházala aquí, o dile a Jarvis que la apruebas."
+    "proposalHint": "Apruébala o recházala aquí, o dile a Jarvis que la apruebas.",
+    "approvalHint": "Aprueba o rechaza aquí, o díselo a Jarvis."
   },
   "core": {
     "working": "trabajando"
@@ -116,7 +117,15 @@
       "areas": {
         "email": {
           "name": "Correos",
-          "description": "Leer y resumir los correos, buscar y analizar la bandeja."
+          "description": "Leer y resumir los correos, buscar y analizar la bandeja. Cambiar es archivar, etiquetar, marcar como leído y mandar a la papelera."
+        },
+        "chatFiles": {
+          "name": "Archivos del chat",
+          "description": "Leer los archivos que envías en el chat (PDF, Word, Excel…) y responder preguntas sobre ellos."
+        },
+        "emailSend": {
+          "name": "Enviar correos",
+          "description": "Preparar correos, respuestas y reenvíos. Solo salen cuando pulsas Enviar en la tarjeta del chat."
         },
         "emailRules": {
           "name": "Reglas de Gmail",
@@ -659,7 +668,8 @@
       "infisical_folders": "Ver las carpetas",
       "infisical_secret_set": "Crear o cambiar un secreto",
       "infisical_secret_delete": "Borrar un secreto",
-      "infisical_folder_create": "Crear una carpeta"
+      "infisical_folder_create": "Crear una carpeta",
+      "approval_decide": "Decidir las tarjetas del chat cuando se lo dices"
     }
   },
   "conversations": {
@@ -708,5 +718,57 @@
     "unsupported": "No sé leer «{{name}}». Adjunta PDF, Word (.docx), Excel (.xlsx), CSV, texto o imágenes.",
     "legacy": "«{{name}}» está en un formato antiguo de Office. Guárdalo como .docx o .xlsx.",
     "openFailed": "No pude abrir el archivo."
+  },
+  "approvals": {
+    "label": "Necesita tu sí",
+    "by": "por {{agent}}",
+    "reject": "Rechazar",
+    "rejected": "Rechazado.",
+    "failed": "No se pudo: {{reason}}",
+    "action": {
+      "EMAIL_SEND": "Enviar correo",
+      "UPDATE_INSTALL": "Instalar actualización",
+      "AGENT_CHANGE": {
+        "create": "Crear agente",
+        "update": "Cambiar agente",
+        "delete": "Eliminar agente"
+      }
+    },
+    "approve": {
+      "EMAIL_SEND": "Enviar",
+      "AGENT_CHANGE": "Aprobar",
+      "UPDATE_INSTALL": "Instalar"
+    },
+    "done": {
+      "EMAIL_SEND": "Correo enviado.",
+      "AGENT_CHANGE": "Equipo actualizado.",
+      "UPDATE_INSTALL": "La actualización quedó en Ready to update."
+    },
+    "email": {
+      "to": "Para",
+      "cc": "Cc",
+      "subject": "Asunto",
+      "attachments": "Adjuntos",
+      "newRecipient": "⚠ Dirección nueva: nunca has intercambiado correos con {{addresses}}."
+    },
+    "agent": {
+      "addedTools": "Herramientas nuevas",
+      "removedTools": "Herramientas retiradas",
+      "writes": "⚠ cambia cosas",
+      "showPrompt": "Ver las instrucciones",
+      "hidePrompt": "Ocultar las instrucciones",
+      "promptBefore": "Ahora",
+      "promptAfter": "Propuesto",
+      "siteDefault": "(las del sitio)",
+      "deleteWarning": "Quien le responde pasa a responder a su jefe.",
+      "fields": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "model": "Modelo",
+        "effort": "Esfuerzo",
+        "reportsTo": "Responde a",
+        "active": "Activo"
+      }
+    }
   }
 }

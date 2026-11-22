@@ -88,6 +88,14 @@ if (push) {
     if (other !== version) fail(`${file} is at ${other}, package.json at ${version} — run --prepare again.`);
   }
   if (tryGit('rev-parse', '-q', '--verify', `refs/tags/${version}`)) fail(`Tag ${version} already exists.`);
+  // The Release workflow only accepts a tag on origin's main: a local main ahead of or
+  // behind it would push an orphan tag (and the APK step would wait for nothing).
+  const remote = 'origin';
+  git('fetch', remote, branch);
+  const remoteHead = tryGit('rev-parse', `${remote}/${branch}`);
+  if (git('rev-parse', 'HEAD') !== remoteHead) {
+    fail(`Local ${branch} is not the same commit as ${remote}/${branch} — push or pull first.`);
+  }
   const notesFile = option('notes') ?? notesPath(version, 'en');
   if (!existsSync(notesFile)) fail(`${notesFile} is missing — run --prepare on develop first.`);
   const message = readFileSync(notesFile, 'utf8').trim();

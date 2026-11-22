@@ -424,7 +424,7 @@ export function buildPostgresTools(context: AgentContext): AgentTool[] {
     {
       name: 'postgres_query',
       description:
-        'Corre uma consulta de leitura no PostgreSQL (SELECT, WITH, EXPLAIN, SHOW…) e devolve as linhas numa tabela compacta. Vai numa transação READ ONLY (não consegue escrever), uma instrução só, até 60 s e com as linhas limitadas. Para escrever usa postgres_execute.',
+        'Corre uma consulta de leitura no PostgreSQL (SELECT, WITH, EXPLAIN, SHOW…) e devolve as linhas numa tabela compacta. Vai numa transação READ ONLY (não consegue escrever, e com o papel pg_read_all_data quando a ligação o permite), uma instrução só, até 60 s e com as linhas limitadas. COPY, EXPLAIN ANALYZE e funções que mexem no servidor (pg_terminate_backend, dblink, pg_read_file…) são recusadas. Para escrever usa postgres_execute.',
       inputSchema: {
         type: 'object',
         properties: {

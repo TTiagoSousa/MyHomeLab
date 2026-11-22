@@ -11,8 +11,12 @@ agents. The code lives in `apps/backend/src/app-update/` and the agent tools in
 
 ## Principles
 
-- **Nothing installs without the user.** The study ends with a recommendation; only the
-  user moves an update to *Ready to update*, and that move is the approval.
+- **The agent decides; the user decides what matters.** When nothing breaks for us and it can
+  be rolled back, the study moves the update to *Ready to update* (`next: install`) and it
+  installs right away; the agent reports afterwards. The code never lets an agent install a
+  major jump, a high-risk update, one with manual steps or a host update that is not low risk:
+  those, and anything the agent judges important, end in *Waiting for reply*
+  (`next: recommend` or `waiting`) for the user.
 - **The rules are documents.** What to check before and after, and how to install a given
   app, are rules in the user's documents (for example "<app> – rules", with
   `## Before updating`, `## After updating` and `## Never` sections). The code measures,
@@ -49,13 +53,13 @@ new version detected ──► available (no task yet)
                               ▼
                        Waiting for study ──► Study ──► update_save_study
                                                           │
-                     ┌────────────────────┬───────────────┴──────────┐
-                     ▼                    ▼                          ▼
-              Waiting for reply     Recheck later               Cancelled
-              (recommendation)      (back to study on date)
-                     │ user moves it / "Yes, install" / says so in chat
-                     ▼
-              Ready to update ──► installer picks it up (one per user)
+          ┌──────────┬────────────────────┬───────────────┴──────────┐
+          │ install  ▼                    ▼                          ▼
+          │   Waiting for reply     Recheck later               Cancelled
+          │   (recommendation)      (back to study on date)
+          │          │ user moves it / "Yes, install" / chat card
+          ▼          ▼
+         Ready to update ──► installer picks it up (one per user)
                                      │ agent: update_prepare → update_check… → update_run
                                      ▼
                                 In progress ──► Verifying ──► Done
@@ -70,9 +74,11 @@ new version detected ──► available (no task yet)
    `update_known_issues`, works through the study points with `update_check`, and saves a
    study (summary, risk, recommendation, reasons, sources, manual steps). A failed study is
    retried once after a delay; a second failure notifies the user.
-3. **Decision.** A recommendation to install lands in *Waiting for reply* and shows under
-   "Needs you" in Notifications. The user approves by moving it to *Ready to update*.
-   Agents can only set `READY` from a chat turn where the user has just authorised it.
+3. **Decision.** A safe update (`next: install`, allowed by the code checks above) goes
+   straight to *Ready to update*. A recommendation (`next: recommend`) or a question lands
+   in *Waiting for reply* and shows under "Needs you" in Notifications; the user approves by
+   moving it to *Ready to update*. Outside the study, agents can only set `READY` through a
+   chat card the user approves (`update_set_status install`); a board move by an agent is reverted.
 4. **Install.** A scheduler picks ready updates (one per user, nothing else in progress) and
    asks the first active agent with `update_run` to install it. The agent calls
    `update_prepare` (opens the attempt with the "before" points and MyHomeLab's own

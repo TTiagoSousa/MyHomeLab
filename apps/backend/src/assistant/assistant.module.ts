@@ -22,6 +22,7 @@ import { AgentScheduleModule } from 'src/agent-schedule/agent-schedule.module';
 import { BoardModule } from 'src/board/board.module';
 import { ChatFileModule } from 'src/chat-file/chat-file.module';
 import { GoogleDriveModule } from 'src/google-drive/google-drive.module';
+import { ChatApprovalModule } from 'src/chat-approval/chat-approval.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { GoogleDriveModule } from 'src/google-drive/google-drive.module';
     TodoModule,
     ChatFileModule,
     GoogleDriveModule,
+    ChatApprovalModule,
   ],
   controllers: [AssistantController, TerminalController],
   providers: [AssistantService, UpdateStudyScheduler],

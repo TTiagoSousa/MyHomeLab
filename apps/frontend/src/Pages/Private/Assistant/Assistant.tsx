@@ -19,6 +19,8 @@ import { CHAT_FILE_ACCEPT, MAX_CHAT_FILES, chatFileProblem } from '../../../Hook
 import { useAlert } from '../../../Contexts/Alert_Context';
 import { useDocProposals } from '../../../Hooks/Docs/useDocProposals';
 import Doc_Proposal_Card from '../Docs/Doc_Proposal_Card';
+import Chat_Approval_Card from './Chat_Approval_Card';
+import { useChatApprovals } from '../../../Hooks/Assistant/useChatApprovals';
 import '../Docs/Doc_Proposals.scss';
 
 const SUGGESTED_PROMPTS = [
@@ -55,9 +57,13 @@ const Assistant = () => {
   });
 
   const { proposals, busyId, fetchProposals, approveProposal, rejectProposal } = useDocProposals(activeId);
+  const { approvals, busyId: approvalBusyId, fetchApprovals, approveApproval, rejectApproval } = useChatApprovals(activeId);
 
   useEffect(() => {
-    if (!loading) fetchProposals();
+    if (!loading) {
+      fetchProposals();
+      fetchApprovals();
+    }
   }, [messages.length, loading]);
 
   useEffect(() => {
@@ -307,6 +313,19 @@ const Assistant = () => {
                   onReject={() => void rejectProposal(proposal.id)}
                 />
                 <span className='Assistant_Proposal_hint'>{t('conversation.proposalHint')}</span>
+              </section>
+            ))}
+
+            {approvals.map((approval) => (
+              <section key={approval.id} className='Assistant_Proposal'>
+                <span className='Assistant_Proposal_label'>{t('approvals.label')}</span>
+                <Chat_Approval_Card
+                  approval={approval}
+                  busy={approvalBusyId === approval.id}
+                  onApprove={() => void approveApproval(approval.id)}
+                  onReject={() => void rejectApproval(approval.id)}
+                />
+                <span className='Assistant_Proposal_hint'>{t('conversation.approvalHint')}</span>
               </section>
             ))}
 

@@ -22,7 +22,8 @@ export const Sidebar_Home: React.FC = () => {
   );
 
   const toggleTheme = () => {
-    mode === 'dark' ? handleLightMode() : handleDarkMode();
+    if (mode === 'dark') handleLightMode();
+    else handleDarkMode();
   };
 
   const getActiveItem = () => {

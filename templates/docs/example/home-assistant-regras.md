@@ -20,7 +20,7 @@ No estudo só se lê e mede. Os pontos **Só Core** ou **Só peças** valem só 
 
 ### A app
 
-- **Onde:** VM 102 `HomeAssistante`, servidor HomeLab (nó `proxmox`), https://homeassistant.example.com. 2 núcleos, 4096 MB, disco 32 GB em zfs_pool, UEFI (OVMF, q35), agente QEMU ligado, arranque automático (onboot, ordem 5). Instalada pelo community-script. **Tipo: Home Assistant OS** (tem atualizações do OS e do Supervisor e add-ons; a confirmar com ha_overview no próximo estudo).
+- **Onde:** VM 212 `HomeAssistante`, servidor HomeLab (nó `proxmox`), https://homeassistant.example.com. 2 núcleos, 4096 MB, disco 32 GB em local-zfs, UEFI (OVMF, q35), agente QEMU ligado, arranque automático (onboot, ordem 5). Instalada pelo community-script. **Tipo: Home Assistant OS** (tem atualizações do OS e do Supervisor e add-ons; a confirmar com ha_overview no próximo estudo).
 - **Como se fala com ele:** pela API, com as ferramentas ha_* (ha_overview, ha_list_updates, ha_list_entities, ha_system_log, ha_list_configs…). Não há comandos na máquina para ler.
 - **Para que serve:** a domótica da casa: luzes, estores, sensores, automações. Se parar, a casa deixa de reagir, por isso o risco conta mais do que noutras apps.
 - **As peças:** ha_list_updates mostra o que há por atualizar lá dentro, por grupo:
@@ -100,23 +100,23 @@ Estar em Ready to update é a aprovação: não se pede outro sim. Os pontos **S
 3. **Integrações do HACS** (as `custom_components`, não os cartões do painel): depois de instalar, o `release_summary` da entidade diz "Restart of Home Assistant required". Faz parte da atualização:
    - primeiro `homeassistant.check_config` e ha_system_log sem erros novos de configuração;
    - depois `homeassistant.restart`. A chamada pode dar timeout e a API responde 502 durante 1 a 3 minutos: espera-se que volte (ha_overview).
-4. **O OS (Home Assistant Operating System):** o Supervisor descarrega e grava a versão nova no outro slot, mas **não reinicia sozinho** (log do Supervisor: "Install of Home Assistant Operating System X success; reboot required"; cria a reparação `reboot_required`). A entidade passa logo a mostrar a versão nova, mas a VM continua na antiga até reiniciar. Prova da versão que corre: `qm agent 102 get-osinfo` (`version-id`).
-   - 👤 **O reinício da VM 102 para ativar o OS é com o meu sim**, num pedido à parte: um arranque de um kernel novo pode falhar ou, numa VM KVM, bloquear o host Proxmox inteiro (ex.: a issue #5129 da 18.4). Fica em Waiting for reply com a pergunta, e diz-se se o estudo viu issues de arranque.
+4. **O OS (Home Assistant Operating System):** o Supervisor descarrega e grava a versão nova no outro slot, mas **não reinicia sozinho** (log do Supervisor: "Install of Home Assistant Operating System X success; reboot required"; cria a reparação `reboot_required`). A entidade passa logo a mostrar a versão nova, mas a VM continua na antiga até reiniciar. Prova da versão que corre: `qm agent 212 get-osinfo` (`version-id`).
+   - 👤 **O reinício da VM 212 para ativar o OS é com o meu sim**, num pedido à parte: um arranque de um kernel novo pode falhar ou, numa VM KVM, bloquear o host Proxmox inteiro (ex.: a issue #5129 da 18.4). Fica em Waiting for reply com a pergunta, e diz-se se o estudo viu issues de arranque.
    - Se não arrancar, o HAOS volta sozinho ao slot anterior.
 5. O MyHomeLab vê a versão nova em até 10 minutos e passa a atualização a Verifying. Depois verifica-se o "feito quando" com **update_verify** (no OS, só depois do reinício).
 
 **O Core:**
-- **Como se instala:** como as outras apps, com **update_prepare** (a máquina e os comandos) e **update_run** (com snapshot da VM 102). Se falhar, o MyHomeLab volta sozinho ao snapshot.
-- **A máquina e o tipo (confirmados a 14/11/2026, ATU-57):** VM 102 `HomeAssistante`, servidor HomeLab. **Home Assistant OS 18.3 (Open Virtual Appliance)**, visto com `qm agent 102 get-osinfo`. O agente QEMU (10.2.2) tem `guest-exec` ligado (`qm agent 102 info`). O `ha` CLI corre dentro do contentor `hassio_cli`.
-- **Teste só de leitura (14/11/2026):** `qm guest exec 102 --timeout 60 -- docker exec hassio_cli ha core info --raw-json` → exitcode 0, `version` 2026.10.0, `version_latest` 2026.11.1.
+- **Como se instala:** como as outras apps, com **update_prepare** (a máquina e os comandos) e **update_run** (com snapshot da VM 212). Se falhar, o MyHomeLab volta sozinho ao snapshot.
+- **A máquina e o tipo (confirmados a 14/11/2026, ATU-57):** VM 212 `HomeAssistante`, servidor HomeLab. **Home Assistant OS 18.3 (Open Virtual Appliance)**, visto com `qm agent 212 get-osinfo`. O agente QEMU (10.2.2) tem `guest-exec` ligado (`qm agent 212 info`). O `ha` CLI corre dentro do contentor `hassio_cli`.
+- **Teste só de leitura (14/11/2026):** `qm guest exec 212 --timeout 60 -- docker exec hassio_cli ha core info --raw-json` → exitcode 0, `version` 2026.10.0, `version_latest` 2026.11.1.
 - **O comando** (`<v>` é a versão nova, ex.: 2026.11.1), um só, para o update_prepare:
 
 ```bash
-qm guest exec 102 --timeout 1200 -- docker exec hassio_cli ha core update --version <v>
+qm guest exec 212 --timeout 1200 -- docker exec hassio_cli ha core update --version <v>
 ```
 
   O `--timeout 1200` porque o download da imagem e o arranque do Core podem levar vários minutos (o `qm guest exec` desiste aos 30 s sem ele). O backup do Home Assistant não se pede aqui: conta o do MyHomeLab e o snapshot do update_run. A saída tem de ter `exitcode 0`; depois o update_run espera que o Core responda na versão nova.
-- **Ler o estado durante e depois** (só leitura): `qm guest exec 102 --timeout 60 -- docker exec hassio_cli ha core info --raw-json`, `qm guest exec 102 --timeout 60 -- docker exec hassio_cli ha jobs info --raw-json` e, no OS, `... ha os info --raw-json` (`version_pending`) e `qm guest exec 102 --timeout 60 -- docker logs --tail 40 hassio_supervisor`. Atenção: o MyHomeLab conta o `qm guest exec` como alteração e tira antes um snapshot da VM 102; `qm agent 102 get-osinfo` não.
+- **Ler o estado durante e depois** (só leitura): `qm guest exec 212 --timeout 60 -- docker exec hassio_cli ha core info --raw-json`, `qm guest exec 212 --timeout 60 -- docker exec hassio_cli ha jobs info --raw-json` e, no OS, `... ha os info --raw-json` (`version_pending`) e `qm guest exec 212 --timeout 60 -- docker logs --tail 40 hassio_supervisor`. Atenção: o MyHomeLab conta o `qm guest exec` como alteração e tira antes um snapshot da VM 212; `qm agent 212 get-osinfo` não.
 - **Alternativa no Home Assistant OS:** `update.install` em `update.home_assistant_core_update`. Só com o meu sim, porque sem update_run não há snapshot nem volta atrás automática.
 
 ### Antes de instalar
@@ -130,7 +130,7 @@ qm guest exec 102 --timeout 1200 -- docker exec hassio_cli ha core update --vers
 - [ ] 🤖 **Só peças · firmware:** o dispositivo está ligado e com bateria ou corrente (um firmware interrompido pode estragar o dispositivo) — prova: o estado da entidade
 
 ### Depois de instalar
-- [ ] 🤖 A versão nova aparece instalada (ha_list_updates ou ha_overview; no OS, também `qm agent 102 get-osinfo` depois do reinício) — prova: a versão
+- [ ] 🤖 A versão nova aparece instalada (ha_list_updates ou ha_overview; no OS, também `qm agent 212 get-osinfo` depois do reinício) — prova: a versão
 - [ ] 🤖 Sem erros novos em ha_system_log desde a atualização, sobretudo da peça ou das integrações carregadas — prova: as linhas novas ou "nenhuma"
 - [ ] 🤖 As integrações carregadas são as mesmas de antes (ha_overview) — prova: as que faltam ou "todas"
 - [ ] 🤖 O que a usa continua a funcionar: as automações dela estão ligadas (ha_list_configs) e as entidades dela têm estado recente, não "unavailable" (ha_list_entities) — prova: o que se viu
@@ -140,7 +140,7 @@ qm guest exec 102 --timeout 1200 -- docker exec hassio_cli ha core update --vers
 
 Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam": a atualização fica em In progress, investiga-se, e o que é simples e seguro corrige-se e corre-se outra vez no mesmo processo (até 3 corridas). O que é desta app:
 
-- **Onde ver:** ha_system_log, o estado da peça em ha_list_updates e se as entidades dela estão "unavailable". No Core também `qm guest exec 102 --timeout 60 -- docker exec hassio_cli ha core logs` (só as últimas linhas, sem segredos).
+- **Onde ver:** ha_system_log, o estado da peça em ha_list_updates e se as entidades dela estão "unavailable". No Core também `qm guest exec 212 --timeout 60 -- docker exec hassio_cli ha core logs` (só as últimas linhas, sem segredos).
 - **Core:** diz-se se o MyHomeLab voltou ao snapshot e se o HA responde (o arranque pode levar alguns minutos).
 - **"Backup is not supported"** (500) no `update.install`: a entidade não aceita `backup`; repete-se sem ele (o backup do MyHomeLab de menos de 2 horas já cobre).
 - **"Open the Marketplace and read the warning first"** (500) no `update.install` de uma peça do HACS: o Marketplace tem um aviso por aceitar e só eu o aceito na interface (visto a 14/11/2026 no Ookla, no TP-Link Router e no UI Lovelace Minimalist). Não se contorna nem se repete: update_attempt_close e Waiting for reply, a pedir que o aceite. Enquanto não o aceitar, nenhuma peça do HACS se instala: as outras em Ready to update ficam à espera com a mesma pergunta, sem tentar.
@@ -151,5 +151,5 @@ Segue "Quando falha" em "Atualizações das apps e do Proxmox – como funcionam
 - Instalar mais do que a peça da tarefa, ou várias peças de uma vez.
 - Usar update.skip, mudar o "atualizar sozinho", desinstalar add-ons ou integrações, ou mexer na configuração delas.
 - Restaurar backups ou voltar a um snapshot sem o meu sim (fora do rollback automático do update_run).
-- Reiniciar o Home Assistant ou o host fora de uma atualização que o peça (uma integração do HACS com "Restart of Home Assistant required" pede-o). Reiniciar a VM 102 para ativar um OS novo é sempre com o meu sim.
+- Reiniciar o Home Assistant ou o host fora de uma atualização que o peça (uma integração do HACS com "Restart of Home Assistant required" pede-o). Reiniciar a VM 212 para ativar um OS novo é sempre com o meu sim.
 - Mostrar o token, palavras-passe ou o conteúdo de secrets.yaml.

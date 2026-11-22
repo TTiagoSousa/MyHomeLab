@@ -188,9 +188,12 @@ export function buildServerControlTools(context: AgentContext): AgentTool[] {
 
 /** Nível 2: comandos por SSH. Correm logo e ficam registados; as regras estão nos documentos. */
 export function buildServerShellTools(context: AgentContext): AgentTool[] {
+  // Quem pediu fica no registo: o agente que chamou, não o primeiro com a ferramenta.
   const agentKey =
+    context.agentKey ??
     context.team.find((agent) => agent.tools.includes('server_run_command'))
-      ?.key ?? 'infra';
+      ?.key ??
+    'infra';
 
   return [
     {
@@ -204,7 +207,7 @@ export function buildServerShellTools(context: AgentContext): AgentTool[] {
     {
       name: 'server_run_command',
       description:
-        'Corre um comando no servidor por SSH (no host do Proxmox; num CT usa "pct exec <vmid> -- comando"). Corre logo e fica registado. O código não trava nada: antes de alterar, segue as regras dos documentos (do servidor, da app e "Quando corro sem ti"). Só contam como leitura os comandos simples de uma lista fechada (cat, ls, grep, systemctl status, docker ps…); os outros — incluindo interpretadores e scripts como python, node, bash -c ou sqlite3 — contam como alteração e, numa máquina, levam antes um snapshot dela.',
+        'Corre um comando no servidor por SSH (no host do Proxmox; num CT usa "pct exec <vmid> -- comando"). Corre logo e fica registado. Num disparo (sem ele a ver) só correm leituras e "systemctl restart <serviço>". Antes de alterar, segue as regras dos documentos (do servidor, da app e "Quando corro sem ti"). Só contam como leitura os comandos simples de uma lista fechada (cat, ls, grep, systemctl status, docker ps…); os outros — incluindo interpretadores e scripts como python, node, bash -c ou sqlite3 — contam como alteração e, numa máquina, levam antes um snapshot dela.',
       inputSchema: {
         type: 'object',
         properties: {

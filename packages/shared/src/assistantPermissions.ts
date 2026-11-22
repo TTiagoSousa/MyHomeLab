@@ -22,7 +22,8 @@ export interface AssistantPermissionArea {
  * recusar. Por omissão está tudo ligado.
  */
 export const ASSISTANT_PERMISSION_AREAS: readonly AssistantPermissionArea[] = [
-  { key: 'email', group: 'email', access: ['read'] },
+  { key: 'email', group: 'email', access: ['read', 'write'] },
+  { key: 'emailSend', group: 'email', access: ['write'] },
   { key: 'emailRules', group: 'email', access: ['read', 'write'] },
   { key: 'todos', group: 'organization', access: ['read', 'write'] },
   { key: 'healthSleep', group: 'health', access: ['read'] },
@@ -63,6 +64,7 @@ export const ASSISTANT_PERMISSION_AREAS: readonly AssistantPermissionArea[] = [
   { key: 'team', group: 'assistant', access: ['read', 'write'] },
   { key: 'prompts', group: 'assistant', access: ['read', 'write'] },
   { key: 'docs', group: 'assistant', access: ['read', 'write'] },
+  { key: 'chatFiles', group: 'assistant', access: ['read'] },
   { key: 'schedules', group: 'assistant', access: ['read', 'write'] },
   { key: 'board', group: 'assistant', access: ['read', 'write'] },
 ];

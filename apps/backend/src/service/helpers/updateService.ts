@@ -13,18 +13,26 @@ export async function updateService(
 ) {
   const existing = await findService(id, userId, serviceRepository);
   const newCategoryId = dto.categoryId;
-  const isMovingCategory = !!newCategoryId && newCategoryId !== existing.categoryId;
+  const isMovingCategory =
+    !!newCategoryId && newCategoryId !== existing.categoryId;
 
   if (!isMovingCategory) {
     return serviceRepository.update(id, dto);
   }
 
   const category = await categoryRepository.findById(newCategoryId);
-  if (!category || category.userId !== userId) throw new NotFoundException('Categoria não encontrada');
+  if (!category || category.userId !== userId)
+    throw new NotFoundException('Categoria não encontrada');
 
   const newOrder = await serviceRepository.countByCategory(newCategoryId);
-  const updated = await serviceRepository.update(id, { ...dto, order: newOrder });
-  await serviceRepository.decrementOrderAfter(existing.categoryId, existing.order);
+  const updated = await serviceRepository.update(id, {
+    ...dto,
+    order: newOrder,
+  });
+  await serviceRepository.decrementOrderAfter(
+    existing.categoryId,
+    existing.order,
+  );
 
   return updated;
 }

@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { ServiceService } from './service.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -13,7 +24,10 @@ export class ServiceController {
   constructor(private readonly serviceService: ServiceService) {}
 
   @Post()
-  create(@Body() dto: CreateServiceDto, @Req() req: Request & { user: JwtPayload }) {
+  create(
+    @Body() dto: CreateServiceDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
     return this.serviceService.create(dto, req.user.id);
   }
 
@@ -28,7 +42,10 @@ export class ServiceController {
   }
 
   @Patch('reorder')
-  reorder(@Body() dto: ReorderServiceDto, @Req() req: Request & { user: JwtPayload }) {
+  reorder(
+    @Body() dto: ReorderServiceDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
     return this.serviceService.reorder(dto, req.user.id);
   }
 

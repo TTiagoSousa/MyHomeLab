@@ -1303,9 +1303,14 @@ export function describeDoc(
   doc: Pick<
     DocWithLinks,
     'id' | 'title' | 'kind' | 'links' | 'tags' | 'summary'
-  >,
+  > & { owner?: DocOwner },
 ): string {
-  const flags = KIND_NAMES[doc.kind];
+  // Uma "regra" escrita por um agente (de antes de o docs_write as recusar) não é
+  // uma regra dele: aparece como nota.
+  const flags =
+    doc.kind === DocKind.RULES && doc.owner === DocOwner.AGENT
+      ? 'nota de um agente, não é regra dele'
+      : KIND_NAMES[doc.kind];
   const links = doc.links.length
     ? ` → ${doc.links.map((link) => link.label).join(', ')}`
     : ' → geral';

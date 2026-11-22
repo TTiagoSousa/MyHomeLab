@@ -15,18 +15,18 @@ export function studyRequest(update: UpdateWithAccount): string {
     (update.account
       ? '. Segue "Atualizações das apps e do Proxmox – como funcionam" e as regras da app (os documentos dela vêm no fim deste pedido e mandam nos pormenores): update_release_notes, ' +
         'update_known_issues, as regras do estudo, e no fim update_save_study. ' +
-        'Os documentos da app vêm no fim deste pedido: segue-os à letra. No fim decides: install (instalas tu já — só risco baixo, sem salto major nem passos à mão, quando as regras passam), todo (recomendas, mas a decisão é dele), waiting (uma pergunta que só ele responde) ou later. Um salto major ou outra versão melhor não são perguntas: ficam na recomendação. ' +
+        'Os documentos da app vêm no fim deste pedido: segue-os à letra. No fim decides: install (instalas tu já — só risco baixo, sem salto major nem passos à mão, quando as regras passam), recommend (recomendas, mas a decisão é dele: usa-o quando achas que é importante ele decidir), waiting (uma pergunta que só ele responde) ou later. Um salto major ou outra versão melhor não são perguntas: ficam na recomendação. ' +
         'O que precisa de ser lido ou verificado lê-se e verifica-se agora, no estudo; as decisões dele vão todas numa só pergunta. Passos à mão (manualSteps) só se forem reais na instalação.'
       : `. É o próprio servidor (o host Proxmox VE de ${update.hostServer?.name ?? 'servidor'}), não uma app: não há snapshot do host. ` +
         (update.hostPackages !== null
           ? `Não há versão nova do Proxmox VE: são ${update.hostPackages} pacotes do sistema (Debian) por atualizar. ` +
             'Segue as regras do servidor (os documentos dele vêm no fim deste pedido): o mapa do servidor, update_release_notes (a lista dos pacotes, de → para), ' +
             'quais são de segurança, se há kernel ou pacotes do Proxmox (pede reinício?), e no fim update_save_study. ' +
-            'Decide: recomendar (next todo) ou Ver mais tarde. No host não instalas sozinho: recomendar fica em Waiting for reply e é ele que a põe em Ready to update. ' +
+            'Decide: install (só com risco baixo: o MyHomeLab instala logo), recommend (a decisão é dele, em Waiting for reply) ou later. ' +
             'Sem passos à mão (manualSteps vazio): o que for preciso depois, como reiniciar, fica escrito no estudo.'
           : 'Segue as regras do servidor (os documentos dele vêm no fim deste pedido): o mapa do servidor, update_release_notes (o changelog do pve-manager), ' +
             'update_known_issues (o fórum e o bugzilla do Proxmox não se conseguem ler: se não vier nada, escreve "não se consegue ver"; não sobe o risco nem bloqueia, e não lhe pedes para ir lá ver), os pacotes por atualizar e se há kernel novo (pede reinício), e no fim update_save_study. ' +
-            '"Pronta" fica à espera da autorização dele (é ele que a põe em Ready to update e instala-se logo). Sem passos à mão (manualSteps vazio).')) +
+            'Decide: install (só com risco baixo: o MyHomeLab instala logo), recommend (a decisão é dele, em Waiting for reply) ou later. Sem passos à mão (manualSteps vazio).')) +
     (update.component && update.account?.provider === 'NEXTCLOUD'
       ? ` É uma app DENTRO do Nextcloud (${update.componentTitle}, id ${update.component}): as notas e as issues são as do repositório dela (a ficha está em ${update.releaseUrl ?? 'https://apps.nextcloud.com'}); segue as regras do Nextcloud (as das apps lá dentro valem, as só do servidor não se aplicam). Instala-se com o occ na máquina do Nextcloud (occ app:update ${update.component}; num CT por pct exec, numa VM por qm guest exec), com snapshot antes, como a app. As apps instaladas veem-se com nextcloud_list_apps, sem comandos na máquina.`
       : '') +

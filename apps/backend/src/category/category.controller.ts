@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -13,7 +24,10 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  create(@Body() dto: CreateCategoryDto, @Req() req: Request & { user: JwtPayload }) {
+  create(
+    @Body() dto: CreateCategoryDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
     return this.categoryService.create(dto, req.user.id);
   }
 
@@ -33,7 +47,10 @@ export class CategoryController {
   }
 
   @Patch('reorder')
-  reorder(@Body() dto: ReorderCategoryDto, @Req() req: Request & { user: JwtPayload }) {
+  reorder(
+    @Body() dto: ReorderCategoryDto,
+    @Req() req: Request & { user: JwtPayload },
+  ) {
     return this.categoryService.reorder(dto, req.user.id);
   }
 

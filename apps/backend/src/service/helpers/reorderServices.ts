@@ -10,11 +10,14 @@ export async function reorderServices(
   categoryRepository: PrismaCategoryRepository,
 ) {
   const category = await categoryRepository.findById(dto.categoryId);
-  if (!category || category.userId !== userId) throw new NotFoundException('Categoria não encontrada');
+  if (!category || category.userId !== userId)
+    throw new NotFoundException('Categoria não encontrada');
 
   const services = await serviceRepository.findAllByUser(userId);
   const categoryServiceIds = new Set(
-    services.filter((service) => service.categoryId === dto.categoryId).map((service) => service.id),
+    services
+      .filter((service) => service.categoryId === dto.categoryId)
+      .map((service) => service.id),
   );
 
   const sameSize = dto.orderedIds.length === categoryServiceIds.size;

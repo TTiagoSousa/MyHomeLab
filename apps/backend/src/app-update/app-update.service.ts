@@ -850,7 +850,9 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
                 ? 'tem passos à mão'
                 : null;
     const autonomous = input.next === 'install' && !blocked;
-    const recommended = input.next === 'todo' || Boolean(blocked);
+    // "todo" é o nome antigo de "recommend".
+    const recommended =
+      input.next === 'recommend' || input.next === 'todo' || Boolean(blocked);
     const question = recommended
       ? `Recomendo instalar ${updateLabel(update)} ${update.toVersion} (risco ${RISK[input.risk]}${blocked ? `; não instalo sozinho porque ${blocked}` : ''}): ${input.recommendation.trim()} ${updateAfter && updateAfter > now() ? `Se concordas, carrega em "Sim, instalar" a partir de ${day(updateAfter)}: se carregares antes, instala-se logo, antes dessa data.` : `Se concordas, carrega em "Sim, instalar" e instala-se logo.`} Senão, Mais tarde ou Cancelar.`
       : input.question?.trim();
@@ -1453,14 +1455,20 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
       where: { id: change.updateId },
     });
     if (!update || wanted === update.status) return;
+    // Ready to update instala-se: só ele põe lá a tarefa. Um agente que a arraste
+    // (pelo board_update) vê-a voltar para trás; ele aprova na tarefa ou no cartão.
+    const agentApproving =
+      wanted === AppUpdateStatus.READY && change.actor !== 'user';
     // Uma mudança que não se pode fazer daqui: a tarefa volta à coluna do estado dela
     // (senão o quadro e a atualização ficavam a dizer coisas diferentes).
-    if (!wanted || !boardMoveAllowed(update, wanted)) {
+    if (!wanted || agentApproving || !boardMoveAllowed(update, wanted)) {
       if (change.toKey === BOARD_STATUS[update.status]) return;
       await this.record.save(
         update,
         {},
-        `🖐 Não se pode mudar para "${change.toKey}" agora (está em ${STATUS_NAMES[update.status]}): voltou à coluna dela.`,
+        agentApproving
+          ? `🖐 Só tu aprovas uma instalação: ${change.actor} pôs a tarefa em "${change.toKey}" e ela voltou à coluna dela.`
+          : `🖐 Não se pode mudar para "${change.toKey}" agora (está em ${STATUS_NAMES[update.status]}): voltou à coluna dela.`,
       );
       return;
     }

@@ -35,7 +35,7 @@ const config: ExpoConfig = {
   userInterfaceStyle: 'automatic',
   backgroundColor: '#060B12',
   android: {
-    package: 'me.homesousa.myhomelab',
+    package: 'io.github.ttiagosousa.myhomelab',
     versionCode,
     adaptiveIcon: {
       backgroundColor: '#060B12',

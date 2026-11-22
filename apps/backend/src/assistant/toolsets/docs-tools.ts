@@ -1,3 +1,4 @@
+import { chatDecisionBlock } from 'src/chat-approval/helpers/chatDecisionBlock';
 import { AgentTool } from '../claude-agent.client';
 import { AgentContext } from '../agents/agent-context';
 import {
@@ -166,13 +167,18 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
         links?: LinkInput;
       }) => {
         const author = { kind: 'agent' as const, key: agentKey };
+        // Uma regra escrita por um agente valia como uma regra dele. As regras só
+        // nascem por docs_propose, que ele aprova.
+        if (input.kind === DocKind.RULES) {
+          return 'Regras não se escrevem aqui: propõe-nas com docs_propose (ele aprova). Para o que viste ou fizeste, usa MAP ou LOG.';
+        }
         if (input.doc) {
           const doc = await context.docs.findForAgent(
             context.userId,
             input.doc,
           );
           if (typeof doc === 'string') return doc;
-          if (doc.owner !== DocOwner.AGENT) {
+          if (doc.owner !== DocOwner.AGENT || doc.kind === DocKind.RULES) {
             return `"${doc.title}" é do utilizador: propõe a mudança com docs_propose (ele aprova em Documentos).`;
           }
           await context.docs.update(
@@ -638,10 +644,17 @@ export function buildDocsTools(context: AgentContext): AgentTool[] {
           }
           proposal = here[0];
         }
-        // Proposta e decisão na mesma volta seria aprovar sem ele a ver.
-        if (proposal.turnId && proposal.turnId === context.turnId) {
-          return 'Propuseste-a nesta mesma resposta: mostra-lha e espera que ele diga que aprova numa mensagem nova.';
-        }
+        // Só uma proposta desta conversa, feita numa volta anterior, e no agente de topo:
+        // as de um disparo ou de outra conversa decidem-se em Documentos ou na tarefa.
+        const blocked = chatDecisionBlock(
+          {
+            status: 'PENDING',
+            conversationId: proposal.conversationId,
+            turnId: proposal.turnId,
+          },
+          context,
+        );
+        if (blocked) return blocked;
         const label = labelOf(proposal);
         if (input.decision === 'reject') {
           await context.docs.reject(context.userId, proposal.id);

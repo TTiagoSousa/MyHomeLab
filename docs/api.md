@@ -291,6 +291,9 @@ SSH uses trust on first use: the first connection stores the server's host key f
 | GET | `/docs/proposals` | Pending agent proposals, each with `changes` (title, section, links and tags it would change); `?conversationId=` keeps only those made in that chat conversation |
 | POST | `/docs/proposals/:id/approve` | Approve a proposal (optionally edited) |
 | POST | `/docs/proposals/:id/reject` | Reject a proposal |
+| GET | `/chat-approvals?conversationId=` | Pending chat cards of a conversation: an email to send, a team change or an update to install, waiting for the user's yes |
+| POST | `/chat-approvals/:id/approve` | Approve a card: sends the email, applies the team change or puts the update in Ready to update (`status` FAILED with `result` when it fails) |
+| POST | `/chat-approvals/:id/reject` | Reject a card |
 | POST | `/docs/starter` | Create any missing starter documents (general rules, process docs, one rules doc per connected app) |
 | GET | `/docs/sections` | The user's sections (`{ id, name, parentId, position }`) |
 | POST | `/docs/sections` | Create a section (`{ name, parentId? }`) |

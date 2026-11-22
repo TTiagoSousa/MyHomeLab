@@ -42,7 +42,21 @@ encrypted with `TOKEN_ENCRYPTION_KEY` and only decrypted inside repositories.
 ### Against a shared development database
 
 `migrate dev` may ask to reset the database when it detects drift. On a database you share
-or care about, generate the SQL instead, review it, and apply it with `migrate deploy`:
+or care about, generate the SQL instead, review it, and apply it with `migrate deploy`. The helper
+script does the diff and names the folder for you:
+
+```bash
+npm run migration:new -w @myhomelab/backend -- <short_name>
+# review prisma/migrations/<prefix>_<short_name>/migration.sql, then
+cd apps/backend && npx prisma migrate deploy
+```
+
+Prisma applies migrations in folder-name order, and some existing folders carry dates
+ahead of the calendar. A new folder must always sort **after the last one**: the script
+uses the current time, or one minute after the last migration when that is later. Never
+rename a folder that has already been applied anywhere.
+
+By hand:
 
 ```bash
 cd apps/backend

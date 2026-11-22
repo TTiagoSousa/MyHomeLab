@@ -1,5 +1,6 @@
 import { Client, ClientConfig, QueryConfig, QueryResult } from 'pg';
 import { AppIntegrationError } from 'src/integrations/app-integration.error';
+import { readOnlyStatementProblem } from './helpers/readOnlyStatement';
 import { AppRelease, compareVersions } from 'src/integrations/releases';
 
 // O PostgreSQL ligado diretamente (pacote pg), sem API nem MCP no meio: o servidor tem de ser
@@ -191,10 +192,18 @@ export async function readOnlyQuery(
   sql: string,
   maxRows: number,
 ): Promise<{ result: QueryResult; truncated: boolean }> {
+  const problem = readOnlyStatementProblem(sql);
+  if (problem) throw new Error(problem);
   const statement = strip(sql);
   const wrap = /^\s*(select|with|values|table)\b/i.test(statement);
   await client.query('BEGIN READ ONLY');
   try {
+    // Com o papel pg_read_all_data (PostgreSQL 14+) a consulta não tem os poderes de
+    // superutilizador da ligação. Se a ligação não o puder usar, fica como estava.
+    await client.query('SAVEPOINT leitura');
+    await client
+      .query('SET LOCAL ROLE pg_read_all_data')
+      .catch(() => client.query('ROLLBACK TO SAVEPOINT leitura'));
     const result = await client.query({
       text: wrap
         ? `SELECT * FROM (\n${statement}\n) AS consulta LIMIT ${maxRows + 1}`

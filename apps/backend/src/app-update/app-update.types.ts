@@ -35,7 +35,7 @@ export interface StudyInput {
   study: string;
   risk: 'low' | 'medium' | 'high';
   recommendation: string;
-  next: 'install' | 'todo' | 'waiting' | 'later';
+  next: 'install' | 'recommend' | 'todo' | 'waiting' | 'later';
   question?: string;
   recheckInDays?: number;
   updateAfter?: string;

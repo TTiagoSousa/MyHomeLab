@@ -78,13 +78,23 @@ describe('postgres client', () => {
       2,
     );
     expect(queries[0].text).toBe('BEGIN READ ONLY');
-    expect(queries[1].text).toMatchObject({
+    expect(queries[1].text).toBe('SAVEPOINT leitura');
+    expect(queries[2].text).toBe('SET LOCAL ROLE pg_read_all_data');
+    expect(queries[3].text).toMatchObject({
       text: 'SELECT * FROM (\nSELECT a FROM t\n) AS consulta LIMIT 3',
       queryMode: 'extended',
     });
-    expect(queries[2].text).toBe('ROLLBACK');
+    expect(queries[4].text).toBe('ROLLBACK');
     expect(result.rows).toEqual([{ a: 1 }, { a: 2 }]);
     expect(truncated).toBe(true);
+  });
+
+  it('refuses COPY … TO PROGRAM before touching the server', async () => {
+    const client = new Client();
+    await expect(
+      readOnlyQuery(client, "COPY (SELECT 1) TO PROGRAM 'sh'", 2),
+    ).rejects.toThrow(/só aceita leituras/);
+    expect(queries).toHaveLength(0);
   });
 
   it('maps a wrong password', async () => {

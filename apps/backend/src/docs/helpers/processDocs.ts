@@ -74,7 +74,7 @@ O estudo responde a três perguntas, com prova:
 
 | Situação | Fica em |
 |---|---|
-| Nada parte para nós e volta-se atrás | Ready to update: instala-se já |
+| Nada parte para nós e volta-se atrás | Ready to update: instala-se já, e no fim diz-se o que se fez |
 | Uma issue grave aberta que nos afeta, com correção a caminho | Recheck later |
 | Salto major, risco alto, passos à mão, ou o host | Waiting for reply, com a recomendação |
 | Uma escolha que só eu faço | Waiting for reply, com a pergunta |

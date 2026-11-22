@@ -13,7 +13,8 @@ export async function updateCategory(
 
   if (dto.name) {
     const exists = await categoryRepository.findByUserAndName(userId, dto.name);
-    if (exists && exists.id !== id) throw new ConflictException('Categoria já existe');
+    if (exists && exists.id !== id)
+      throw new ConflictException('Categoria já existe');
   }
 
   return categoryRepository.update(id, dto);

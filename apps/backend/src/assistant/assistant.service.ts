@@ -48,6 +48,7 @@ import {
   docsSection,
 } from 'src/agent/helpers/composeSystemPrompt';
 import { guardTools } from 'src/agent/helpers/assistantToolPermissions';
+import { ChatApprovalService } from 'src/chat-approval/chat-approval.service';
 import {
   BRIDGE_PREFIX,
   BRIDGE_SERVER,
@@ -225,6 +226,7 @@ export class AssistantService {
     private readonly aiUsage: AiUsageService,
     private readonly chatFiles: ChatFileService,
     private readonly drive: DriveService,
+    private readonly approvals: ChatApprovalService,
   ) {}
 
   private buildContext(
@@ -270,6 +272,7 @@ export class AssistantService {
       todos: this.todos,
       chatFiles: this.chatFiles,
       drive: this.drive,
+      approvals: this.approvals,
       health: {
         sleep: this.sleep,
         heart: this.heartRate,
@@ -380,7 +383,11 @@ export class AssistantService {
         userId: schedule.userId,
         conversationId: conversation.id,
         role: ChatRole.ASSISTANT,
-        content: reply.trim(),
+        // Na conversa seguinte o Jarvis lê isto como dele: a primeira linha diz que foi
+        // um disparo a correr sozinho, não uma volta com ele.
+        content: `_Disparo «${schedule.title}» — correu sozinho, sem ti._
+
+${reply.trim()}`,
       },
     });
     return conversation;
@@ -591,6 +598,7 @@ export class AssistantService {
     );
     context.conversationId = thread.id;
     context.filesInTurn = files.length > 0;
+    context.userMessage = message;
 
     // Estado que muda de volta para volta entra aqui, no fim das mensagens — e
     // nunca no system prompt, que tem de ficar byte a byte igual para a cache
@@ -599,6 +607,7 @@ export class AssistantService {
     const notice = [
       taskNotice,
       describePendingProposals(context).trim(),
+      await this.describePendingApprovals(user.id, thread.id),
       await this.describeWaitingUpdates(user.id),
     ]
       .filter(Boolean)
@@ -733,6 +742,21 @@ export class AssistantService {
         .join('\n') +
       '\nSe ele responder a uma destas, passa a resposta ao agente que trata das atualizações (que a regista com update_set_status ou volta a preparar a atualização).'
     );
+  }
+
+  /** Os cartões do chat por decidir nesta conversa (enviar, mudar a equipa, instalar). */
+  private async describePendingApprovals(
+    userId: string,
+    conversationId: string,
+  ): Promise<string> {
+    const pending = await this.approvals.describePending(
+      userId,
+      conversationId,
+    );
+    return pending
+      ? `Cartões por decidir nesta conversa (só ele decide: no cartão, ou dizendo-te numa mensagem nova — aí usas approval_decide):
+${pending}`
+      : '';
   }
 
   /**

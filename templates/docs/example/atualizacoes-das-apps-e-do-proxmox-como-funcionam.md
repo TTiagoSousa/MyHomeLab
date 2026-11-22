@@ -70,7 +70,7 @@ O estudo responde a três perguntas, cada uma com prova.
 |---|---|---|
 | Nada parte para nós e volta-se atrás | `install` | Ready to update: instala-se já |
 | Uma issue grave aberta que nos afeta, com correção a caminho | `later` (os dias até à correção prevista; sem data, 7) | Recheck later |
-| Salto major, risco alto, passos à mão, ou o host com risco médio ou alto | `todo` | Waiting for reply, com a recomendação |
+| Salto major, risco alto, passos à mão, ou o host com risco médio ou alto | `recommend` | Waiting for reply, com a recomendação |
 | Uma escolha que só eu faço (um passo que muda privacidade ou dados, algo que não se desfaz) | `waiting` | Waiting for reply, com uma pergunta |
 
 - **Risco:**
@@ -98,14 +98,14 @@ No campo `summary` vai isto. Os pormenores (o que se leu, os links, as mediçõe
 **Pode, sem me perguntar:**
 - Estudar, instalar e verificar tudo o que a tabela manda instalar.
 - Correr o backup do MyHomeLab (run_backup), tirar o snapshot (update_run) e limpar as caches e as imagens antigas que o documento da app autoriza.
-- Resolver um ponto de "Antes de instalar" que falha, quando a solução é segura: correr o backup que falta, libertar espaço apagando caches ou imagens antigas, esperar que a app acabe de arrancar.
+- Resolver um ponto de "Antes de instalar" que falha, quando a solução é segura: correr o backup que falta, libertar espaço apagando caches ou imagens antigas, aumentar 10% o disco ou a memória de uma máquina acima do limite, esperar que a app acabe de arrancar.
 - Contornar uma falha da instalação, como diz "Quando falha".
 - Corrigir no documento da app um comando, um caminho ou um formato que se provou estar errado (docs_write, fica a versão anterior), e dizer-mo no relatório.
 - Marcar como "não se aplica" um ponto que nenhuma ferramenta consegue ver, com o porquê.
 
-**Espera por mim (Waiting for reply):** só o que está na tabela (`todo` e `waiting`), e:
+**Espera por mim (Waiting for reply):** só o que está na tabela (`recommend` e `waiting`), e:
 - reiniciar o host;
-- aumentar um disco ou os recursos de uma máquina;
+- aumentar um disco ou os recursos de uma máquina mais do que esses 10%;
 - restaurar um backup, ou voltar a um snapshot fora do update_run;
 - mudar uma regra de segurança de um documento: isso é por proposta (docs_propose), não por docs_write.
 

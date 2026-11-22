@@ -7,12 +7,11 @@ import {
   discardAgentPrompt,
 } from '../tools/manageAgentPrompts';
 import {
-  createAgent,
-  deleteAgent,
   listAvailableTools,
   listTeam,
-  updateAgent,
+  planAgentChange,
 } from '../tools/manageTeam';
+import type { AgentChangePayload } from 'src/chat-approval/chat-approval.types';
 
 const AGENT = {
   type: 'string' as const,
@@ -65,7 +64,7 @@ export function buildTeamTools(context: AgentContext): AgentTool[] {
     {
       name: 'create_agent',
       description:
-        'Cria um agente novo na equipa, já com tudo: nome, descrição, instruções completas, modelo, esforço, ferramentas e a quem responde (por omissão, a ti). Fica ativo a partir da próxima mensagem.',
+        'Propõe um agente novo na equipa, já com tudo: nome, descrição, instruções completas, modelo, esforço, ferramentas e a quem responde (por omissão, a ti). Não cria logo: aparece-lhe um cartão no chat e só fica criado quando ele aprova.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -91,13 +90,13 @@ export function buildTeamTools(context: AgentContext): AgentTool[] {
         },
         required: ['name', 'description', 'prompt', 'tools'],
       },
-      handler: (input: Parameters<typeof createAgent>[0]) =>
-        createAgent(input, context),
+      handler: (input: Record<string, unknown>) =>
+        proposeChange('create', input, context),
     },
     {
       name: 'update_agent',
       description:
-        'Muda um agente da equipa (menos tu): nome, descrição, instruções, modelo, esforço, ferramentas (todas, ou só acrescentar/tirar), a quem responde, ou liga/desliga. Só muda o que passares.',
+        'Propõe uma mudança a um agente da equipa (menos tu): nome, descrição, instruções, modelo, esforço, ferramentas (todas, ou só acrescentar/tirar), a quem responde, ou liga/desliga. Só muda o que passares, e só quando ele aprova o cartão no chat.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -125,19 +124,44 @@ export function buildTeamTools(context: AgentContext): AgentTool[] {
         },
         required: ['agent'],
       },
-      handler: (input: Parameters<typeof updateAgent>[0]) =>
-        updateAgent(input, context),
+      handler: (input: Record<string, unknown>) =>
+        proposeChange('update', input, context),
     },
     {
       name: 'delete_agent',
       description:
-        'Apaga um agente da equipa (não o CEO). Quem lhe respondia passa a responder ao chefe dele. Só com pedido explícito do utilizador.',
+        'Propõe apagar um agente da equipa (não o CEO). Quem lhe respondia passa a responder ao chefe dele. Fica apagado quando ele aprova o cartão no chat.',
       inputSchema: {
         type: 'object',
         properties: { agent: AGENT },
         required: ['agent'],
       },
-      handler: (input: { agent: string }) => deleteAgent(input, context),
+      handler: (input: Record<string, unknown>) =>
+        proposeChange('delete', input, context),
+    },
+    {
+      name: 'approval_decide',
+      description:
+        'Aprova ou recusa um cartão do chat (enviar um email, mudar a equipa, instalar uma atualização) quando ele o diz numa mensagem nova ("aprovo", "envia", "não"). Só no chat, para um cartão desta conversa feito numa resposta anterior; nunca por iniciativa tua.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            description:
+              'O id do cartão (vem na lista dos que estão por decidir).',
+          },
+          decision: { type: 'string', enum: ['approve', 'reject'] },
+        },
+        required: ['id', 'decision'],
+      },
+      handler: (input: { id: string; decision: 'approve' | 'reject' }) =>
+        context.approvals.decideFromChat(
+          context.userId,
+          input.id,
+          input.decision,
+          context,
+        ),
     },
     {
       name: 'list_agent_prompts',
@@ -219,4 +243,30 @@ export function buildTeamTools(context: AgentContext): AgentTool[] {
         Promise.resolve(discardAgentPrompt(input, context)),
     },
   ];
+}
+
+/** create_agent, update_agent e delete_agent: um cartão no chat, que ele aprova. */
+async function proposeChange(
+  action: AgentChangePayload['action'],
+  input: Record<string, unknown>,
+  context: AgentContext,
+): Promise<string> {
+  if (context.source !== 'chat' || !context.conversationId) {
+    return 'Recusado: mudar a equipa só se faz no chat, com o sim dele num cartão. Diz-lhe o que propões no aviso.';
+  }
+  const plan = planAgentChange(action, input, context);
+  if (typeof plan === 'string') return plan;
+  const approval = await context.approvals.create(
+    context.userId,
+    'AGENT_CHANGE',
+    context.agentKey ?? 'ceo',
+    plan,
+    { conversationId: context.conversationId, turnId: context.turnId },
+    (payload) =>
+      (payload as unknown as AgentChangePayload).agentName === plan.agentName,
+  );
+  return (
+    `Proposta registada (${approval.id}): aparece-lhe um cartão no chat com o que muda, e só acontece quando ele carrega em Aprovar. ` +
+    'Diz-lhe numa frase o que propões. Se ele responder que aprova numa mensagem nova, o Jarvis decide com approval_decide.'
+  );
 }

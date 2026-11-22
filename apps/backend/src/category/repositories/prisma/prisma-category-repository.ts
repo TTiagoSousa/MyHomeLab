@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CategoryRepository, CategoryWithServices } from '../category-repository';
+import {
+  CategoryRepository,
+  CategoryWithServices,
+} from '../category-repository';
 import { Category } from 'src/generated/prisma/client/client';
 
 @Injectable()
@@ -11,15 +14,25 @@ export class PrismaCategoryRepository implements CategoryRepository {
     return this.prisma.category.findUnique({ where: { id } });
   }
 
-  async findByUserAndName(userId: string, name: string): Promise<Category | null> {
-    return this.prisma.category.findUnique({ where: { userId_name: { userId, name } } });
+  async findByUserAndName(
+    userId: string,
+    name: string,
+  ): Promise<Category | null> {
+    return this.prisma.category.findUnique({
+      where: { userId_name: { userId, name } },
+    });
   }
 
   async findAllByUser(userId: string): Promise<Category[]> {
-    return this.prisma.category.findMany({ where: { userId }, orderBy: { order: 'asc' } });
+    return this.prisma.category.findMany({
+      where: { userId },
+      orderBy: { order: 'asc' },
+    });
   }
 
-  async findAllByUserWithServices(userId: string): Promise<CategoryWithServices[]> {
+  async findAllByUserWithServices(
+    userId: string,
+  ): Promise<CategoryWithServices[]> {
     return this.prisma.category.findMany({
       where: { userId },
       include: { services: { orderBy: { order: 'asc' } } },
@@ -31,7 +44,11 @@ export class PrismaCategoryRepository implements CategoryRepository {
     return this.prisma.category.count({ where: { userId } });
   }
 
-  async create(data: { name: string; userId: string; order: number }): Promise<Category> {
+  async create(data: {
+    name: string;
+    userId: string;
+    order: number;
+  }): Promise<Category> {
     return this.prisma.category.create({ data });
   }
 

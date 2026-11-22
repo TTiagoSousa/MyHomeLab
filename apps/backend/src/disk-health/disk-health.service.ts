@@ -15,6 +15,7 @@ import {
   createProxmoxClient,
   ProxmoxClient,
   ProxmoxDisk,
+  ProxmoxZfsPool,
 } from 'src/proxmox/proxmox.client';
 import { parseSmart } from './helpers/parseSmart';
 import { DiskIssue, DiskSnapshot, evaluateDisk } from './helpers/evaluateDisk';
@@ -267,7 +268,7 @@ export class DiskHealthService {
     const [disks, pools] = await Promise.all([
       client.listDisks(node),
       // Sem ZFS (ou sem o pacote), o Proxmox responde com erro — não há pools.
-      client.listZfsPools(node).catch(() => []),
+      client.listZfsPools(node).catch((): ProxmoxZfsPool[] => []),
     ]);
 
     const views: DiskView[] = [];

@@ -27,7 +27,8 @@
     "docsUsed": "Documents used:",
     "openTask": "Open task {{key}}",
     "proposal": "Proposal to decide",
-    "proposalHint": "Approve or reject it here, or tell Jarvis you approve."
+    "proposalHint": "Approve or reject it here, or tell Jarvis you approve.",
+    "approvalHint": "Approve or reject here, or tell Jarvis."
   },
   "core": {
     "working": "working"
@@ -116,7 +117,15 @@
       "areas": {
         "email": {
           "name": "Emails",
-          "description": "Read and summarise emails, search and analyse the inbox."
+          "description": "Read and summarise emails, search and analyse the inbox. Change means archive, label, mark as read and move to the bin."
+        },
+        "chatFiles": {
+          "name": "Chat files",
+          "description": "Read the files you send in the chat (PDF, Word, Excel…) and answer questions about them."
+        },
+        "emailSend": {
+          "name": "Send emails",
+          "description": "Draft emails, replies and forwards. They only go out when you press Send on the chat card."
         },
         "emailRules": {
           "name": "Gmail rules",
@@ -659,7 +668,8 @@
       "infisical_folders": "See the folders",
       "infisical_secret_set": "Create or change a secret",
       "infisical_secret_delete": "Delete a secret",
-      "infisical_folder_create": "Create a folder"
+      "infisical_folder_create": "Create a folder",
+      "approval_decide": "Decide chat cards when you tell it"
     }
   },
   "conversations": {
@@ -708,5 +718,57 @@
     "unsupported": "I can’t read “{{name}}”. Attach PDF, Word (.docx), Excel (.xlsx), CSV, text or images.",
     "legacy": "“{{name}}” is in an old Office format. Save it as .docx or .xlsx.",
     "openFailed": "Couldn’t open the file."
+  },
+  "approvals": {
+    "label": "Needs your yes",
+    "by": "by {{agent}}",
+    "reject": "Reject",
+    "rejected": "Rejected.",
+    "failed": "It failed: {{reason}}",
+    "action": {
+      "EMAIL_SEND": "Send email",
+      "UPDATE_INSTALL": "Install update",
+      "AGENT_CHANGE": {
+        "create": "Create agent",
+        "update": "Change agent",
+        "delete": "Delete agent"
+      }
+    },
+    "approve": {
+      "EMAIL_SEND": "Send",
+      "AGENT_CHANGE": "Approve",
+      "UPDATE_INSTALL": "Install"
+    },
+    "done": {
+      "EMAIL_SEND": "Email sent.",
+      "AGENT_CHANGE": "Team updated.",
+      "UPDATE_INSTALL": "The update is now Ready to update."
+    },
+    "email": {
+      "to": "To",
+      "cc": "Cc",
+      "subject": "Subject",
+      "attachments": "Attachments",
+      "newRecipient": "⚠ New address: you have never exchanged emails with {{addresses}}."
+    },
+    "agent": {
+      "addedTools": "New tools",
+      "removedTools": "Removed tools",
+      "writes": "⚠ changes things",
+      "showPrompt": "Show the instructions",
+      "hidePrompt": "Hide the instructions",
+      "promptBefore": "Now",
+      "promptAfter": "Proposed",
+      "siteDefault": "(the site defaults)",
+      "deleteWarning": "Whoever reports to it will report to its boss.",
+      "fields": {
+        "name": "Name",
+        "description": "Description",
+        "model": "Model",
+        "effort": "Effort",
+        "reportsTo": "Reports to",
+        "active": "On"
+      }
+    }
   }
 }

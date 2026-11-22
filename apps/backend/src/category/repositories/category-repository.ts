@@ -8,7 +8,11 @@ export interface CategoryRepository {
   findAllByUser(userId: string): Promise<Category[]>;
   findAllByUserWithServices(userId: string): Promise<CategoryWithServices[]>;
   countByUser(userId: string): Promise<number>;
-  create(data: { name: string; userId: string; order: number }): Promise<Category>;
+  create(data: {
+    name: string;
+    userId: string;
+    order: number;
+  }): Promise<Category>;
   update(id: string, data: { name?: string }): Promise<Category>;
   delete(id: string): Promise<void>;
   decrementOrderAfter(userId: string, order: number): Promise<void>;

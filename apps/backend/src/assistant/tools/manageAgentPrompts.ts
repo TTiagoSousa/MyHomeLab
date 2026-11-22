@@ -123,6 +123,11 @@ export async function applyAgentPrompt(
       : 'Não há nenhuma proposta em aberto para aplicar.';
   }
 
+  // Só ele, no chat, com o agente de topo: num disparo ou num subagente o "sim" não é dele.
+  if (context.source !== 'chat' || (context.depth ?? 0) > 0) {
+    return 'Recusado: uma proposta de instruções só se aplica no chat, quando ele diz que sim ao Jarvis.';
+  }
+
   const check = context.promptProposals.authorise(
     id,
     context.turnId,

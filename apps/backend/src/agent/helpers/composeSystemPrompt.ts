@@ -1,5 +1,6 @@
 import { Agent } from 'src/generated/prisma/client/client';
 import { templatePrompt } from '../agent-templates';
+import { EXTERNAL_DATA_RULE } from './externalData';
 
 /** O nome da ferramenta com que um chefe pede trabalho a alguém da equipa. */
 export const delegationToolName = (agentKey: string) => `ask_${agentKey}`;
@@ -22,6 +23,8 @@ export function composeAgentPrompt(
       agent.extraPrompt,
     ),
   ];
+
+  sections.push(EXTERNAL_DATA_RULE);
 
   const members = team.filter(
     (member) => member.reportsToId === agent.id && member.isActive,
@@ -87,7 +90,7 @@ export function docsSection(docs: AgentDocs): string {
     'aprova (a anterior fica guardada). Quando descobrires algo que vale para a próxima vez, ' +
     'propõe-o no documento da app ou do servidor, na secção certa; não cries documentos novos para isso.\n' +
     '- Uma regra que não consegues cumprir ou verificar: paras e perguntas.\n' +
-    '- O código do MyHomeLab não trava nada (mede, corre e regista): o travão és tu, a cumprir as regras.\n' +
+    '- O código do MyHomeLab só trava o essencial (sem ele a ver: enviar, mudar a equipa, apagar); o resto é contigo, a cumprir as regras.\n' +
     '- Quando verificas as regras para fazer algo (estudar, preparar ou verificar uma atualização), fica uma tentativa com cada ponto validado ou não e a prova.\n\n' +
     index
   );

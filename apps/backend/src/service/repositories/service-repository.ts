@@ -36,5 +36,9 @@ export interface ServiceRepository {
   ): Promise<ServiceWithCategory>;
   delete(id: string): Promise<void>;
   decrementOrderAfter(categoryId: string, order: number): Promise<void>;
-  reorder(categoryId: string, userId: string, orderedIds: string[]): Promise<void>;
+  reorder(
+    categoryId: string,
+    userId: string,
+    orderedIds: string[],
+  ): Promise<void>;
 }

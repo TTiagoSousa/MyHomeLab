@@ -1949,6 +1949,13 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
   tool('update_agent', 'team', 'team', 'write', 'a mudar um agente'),
   tool('delete_agent', 'team', 'team', 'write', 'a apagar um agente'),
   tool(
+    'approval_decide',
+    'team',
+    'team',
+    'write',
+    'a decidir um cartão do chat',
+  ),
+  tool(
     'list_agent_prompts',
     'team',
     'team',
