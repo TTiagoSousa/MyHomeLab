@@ -143,6 +143,18 @@ export class NotificationService {
     });
   }
 
+  /** Fecha os avisos ativos de um tipo cujo assunto não está na lista (de todos os utilizadores). */
+  async resolveKindExcept(
+    kind: NotificationKind,
+    keep: string[],
+  ): Promise<void> {
+    await this.resolveWhere({
+      kind,
+      resolvedAt: null,
+      subject: { notIn: keep },
+    });
+  }
+
   /** Fecha os avisos de uma app ligada (ex: quando a conta é desligada). */
   async resolveConnectedAccount(connectedAccountId: string): Promise<void> {
     await this.resolveWhere({ connectedAccountId, resolvedAt: null });

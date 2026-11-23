@@ -349,9 +349,10 @@ systemctl enable "$SERVICE" >/dev/null
 install_claude_code() {
   msg "Installing Claude Code…"
   # Em / e não no repo: o npm, como root, leria o .npmrc da pasta onde está, e o repo é
-  # do utilizador da app.
-  if ( cd / && npm install -g --no-fund --no-audit @anthropic-ai/claude-code >/dev/null 2>&1 ); then
-    msg "Claude Code $(cd / && claude --version 2>/dev/null | head -1)"
+  # do utilizador da app. Com limite de tempo: um npm pendurado (rede, registo) não pode
+  # prender a instalação nem a atualização (que só reinicia o backend depois deste passo).
+  if ( cd / && timeout -k 15 300 npm install -g --no-fund --no-audit @anthropic-ai/claude-code </dev/null >/dev/null 2>&1 ); then
+    msg "Claude Code $(cd / && timeout -k 5 20 claude --version </dev/null 2>/dev/null | head -1)"
   else
     warn "Claude Code could not be installed now (the agents need it). Try: npm install -g @anthropic-ai/claude-code"
   fi

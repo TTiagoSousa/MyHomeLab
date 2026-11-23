@@ -4,6 +4,7 @@ import {
   HttpException,
   Injectable,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { RUN_FREQUENCY_INTERVAL_MS } from '@myhomelab/shared';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -110,7 +111,7 @@ const nextcloudBase = (caldavUrl: string) =>
  * backup que falha abre um alerta, que fecha no próximo que correr bem.
  */
 @Injectable()
-export class BackupService {
+export class BackupService implements OnModuleInit {
   /** Os trabalhos a correr agora: um backup lento (ex.: o do Home Assistant) não pode arrancar duas vezes. */
   private readonly running = new Set<string>();
 
@@ -120,6 +121,21 @@ export class BackupService {
     private readonly accounts: PrismaConnectedAccountRepository,
     private readonly instance: InstanceBackupService,
   ) {}
+
+  /**
+   * Os backups das apps saíram (v1.10.0) e já não correm: os avisos de falha deles nunca
+   * fechariam sozinhos. Ao arrancar fecham-se os que não são de um backup do MyHomeLab.
+   */
+  async onModuleInit() {
+    const jobs = await this.prisma.backupJob.findMany({
+      where: { accountId: null },
+      select: { id: true },
+    });
+    await this.notifications.resolveKindExcept(
+      NotificationKind.BACKUP_FAILED,
+      jobs.map((job) => `backup:${job.id}`),
+    );
+  }
 
   // ── Destinos ─────────────────────────────────────────────────────────────
 
