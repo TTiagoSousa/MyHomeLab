@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.11.1] — 2026-11-23
+
+### Fixes
+- **backup**: close failure notices of the removed app backups on startup and time out the Claude Code install so updates cannot hang
+
+
 ## [1.11.0] — 2026-11-22
 
 ### Features
@@ -152,3 +158,4 @@ First public release of MyHomeLab.
 [1.9.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.9.0
 [1.10.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.10.0
 [1.11.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.11.0
+[1.11.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.11.1
