@@ -1,6 +1,7 @@
 import './Settings.scss';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES, currentLanguage, setLanguage } from '../../../i18n';
+import Settings_Weather from './Settings_Weather';
 
 const Settings = () => {
   const { t } = useTranslation('settings');
@@ -38,6 +39,7 @@ const Settings = () => {
         </div>
       </div>
 
+      <Settings_Weather />
     </div>
   );
 };

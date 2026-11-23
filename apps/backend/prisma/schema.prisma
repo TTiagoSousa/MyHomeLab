@@ -143,6 +143,8 @@ model User {
   backupJobs          BackupJob[]
   intakeItems         IntakeItem[]
   agentLogs           AgentLog[]
+  todayShortcuts      TodayShortcut[]
+  weatherLocation     WeatherLocation?
   intakeSettings      IntakeSettings?
   moodEntries         MoodEntry[]
   habits              Habit[]
@@ -279,6 +281,7 @@ model ConnectedAccount {
 
   emailRuleProposals EmailRuleProposal[]
   backupJobs         BackupJob[]         @relation("AccountBackups")
+  todayShortcuts     TodayShortcut[]
   cronJobs           CronJob[]
   // A Saúde a ler os treinos por esta app (o openGym ligado), sem emparelhamento próprio.
   openGymHealth      OpenGymConnection?
@@ -2637,4 +2640,41 @@ model ChatApproval {
 
   @@index([userId, status])
   @@index([conversationId])
+}
+
+// ── Hoje ─────────────────────────────────────────────────────────────────────
+
+enum TodayShortcutKind {
+  APP // a página de uma app ligada (accountId)
+  EMAIL_RULES // as regras de email
+  LINK // um endereço à escolha (label + url)
+}
+
+// Os atalhos da página Hoje, pela ordem de position.
+model TodayShortcut {
+  id        String            @id @default(uuid())
+  userId    String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      TodayShortcutKind
+  accountId String?
+  account   ConnectedAccount? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  label     String?
+  url       String?
+  position  Int               @default(0)
+  createdAt DateTime          @default(now())
+
+  @@index([userId, position])
+  @@index([accountId])
+}
+
+// A cidade do tempo na página Hoje (Definições), já com as coordenadas do Open-Meteo.
+model WeatherLocation {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  country   String?
+  latitude  Float
+  longitude Float
+  timezone  String
+  updatedAt DateTime @updatedAt
 }

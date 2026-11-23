@@ -105,4 +105,38 @@
     }
   }
 
+  .Settings_weather_current{
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--card-global-header-title-color);
+  }
+
+  .Settings_weather_form{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .Global_Input{
+      flex: 1 1 220px;
+      height: 38px;
+    }
+
+    .Settings_weather_save{
+      @include Mixin.Solid_Button;
+      height: 38px;
+      padding: 0 16px;
+    }
+
+    .Settings_weather_clear{
+      @include Mixin.Ghost_Button;
+      height: 38px;
+      padding: 0 14px;
+    }
+  }
+
+  .Settings_weather_error{
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: var(--danger-color);
+  }
 }

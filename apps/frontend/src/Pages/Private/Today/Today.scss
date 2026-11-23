@@ -1,3 +1,4 @@
+@use '../../../Styles/Fonts.scss' as Font;
 @use '../../../Styles/Mixins.scss' as Mixin;
 
 .Today {
@@ -9,13 +10,301 @@
     .Right_Side span{ color: var(--card-global-header-title-color); }
   }
 
+  .Today_Ghost_Button{
+    @include Mixin.Ghost_Button;
+    height: 34px;
+    padding: 0 12px;
+
+    svg{ width: 14px; height: 14px; }
+  }
+
+  .Today_Solid_Button{
+    @include Mixin.Solid_Button;
+    height: 38px;
+    padding: 0 14px;
+  }
+
   .Today_Empty{
     margin: 0;
-    padding: 32px 20px;
+    padding: 28px 20px;
     border: 1px dashed var(--hud-line-strong);
     border-radius: var(--ctrl-radius);
     text-align: center;
     font-size: 13px;
     color: var(--text-soft);
+  }
+
+  .Today_Error{
+    margin: 0;
+    font-size: 13px;
+    color: var(--danger-color);
+  }
+
+  .Today_Weather{
+    @include Mixin.Panel_Surface;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 20px;
+
+    &.Today_Weather_Muted{
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    .Today_Weather_Now{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .Today_Weather_Symbol{ font-size: 34px; line-height: 1; }
+
+    .Today_Weather_Temperature{
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--card-global-header-title-color);
+    }
+
+    .Today_Weather_Place{
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 13px;
+      color: var(--text-soft);
+
+      strong{ font-size: 15px; color: var(--card-global-header-title-color); }
+    }
+
+    .Today_Weather_Range{
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    .Today_Weather_Days{
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      li{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 4px;
+        border: 1px solid var(--hud-line-strong);
+        border-radius: var(--ctrl-radius);
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .Today_Weather_Day{
+        font-weight: 700;
+        text-transform: capitalize;
+        color: var(--card-global-header-title-color);
+      }
+    }
+  }
+
+  .Today_Shortcuts{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .Today_Shortcuts_Header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      > span{
+        @include Mixin.Hud_Title;
+      }
+    }
+
+    .Today_Shortcuts_Grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .Today_Shortcut{
+      position: relative;
+
+      .Today_Shortcut_Open{
+        @include Mixin.Panel_Surface;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 36px 14px 14px;
+        text-align: left;
+        text-decoration: none;
+        color: inherit;
+        font-family: Font.$font_family_sans;
+        cursor: pointer;
+        transition: border-color .15s ease;
+
+        &:hover:not(:disabled){ border-color: var(--accent); }
+        &:focus-visible{ outline: none; box-shadow: 0 0 0 2px var(--accent); }
+      }
+
+      .Today_Shortcut_Icon{
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--ctrl-radius);
+        border: 1px solid var(--accent-deep);
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+
+        svg{ width: 20px; height: 20px; }
+      }
+
+      .Today_Shortcut_Text{
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 12px;
+        color: var(--text-soft);
+
+        strong{
+          font-size: 14px;
+          color: var(--card-global-header-title-color);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        span{
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .Today_Shortcut_Remove{
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: none;
+        border-radius: var(--ctrl-radius);
+        background: transparent;
+        color: var(--text-faint);
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity .15s ease, color .15s ease;
+
+        svg{ width: 12px; height: 12px; }
+
+        &:hover{ color: var(--accent-bright); }
+        &:focus-visible{ opacity: 1; outline: none; box-shadow: 0 0 0 2px var(--accent); }
+      }
+
+      &:hover .Today_Shortcut_Remove{ opacity: 1; }
+
+      @media (hover: none){
+        .Today_Shortcut_Remove{ opacity: 1; }
+      }
+    }
+  }
+
+  .Today_Modal_Overlay{
+    @include Mixin.Modal_Overlay;
+
+    .Today_Modal{
+      @include Mixin.Modal_Panel;
+      width: 380px;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding: 20px;
+
+      .Today_Modal_Title{
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .Today_Modal_Kinds{
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+
+        button{
+          @include Mixin.Ghost_Button;
+          min-height: 36px;
+          padding: 4px 6px;
+          font-size: 12px;
+
+          &.active{
+            color: var(--accent-bright);
+            border-color: var(--accent);
+            background: var(--accent-soft);
+          }
+        }
+      }
+
+      .Today_Modal_Field{
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        label{
+          font-size: 12px;
+          font-weight: 700;
+        }
+
+        .Global_Input,
+        .Dropdown_Field{
+          height: 38px;
+        }
+      }
+
+      .Today_Modal_Hint{
+        margin: 0;
+        font-size: 13px;
+        color: var(--text-soft);
+      }
+
+      .Today_Modal_Error{
+        margin: 0;
+        font-size: 13px;
+        color: var(--danger-color);
+      }
+
+      .Today_Modal_Actions{
+        display: flex;
+        gap: 10px;
+
+        button{ flex: 1; height: 40px; }
+      }
+    }
+  }
+}
+
+@media (max-width: 600px){
+  .Today .Today_Weather .Today_Weather_Days{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

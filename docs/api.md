@@ -401,6 +401,17 @@ The update lifecycle itself is driven by the board and the agents' tools; see
 | DELETE | `/notifications/resolved` | Clear the resolved history |
 | POST | `/notifications/:id/dismiss` | Mark an agent notice as seen |
 
+## Today · `/today`
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/today/shortcuts` | The Today shortcuts, in order |
+| POST | `/today/shortcuts` | Add one: `{ kind: APP, accountId }`, `{ kind: EMAIL_RULES }` or `{ kind: LINK, label, url }` (409 if that app or the email rules are already there) |
+| DELETE | `/today/shortcuts/:id` | Remove a shortcut |
+| GET | `/today/weather` | `{ location, forecast }`: now and the next days from Open-Meteo (cached 15 min), or nulls without a city |
+| PUT | `/today/weather` | `{ city }`: geocode it with Open-Meteo and save it (404 if not found) |
+| DELETE | `/today/weather` | Forget the city |
+
 ## Health · `/health`
 
 All health routes are per user. AI-assisted routes (lab/exam extraction, meal estimates)

@@ -179,5 +179,13 @@
     "defaults": "Restore recommended",
     "save": "Save",
     "saved": "Mixed mode saved."
+  },
+  "weather": {
+    "title": "Weather",
+    "description": "The weather city on the Today page. Only the city name is sent to Open-Meteo (free, no account).",
+    "current": "Now: {{city}}",
+    "none": "You have not chosen a city yet.",
+    "placeholder": "E.g. Lisbon",
+    "clear": "Remove"
   }
 }

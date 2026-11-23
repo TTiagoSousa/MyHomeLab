@@ -398,10 +398,11 @@
     },
     "today": {
       "title": "Hoy",
-      "summary": "Por ahora está vacío. Lo que te necesita está en Notificaciones.",
+      "summary": "El tiempo de tu ciudad y tus accesos directos: las páginas de las apps conectadas, las reglas de email y enlaces tuyos. Lo que te necesita está en Notificaciones.",
       "steps": [
-        "Notificaciones → Te necesitan: las preguntas y las propuestas de los agentes. Pulsa y abre la tarea, donde decides con un botón.",
-        "Notificaciones → Avisos: servicios caídos, copias fallidas, discos y certificados."
+        "Tiempo: elige la ciudad en Ajustes → Tiempo.",
+        "Accesos directos: pulsa Añadir y elige una app conectada, las reglas de email o un enlace. Para quitar uno, pulsa su ×.",
+        "Notificaciones → Te necesita: las preguntas y propuestas de los agentes. Púlsalo para abrir la tarea, donde decides con un botón."
       ],
       "notes": [
         "Para dar otra respuesta al agente, escribe en los comentarios de la tarea."

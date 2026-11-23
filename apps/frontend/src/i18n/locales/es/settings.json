@@ -179,5 +179,13 @@
     "defaults": "Restablecer lo recomendado",
     "save": "Guardar",
     "saved": "Modo Mixto guardado."
+  },
+  "weather": {
+    "title": "Tiempo",
+    "description": "La ciudad del tiempo en la página Hoy. Solo el nombre de la ciudad va a Open-Meteo (gratis, sin cuenta).",
+    "current": "Ahora: {{city}}",
+    "none": "Aún no has elegido una ciudad.",
+    "placeholder": "Ej.: Lisboa",
+    "clear": "Quitar"
   }
 }

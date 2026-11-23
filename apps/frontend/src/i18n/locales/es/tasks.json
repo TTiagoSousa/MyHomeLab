@@ -238,7 +238,46 @@
   },
   "today": {
     "title": "Hoy",
-    "empty": "Por ahora no hay nada aquí. Lo que te necesita está en Notificaciones."
+    "shortcuts": {
+      "title": "Accesos directos",
+      "add": "Añadir",
+      "addTitle": "Añadir acceso directo",
+      "empty": "Aún no tienes accesos directos. Añade la página de una app conectada, las reglas de email o un enlace tuyo.",
+      "remove": "Quitar el acceso directo {{name}}",
+      "kinds": {
+        "APP": "App conectada",
+        "EMAIL_RULES": "Reglas de email",
+        "LINK": "Enlace"
+      },
+      "hints": {
+        "app": "App conectada",
+        "emailRules": "Gmail"
+      },
+      "app": "App",
+      "appPlaceholder": "Elige la app",
+      "noApps": "Aún no tienes apps conectadas. Conecta una en Apps conectadas.",
+      "emailRulesHint": "Abre la página de las reglas de Gmail.",
+      "label": "Nombre",
+      "labelPlaceholder": "Ej.: Router",
+      "url": "Dirección"
+    },
+    "weather": {
+      "title": "Tiempo",
+      "noCity": "Elige tu ciudad en Ajustes para ver el tiempo aquí.",
+      "chooseCity": "Elegir ciudad",
+      "range": "máx {{max}}° · mín {{min}}°",
+      "rain": "lluvia {{chance}}%",
+      "codes": {
+        "clear": "Despejado",
+        "partly": "Poco nuboso",
+        "cloudy": "Nublado",
+        "fog": "Niebla",
+        "drizzle": "Llovizna",
+        "rain": "Lluvia",
+        "snow": "Nieve",
+        "storm": "Tormenta"
+      }
+    }
   },
   "process": {
     "intake": {

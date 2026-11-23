@@ -18,6 +18,7 @@ import { AiCredentialModule } from './ai-credential/ai-credential.module';
 import { ClaudeCodeModule } from './claude-code/claude-code.module';
 import { ServerConnectionModule } from './server-connection/server-connection.module';
 import { NotificationModule } from './notification/notification.module';
+import { TodayModule } from './today/today.module';
 import { ServiceMonitorModule } from './service-monitor/service-monitor.module';
 import { DiskHealthModule } from './disk-health/disk-health.module';
 import { EmailRuleProposalModule } from './email-rule-proposal/email-rule-proposal.module';
@@ -54,6 +55,7 @@ import { AgentScheduleRunnerModule } from './agent-schedule/agent-schedule-runne
     ClaudeCodeModule,
     ServerConnectionModule,
     NotificationModule,
+    TodayModule,
     ServiceMonitorModule,
     DiskHealthModule,
     EmailRuleProposalModule,

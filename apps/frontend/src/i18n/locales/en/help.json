@@ -398,10 +398,11 @@
     },
     "today": {
       "title": "Today",
-      "summary": "Empty for now. What needs you is in Notifications.",
+      "summary": "The weather in your city and your shortcuts: connected app pages, the email rules and your own links. What needs you is in Notifications.",
       "steps": [
-        "Notifications → Needs you: the agents’ questions and proposals. Click to open the task, where you decide with one button.",
-        "Notifications → Warnings: services down, failed backups, disks and certificates."
+        "Weather: choose the city in Settings → Weather.",
+        "Shortcuts: press Add and choose a connected app, the email rules or a link. To remove one, press its ×.",
+        "Notifications → Needs you: the agents' questions and proposals. Press it to open the task, where you decide with a button."
       ],
       "notes": [
         "To give the agent any other answer, write in the task comments."

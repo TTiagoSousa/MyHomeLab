@@ -238,7 +238,46 @@
   },
   "today": {
     "title": "Today",
-    "empty": "Nothing here for now. What needs you is in Notifications."
+    "shortcuts": {
+      "title": "Shortcuts",
+      "add": "Add",
+      "addTitle": "Add shortcut",
+      "empty": "No shortcuts yet. Add a connected app page, the email rules or a link of your own.",
+      "remove": "Remove the {{name}} shortcut",
+      "kinds": {
+        "APP": "Connected app",
+        "EMAIL_RULES": "Email rules",
+        "LINK": "Link"
+      },
+      "hints": {
+        "app": "Connected app",
+        "emailRules": "Gmail"
+      },
+      "app": "App",
+      "appPlaceholder": "Choose the app",
+      "noApps": "You have no connected apps yet. Connect one in Apps.",
+      "emailRulesHint": "Opens the Gmail rules page.",
+      "label": "Name",
+      "labelPlaceholder": "E.g. Router",
+      "url": "Address"
+    },
+    "weather": {
+      "title": "Weather",
+      "noCity": "Choose your city in Settings to see the weather here.",
+      "chooseCity": "Choose city",
+      "range": "high {{max}}° · low {{min}}°",
+      "rain": "rain {{chance}}%",
+      "codes": {
+        "clear": "Clear sky",
+        "partly": "Partly cloudy",
+        "cloudy": "Cloudy",
+        "fog": "Fog",
+        "drizzle": "Drizzle",
+        "rain": "Rain",
+        "snow": "Snow",
+        "storm": "Thunderstorm"
+      }
+    }
   },
   "process": {
     "intake": {
