@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.12.0] — 2026-11-23
+
+### Features
+- **today**: add weather from the city chosen in settings and shortcuts to connected apps, email rules and links
+
+
 ## [1.11.1] — 2026-11-23
 
 ### Fixes
@@ -159,3 +165,4 @@ First public release of MyHomeLab.
 [1.10.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.10.0
 [1.11.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.11.0
 [1.11.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.11.1
+[1.12.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.12.0
