@@ -24,7 +24,7 @@
     "claude": "node scripts/claude-terminal.mjs"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.5"
   },
   "license": "GPL-3.0-only",
   "repository": {
