@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.14.0] — 2026-11-24
+
+### Features
+- **health**: add BMI and fat, muscle, skeletal muscle, bone, water and protein mass and percentage pages, join a value to an existing measurement, list or grid quick forms with field order, and a devices page with kinds, brand, model and a default per kind used by weigh-ins and vital readings
+
+
 ## [1.13.0] — 2026-11-24
 
 ### Features
@@ -173,3 +179,4 @@ First public release of MyHomeLab.
 [1.11.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.11.1
 [1.12.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.12.0
 [1.13.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.13.0
+[1.14.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.14.0
