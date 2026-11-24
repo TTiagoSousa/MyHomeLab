@@ -749,7 +749,8 @@
     "hideComposition": "Esconder composição",
     "invalid": "Há valores fora dos limites.",
     "compositionCount_one": "{{count}} medida",
-    "compositionCount_other": "{{count}} medidas"
+    "compositionCount_other": "{{count}} medidas",
+    "measurementValues": "Valores da medição"
   },
   "water": {
     "title": "Água",
@@ -1871,16 +1872,23 @@
   "bodyMetrics": {
     "names": {
       "weightKg": "Peso",
+      "bmi": "IMC",
       "bodyFatPct": "Gordura corporal",
+      "fatMassKg": "Massa de gordura",
       "subcutaneousFatPct": "Gordura subcutânea",
       "visceralFat": "Gordura visceral",
+      "musclePct": "Percentagem de músculo",
       "muscleKg": "Massa muscular",
       "skeletalMusclePct": "Músculo esquelético",
+      "skeletalMuscleKg": "Massa de músculo esquelético",
+      "bonePct": "Percentagem de massa óssea",
       "boneKg": "Massa óssea",
       "leanKg": "Peso sem gordura",
       "bmrKcal": "TMB",
       "waterPct": "Água corporal",
+      "waterKg": "Massa de água",
       "proteinPct": "Proteína",
+      "proteinKg": "Massa de proteína",
       "waistCm": "Cintura",
       "chestCm": "Peito",
       "armCm": "Braço",
@@ -1890,16 +1898,23 @@
       "waterMl": "Água bebida"
     },
     "descriptions": {
+      "bmi": "O índice de massa corporal. Se a balança não o der, é calculado com o peso e a altura do perfil.",
       "bodyFatPct": "A parte do peso que é gordura, como a balança a mede.",
+      "fatMassKg": "O peso da gordura, em kg.",
       "subcutaneousFatPct": "A gordura logo por baixo da pele, em percentagem do peso.",
       "visceralFat": "O índice da balança para a gordura à volta dos órgãos. Quanto mais baixo, melhor.",
+      "musclePct": "Os músculos, em percentagem do peso.",
       "muscleKg": "O peso dos músculos, em kg.",
       "skeletalMusclePct": "Os músculos que mexes, em percentagem do peso.",
+      "skeletalMuscleKg": "O peso dos músculos que mexes, em kg.",
+      "bonePct": "Os ossos, em percentagem do peso.",
       "boneKg": "O peso estimado dos ossos, em kg.",
       "leanKg": "Tudo o que não é gordura. Se a balança não o der, é calculado com o peso e a gordura.",
       "bmrKcal": "As calorias que o corpo gasta por dia em repouso (taxa metabólica basal).",
       "waterPct": "A água no corpo, em percentagem do peso.",
+      "waterKg": "A água no corpo, em kg.",
       "proteinPct": "A proteína no corpo, em percentagem do peso.",
+      "proteinKg": "A proteína no corpo, em kg.",
       "waistCm": "A medida à volta da cintura. Mete-se aqui, em Corpo ou num formulário rápido.",
       "chestCm": "A medida à volta do peito. Mete-se aqui, em Corpo ou num formulário rápido.",
       "armCm": "A medida à volta do braço. Mete-se aqui, em Corpo ou num formulário rápido.",
@@ -1926,16 +1941,22 @@
     "emptyTab": "Ainda não há valores de {{name}}.",
     "saved": "Valor guardado",
     "addTitle": "Registar {{name}}",
-    "addScaleHint": "Mete o valor que a balança te deu ({{min}}–{{max}}). Fica numa pesagem com o aparelho escolhido.",
+    "addScaleHint": "Mete o valor que a balança te deu ({{min}}–{{max}}). Podes criar uma medição nova ou juntá-lo a uma que já fizeste.",
     "addTapeHint": "Mete a medida do dia ({{min}}–{{max}}). As outras medidas desse dia ficam como estão.",
     "invalid": "O valor tem de estar entre {{min}} e {{max}}.",
     "emptyHere": "Regista o primeiro valor em cima.",
     "register": "Registar {{name}}",
-    "latest": "Último valor"
+    "latest": "Último valor",
+    "measurement": "Medição",
+    "newMeasurement": "Nova medição",
+    "valuesCount_one": "{{count}} valor",
+    "valuesCount_other": "{{count}} valores",
+    "alreadyHas": "já tem este",
+    "joiningHint": "O valor entra nessa medição (fica com a data, a hora e o aparelho dela). Se já tinha este valor, é substituído."
   },
   "devices": {
     "title": "Aparelhos",
-    "description": "As balanças de onde vêm as pesagens. O predefinido já vem escolhido ao registar.",
+    "description": "As máquinas com que medes: balança, medidor de tensão, glicómetro… Há um predefinido por tipo, que já vem escolhido quando registas.",
     "device": "Aparelho",
     "none": "Sem aparelho",
     "default": "Predefinido",
@@ -1943,8 +1964,40 @@
     "remove": "Apagar",
     "confirmRemove": "Confirmar",
     "name": "Nome do aparelho",
-    "namePlaceholder": "Ex.: Renpho",
-    "add": "Acrescentar"
+    "namePlaceholder": "Ex.: Balança da casa de banho",
+    "add": "Acrescentar",
+    "addTitle": "Registar aparelho",
+    "kind": "Tipo",
+    "brand": "Marca",
+    "brandPlaceholder": "Ex.: Renpho",
+    "model": "Modelo",
+    "modelPlaceholder": "Ex.: ES-CS20M",
+    "emptyTitle": "Ainda sem aparelhos",
+    "emptyText": "Regista a tua balança ou o medidor de tensão em cima.",
+    "kinds": {
+      "SCALE": "Balança",
+      "BLOOD_PRESSURE": "Medidor de tensão",
+      "GLUCOMETER": "Glicómetro",
+      "THERMOMETER": "Termómetro",
+      "OXIMETER": "Oxímetro",
+      "OTHER": "Outro"
+    },
+    "kindsPlural": {
+      "SCALE": "Balanças",
+      "BLOOD_PRESSURE": "Medidores de tensão",
+      "GLUCOMETER": "Glicómetros",
+      "THERMOMETER": "Termómetros",
+      "OXIMETER": "Oxímetros",
+      "OTHER": "Outros"
+    },
+    "kindHints": {
+      "SCALE": "Usadas no peso, na composição corporal e nos formulários.",
+      "BLOOD_PRESSURE": "Usados nas medições de tensão arterial.",
+      "GLUCOMETER": "Usados nas medições de glicemia.",
+      "THERMOMETER": "Usados nas medições de temperatura.",
+      "OXIMETER": "Para o oxigénio no sangue.",
+      "OTHER": "Outras máquinas de medição."
+    }
   },
   "forms": {
     "saved": "Valores guardados",
@@ -1965,6 +2018,14 @@
       "water": "Água"
     },
     "saveForm": "Guardar formulário",
-    "fillHint": "Preenche só o que tiveres. O Enter passa ao campo seguinte."
+    "fillHint": "Preenche só o que tiveres. O Enter passa ao campo seguinte.",
+    "layout": "Vista",
+    "layouts": {
+      "GRID": "Grelha",
+      "LIST": "Lista"
+    },
+    "order": "Ordem dos campos",
+    "moveUp": "Subir",
+    "moveDown": "Descer"
   }
 }

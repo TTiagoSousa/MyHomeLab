@@ -103,6 +103,7 @@ export interface VitalReading {
   pulse: number | null;
   context: GlucoseContext | null;
   notes: string | null;
+  device: string | null;
 }
 
 export interface VitalPayload {
@@ -114,6 +115,7 @@ export interface VitalPayload {
   pulse: number | null;
   context: GlucoseContext | null;
   notes: string | null;
+  deviceId: string | null;
 }
 
 export interface BodyData {

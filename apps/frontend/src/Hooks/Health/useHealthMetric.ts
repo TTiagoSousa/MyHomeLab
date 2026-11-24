@@ -11,6 +11,7 @@ export interface MetricValuePayload {
   deviceId: string | null;
   measuredAt: string;
   timeZone: string;
+  entryId?: string;
 }
 
 export const useHealthMetric = (metric: HealthMetric, days: number) => {

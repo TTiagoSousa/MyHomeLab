@@ -25,6 +25,11 @@ export class SaveHealthFormDto {
   @ArrayMaxSize(HEALTH_FORM_FIELDS.length)
   @IsIn([...HEALTH_FORM_FIELDS], { each: true })
   fields!: string[];
+
+  /** Em grelha ou em lista (na lista, pela ordem dos campos). */
+  @IsOptional()
+  @IsIn(['GRID', 'LIST'])
+  layout?: 'GRID' | 'LIST';
 }
 
 /** O que se meteu num formulário: { campo: valor } só com os campos do formulário. */

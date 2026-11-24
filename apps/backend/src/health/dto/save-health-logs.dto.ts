@@ -9,6 +9,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Matches,
   Max,
   MaxLength,
@@ -297,6 +298,11 @@ export class SaveVitalDto extends TimedDto {
   @IsString()
   @MaxLength(500)
   notes?: string | null;
+
+  /** O aparelho; sem o campo usa-se o predefinido do tipo, com null nenhum. */
+  @IsOptional()
+  @IsUUID()
+  deviceId?: string | null;
 }
 
 export class SaveMoodDto {

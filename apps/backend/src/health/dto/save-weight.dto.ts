@@ -55,6 +55,34 @@ export class SaveWeightDto {
   @IsNumber()
   proteinPct?: number | null;
 
+  @IsOptional()
+  @IsNumber()
+  bmi?: number | null;
+
+  @IsOptional()
+  @IsNumber()
+  fatMassKg?: number | null;
+
+  @IsOptional()
+  @IsNumber()
+  musclePct?: number | null;
+
+  @IsOptional()
+  @IsNumber()
+  skeletalMuscleKg?: number | null;
+
+  @IsOptional()
+  @IsNumber()
+  bonePct?: number | null;
+
+  @IsOptional()
+  @IsNumber()
+  waterKg?: number | null;
+
+  @IsOptional()
+  @IsNumber()
+  proteinKg?: number | null;
+
   /** O aparelho; sem o campo usa-se o predefinido, com null fica sem aparelho. */
   @IsOptional()
   @IsUUID()

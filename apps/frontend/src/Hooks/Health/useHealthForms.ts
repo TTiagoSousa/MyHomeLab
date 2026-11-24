@@ -4,11 +4,12 @@ import http from "../../Service/httpService";
 import { useAlert } from "../../Contexts/Alert_Context";
 import i18n from "../../i18n";
 import { healthErrorMessage } from "./healthErrors";
-import type { HealthForm, HealthFormField } from "./healthTypes";
+import type { HealthForm, HealthFormField, HealthFormLayout } from "./healthTypes";
 
 export interface HealthFormDraft {
   name: string;
   fields: HealthFormField[];
+  layout: HealthFormLayout;
 }
 
 export interface HealthFormSubmission {

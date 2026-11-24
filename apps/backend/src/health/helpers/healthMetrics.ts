@@ -1,15 +1,22 @@
 /** A composição corporal que vem com cada pesagem (cada uma tem a sua página). */
 export const COMPOSITION_FIELDS = [
+  'bmi',
   'bodyFatPct',
+  'fatMassKg',
   'subcutaneousFatPct',
   'visceralFat',
+  'musclePct',
   'muscleKg',
   'skeletalMusclePct',
+  'skeletalMuscleKg',
+  'bonePct',
   'boneKg',
   'leanKg',
   'bmrKcal',
   'waterPct',
+  'waterKg',
   'proteinPct',
+  'proteinKg',
 ] as const;
 
 /** As medidas de fita do Corpo (uma linha por dia). */
@@ -48,16 +55,23 @@ export const FIELD_LIMITS: Record<
   { min: number; max: number; decimals: number }
 > = {
   weightKg: { min: 20, max: 400, decimals: 2 },
+  bmi: { min: 10, max: 80, decimals: 1 },
   bodyFatPct: { min: 1, max: 75, decimals: 1 },
+  fatMassKg: { min: 1, max: 250, decimals: 2 },
   subcutaneousFatPct: { min: 1, max: 70, decimals: 1 },
   visceralFat: { min: 1, max: 60, decimals: 1 },
+  musclePct: { min: 10, max: 95, decimals: 1 },
   muscleKg: { min: 5, max: 200, decimals: 2 },
   skeletalMusclePct: { min: 5, max: 80, decimals: 1 },
+  skeletalMuscleKg: { min: 5, max: 150, decimals: 2 },
+  bonePct: { min: 0.5, max: 20, decimals: 1 },
   boneKg: { min: 0.5, max: 15, decimals: 2 },
   leanKg: { min: 10, max: 300, decimals: 2 },
   bmrKcal: { min: 500, max: 6000, decimals: 0 },
   waterPct: { min: 20, max: 85, decimals: 1 },
+  waterKg: { min: 10, max: 250, decimals: 2 },
   proteinPct: { min: 3, max: 40, decimals: 1 },
+  proteinKg: { min: 1, max: 80, decimals: 2 },
   waistCm: { min: 10, max: 300, decimals: 1 },
   chestCm: { min: 10, max: 300, decimals: 1 },
   armCm: { min: 5, max: 150, decimals: 1 },
@@ -72,6 +86,22 @@ export const isCompositionField = (field: string): field is CompositionField =>
 
 export const isBodyField = (field: string): field is BodyField =>
   (BODY_FIELDS as readonly string[]).includes(field);
+
+/** Os tipos de aparelho e o de cada medição (tensão, glicemia, temperatura). */
+export const DEVICE_KINDS = [
+  'SCALE',
+  'BLOOD_PRESSURE',
+  'GLUCOMETER',
+  'THERMOMETER',
+  'OXIMETER',
+  'OTHER',
+] as const;
+
+export const VITAL_DEVICE_KIND = {
+  BLOOD_PRESSURE: 'BLOOD_PRESSURE',
+  GLUCOSE: 'GLUCOMETER',
+  TEMPERATURE: 'THERMOMETER',
+} as const;
 
 /** Os separadores das médias em Saúde (os fixos mais uma por métrica). */
 export const AVERAGE_TABS = [

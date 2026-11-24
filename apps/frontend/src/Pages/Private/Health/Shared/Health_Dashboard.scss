@@ -1021,14 +1021,17 @@
   }
 
   .Metric_Form{
-    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)) auto;
 
-    &.tape{ grid-template-columns: repeat(2, minmax(0, 1fr)) auto; }
+    &.short{ grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto; }
 
     @media (max-width: 700px){
       grid-template-columns: 1fr 1fr;
 
-      &.tape{ grid-template-columns: 1fr 1fr; }
+      &.short{ grid-template-columns: 1fr 1fr; }
+
+      &:not(.short) > .Health_Form_Field:nth-child(-n + 2),
+      &:not(.short) > .Health_Form_Field:nth-child(5){ grid-column: 1 / -1; }
 
       .Health_Form_Save{ grid-column: 1 / -1; }
     }
@@ -1037,19 +1040,72 @@
   .Weight_Main{
     grid-template-columns: repeat(4, minmax(0, 1fr));
 
-    @media (max-width: 700px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    &.short{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    @media (max-width: 700px){
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      &.short{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+      &.short > :last-child{ grid-column: 1 / -1; }
+    }
   }
 
   .Weight_Composition{
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
 
-    @media (max-width: 1000px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 1100px){ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 700px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 
   .Weight_Device_Form{
     grid-template-columns: minmax(0, 1fr) auto;
 
     @media (max-width: 700px){ grid-template-columns: minmax(0, 1fr) auto; }
+  }
+
+  .Weight_Entry_Toggle{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:disabled{ cursor: default; }
+
+    &:focus-visible{
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+  }
+
+  .Weight_Entry_Values{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 10px 14px 14px;
+    border-bottom: 1px solid var(--hud-line);
+    list-style: none;
+    background: var(--accent-soft);
+
+    li{
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 11px;
+      color: var(--text-soft);
+
+      strong{
+        font-size: 13px;
+        color: var(--text-main);
+      }
+    }
   }
 
   .Weight_Devices{
@@ -1075,6 +1131,23 @@
     min-width: 0;
     font-size: 13px;
     color: var(--text-main);
+  }
+
+  .Weight_Device_Model{
+    display: block;
+    margin-top: 2px;
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .Devices_Form{
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+
+    @media (max-width: 700px){
+      grid-template-columns: 1fr 1fr;
+
+      .Health_Form_Save{ grid-column: 1 / -1; }
+    }
   }
 
   .Weight_Device_Default{

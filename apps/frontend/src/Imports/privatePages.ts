@@ -104,6 +104,7 @@ export const Fasting = lazy(() => import('../Pages/Private/Health/Fasting/Fastin
 export const HealthMetric = lazy(() => import('../Pages/Private/Health/Metrics/Metric'));
 export const Conditions = lazy(() => import('../Pages/Private/Health/Conditions/Conditions'));
 export const Vitals = lazy(() => import('../Pages/Private/Health/Vitals/Vitals'));
+export const HealthDevices = lazy(() => import('../Pages/Private/Health/Devices/Devices'));
 export const Docs = lazy(() => import('../Pages/Private/Docs/Docs'));
 export const Todos = lazy(() => import('../Pages/Private/Todos/Todos'));
 export { default as Tasks } from '../Pages/Private/Tasks/Tasks';

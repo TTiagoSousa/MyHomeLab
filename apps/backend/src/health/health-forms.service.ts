@@ -22,11 +22,18 @@ import {
 
 const WEIGHING_FIELDS = ['weightKg', ...COMPOSITION_FIELDS] as const;
 
-const FORM_SELECT = { id: true, name: true, fields: true } as const;
+const FORM_SELECT = {
+  id: true,
+  name: true,
+  fields: true,
+  layout: true,
+} as const;
 
-/** Os campos pela ordem do catálogo (e sem repetidos). */
+/** Os campos pela ordem escolhida, sem repetidos e só os do catálogo. */
 const ordered = (fields: string[]) =>
-  HEALTH_FORM_FIELDS.filter((field) => fields.includes(field));
+  [...new Set(fields)].filter((field) =>
+    (HEALTH_FORM_FIELDS as readonly string[]).includes(field),
+  );
 
 /**
  * Os formulários rápidos da Saúde: cada um junta campos de vários sítios (peso e
@@ -60,6 +67,7 @@ export class HealthFormsService {
         userId,
         name: dto.name.trim(),
         fields: ordered(dto.fields),
+        layout: dto.layout ?? 'GRID',
         position: (last?.position ?? -1) + 1,
       },
       select: FORM_SELECT,
@@ -70,7 +78,11 @@ export class HealthFormsService {
     await this.find(userId, id);
     return this.prisma.healthForm.update({
       where: { id },
-      data: { name: dto.name.trim(), fields: ordered(dto.fields) },
+      data: {
+        name: dto.name.trim(),
+        fields: ordered(dto.fields),
+        ...(dto.layout ? { layout: dto.layout } : {}),
+      },
       select: FORM_SELECT,
     });
   }

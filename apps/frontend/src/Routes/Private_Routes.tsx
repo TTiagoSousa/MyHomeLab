@@ -45,6 +45,7 @@ const Private_Routes = () => {
       <Route path='MyHomeLab/Health/Metrics/:metric' element={ <Private_Page.HealthMetric /> } />
       <Route path='MyHomeLab/Health/Conditions' element={ <Private_Page.Conditions /> } />
       <Route path='MyHomeLab/Health/Vitals' element={ <Private_Page.Vitals /> } />
+      <Route path='MyHomeLab/Health/Devices' element={ <Private_Page.HealthDevices /> } />
       <Route path='MyHomeLab/Servers' element={ <Private_Page.Servers /> } />
       <Route path='MyHomeLab/Docs' element={ <Private_Page.Docs /> } />
       <Route path='MyHomeLab/Docs/:docId' element={ <Private_Page.Docs /> } />

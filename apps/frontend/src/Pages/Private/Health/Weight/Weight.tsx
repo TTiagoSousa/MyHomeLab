@@ -10,7 +10,6 @@ import Weight_Height_Card from './Weight_Height_Card';
 import Weight_Average_Tiles from './Weight_Average_Tiles';
 import Weight_Trend_Chart from './Weight_Trend_Chart';
 import Weight_Entries_Panel from './Weight_Entries_Panel';
-import Weight_Devices_Card from './Weight_Devices_Card';
 import Metric_Links from '../Metrics/Metric_Links';
 import { COMPOSITION_METRICS } from '../Metrics/metricCatalog';
 import { useMeasurementDevices } from '../../../../Hooks/Health/useMeasurementDevices';
@@ -33,8 +32,8 @@ const Weight = () => {
 
       <Weight_Add_Card
         saving={saving}
-        devices={devices.devices}
-        defaultDeviceId={devices.defaultDevice?.id ?? null}
+        devices={devices.devicesOf('SCALE')}
+        defaultDeviceId={devices.defaultOf('SCALE')?.id ?? null}
         onAdd={handleAdd}
       />
 
@@ -42,13 +41,6 @@ const Weight = () => {
 
       <Weight_Height_Card refreshKey={entries.length} />
 
-      <Weight_Devices_Card
-        devices={devices.devices}
-        saving={devices.saving}
-        onAdd={devices.addDevice}
-        onMakeDefault={devices.makeDefault}
-        onRemove={devices.removeDevice}
-      />
 
       {error && <div className='Health_empty'>{error}</div>}
 

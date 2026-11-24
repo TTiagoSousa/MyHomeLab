@@ -49,6 +49,13 @@ export class HealthMetricsService {
     if (isBodyField(metric)) {
       const day = localDayDate(new Date(dto.measuredAt), dto.timeZone);
       await this.body.mergeMeasurement(userId, day, values);
+    } else if (dto.entryId) {
+      // a mesma medição: o valor entra na pesagem escolhida
+      const { count } = await this.prisma.weightEntry.updateMany({
+        where: { id: dto.entryId, userId },
+        data: values,
+      });
+      if (!count) throw new NotFoundException('Medição não encontrada');
     } else {
       await this.weight.create(userId, {
         ...values,

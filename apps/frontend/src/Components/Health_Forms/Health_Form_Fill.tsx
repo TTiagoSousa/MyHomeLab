@@ -1,14 +1,12 @@
 import { useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import Global_Input from '../Inputs/Global_Input/Global_Input';
-import Global_Dropdown from '../Inputs/Global_Dropdown/Global_Dropdown';
 import type { HealthForm, HealthFormField } from '../../Hooks/Health/healthTypes';
 import type { HealthFormSubmission } from '../../Hooks/Health/useHealthForms';
 import { useMeasurementDevices } from '../../Hooks/Health/useMeasurementDevices';
 import { browserTimeZone, dateInput, timeInput } from '../../Pages/Private/Health/Shared/healthFormat';
 import { FIELD_INFO, SCALE_FIELDS, parseField } from '../../Pages/Private/Health/Metrics/metricCatalog';
-
-const NO_DEVICE = 'none';
+import Health_Device_Field, { NO_DEVICE } from '../../Pages/Private/Health/Shared/Health_Device_Field';
 
 interface Health_Form_Fill_Props {
   form: HealthForm;
@@ -27,7 +25,7 @@ const inputId = (field: HealthFormField) => `health-form-${field}`;
 
 const Health_Form_Fill = ({ form, saving, onSubmit, onDone }: Health_Form_Fill_Props) => {
   const { t } = useTranslation('health');
-  const { devices, defaultDevice } = useMeasurementDevices();
+  const devices = useMeasurementDevices();
   const now = new Date();
   const [texts, setTexts] = useState<Partial<Record<HealthFormField, string>>>({});
   const [date, setDate] = useState(dateInput(now));
@@ -36,7 +34,8 @@ const Health_Form_Fill = ({ form, saving, onSubmit, onDone }: Health_Form_Fill_P
   const [error, setError] = useState('');
 
   const usesScale = form.fields.some((field) => SCALE_FIELDS.includes(field));
-  const deviceId = deviceChoice ?? defaultDevice?.id ?? NO_DEVICE;
+  const deviceId = deviceChoice ?? devices.defaultOf('SCALE')?.id ?? NO_DEVICE;
+  const list = form.layout === 'LIST';
   const values = form.fields.map((field) => ({ field, value: parseField(field, texts[field] ?? '') }));
   const invalid = values.some(({ value }) => value != null && Number.isNaN(value));
   const filled = values.some(({ value }) => value != null && !Number.isNaN(value));
@@ -73,22 +72,20 @@ const Health_Form_Fill = ({ form, saving, onSubmit, onDone }: Health_Form_Fill_P
           <Global_Input id='health-form-time' type='time' value={time} onChange={(e) => setTime(e.target.value)} />
         </div>
         {usesScale && (
-          <div className='Health_Forms_Field'>
-            <label htmlFor='health-form-device'>{t('devices.device')}</label>
-            <Global_Dropdown
-              id='health-form-device'
-              value={deviceId}
-              onChange={setDeviceChoice}
-              options={[
-                { value: NO_DEVICE, label: t('devices.none') },
-                ...devices.map((device) => ({ value: device.id, label: device.name })),
-              ]}
-            />
-          </div>
+          <Health_Device_Field
+            id='health-form-device'
+            className='Health_Forms_Field'
+            devices={devices.devicesOf('SCALE')}
+            value={deviceId}
+            onChange={setDeviceChoice}
+          />
         )}
       </div>
 
-      <div className='Health_Forms_Grid' style={{ '--form-columns': columnsFor(form.fields.length) } as CSSProperties}>
+      <div
+        className={list ? 'Health_Forms_List_Fields' : 'Health_Forms_Grid'}
+        style={list ? undefined : ({ '--form-columns': columnsFor(form.fields.length) } as CSSProperties)}
+      >
         {form.fields.map((field, index) => (
           <div key={field} className='Health_Forms_Field'>
             <label htmlFor={inputId(field)}>

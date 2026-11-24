@@ -16,6 +16,11 @@ export class SaveMetricValueDto {
   @IsUUID()
   deviceId?: string | null;
 
+  /** Junta o valor a uma medição (pesagem) que já existe, em vez de criar outra. */
+  @IsOptional()
+  @IsUUID()
+  entryId?: string;
+
   @IsISO8601()
   measuredAt!: string;
 

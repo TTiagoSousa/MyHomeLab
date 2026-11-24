@@ -749,7 +749,8 @@
     "hideComposition": "Ocultar composición",
     "invalid": "Hay valores fuera de los límites.",
     "compositionCount_one": "{{count}} medida",
-    "compositionCount_other": "{{count}} medidas"
+    "compositionCount_other": "{{count}} medidas",
+    "measurementValues": "Valores de la medición"
   },
   "water": {
     "title": "Agua",
@@ -1871,16 +1872,23 @@
   "bodyMetrics": {
     "names": {
       "weightKg": "Peso",
+      "bmi": "IMC",
       "bodyFatPct": "Grasa corporal",
+      "fatMassKg": "Masa grasa",
       "subcutaneousFatPct": "Grasa subcutánea",
       "visceralFat": "Grasa visceral",
+      "musclePct": "Porcentaje de músculo",
       "muscleKg": "Masa muscular",
       "skeletalMusclePct": "Músculo esquelético",
+      "skeletalMuscleKg": "Masa de músculo esquelético",
+      "bonePct": "Porcentaje de masa ósea",
       "boneKg": "Masa ósea",
       "leanKg": "Peso sin grasa",
       "bmrKcal": "TMB",
       "waterPct": "Agua corporal",
+      "waterKg": "Masa de agua",
       "proteinPct": "Proteína",
+      "proteinKg": "Masa de proteína",
       "waistCm": "Cintura",
       "chestCm": "Pecho",
       "armCm": "Brazo",
@@ -1890,16 +1898,23 @@
       "waterMl": "Agua bebida"
     },
     "descriptions": {
+      "bmi": "El índice de masa corporal. Si la báscula no lo da, se calcula con el peso y la altura del perfil.",
       "bodyFatPct": "La parte del peso que es grasa, según la báscula.",
+      "fatMassKg": "El peso de la grasa, en kg.",
       "subcutaneousFatPct": "La grasa justo debajo de la piel, en porcentaje del peso.",
       "visceralFat": "El índice de la báscula para la grasa alrededor de los órganos. Cuanto más bajo, mejor.",
+      "musclePct": "Los músculos, en porcentaje del peso.",
       "muscleKg": "El peso de los músculos, en kg.",
       "skeletalMusclePct": "Los músculos que mueves, en porcentaje del peso.",
+      "skeletalMuscleKg": "El peso de los músculos que mueves, en kg.",
+      "bonePct": "Los huesos, en porcentaje del peso.",
       "boneKg": "El peso estimado de los huesos, en kg.",
       "leanKg": "Todo lo que no es grasa. Si la báscula no lo da, se calcula con el peso y la grasa.",
       "bmrKcal": "Las calorías que el cuerpo gasta al día en reposo (tasa metabólica basal).",
       "waterPct": "El agua del cuerpo, en porcentaje del peso.",
+      "waterKg": "El agua del cuerpo, en kg.",
       "proteinPct": "La proteína del cuerpo, en porcentaje del peso.",
+      "proteinKg": "La proteína del cuerpo, en kg.",
       "waistCm": "La medida alrededor de la cintura. Se registra aquí, en Cuerpo o en un formulario rápido.",
       "chestCm": "La medida alrededor del pecho. Se registra aquí, en Cuerpo o en un formulario rápido.",
       "armCm": "La medida alrededor del brazo. Se registra aquí, en Cuerpo o en un formulario rápido.",
@@ -1926,16 +1941,22 @@
     "emptyTab": "Aún no hay valores de {{name}}.",
     "saved": "Valor guardado",
     "addTitle": "Registrar {{name}}",
-    "addScaleHint": "Introduce el valor que te dio la báscula ({{min}}–{{max}}). Se guarda como un pesaje con el aparato elegido.",
+    "addScaleHint": "Introduce el valor que te dio la báscula ({{min}}–{{max}}). Puedes crear una medición nueva o añadirlo a una que ya hiciste.",
     "addTapeHint": "Introduce la medida del día ({{min}}–{{max}}). Las demás medidas de ese día no cambian.",
     "invalid": "El valor tiene que estar entre {{min}} y {{max}}.",
     "emptyHere": "Registra el primer valor arriba.",
     "register": "Registrar {{name}}",
-    "latest": "Último valor"
+    "latest": "Último valor",
+    "measurement": "Medición",
+    "newMeasurement": "Nueva medición",
+    "valuesCount_one": "{{count}} valor",
+    "valuesCount_other": "{{count}} valores",
+    "alreadyHas": "ya tiene este",
+    "joiningHint": "El valor entra en esa medición (con su fecha, hora y aparato). Si ya tenía este valor, se sustituye."
   },
   "devices": {
     "title": "Aparatos",
-    "description": "Las básculas de donde vienen los pesajes. El predeterminado ya viene elegido al registrar.",
+    "description": "Las máquinas con las que mides: báscula, tensiómetro, glucómetro… Hay uno predeterminado por tipo, que ya viene elegido al registrar.",
     "device": "Aparato",
     "none": "Sin aparato",
     "default": "Predeterminado",
@@ -1943,8 +1964,40 @@
     "remove": "Eliminar",
     "confirmRemove": "Confirmar",
     "name": "Nombre del aparato",
-    "namePlaceholder": "Ej.: Renpho",
-    "add": "Añadir"
+    "namePlaceholder": "Ej.: Báscula del baño",
+    "add": "Añadir",
+    "addTitle": "Registrar aparato",
+    "kind": "Tipo",
+    "brand": "Marca",
+    "brandPlaceholder": "Ej.: Renpho",
+    "model": "Modelo",
+    "modelPlaceholder": "Ej.: ES-CS20M",
+    "emptyTitle": "Aún sin aparatos",
+    "emptyText": "Registra tu báscula o tensiómetro arriba.",
+    "kinds": {
+      "SCALE": "Báscula",
+      "BLOOD_PRESSURE": "Tensiómetro",
+      "GLUCOMETER": "Glucómetro",
+      "THERMOMETER": "Termómetro",
+      "OXIMETER": "Oxímetro",
+      "OTHER": "Otro"
+    },
+    "kindsPlural": {
+      "SCALE": "Básculas",
+      "BLOOD_PRESSURE": "Tensiómetros",
+      "GLUCOMETER": "Glucómetros",
+      "THERMOMETER": "Termómetros",
+      "OXIMETER": "Oxímetros",
+      "OTHER": "Otros"
+    },
+    "kindHints": {
+      "SCALE": "Se usan en el peso, la composición corporal y los formularios.",
+      "BLOOD_PRESSURE": "Se usan en las mediciones de tensión arterial.",
+      "GLUCOMETER": "Se usan en las mediciones de glucemia.",
+      "THERMOMETER": "Se usan en las mediciones de temperatura.",
+      "OXIMETER": "Para el oxígeno en sangre.",
+      "OTHER": "Otras máquinas de medición."
+    }
   },
   "forms": {
     "saved": "Valores guardados",
@@ -1965,6 +2018,14 @@
       "water": "Agua"
     },
     "saveForm": "Guardar formulario",
-    "fillHint": "Rellena solo lo que tengas. Enter pasa al campo siguiente."
+    "fillHint": "Rellena solo lo que tengas. Enter pasa al campo siguiente.",
+    "layout": "Vista",
+    "layouts": {
+      "GRID": "Cuadrícula",
+      "LIST": "Lista"
+    },
+    "order": "Orden de los campos",
+    "moveUp": "Subir",
+    "moveDown": "Bajar"
   }
 }

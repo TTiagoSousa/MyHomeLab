@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Global_Input from '../../../../Components/Inputs/Global_Input/Global_Input';
-import Global_Dropdown from '../../../../Components/Inputs/Global_Dropdown/Global_Dropdown';
 import type { CompositionField, MeasurementDevice } from '../../../../Hooks/Health/healthTypes';
 import type { WeightPayload } from '../../../../Hooks/Health/useWeight';
 import { browserTimeZone, dateInput, timeInput } from '../Shared/healthFormat';
 import { COMPOSITION_METRICS, FIELD_INFO, parseField } from '../Metrics/metricCatalog';
+import Health_Device_Field, { NO_DEVICE } from '../Shared/Health_Device_Field';
 
 type Field = 'weightKg' | CompositionField;
 
 const FIELDS: Field[] = ['weightKg', ...COMPOSITION_METRICS];
-const NO_DEVICE = 'none';
 
 interface Weight_Add_Card_Props {
   saving: boolean;
@@ -90,8 +89,8 @@ const Weight_Add_Card = ({ saving, devices, defaultDeviceId, onAdd }: Weight_Add
         </div>
       </div>
 
-      <div className='Health_Form Weight_Main'>
-        {input('weightKg')}
+      <div className={`Health_Form Weight_Main${showComposition ? ' short' : ''}`}>
+        {!showComposition && input('weightKg')}
         <div className='Health_Form_Field'>
           <label htmlFor='weight-date'>{t('weight.date')}</label>
           <Global_Input id='weight-date' type='date' value={date} onChange={(e) => setDate(e.target.value)} />
@@ -100,21 +99,10 @@ const Weight_Add_Card = ({ saving, devices, defaultDeviceId, onAdd }: Weight_Add
           <label htmlFor='weight-time'>{t('weight.time')}</label>
           <Global_Input id='weight-time' type='time' value={time} onChange={(e) => setTime(e.target.value)} />
         </div>
-        <div className='Health_Form_Field'>
-          <label htmlFor='weight-device'>{t('devices.device')}</label>
-          <Global_Dropdown
-            id='weight-device'
-            value={deviceId}
-            onChange={setDeviceChoice}
-            options={[
-              { value: NO_DEVICE, label: t('devices.none') },
-              ...devices.map((device) => ({ value: device.id, label: device.name })),
-            ]}
-          />
-        </div>
+        <Health_Device_Field id='weight-device' devices={devices} value={deviceId} onChange={setDeviceChoice} />
       </div>
 
-      {showComposition && <div className='Health_Form Weight_Composition'>{COMPOSITION_METRICS.map(input)}</div>}
+      {showComposition && <div className='Health_Form Weight_Composition'>{FIELDS.map(input)}</div>}
 
       {invalid && <p className='Health_Form_Error'>{t('weight.invalid')}</p>}
       {error && <p className='Health_Form_Error'>{error}</p>}

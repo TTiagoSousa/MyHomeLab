@@ -1162,16 +1162,23 @@ model WeightEntry {
   device     MeasurementDevice? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
 
   weightKg           Float?
+  bmi                Float? // IMC (da balança; sem ele, calcula-se com a altura)
   bodyFatPct         Float? // gordura corporal (%)
+  fatMassKg          Float? // massa de gordura (kg)
   subcutaneousFatPct Float? // gordura subcutânea (%)
   visceralFat        Float? // gordura visceral (índice da balança)
+  musclePct          Float? // músculo (%)
   muscleKg           Float? // massa muscular (kg)
   skeletalMusclePct  Float? // músculo esquelético (%)
+  skeletalMuscleKg   Float? // massa de músculo esquelético (kg)
+  bonePct            Float? // massa óssea (%)
   boneKg             Float? // massa óssea (kg)
   leanKg             Float? // peso sem gordura (kg)
   bmrKcal            Float? // taxa metabólica basal (kcal)
   waterPct           Float? // água corporal (%)
+  waterKg            Float? // massa de água (kg)
   proteinPct         Float? // proteína (%)
+  proteinKg          Float? // massa de proteína (kg)
 
   createdAt DateTime @default(now())
 
@@ -1179,29 +1186,49 @@ model WeightEntry {
   @@index([deviceId])
 }
 
-/// Um aparelho de onde vêm as pesagens (ex: "Renpho"). O predefinido já vem
-/// escolhido ao registar.
+enum MeasurementDeviceKind {
+  SCALE // balança (pesagens)
+  BLOOD_PRESSURE // medidor de tensão arterial
+  GLUCOMETER // glicómetro
+  THERMOMETER // termómetro
+  OXIMETER // oxímetro
+  OTHER
+}
+
+/// Um aparelho de medição (balança, medidor de tensão…). Há um predefinido por
+/// tipo, que já vem escolhido ao registar.
 model MeasurementDevice {
-  id        String   @id @default(uuid())
+  id        String                @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      MeasurementDeviceKind @default(SCALE)
   name      String
-  isDefault Boolean  @default(false)
-  createdAt DateTime @default(now())
+  brand     String?
+  model     String?
+  notes     String?
+  isDefault Boolean               @default(false)
+  createdAt DateTime              @default(now())
 
   weightEntries WeightEntry[]
+  vitalReadings VitalReading[]
 
   @@unique([userId, name])
 }
 
 /// Um formulário rápido da Saúde: um nome e os campos que se metem de uma vez
 /// (chaves de HEALTH_FORM_FIELDS no backend).
+enum HealthFormLayout {
+  GRID
+  LIST
+}
+
 model HealthForm {
-  id        String   @id @default(uuid())
+  id        String           @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   name      String
-  fields    String[]
+  fields    String[] // pela ordem escolhida
+  layout    HealthFormLayout @default(GRID)
   position  Int      @default(0)
   createdAt DateTime @default(now())
 
@@ -1496,10 +1523,13 @@ model VitalReading {
   pulse    Int?
   context  String? // na glicemia: FASTING, BEFORE_MEAL, AFTER_MEAL ou RANDOM
   notes    String?
+  deviceId String?
+  device   MeasurementDevice? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
 
   @@index([userId, kind, at])
+  @@index([deviceId])
 }
 
 /// Humor, energia e motivação de um dia (1–5), com uma nota.

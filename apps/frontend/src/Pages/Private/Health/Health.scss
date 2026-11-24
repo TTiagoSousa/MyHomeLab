@@ -16,6 +16,12 @@
     }
   }
 
+  .Health_devices{
+    @include Mixin.Ghost_Button;
+    height: 42px;
+    padding: 0 14px;
+  }
+
   .Health_add{
     @include Mixin.Solid_Button;
     height: 42px;

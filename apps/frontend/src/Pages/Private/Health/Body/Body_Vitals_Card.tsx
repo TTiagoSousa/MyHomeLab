@@ -5,6 +5,9 @@ import Global_Dropdown from '../../../../Components/Inputs/Global_Dropdown/Globa
 import type { GlucoseContext, VitalKind, VitalPayload } from '../../../../Hooks/Health/healthLogTypes';
 import { browserTimeZone, dateInput, timeInput } from '../Shared/healthFormat';
 import { GLUCOSE_CONTEXTS, parseNumber } from './bodyFormat';
+import { useMeasurementDevices } from '../../../../Hooks/Health/useMeasurementDevices';
+import Health_Device_Field, { NO_DEVICE } from '../Shared/Health_Device_Field';
+import { VITAL_DEVICE_KIND } from '../Metrics/metricCatalog';
 
 interface Body_Vitals_Card_Props {
   kind: VitalKind;
@@ -24,6 +27,10 @@ const Body_Vitals_Card = ({ kind, saving, onAdd }: Body_Vitals_Card_Props) => {
   const [pulse, setPulse] = useState('');
   const [context, setContext] = useState<GlucoseContext>('FASTING');
   const [notes, setNotes] = useState('');
+  const devices = useMeasurementDevices();
+  const [deviceChoice, setDeviceChoice] = useState<string | null>(null);
+  const deviceKind = VITAL_DEVICE_KIND[kind];
+  const deviceId = deviceChoice ?? devices.defaultOf(deviceKind)?.id ?? NO_DEVICE;
   const [error, setError] = useState('');
 
   const at = new Date(`${date}T${time}`);
@@ -49,6 +56,7 @@ const Body_Vitals_Card = ({ kind, saving, onAdd }: Body_Vitals_Card_Props) => {
       pulse: kind === 'BLOOD_PRESSURE' && pulseValue != null ? Math.round(pulseValue) : null,
       context: kind === 'GLUCOSE' ? context : null,
       notes: notes.trim() || null,
+      deviceId: deviceId === NO_DEVICE ? null : deviceId,
     });
     if (failure) setError(failure);
     else {
@@ -118,6 +126,7 @@ const Body_Vitals_Card = ({ kind, saving, onAdd }: Body_Vitals_Card_Props) => {
           <label htmlFor='vital-time'>{t('body.time')}</label>
           <Global_Input id='vital-time' type='time' value={time} onChange={(e) => setTime(e.target.value)} />
         </div>
+        <Health_Device_Field id='vital-device' devices={devices.devicesOf(deviceKind)} value={deviceId} onChange={setDeviceChoice} />
       </div>
 
       <div className='Health_Form_Field'>

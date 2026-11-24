@@ -4,51 +4,81 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SaveDeviceDto } from './dto/save-device.dto';
+import { MeasurementDeviceKind } from 'src/generated/prisma/client/client';
+import { SaveDeviceDto, UpdateDeviceDto } from './dto/save-device.dto';
+import { DEVICE_KINDS } from './helpers/healthMetrics';
+
+const DEVICE_SELECT = {
+  id: true,
+  kind: true,
+  name: true,
+  brand: true,
+  model: true,
+  notes: true,
+  isDefault: true,
+} as const;
+
+const textOrNull = (value: string | null | undefined) =>
+  value === undefined ? undefined : value?.trim() || null;
 
 /**
- * Os aparelhos das pesagens (balanças). Há no máximo um predefinido; o primeiro
- * que se cria fica predefinido.
+ * Os aparelhos de medição (balanças, medidores de tensão…). Há no máximo um
+ * predefinido por tipo; o primeiro de cada tipo fica predefinido.
  */
 @Injectable()
 export class MeasurementDevicesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  list(userId: string) {
-    return this.prisma.measurementDevice.findMany({
+  async list(userId: string) {
+    const devices = await this.prisma.measurementDevice.findMany({
       where: { userId },
       orderBy: [{ isDefault: 'desc' }, { name: 'asc' }],
-      select: { id: true, name: true, isDefault: true },
+      select: DEVICE_SELECT,
     });
+    // pela ordem dos tipos, para a página dos aparelhos agrupar
+    return devices.sort(
+      (a, b) => DEVICE_KINDS.indexOf(a.kind) - DEVICE_KINDS.indexOf(b.kind),
+    );
   }
 
   async create(userId: string, dto: SaveDeviceDto) {
     const name = dto.name.trim();
+    const kind: MeasurementDeviceKind = dto.kind ?? 'SCALE';
     await this.ensureFreeName(userId, name);
-    const count = await this.prisma.measurementDevice.count({
-      where: { userId },
+    const sameKind = await this.prisma.measurementDevice.count({
+      where: { userId, kind },
     });
-    const isDefault = dto.isDefault === true || count === 0;
+    const isDefault = dto.isDefault === true || sameKind === 0;
     await this.prisma.$transaction(async (tx) => {
       if (isDefault) {
         await tx.measurementDevice.updateMany({
-          where: { userId },
+          where: { userId, kind },
           data: { isDefault: false },
         });
       }
-      await tx.measurementDevice.create({ data: { userId, name, isDefault } });
+      await tx.measurementDevice.create({
+        data: {
+          userId,
+          kind,
+          name,
+          brand: textOrNull(dto.brand),
+          model: textOrNull(dto.model),
+          notes: textOrNull(dto.notes),
+          isDefault,
+        },
+      });
     });
     return this.list(userId);
   }
 
-  async update(userId: string, id: string, dto: Partial<SaveDeviceDto>) {
-    await this.find(userId, id);
+  async update(userId: string, id: string, dto: UpdateDeviceDto) {
+    const device = await this.find(userId, id);
     const name = dto.name?.trim();
     if (name) await this.ensureFreeName(userId, name, id);
     await this.prisma.$transaction(async (tx) => {
       if (dto.isDefault) {
         await tx.measurementDevice.updateMany({
-          where: { userId },
+          where: { userId, kind: device.kind },
           data: { isDefault: false },
         });
       }
@@ -56,6 +86,9 @@ export class MeasurementDevicesService {
         where: { id },
         data: {
           ...(name ? { name } : {}),
+          brand: textOrNull(dto.brand),
+          model: textOrNull(dto.model),
+          notes: textOrNull(dto.notes),
           ...(dto.isDefault !== undefined ? { isDefault: dto.isDefault } : {}),
         },
       });
@@ -63,7 +96,7 @@ export class MeasurementDevicesService {
     return this.list(userId);
   }
 
-  /** As pesagens do aparelho ficam, só sem aparelho. */
+  /** Os registos do aparelho ficam, só sem aparelho. */
   async remove(userId: string, id: string) {
     await this.find(userId, id);
     await this.prisma.measurementDevice.delete({ where: { id } });

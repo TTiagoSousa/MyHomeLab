@@ -425,7 +425,7 @@ export async function healthMetric(
       if (!data.entries.length) return NO_DATA;
       return [
         `Peso em kg, registado à mão (${period}). Médias do peso: ${json(data.averages)}`,
-        'Pesagens (data hora | id | aparelho | kg | diferença para a anterior | composição: gordura %, gordura subcutânea %, gordura visceral, músculo kg, músculo esquelético %, osso kg, sem gordura kg, TMB kcal, água %, proteína %):',
+        `Pesagens — cada uma é uma medição (data hora | id | aparelho | kg | diferença para a anterior | ${COMPOSITION_FIELDS.join(' / ')}; % e kg como diz o nome, TMB em kcal, gordura visceral é um índice):`,
         ...rows(
           data.entries.map(
             (e) =>

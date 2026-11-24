@@ -44,6 +44,7 @@ const Body_Vitals_List = ({ kind, readings, onRemove }: Body_Vitals_List_Props) 
                 <span className='Body_Vital_Value'>{formatVital(reading)}</span>
                 {reading.pulse != null && <span className='Body_Vital_Extra'>{t('body.vitals.pulseValue', { value: reading.pulse })}</span>}
                 {reading.context && <span className='Body_Vital_Extra'>{t(`body.vitals.contexts.${reading.context}`)}</span>}
+                {reading.device && <span className='Body_Vital_Extra'>{reading.device}</span>}
                 <span className={`Body_Level ${levelTone(level)}`}>{t(`body.vitals.levels.${level}`)}</span>
               </div>
               {reading.notes && <p className='Body_Vital_Notes'>{reading.notes}</p>}

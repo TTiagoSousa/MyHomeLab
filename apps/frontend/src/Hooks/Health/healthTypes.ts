@@ -183,16 +183,23 @@ export interface WeightAverages {
 }
 
 export type CompositionField =
+  | 'bmi'
   | 'bodyFatPct'
+  | 'fatMassKg'
   | 'subcutaneousFatPct'
   | 'visceralFat'
+  | 'musclePct'
   | 'muscleKg'
   | 'skeletalMusclePct'
+  | 'skeletalMuscleKg'
+  | 'bonePct'
   | 'boneKg'
   | 'leanKg'
   | 'bmrKcal'
   | 'waterPct'
-  | 'proteinPct';
+  | 'waterKg'
+  | 'proteinPct'
+  | 'proteinKg';
 
 export type TapeField = 'waistCm' | 'chestCm' | 'armCm' | 'thighCm' | 'hipsCm' | 'neckCm';
 
@@ -247,16 +254,25 @@ export interface MetricSummary {
   recent: RecentValue[];
 }
 
+export type DeviceKind = 'SCALE' | 'BLOOD_PRESSURE' | 'GLUCOMETER' | 'THERMOMETER' | 'OXIMETER' | 'OTHER';
+
 export interface MeasurementDevice {
   id: string;
+  kind: DeviceKind;
   name: string;
+  brand: string | null;
+  model: string | null;
+  notes: string | null;
   isDefault: boolean;
 }
+
+export type HealthFormLayout = 'GRID' | 'LIST';
 
 export interface HealthForm {
   id: string;
   name: string;
   fields: HealthFormField[];
+  layout: HealthFormLayout;
 }
 
 export interface WaterAverages {

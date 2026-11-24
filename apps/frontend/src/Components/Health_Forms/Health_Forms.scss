@@ -102,6 +102,85 @@
     @media (max-width: 560px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 
+  .Health_Forms_List_Fields{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .Health_Forms_Field{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 160px;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 10px;
+      border: 1px solid var(--hud-line);
+      border-radius: var(--ctrl-radius);
+
+      label{ font-size: 12.5px; color: var(--text-main); }
+    }
+  }
+
+  .Health_Forms_Label{
+    font-size: 11.5px;
+    color: var(--text-soft);
+  }
+
+  .Health_Forms_Layouts{
+    display: flex;
+    gap: 6px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      flex: 1;
+      height: 38px;
+      font-size: 12.5px;
+
+      &.active{
+        color: var(--accent-bright);
+        border-color: var(--accent);
+        background: var(--accent-soft);
+      }
+    }
+  }
+
+  .Health_Forms_Order{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    ol{
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: order;
+    }
+
+    li{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px 4px 10px;
+      border: 1px solid var(--hud-line);
+      border-radius: var(--ctrl-radius);
+      counter-increment: order;
+      font-size: 12.5px;
+      color: var(--text-main);
+
+      &::before{
+        content: counter(order) '.';
+        min-width: 18px;
+        color: var(--text-faint);
+      }
+
+      span{ flex: 1; min-width: 0; }
+
+      .Health_Forms_Ghost{ width: 34px; padding: 0; }
+    }
+  }
+
   .Health_Forms_Field{
     display: flex;
     flex-direction: column;

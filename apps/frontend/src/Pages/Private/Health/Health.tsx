@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import './Health.scss';
 import { useHealthSummary } from '../../../Hooks/Health/useHealthSummary';
 import { useHealthProfile } from '../../../Hooks/Health/useHealthProfile';
@@ -13,6 +14,7 @@ const Health = () => {
   const { summary, loading, error, fetchSummary } = useHealthSummary();
   const { profile, saving: savingTabs, saveProfile } = useHealthProfile();
   const [importOpen, setImportOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className='Health'>
@@ -22,6 +24,9 @@ const Health = () => {
         </div>
 
         <div className='Left_Side'>
+          <button type='button' className='Health_devices' onClick={() => navigate('/MyHomeLab/Health/Devices')}>
+            {t('devices.title')}
+          </button>
           <button type='button' className='Health_add' onClick={() => setImportOpen(true)}>
             <Icon.Plus />
             <span>{t('page.addData')}</span>

@@ -16,7 +16,12 @@ import {
 import { localDayDate } from './helpers/localDayDate';
 import { dateOnly } from './helpers/dateOnly';
 import { dayOf } from './helpers/dayOf';
-import { BODY_FIELDS, type BodyField } from './helpers/healthMetrics';
+import { deviceFor } from './helpers/deviceFor';
+import {
+  BODY_FIELDS,
+  VITAL_DEVICE_KIND,
+  type BodyField,
+} from './helpers/healthMetrics';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -34,8 +39,11 @@ const toMeasurementView = (measurement: BodyMeasurement) => ({
   notes: measurement.notes,
 });
 
-const toVitalView = (vital: VitalReading) => ({
+const toVitalView = (
+  vital: VitalReading & { device?: { name: string } | null },
+) => ({
   id: vital.id,
+  device: vital.device?.name ?? null,
   at: vital.at,
   day: dayOf(vital.day),
   timeZone: vital.timeZone,
@@ -75,6 +83,7 @@ export class BodyService {
             : {}),
         },
         orderBy: { at: 'desc' },
+        include: { device: { select: { name: true } } },
       }),
     ]);
     return {
@@ -191,7 +200,14 @@ export class BodyService {
         pulse: dto.kind === 'BLOOD_PRESSURE' ? (dto.pulse ?? null) : null,
         context: dto.kind === 'GLUCOSE' ? (dto.context ?? null) : null,
         notes: dto.notes?.trim() || null,
+        deviceId: await deviceFor(
+          this.prisma,
+          userId,
+          dto.deviceId,
+          VITAL_DEVICE_KIND[dto.kind as keyof typeof VITAL_DEVICE_KIND],
+        ),
       },
+      include: { device: { select: { name: true } } },
     });
     return toVitalView(vital);
   }

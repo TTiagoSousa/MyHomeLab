@@ -749,7 +749,8 @@
     "hideComposition": "Hide composition",
     "invalid": "Some values are out of range.",
     "compositionCount_one": "{{count}} measure",
-    "compositionCount_other": "{{count}} measures"
+    "compositionCount_other": "{{count}} measures",
+    "measurementValues": "Measurement values"
   },
   "water": {
     "title": "Water",
@@ -1871,16 +1872,23 @@
   "bodyMetrics": {
     "names": {
       "weightKg": "Weight",
+      "bmi": "BMI",
       "bodyFatPct": "Body fat",
+      "fatMassKg": "Fat mass",
       "subcutaneousFatPct": "Subcutaneous fat",
       "visceralFat": "Visceral fat",
+      "musclePct": "Muscle percentage",
       "muscleKg": "Muscle mass",
       "skeletalMusclePct": "Skeletal muscle",
+      "skeletalMuscleKg": "Skeletal muscle mass",
+      "bonePct": "Bone mass percentage",
       "boneKg": "Bone mass",
       "leanKg": "Fat-free weight",
       "bmrKcal": "BMR",
       "waterPct": "Body water",
+      "waterKg": "Water mass",
       "proteinPct": "Protein",
+      "proteinKg": "Protein mass",
       "waistCm": "Waist",
       "chestCm": "Chest",
       "armCm": "Arm",
@@ -1890,16 +1898,23 @@
       "waterMl": "Water drunk"
     },
     "descriptions": {
+      "bmi": "Body mass index. If your scale does not give it, it is worked out from the weight and the height in your profile.",
       "bodyFatPct": "The share of your weight that is fat, as the scale measures it.",
+      "fatMassKg": "The weight of your fat, in kg.",
       "subcutaneousFatPct": "The fat just under the skin, as a share of your weight.",
       "visceralFat": "The scale’s index for the fat around your organs. Lower is better.",
+      "musclePct": "Your muscles, as a share of your weight.",
       "muscleKg": "The weight of your muscles, in kg.",
       "skeletalMusclePct": "The muscles you move, as a share of your weight.",
+      "skeletalMuscleKg": "The weight of the muscles you move, in kg.",
+      "bonePct": "Your bones, as a share of your weight.",
       "boneKg": "The estimated weight of your bones, in kg.",
       "leanKg": "Everything that is not fat. If the scale does not give it, it is worked out from the weight and the fat.",
       "bmrKcal": "The calories your body burns per day at rest (basal metabolic rate).",
       "waterPct": "The water in your body, as a share of your weight.",
+      "waterKg": "The water in your body, in kg.",
       "proteinPct": "The protein in your body, as a share of your weight.",
+      "proteinKg": "The protein in your body, in kg.",
       "waistCm": "The measurement around your waist. Entered here, in Body or in a quick form.",
       "chestCm": "The measurement around your chest. Entered here, in Body or in a quick form.",
       "armCm": "The measurement around your arm. Entered here, in Body or in a quick form.",
@@ -1926,16 +1941,22 @@
     "emptyTab": "No {{name}} values yet.",
     "saved": "Value saved",
     "addTitle": "Log {{name}}",
-    "addScaleHint": "Enter the value your scale gave you ({{min}}–{{max}}). It is saved as a weigh-in with the chosen device.",
+    "addScaleHint": "Enter the value your scale gave you ({{min}}–{{max}}). You can start a new measurement or add it to one you already made.",
     "addTapeHint": "Enter the day’s measurement ({{min}}–{{max}}). The other measurements of that day stay as they are.",
     "invalid": "The value must be between {{min}} and {{max}}.",
     "emptyHere": "Log the first value above.",
     "register": "Log {{name}}",
-    "latest": "Latest value"
+    "latest": "Latest value",
+    "measurement": "Measurement",
+    "newMeasurement": "New measurement",
+    "valuesCount_one": "{{count}} value",
+    "valuesCount_other": "{{count}} values",
+    "alreadyHas": "already has this",
+    "joiningHint": "The value joins that measurement (with its date, time and device). If it already had this value, it is replaced."
   },
   "devices": {
     "title": "Devices",
-    "description": "The scales your weigh-ins come from. The default one is already picked when you log.",
+    "description": "The machines you measure with: scale, blood pressure monitor, glucometer… Each type has a default that is already picked when you log.",
     "device": "Device",
     "none": "No device",
     "default": "Default",
@@ -1943,8 +1964,40 @@
     "remove": "Delete",
     "confirmRemove": "Confirm",
     "name": "Device name",
-    "namePlaceholder": "E.g. Renpho",
-    "add": "Add"
+    "namePlaceholder": "E.g. Bathroom scale",
+    "add": "Add",
+    "addTitle": "Add a device",
+    "kind": "Type",
+    "brand": "Brand",
+    "brandPlaceholder": "E.g. Renpho",
+    "model": "Model",
+    "modelPlaceholder": "E.g. ES-CS20M",
+    "emptyTitle": "No devices yet",
+    "emptyText": "Add your scale or blood pressure monitor above.",
+    "kinds": {
+      "SCALE": "Scale",
+      "BLOOD_PRESSURE": "Blood pressure monitor",
+      "GLUCOMETER": "Glucometer",
+      "THERMOMETER": "Thermometer",
+      "OXIMETER": "Oximeter",
+      "OTHER": "Other"
+    },
+    "kindsPlural": {
+      "SCALE": "Scales",
+      "BLOOD_PRESSURE": "Blood pressure monitors",
+      "GLUCOMETER": "Glucometers",
+      "THERMOMETER": "Thermometers",
+      "OXIMETER": "Oximeters",
+      "OTHER": "Others"
+    },
+    "kindHints": {
+      "SCALE": "Used for weight, body composition and quick forms.",
+      "BLOOD_PRESSURE": "Used for blood pressure readings.",
+      "GLUCOMETER": "Used for blood sugar readings.",
+      "THERMOMETER": "Used for temperature readings.",
+      "OXIMETER": "For blood oxygen.",
+      "OTHER": "Other measuring machines."
+    }
   },
   "forms": {
     "saved": "Values saved",
@@ -1965,6 +2018,14 @@
       "water": "Water"
     },
     "saveForm": "Save form",
-    "fillHint": "Fill in only what you have. Enter moves to the next field."
+    "fillHint": "Fill in only what you have. Enter moves to the next field.",
+    "layout": "View",
+    "layouts": {
+      "GRID": "Grid",
+      "LIST": "List"
+    },
+    "order": "Field order",
+    "moveUp": "Move up",
+    "moveDown": "Move down"
   }
 }

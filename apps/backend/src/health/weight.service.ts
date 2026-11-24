@@ -13,6 +13,7 @@ import { weightAverages } from './helpers/weightAverages';
 import { localDay } from './helpers/timeZone';
 import { roundTo } from './helpers/readings';
 import { checkedValues } from './helpers/checkedValues';
+import { deviceFor } from './helpers/deviceFor';
 import {
   COMPOSITION_FIELDS,
   type CompositionField,
@@ -54,6 +55,19 @@ export class WeightService {
         2,
       );
     }
+    // O IMC sai do peso e da altura do perfil quando a balança não o dá.
+    if (values.bmi == null && values.weightKg != null) {
+      const profile = await this.prisma.healthProfile.findUnique({
+        where: { userId },
+        select: { heightCm: true },
+      });
+      if (profile?.heightCm) {
+        values.bmi = roundTo(
+          values.weightKg / (profile.heightCm / 100) ** 2,
+          1,
+        );
+      }
+    }
     const measuredAt = new Date(dto.measuredAt);
     const entry = await this.prisma.weightEntry.create({
       data: {
@@ -61,7 +75,7 @@ export class WeightService {
         measuredAt,
         day: new Date(`${localDay(measuredAt, dto.timeZone)}T00:00:00Z`),
         timeZone: dto.timeZone,
-        deviceId: await this.deviceFor(userId, dto.deviceId),
+        deviceId: await deviceFor(this.prisma, userId, dto.deviceId, 'SCALE'),
         ...values,
       },
     });
@@ -128,17 +142,6 @@ export class WeightService {
   }
 
   /** O aparelho da pesagem: o pedido, o predefinido se não vier, ou nenhum. */
-  private async deviceFor(userId: string, deviceId: string | null | undefined) {
-    if (deviceId === null) return null;
-    const device = await this.prisma.measurementDevice.findFirst({
-      where: deviceId ? { id: deviceId, userId } : { userId, isDefault: true },
-      select: { id: true },
-    });
-    if (deviceId && !device)
-      throw new NotFoundException('Aparelho não encontrado');
-    return device?.id ?? null;
-  }
-
   private async latestDay(userId: string, withWeight = true) {
     const latest = await this.prisma.weightEntry.findFirst({
       where: { userId, ...(withWeight ? { weightKg: { not: null } } : {}) },
