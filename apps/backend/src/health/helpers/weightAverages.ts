@@ -18,18 +18,20 @@ export interface WeightAverages {
 
 const dayOf = (entry: WeightEntry) => entry.day.toISOString().slice(0, 10);
 
-/** As médias de um período de pesagens (por qualquer ordem). */
+type Weighed = WeightEntry & { weightKg: number };
+
+/** As médias de um período de pesagens (por qualquer ordem); as que só têm composição não contam. */
 export function weightAverages(entries: WeightEntry[]): WeightAverages {
-  const sorted = [...entries].sort(
-    (a, b) => a.measuredAt.getTime() - b.measuredAt.getTime(),
-  );
+  const sorted = entries
+    .filter((entry): entry is Weighed => entry.weightKg != null)
+    .sort((a, b) => a.measuredAt.getTime() - b.measuredAt.getTime());
   const first = sorted[0];
   const last = sorted[sorted.length - 1];
-  const min = sorted.reduce<WeightEntry | null>(
+  const min = sorted.reduce<Weighed | null>(
     (low, entry) => (!low || entry.weightKg < low.weightKg ? entry : low),
     null,
   );
-  const max = sorted.reduce<WeightEntry | null>(
+  const max = sorted.reduce<Weighed | null>(
     (high, entry) => (!high || entry.weightKg > high.weightKg ? entry : high),
     null,
   );

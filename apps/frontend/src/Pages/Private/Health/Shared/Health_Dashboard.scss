@@ -78,8 +78,18 @@
       @media (max-width: 1000px){ grid-template-columns: 1.4fr .8fr 1.4fr auto; }
     }
 
+    &.metric .Health_Table_Row{
+      grid-template-columns: 1.6fr 1fr 1fr 1fr 120px;
+
+      @media (max-width: 1000px){ grid-template-columns: 1.6fr 1fr 1fr 120px; }
+    }
+
+    &.metric.tape .Health_Table_Row{ grid-template-columns: 1.6fr 1fr 1fr 120px; }
+
     &.weight .Health_Table_Row{
-      grid-template-columns: 1.6fr 1fr 1fr 120px;
+      grid-template-columns: 1.5fr .9fr .8fr 1fr .9fr 120px;
+
+      @media (max-width: 1000px){ grid-template-columns: 1.5fr .9fr .8fr 120px; }
     }
 
     &.water .Health_Table_Row{
@@ -995,6 +1005,81 @@
     }
 
     &.loading{ opacity: .6; }
+  }
+
+  .Metric_Links{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .Metric_Link{
+    @include Mixin.Ghost_Button;
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12.5px;
+  }
+
+  .Metric_Form{
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+
+    &.tape{ grid-template-columns: repeat(2, minmax(0, 1fr)) auto; }
+
+    @media (max-width: 700px){
+      grid-template-columns: 1fr 1fr;
+
+      &.tape{ grid-template-columns: 1fr 1fr; }
+
+      .Health_Form_Save{ grid-column: 1 / -1; }
+    }
+  }
+
+  .Weight_Main{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    @media (max-width: 700px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  .Weight_Composition{
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+
+    @media (max-width: 1000px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  .Weight_Device_Form{
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    @media (max-width: 700px){ grid-template-columns: minmax(0, 1fr) auto; }
+  }
+
+  .Weight_Devices{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .Weight_Device{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+  }
+
+  .Weight_Device_Name{
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    color: var(--text-main);
+  }
+
+  .Weight_Device_Default{
+    @include Mixin.Hud_Label(9px);
+    color: var(--accent-bright);
   }
 
   .Health_toggle{

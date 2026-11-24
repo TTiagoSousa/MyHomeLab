@@ -68,7 +68,18 @@
       "steps": "Aún no hay pasos.",
       "weight": "Aún no has registrado el peso. Es manual: abre la página y añade el primer pesaje.",
       "water": "Aún no has registrado agua. Es manual: abre la página y ve sumando los vasos."
-    }
+    },
+    "tabsPrevious": "Pestañas anteriores",
+    "tabsNext": "Más pestañas",
+    "tabsFilter": "Elegir pestañas",
+    "tabsFilterHint": "Elige lo que aparece en las medias. Se guarda en tu cuenta.",
+    "tabGroups": {
+      "general": "General",
+      "composition": "Composición corporal",
+      "tape": "Medidas"
+    },
+    "tabsReset": "Restablecer",
+    "recent": "Últimos registros"
   },
   "metrics": {
     "duration": "Duración",
@@ -206,7 +217,11 @@
       "huawei": "Sueño, pulso, temperatura, oxígeno, estrés, pasos y entrenamientos",
       "openGym": "Los entrenamientos del gimnasio, sincronizados solos"
     },
-    "soonSources": "Próximamente: {{sources}}"
+    "soonSources": "Próximamente: {{sources}}",
+    "modes": {
+      "automatic": "Automáticos",
+      "manual": "Manual"
+    }
   },
   "periods": {
     "0": "Todo",
@@ -695,7 +710,7 @@
   "weight": {
     "title": "Peso",
     "addTitle": "Registrar pesaje",
-    "addDescription": "El peso se registra a mano. Pon lo que marca la báscula, a ser posible siempre a la misma hora.",
+    "addDescription": "Registra el peso y, si la báscula lo da, la composición corporal. Rellena solo lo que tengas.",
     "kg": "Peso (kg)",
     "date": "Fecha",
     "time": "Hora",
@@ -725,10 +740,16 @@
       "date": "Fecha",
       "weight": "Peso",
       "change": "Diferencia",
-      "actions": ""
+      "actions": "",
+      "composition": "Composición"
     },
     "remove": "Eliminar",
-    "confirmRemove": "Confirmar"
+    "confirmRemove": "Confirmar",
+    "showComposition": "Mostrar composición",
+    "hideComposition": "Ocultar composición",
+    "invalid": "Hay valores fuera de los límites.",
+    "compositionCount_one": "{{count}} medida",
+    "compositionCount_other": "{{count}} medidas"
   },
   "water": {
     "title": "Agua",
@@ -789,7 +810,7 @@
     },
     "profile": {
       "title": "Perfil",
-      "text": "Nombre, fecha de nacimiento, sexo, grupo sanguíneo, alergias y enfermedades conocidas."
+      "text": "Nombre, fecha de nacimiento, sexo, grupo sanguíneo, altura y contacto de emergencia."
     },
     "nutrition": {
       "title": "Alimentación",
@@ -797,7 +818,7 @@
     },
     "body": {
       "title": "Cuerpo",
-      "text": "Medidas, grasa y músculo, fotos de progreso, tensión, glucemia y temperatura."
+      "text": "Medidas con cinta (cintura, pecho…) y fotos de progreso."
     },
     "intakes": {
       "title": "Café y alcohol",
@@ -806,6 +827,14 @@
     "wellbeing": {
       "title": "Bienestar",
       "text": "Medias del ánimo y del ayuno; entra en cada uno para registrar y ver el historial."
+    },
+    "conditions": {
+      "title": "Enfermedades y alergias",
+      "text": "Enfermedades crónicas y alergias, con el estado, la gravedad y el tratamiento."
+    },
+    "vitals": {
+      "title": "Mediciones",
+      "text": "Tensión arterial, glucemia y temperatura, con el historial."
     }
   },
   "labs": {
@@ -1210,9 +1239,7 @@
       "armCm": "Brazo",
       "thighCm": "Muslo",
       "hipsCm": "Cadera",
-      "neckCm": "Cuello",
-      "bodyFatPct": "Grasa",
-      "muscleKg": "Masa muscular"
+      "neckCm": "Cuello"
     },
     "measurements": {
       "addTitle": "Registrar medidas",
@@ -1225,7 +1252,7 @@
       "saved": "Medidas guardadas.",
       "emptyError": "Rellena al menos una medida.",
       "emptyTitle": "Aún no hay medidas",
-      "emptyText": "Registra la cintura, el pecho o la grasa para seguir tu evolución.",
+      "emptyText": "Registra la cintura, el pecho u otra medida para seguir su evolución.",
       "history_one": "{{count}} registro",
       "history_other": "{{count}} registros",
       "historyDescription": "Del más reciente al más antiguo, con la diferencia respecto a la medición anterior.",
@@ -1807,7 +1834,8 @@
       "datesInvalid": "La fecha en que quedó tratada es anterior a la de inicio.",
       "save": "Guardar",
       "saving": "Guardando…"
-    }
+    },
+    "pageTitle": "Enfermedades y alergias"
   },
   "sessions": {
     "roles": {
@@ -1839,5 +1867,104 @@
       "save": "Guardar sesión",
       "saving": "Guardando…"
     }
+  },
+  "bodyMetrics": {
+    "names": {
+      "weightKg": "Peso",
+      "bodyFatPct": "Grasa corporal",
+      "subcutaneousFatPct": "Grasa subcutánea",
+      "visceralFat": "Grasa visceral",
+      "muscleKg": "Masa muscular",
+      "skeletalMusclePct": "Músculo esquelético",
+      "boneKg": "Masa ósea",
+      "leanKg": "Peso sin grasa",
+      "bmrKcal": "TMB",
+      "waterPct": "Agua corporal",
+      "proteinPct": "Proteína",
+      "waistCm": "Cintura",
+      "chestCm": "Pecho",
+      "armCm": "Brazo",
+      "thighCm": "Muslo",
+      "hipsCm": "Cadera",
+      "neckCm": "Cuello",
+      "waterMl": "Agua bebida"
+    },
+    "descriptions": {
+      "bodyFatPct": "La parte del peso que es grasa, según la báscula.",
+      "subcutaneousFatPct": "La grasa justo debajo de la piel, en porcentaje del peso.",
+      "visceralFat": "El índice de la báscula para la grasa alrededor de los órganos. Cuanto más bajo, mejor.",
+      "muscleKg": "El peso de los músculos, en kg.",
+      "skeletalMusclePct": "Los músculos que mueves, en porcentaje del peso.",
+      "boneKg": "El peso estimado de los huesos, en kg.",
+      "leanKg": "Todo lo que no es grasa. Si la báscula no lo da, se calcula con el peso y la grasa.",
+      "bmrKcal": "Las calorías que el cuerpo gasta al día en reposo (tasa metabólica basal).",
+      "waterPct": "El agua del cuerpo, en porcentaje del peso.",
+      "proteinPct": "La proteína del cuerpo, en porcentaje del peso.",
+      "waistCm": "La medida alrededor de la cintura. Se registra aquí, en Cuerpo o en un formulario rápido.",
+      "chestCm": "La medida alrededor del pecho. Se registra aquí, en Cuerpo o en un formulario rápido.",
+      "armCm": "La medida alrededor del brazo. Se registra aquí, en Cuerpo o en un formulario rápido.",
+      "thighCm": "La medida alrededor del muslo. Se registra aquí, en Cuerpo o en un formulario rápido.",
+      "hipsCm": "La medida alrededor de la cadera. Se registra aquí, en Cuerpo o en un formulario rápido.",
+      "neckCm": "La medida alrededor del cuello. Se registra aquí, en Cuerpo o en un formulario rápido."
+    },
+    "history_one": "{{count}} registro",
+    "history_other": "{{count}} registros",
+    "historyScale": "Del más reciente al más antiguo, con la diferencia respecto al anterior y el aparato.",
+    "historyTape": "Del más reciente al más antiguo, con la diferencia respecto a la medida anterior.",
+    "columns": {
+      "value": "Valor",
+      "device": "Aparato"
+    },
+    "emptyTitle": "Aún sin valores",
+    "basedOn_one": "{{count}} registro · {{from}} – {{to}}",
+    "basedOn_other": "{{count}} registros · {{from}} – {{to}}",
+    "trendTitle": "Evolución",
+    "linksHint": "Cada medida tiene su página, con las medias, el gráfico y el historial.",
+    "compositionTitle": "Composición corporal",
+    "tapeTitle": "Cada medida",
+    "seeMore": "Ver el historial",
+    "emptyTab": "Aún no hay valores de {{name}}.",
+    "saved": "Valor guardado",
+    "addTitle": "Registrar {{name}}",
+    "addScaleHint": "Introduce el valor que te dio la báscula ({{min}}–{{max}}). Se guarda como un pesaje con el aparato elegido.",
+    "addTapeHint": "Introduce la medida del día ({{min}}–{{max}}). Las demás medidas de ese día no cambian.",
+    "invalid": "El valor tiene que estar entre {{min}} y {{max}}.",
+    "emptyHere": "Registra el primer valor arriba.",
+    "register": "Registrar {{name}}",
+    "latest": "Último valor"
+  },
+  "devices": {
+    "title": "Aparatos",
+    "description": "Las básculas de donde vienen los pesajes. El predeterminado ya viene elegido al registrar.",
+    "device": "Aparato",
+    "none": "Sin aparato",
+    "default": "Predeterminado",
+    "makeDefault": "Hacer predeterminado",
+    "remove": "Eliminar",
+    "confirmRemove": "Confirmar",
+    "name": "Nombre del aparato",
+    "namePlaceholder": "Ej.: Renpho",
+    "add": "Añadir"
+  },
+  "forms": {
+    "saved": "Valores guardados",
+    "title": "Formularios rápidos",
+    "description": "Crea un formulario con los campos que siempre registras y rellénalos de una vez.",
+    "new": "Nuevo formulario",
+    "empty": "Aún no tienes formularios. Crea uno, por ejemplo \"Diario\" con el peso, la grasa y el agua.",
+    "edit": "Editar",
+    "remove": "Eliminar",
+    "confirmRemove": "Confirmar",
+    "editTitle": "Editar formulario",
+    "newTitle": "Nuevo formulario",
+    "name": "Nombre",
+    "namePlaceholder": "Ej.: Diario",
+    "groups": {
+      "scale": "Báscula",
+      "tape": "Medidas con cinta",
+      "water": "Agua"
+    },
+    "saveForm": "Guardar formulario",
+    "fillHint": "Rellena solo lo que tengas. Enter pasa al campo siguiente."
   }
 }

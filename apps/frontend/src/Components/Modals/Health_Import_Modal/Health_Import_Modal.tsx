@@ -5,6 +5,7 @@ import { useHealthImport } from '../../../Hooks/Health/useHealthImport';
 import { useOpenGym } from '../../../Hooks/Health/useOpenGym';
 import Health_Import_OpenGym from './Health_Import_OpenGym';
 import Health_OpenGym_Status from './Health_OpenGym_Status';
+import Health_Forms_Panel from '../../Health_Forms/Health_Forms_Panel';
 import type {
   HuaweiHeartImportResult,
   HuaweiImportResult,
@@ -18,6 +19,9 @@ import { formatDay } from '../../../Pages/Private/Health/Shared/healthFormat';
 import { extractDetailReadings, extractExercise, huaweiFilesOf } from './huaweiExport';
 
 type Source = 'huawei' | 'openGym';
+type Mode = 'automatic' | 'manual';
+
+const MODES: Mode[] = ['automatic', 'manual'];
 
 const SOURCES: Source[] = ['huawei', 'openGym'];
 const SOON_SOURCES = ['apple', 'samsung', 'google'];
@@ -41,6 +45,7 @@ const Health_Import_Modal = ({ onClose, onImported }: Health_Import_Modal_Props)
     importHuaweiExercise,
   } = useHealthImport();
   const openGym = useOpenGym();
+  const [mode, setMode] = useState<Mode>('automatic');
   const [source, setSource] = useState<Source>('huawei');
   const [files, setFiles] = useState<ReturnType<typeof huaweiFilesOf> | null>(null);
   const [progress, setProgress] = useState<string | null>(null);
@@ -114,162 +119,195 @@ const Health_Import_Modal = ({ onClose, onImported }: Health_Import_Modal_Props)
           <span className='Health_Import_Modal_Text'>{t('import.description')}</span>
         </div>
 
-        <div className='Health_Import_Modal_Sources'>
-          {SOURCES.map((key) => (
+        <div className='Health_Import_Modal_Modes' role='tablist'>
+          {MODES.map((key) => (
             <button
               key={key}
               type='button'
+              role='tab'
+              aria-selected={mode === key}
               disabled={importing}
-              aria-pressed={source === key}
-              className={`Health_Import_Modal_Source${source === key ? ' active' : ''}`}
-              onClick={() => setSource(key)}
+              className={mode === key ? 'active' : ''}
+              onClick={() => setMode(key)}
             >
-              <span className='Health_Import_Modal_Source_top'>
-                <span className='Health_Import_Modal_Source_name'>{t(`import.sources.${key}`)}</span>
-                {key === 'openGym' && openGym.connection?.connected && <Health_OpenGym_Status status={openGym.status} />}
-              </span>
-              <span className='Health_Import_Modal_Source_hint'>{t(`import.sourceHints.${key}`)}</span>
+              {t(`import.modes.${key}`)}
             </button>
           ))}
         </div>
 
-        <span className='Health_Import_Modal_Soon'>
-          {t('import.soonSources', { sources: SOON_SOURCES.map((key) => t(`import.sources.${key}`)).join(' · ') })}
-        </span>
-
-        {source === 'openGym' && <Health_Import_OpenGym openGym={openGym} onSynced={onImported} onClose={onClose} />}
-
-        {source === 'huawei' && (
-          <div className='Health_Import_Modal_Body'>
-            <span className='Health_Import_Modal_Text'>{t('import.huaweiHelp')}</span>
-
-            <label className={`Health_Import_Modal_Pick ${importing ? 'disabled' : ''}`}>
-              <input
-                type='file'
-                multiple
-                disabled={importing}
-                ref={(input) => input?.setAttribute('webkitdirectory', '')}
-                onChange={(e) => {
-                  setFiles(huaweiFilesOf(e.target.files));
-                  setSleepResult(null);
-                  setHeartResult(null);
-                  setSkinResult(null);
-                  setOxygenResult(null);
-                  setStressResult(null);
-                  setStepsResult(null);
-                  setExerciseResult(null);
-                }}
-              />
-              {t('import.chooseFolder')}
-            </label>
-
-            {files && !nothingFound && (
-              <span className='Health_Import_Modal_Info'>
-                {t('import.filesFound', {
-                  sleep: files.sleep.length,
-                  detail: files.detail.length,
-                  exercise: files.workouts.length + files.activity.length,
-                })}
-              </span>
-            )}
-            {nothingFound && <span className='Health_Import_Modal_Info error'>{t('import.noFiles')}</span>}
-            {progress && <span className='Health_Import_Modal_Info'>{progress}</span>}
-
-            {sleepResult && (
-              <span className='Health_Import_Modal_Info success'>
-                {t('import.doneSleep', {
-                  nights: sleepResult.nights,
-                  naps: sleepResult.naps,
-                  created: sleepResult.created,
-                  updated: sleepResult.updated,
-                  from: day(sleepResult.from),
-                  to: day(sleepResult.to),
-                })}
-              </span>
-            )}
-            {heartResult && (
-              <span className='Health_Import_Modal_Info success'>
-                {t('import.doneHeart', {
-                  days: heartResult.days,
-                  created: heartResult.created,
-                  updated: heartResult.updated,
-                  from: day(heartResult.from),
-                  to: day(heartResult.to),
-                })}
-              </span>
-            )}
-            {skinResult && (
-              <span className='Health_Import_Modal_Info success'>
-                {t('import.doneSkinTemperature', {
-                  days: skinResult.days,
-                  created: skinResult.created,
-                  updated: skinResult.updated,
-                  from: day(skinResult.from),
-                  to: day(skinResult.to),
-                })}
-              </span>
-            )}
-            {oxygenResult && (
-              <span className='Health_Import_Modal_Info success'>
-                {t('import.doneBloodOxygen', {
-                  days: oxygenResult.days,
-                  created: oxygenResult.created,
-                  updated: oxygenResult.updated,
-                  from: day(oxygenResult.from),
-                  to: day(oxygenResult.to),
-                })}
-              </span>
-            )}
-            {stressResult && (
-              <span className='Health_Import_Modal_Info success'>
-                {t('import.doneStress', {
-                  days: stressResult.days,
-                  created: stressResult.created,
-                  updated: stressResult.updated,
-                  from: day(stressResult.from),
-                  to: day(stressResult.to),
-                })}
-              </span>
-            )}
-            {stepsResult && (
-              <span className='Health_Import_Modal_Info success'>
-                {t('import.doneSteps', {
-                  days: stepsResult.days,
-                  created: stepsResult.created,
-                  updated: stepsResult.updated,
-                  from: day(stepsResult.from),
-                  to: day(stepsResult.to),
-                })}
-              </span>
-            )}
-            {exerciseResult && (
-              <span className='Health_Import_Modal_Info success'>
-                {t('import.doneExercise', {
-                  workouts: exerciseResult.workouts,
-                  from: day(exerciseResult.from),
-                  to: day(exerciseResult.to),
-                })}
-              </span>
-            )}
-          </div>
+        {mode === 'manual' && (
+          <>
+            <div className='Health_Import_Modal_Body'>
+              <Health_Forms_Panel onSaved={onImported} />
+            </div>
+            <div className='Health_Import_Modal_Footer'>
+              <button type='button' className='Health_Import_Modal_Close' onClick={onClose}>
+                {t('import.close')}
+              </button>
+            </div>
+          </>
         )}
 
-        {source === 'huawei' && (
-        <div className='Health_Import_Modal_Footer'>
-          <button type='button' className='Health_Import_Modal_Close' onClick={onClose} disabled={importing}>
-            {t(done ? 'import.close' : 'import.cancel')}
-          </button>
-          {!done && (
-            <button
-              type='button'
-              className='Health_Import_Modal_Submit'
-              onClick={submit}
-              disabled={importing || !files || !!nothingFound}
-            >
-              {t(importing ? 'import.importing' : 'import.submit')}
-            </button>
+        {mode === 'automatic' && (
+        <>
+          <div className='Health_Import_Modal_Sources'>
+            {SOURCES.map((key) => (
+              <button
+                key={key}
+                type='button'
+                disabled={importing}
+                aria-pressed={source === key}
+                className={`Health_Import_Modal_Source${source === key ? ' active' : ''}`}
+                onClick={() => setSource(key)}
+              >
+                <span className='Health_Import_Modal_Source_top'>
+                  <span className='Health_Import_Modal_Source_name'>{t(`import.sources.${key}`)}</span>
+                  {key === 'openGym' && openGym.connection?.connected && <Health_OpenGym_Status status={openGym.status} />}
+                </span>
+                <span className='Health_Import_Modal_Source_hint'>{t(`import.sourceHints.${key}`)}</span>
+              </button>
+            ))}
+          </div>
+
+          <span className='Health_Import_Modal_Soon'>
+            {t('import.soonSources', { sources: SOON_SOURCES.map((key) => t(`import.sources.${key}`)).join(' · ') })}
+          </span>
+
+          {source === 'openGym' && <Health_Import_OpenGym openGym={openGym} onSynced={onImported} onClose={onClose} />}
+
+          {source === 'huawei' && (
+            <div className='Health_Import_Modal_Body'>
+              <span className='Health_Import_Modal_Text'>{t('import.huaweiHelp')}</span>
+
+              <label className={`Health_Import_Modal_Pick ${importing ? 'disabled' : ''}`}>
+                <input
+                  type='file'
+                  multiple
+                  disabled={importing}
+                  ref={(input) => input?.setAttribute('webkitdirectory', '')}
+                  onChange={(e) => {
+                    setFiles(huaweiFilesOf(e.target.files));
+                    setSleepResult(null);
+                    setHeartResult(null);
+                    setSkinResult(null);
+                    setOxygenResult(null);
+                    setStressResult(null);
+                    setStepsResult(null);
+                    setExerciseResult(null);
+                  }}
+                />
+                {t('import.chooseFolder')}
+              </label>
+
+              {files && !nothingFound && (
+                <span className='Health_Import_Modal_Info'>
+                  {t('import.filesFound', {
+                    sleep: files.sleep.length,
+                    detail: files.detail.length,
+                    exercise: files.workouts.length + files.activity.length,
+                  })}
+                </span>
+              )}
+              {nothingFound && <span className='Health_Import_Modal_Info error'>{t('import.noFiles')}</span>}
+              {progress && <span className='Health_Import_Modal_Info'>{progress}</span>}
+
+              {sleepResult && (
+                <span className='Health_Import_Modal_Info success'>
+                  {t('import.doneSleep', {
+                    nights: sleepResult.nights,
+                    naps: sleepResult.naps,
+                    created: sleepResult.created,
+                    updated: sleepResult.updated,
+                    from: day(sleepResult.from),
+                    to: day(sleepResult.to),
+                  })}
+                </span>
+              )}
+              {heartResult && (
+                <span className='Health_Import_Modal_Info success'>
+                  {t('import.doneHeart', {
+                    days: heartResult.days,
+                    created: heartResult.created,
+                    updated: heartResult.updated,
+                    from: day(heartResult.from),
+                    to: day(heartResult.to),
+                  })}
+                </span>
+              )}
+              {skinResult && (
+                <span className='Health_Import_Modal_Info success'>
+                  {t('import.doneSkinTemperature', {
+                    days: skinResult.days,
+                    created: skinResult.created,
+                    updated: skinResult.updated,
+                    from: day(skinResult.from),
+                    to: day(skinResult.to),
+                  })}
+                </span>
+              )}
+              {oxygenResult && (
+                <span className='Health_Import_Modal_Info success'>
+                  {t('import.doneBloodOxygen', {
+                    days: oxygenResult.days,
+                    created: oxygenResult.created,
+                    updated: oxygenResult.updated,
+                    from: day(oxygenResult.from),
+                    to: day(oxygenResult.to),
+                  })}
+                </span>
+              )}
+              {stressResult && (
+                <span className='Health_Import_Modal_Info success'>
+                  {t('import.doneStress', {
+                    days: stressResult.days,
+                    created: stressResult.created,
+                    updated: stressResult.updated,
+                    from: day(stressResult.from),
+                    to: day(stressResult.to),
+                  })}
+                </span>
+              )}
+              {stepsResult && (
+                <span className='Health_Import_Modal_Info success'>
+                  {t('import.doneSteps', {
+                    days: stepsResult.days,
+                    created: stepsResult.created,
+                    updated: stepsResult.updated,
+                    from: day(stepsResult.from),
+                    to: day(stepsResult.to),
+                  })}
+                </span>
+              )}
+              {exerciseResult && (
+                <span className='Health_Import_Modal_Info success'>
+                  {t('import.doneExercise', {
+                    workouts: exerciseResult.workouts,
+                    from: day(exerciseResult.from),
+                    to: day(exerciseResult.to),
+                  })}
+                </span>
+              )}
+            </div>
           )}
-        </div>
+
+          {source === 'huawei' && (
+          <div className='Health_Import_Modal_Footer'>
+            <button type='button' className='Health_Import_Modal_Close' onClick={onClose} disabled={importing}>
+              {t(done ? 'import.close' : 'import.cancel')}
+            </button>
+            {!done && (
+              <button
+                type='button'
+                className='Health_Import_Modal_Submit'
+                onClick={submit}
+                disabled={importing || !files || !!nothingFound}
+              >
+                {t(importing ? 'import.importing' : 'import.submit')}
+              </button>
+            )}
+          </div>
+          )}
+        </>
         )}
       </div>
     </div>

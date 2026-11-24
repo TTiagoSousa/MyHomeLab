@@ -68,7 +68,18 @@
       "steps": "No steps yet.",
       "weight": "You haven't logged your weight yet. It's manual: open the page and add the first weigh-in.",
       "water": "You haven't logged any water yet. It's manual: open the page and add your glasses as you go."
-    }
+    },
+    "tabsPrevious": "Previous tabs",
+    "tabsNext": "More tabs",
+    "tabsFilter": "Choose tabs",
+    "tabsFilterHint": "Choose what shows in the averages. It is saved in your account.",
+    "tabGroups": {
+      "general": "General",
+      "composition": "Body composition",
+      "tape": "Measurements"
+    },
+    "tabsReset": "Reset",
+    "recent": "Latest entries"
   },
   "metrics": {
     "duration": "Duration",
@@ -206,7 +217,11 @@
       "huawei": "Sleep, heart rate, temperature, oxygen, stress, steps and workouts",
       "openGym": "Gym workouts, synced automatically"
     },
-    "soonSources": "Coming soon: {{sources}}"
+    "soonSources": "Coming soon: {{sources}}",
+    "modes": {
+      "automatic": "Automatic",
+      "manual": "Manual"
+    }
   },
   "periods": {
     "0": "All",
@@ -695,7 +710,7 @@
   "weight": {
     "title": "Weight",
     "addTitle": "Log a weigh-in",
-    "addDescription": "Weight is logged by hand. Enter what the scale says, ideally at the same time each day.",
+    "addDescription": "Enter the weight and, if your scale gives it, the body composition. Fill in only what you have.",
     "kg": "Weight (kg)",
     "date": "Date",
     "time": "Time",
@@ -725,10 +740,16 @@
       "date": "Date",
       "weight": "Weight",
       "change": "Difference",
-      "actions": ""
+      "actions": "",
+      "composition": "Composition"
     },
     "remove": "Delete",
-    "confirmRemove": "Confirm"
+    "confirmRemove": "Confirm",
+    "showComposition": "Show composition",
+    "hideComposition": "Hide composition",
+    "invalid": "Some values are out of range.",
+    "compositionCount_one": "{{count}} measure",
+    "compositionCount_other": "{{count}} measures"
   },
   "water": {
     "title": "Water",
@@ -789,7 +810,7 @@
     },
     "profile": {
       "title": "Profile",
-      "text": "Name, date of birth, sex, blood type, known allergies and conditions."
+      "text": "Name, date of birth, sex, blood type, height and emergency contact."
     },
     "nutrition": {
       "title": "Nutrition",
@@ -797,7 +818,7 @@
     },
     "body": {
       "title": "Body",
-      "text": "Measurements, body fat and muscle, progress photos, blood pressure, glucose and temperature."
+      "text": "Tape measurements (waist, chest…) and progress photos."
     },
     "intakes": {
       "title": "Coffee and alcohol",
@@ -806,6 +827,14 @@
     "wellbeing": {
       "title": "Wellbeing",
       "text": "Mood and fasting averages; open each one to log and see the history."
+    },
+    "conditions": {
+      "title": "Conditions and allergies",
+      "text": "Chronic conditions and allergies, with status, severity and treatment."
+    },
+    "vitals": {
+      "title": "Readings",
+      "text": "Blood pressure, blood sugar and temperature, with the history."
     }
   },
   "labs": {
@@ -1210,9 +1239,7 @@
       "armCm": "Arm",
       "thighCm": "Thigh",
       "hipsCm": "Hips",
-      "neckCm": "Neck",
-      "bodyFatPct": "Body fat",
-      "muscleKg": "Muscle mass"
+      "neckCm": "Neck"
     },
     "measurements": {
       "addTitle": "Log measurements",
@@ -1225,7 +1252,7 @@
       "saved": "Measurements saved.",
       "emptyError": "Fill in at least one measurement.",
       "emptyTitle": "No measurements yet",
-      "emptyText": "Log your waist, chest or body fat to follow your progress.",
+      "emptyText": "Log your waist, chest or another measurement to follow how it changes.",
       "history_one": "{{count}} entry",
       "history_other": "{{count}} entries",
       "historyDescription": "Newest first, with the change from the previous measurement.",
@@ -1807,7 +1834,8 @@
       "datesInvalid": "The treated date is before the start date.",
       "save": "Save",
       "saving": "Saving…"
-    }
+    },
+    "pageTitle": "Conditions and allergies"
   },
   "sessions": {
     "roles": {
@@ -1839,5 +1867,104 @@
       "save": "Save session",
       "saving": "Saving…"
     }
+  },
+  "bodyMetrics": {
+    "names": {
+      "weightKg": "Weight",
+      "bodyFatPct": "Body fat",
+      "subcutaneousFatPct": "Subcutaneous fat",
+      "visceralFat": "Visceral fat",
+      "muscleKg": "Muscle mass",
+      "skeletalMusclePct": "Skeletal muscle",
+      "boneKg": "Bone mass",
+      "leanKg": "Fat-free weight",
+      "bmrKcal": "BMR",
+      "waterPct": "Body water",
+      "proteinPct": "Protein",
+      "waistCm": "Waist",
+      "chestCm": "Chest",
+      "armCm": "Arm",
+      "thighCm": "Thigh",
+      "hipsCm": "Hips",
+      "neckCm": "Neck",
+      "waterMl": "Water drunk"
+    },
+    "descriptions": {
+      "bodyFatPct": "The share of your weight that is fat, as the scale measures it.",
+      "subcutaneousFatPct": "The fat just under the skin, as a share of your weight.",
+      "visceralFat": "The scale’s index for the fat around your organs. Lower is better.",
+      "muscleKg": "The weight of your muscles, in kg.",
+      "skeletalMusclePct": "The muscles you move, as a share of your weight.",
+      "boneKg": "The estimated weight of your bones, in kg.",
+      "leanKg": "Everything that is not fat. If the scale does not give it, it is worked out from the weight and the fat.",
+      "bmrKcal": "The calories your body burns per day at rest (basal metabolic rate).",
+      "waterPct": "The water in your body, as a share of your weight.",
+      "proteinPct": "The protein in your body, as a share of your weight.",
+      "waistCm": "The measurement around your waist. Entered here, in Body or in a quick form.",
+      "chestCm": "The measurement around your chest. Entered here, in Body or in a quick form.",
+      "armCm": "The measurement around your arm. Entered here, in Body or in a quick form.",
+      "thighCm": "The measurement around your thigh. Entered here, in Body or in a quick form.",
+      "hipsCm": "The measurement around your hips. Entered here, in Body or in a quick form.",
+      "neckCm": "The measurement around your neck. Entered here, in Body or in a quick form."
+    },
+    "history_one": "{{count}} entry",
+    "history_other": "{{count}} entries",
+    "historyScale": "Newest first, with the change from the previous one and the device.",
+    "historyTape": "Newest first, with the change from the previous measurement.",
+    "columns": {
+      "value": "Value",
+      "device": "Device"
+    },
+    "emptyTitle": "No values yet",
+    "basedOn_one": "{{count}} entry · {{from}} – {{to}}",
+    "basedOn_other": "{{count}} entries · {{from}} – {{to}}",
+    "trendTitle": "Trend",
+    "linksHint": "Each measurement has its own page with the averages, the chart and the history.",
+    "compositionTitle": "Body composition",
+    "tapeTitle": "Each measurement",
+    "seeMore": "See the history",
+    "emptyTab": "No {{name}} values yet.",
+    "saved": "Value saved",
+    "addTitle": "Log {{name}}",
+    "addScaleHint": "Enter the value your scale gave you ({{min}}–{{max}}). It is saved as a weigh-in with the chosen device.",
+    "addTapeHint": "Enter the day’s measurement ({{min}}–{{max}}). The other measurements of that day stay as they are.",
+    "invalid": "The value must be between {{min}} and {{max}}.",
+    "emptyHere": "Log the first value above.",
+    "register": "Log {{name}}",
+    "latest": "Latest value"
+  },
+  "devices": {
+    "title": "Devices",
+    "description": "The scales your weigh-ins come from. The default one is already picked when you log.",
+    "device": "Device",
+    "none": "No device",
+    "default": "Default",
+    "makeDefault": "Make default",
+    "remove": "Delete",
+    "confirmRemove": "Confirm",
+    "name": "Device name",
+    "namePlaceholder": "E.g. Renpho",
+    "add": "Add"
+  },
+  "forms": {
+    "saved": "Values saved",
+    "title": "Quick forms",
+    "description": "Create a form with the fields you always enter and fill them all in one go.",
+    "new": "New form",
+    "empty": "You have no forms yet. Create one, for example \"Daily\" with weight, body fat and water.",
+    "edit": "Edit",
+    "remove": "Delete",
+    "confirmRemove": "Confirm",
+    "editTitle": "Edit form",
+    "newTitle": "New form",
+    "name": "Name",
+    "namePlaceholder": "E.g. Daily",
+    "groups": {
+      "scale": "Scale",
+      "tape": "Tape measurements",
+      "water": "Water"
+    },
+    "saveForm": "Save form",
+    "fillHint": "Fill in only what you have. Enter moves to the next field."
   }
 }

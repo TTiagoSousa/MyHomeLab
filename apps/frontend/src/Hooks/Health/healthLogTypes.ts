@@ -72,8 +72,6 @@ export interface BodyMeasurementFields {
   thighCm: number | null;
   hipsCm: number | null;
   neckCm: number | null;
-  bodyFatPct: number | null;
-  muscleKg: number | null;
 }
 
 export interface BodyMeasurement extends BodyMeasurementFields {

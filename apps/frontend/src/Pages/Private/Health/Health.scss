@@ -44,10 +44,10 @@
 
   .Health_Records{
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
 
-    @media (max-width: 1100px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 1300px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
     @media (max-width: 600px){ grid-template-columns: 1fr; }
   }
 
@@ -86,15 +86,146 @@
 
   .Health_Averages{
     @include Mixin.Panel_Surface;
+    position: relative;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
 
+  .Health_Averages_Nav{
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--hud-line);
+  }
+
+  .Health_Averages_Arrow,
+  .Health_Averages_Filter_Button{
+    flex-shrink: 0;
+    width: 40px;
+    border: none;
+    background: transparent;
+    color: var(--text-soft);
+    font-size: 20px;
+    cursor: pointer;
+
+    &:hover{ color: var(--accent-bright); }
+
+    &:focus-visible{
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--accent);
+    }
+  }
+
+  .Health_Averages_Arrow.left{ border-right: 1px solid var(--hud-line); }
+  .Health_Averages_Arrow.right{ border-left: 1px solid var(--hud-line); }
+
+  .Health_Averages_Filter_Button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid var(--hud-line);
+
+    svg{ width: 16px; height: 16px; }
+
+    &.active{
+      color: var(--accent-bright);
+      background: var(--accent-soft);
+    }
+  }
+
+  .Health_Tabs_Filter{
+    position: absolute;
+    top: 47px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--cards-background);
+  }
+
+  .Health_Tabs_Filter_Hint{
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-soft);
+  }
+
+  .Health_Tabs_Filter_Group{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px 12px;
+    margin: 0;
+    padding: 10px 12px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+
+    @media (max-width: 600px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    legend{
+      @include Mixin.Hud_Label(9px);
+      padding: 0 6px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Health_Tabs_Filter_Check{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-main);
+    cursor: pointer;
+
+    input{ accent-color: var(--accent); }
+  }
+
+  .Health_Tabs_Filter_Error{
+    margin: 0;
+    font-size: 12px;
+    color: var(--danger-color);
+  }
+
+  .Health_Tabs_Filter_Actions{
+    position: sticky;
+    bottom: -16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 -20px -16px;
+    padding: 10px 20px;
+    border-top: 1px solid var(--hud-line);
+    background: var(--cards-background);
+
+    span{ flex: 1; }
+  }
+
+  .Health_Tabs_Filter_Ghost{
+    @include Mixin.Ghost_Button;
+    height: 34px;
+    padding: 0 14px;
+    font-size: 12.5px;
+  }
+
+  .Health_Tabs_Filter_Save{
+    @include Mixin.Solid_Button;
+    height: 34px;
+    padding: 0 16px;
+    font-size: 12.5px;
+  }
+
   .Health_Averages_Tabs{
     display: flex;
+    flex: 1;
+    min-width: 0;
     overflow-x: auto;
-    border-bottom: 1px solid var(--hud-line);
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar{ display: none; }
 
     button{
       display: inline-flex;
@@ -135,7 +266,9 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-height: 346px;
     padding: 18px;
+    box-sizing: border-box;
   }
 
   .Health_Averages_Head{
@@ -180,7 +313,67 @@
     }
   }
 
+  .Health_Recent{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .Health_Recent_Title{
+    @include Mixin.Hud_Label(9px);
+    color: var(--text-faint);
+  }
+
+  .Health_Recent_List{
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @media (max-width: 700px){
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      li:nth-child(n + 4){ display: none; }
+    }
+
+    li{
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+      padding: 8px 10px;
+      border: 1px solid var(--hud-line);
+      border-radius: var(--ctrl-radius);
+
+      span{
+        font-size: 11px;
+        color: var(--text-faint);
+      }
+
+      strong{
+        overflow: hidden;
+        font-size: 13px;
+        color: var(--text-main);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &.latest{ border-color: var(--accent); }
+    }
+  }
+
+  .Health_Averages_Empty{
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
   .Health_Averages_Footer{
+    margin-top: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;

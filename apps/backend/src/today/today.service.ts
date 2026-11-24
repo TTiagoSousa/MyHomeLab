@@ -18,10 +18,16 @@ const SHORTCUT_VIEW = {
   kind: true,
   label: true,
   url: true,
-  account: { select: { id: true, provider: true, displayName: true } },
+  account: {
+    select: { id: true, provider: true, displayName: true, emailAddress: true },
+  },
+  form: { select: { id: true, name: true, fields: true } },
 } as const;
 
-/** A página Hoje: os atalhos (apps ligadas, regras de email, links) e o tempo da cidade escolhida. */
+/**
+ * A página Hoje: os atalhos (apps ligadas, regras de email, links, formulários
+ * da Saúde, café e álcool) e o tempo da cidade escolhida.
+ */
 @Injectable()
 export class TodayService {
   /** O tempo pedido há pouco, por utilizador: o Open-Meteo atualiza de 15 em 15 minutos. */
@@ -48,12 +54,21 @@ export class TodayService {
       });
       if (!account) throw new NotFoundException('Essa app ligada não existe.');
     }
+    if (dto.kind === TodayShortcutKind.HEALTH_FORM) {
+      const form = await this.prisma.healthForm.findFirst({
+        where: { id: dto.formId, userId },
+        select: { id: true },
+      });
+      if (!form) throw new NotFoundException('Esse formulário não existe.');
+    }
     if (dto.kind !== TodayShortcutKind.LINK) {
       const repeated = await this.prisma.todayShortcut.findFirst({
         where: {
           userId,
           kind: dto.kind,
           accountId: dto.kind === TodayShortcutKind.APP ? dto.accountId : null,
+          formId:
+            dto.kind === TodayShortcutKind.HEALTH_FORM ? dto.formId : null,
         },
         select: { id: true },
       });
@@ -68,6 +83,7 @@ export class TodayService {
         userId,
         kind: dto.kind,
         accountId: dto.kind === TodayShortcutKind.APP ? dto.accountId : null,
+        formId: dto.kind === TodayShortcutKind.HEALTH_FORM ? dto.formId : null,
         label: dto.kind === TodayShortcutKind.LINK ? dto.label?.trim() : null,
         url: dto.kind === TodayShortcutKind.LINK ? dto.url?.trim() : null,
         position: (last._max.position ?? -1) + 1,

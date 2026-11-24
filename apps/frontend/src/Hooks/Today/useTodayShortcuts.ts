@@ -3,20 +3,23 @@ import { End_Points } from '../../Service/endPoints';
 import http from '../../Service/httpService';
 import i18n from '../../i18n';
 import type { ConnectionProvider } from '../ConnectedAccount/useConnectedAccounts';
+import type { HealthForm } from '../Health/healthTypes';
 
-export type Today_Shortcut_Kind = 'APP' | 'EMAIL_RULES' | 'LINK';
+export type Today_Shortcut_Kind = 'APP' | 'EMAIL_RULES' | 'LINK' | 'HEALTH_FORM' | 'INTAKES';
 
 export interface Today_Shortcut {
   id: string;
   kind: Today_Shortcut_Kind;
   label: string | null;
   url: string | null;
-  account: { id: string; provider: ConnectionProvider; displayName: string | null } | null;
+  account: { id: string; provider: ConnectionProvider; displayName: string | null; emailAddress: string | null } | null;
+  form: HealthForm | null;
 }
 
 export interface New_Today_Shortcut {
   kind: Today_Shortcut_Kind;
   accountId?: string;
+  formId?: string;
   label?: string;
   url?: string;
 }

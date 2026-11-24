@@ -18,6 +18,7 @@ import { ExerciseService } from './exercise.service';
 import { StepsService } from './steps.service';
 import { WeightService } from './weight.service';
 import { WaterService } from './water.service';
+import { HealthMetricsService } from './health-metrics.service';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const SOURCE_HUAWEI = 'HUAWEI';
@@ -52,6 +53,7 @@ export class HealthService {
     private readonly steps: StepsService,
     private readonly weight: WeightService,
     private readonly water: WaterService,
+    private readonly metrics: HealthMetricsService,
   ) {}
 
   /**
@@ -139,9 +141,14 @@ export class HealthService {
     };
   }
 
-  /** O cartão de médias da página Saúde: sono, batimento, temperatura da pele, oxigénio, stress, passos e exercício, cada um com os últimos 7, 30 e 90 dias. */
+  /**
+   * O cartão de médias da página Saúde: sono, batimento, temperatura da pele,
+   * oxigénio, stress, passos, exercício, peso, água e cada métrica da composição
+   * e das medidas, cada um com os últimos 7, 30 e 90 dias.
+   */
   async summary(userId: string) {
     return {
+      metrics: await this.metrics.summary(userId),
       sleep: await this.sleepSummary(userId),
       heart: await this.heartRate.summary(userId),
       skinTemperature: await this.skinTemperature.summary(userId),

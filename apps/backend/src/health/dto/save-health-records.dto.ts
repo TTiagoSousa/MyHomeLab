@@ -15,6 +15,7 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
+import { AVERAGE_TABS } from '../helpers/healthMetrics';
 
 export const DOSE_UNITS = [
   'mg',
@@ -119,6 +120,13 @@ export class SaveHealthProfileDto {
   @IsString()
   @MaxLength(2000)
   notes?: string | null;
+
+  /** Os separadores das médias em Saúde, por ordem; vazio = os que têm dados. */
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(AVERAGE_TABS.length)
+  @IsIn(AVERAGE_TABS, { each: true })
+  averageTabs?: string[];
 }
 
 export class SaveMedicationDto {

@@ -3,11 +3,13 @@ import { useTranslation } from 'react-i18next';
 
 const RECORDS = [
   { key: 'profile', path: '/MyHomeLab/Health/Profile' },
+  { key: 'conditions', path: '/MyHomeLab/Health/Conditions' },
   { key: 'labs', path: '/MyHomeLab/Health/Labs' },
   { key: 'medication', path: '/MyHomeLab/Health/Medication' },
   { key: 'diary', path: '/MyHomeLab/Health/Diary' },
   { key: 'nutrition', path: '/MyHomeLab/Health/Nutrition' },
   { key: 'body', path: '/MyHomeLab/Health/Body' },
+  { key: 'vitals', path: '/MyHomeLab/Health/Vitals' },
   { key: 'intakes', path: '/MyHomeLab/Health/Intakes' },
   { key: 'wellbeing', path: '/MyHomeLab/Health/Wellbeing' },
 ];

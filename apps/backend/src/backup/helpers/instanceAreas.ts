@@ -76,6 +76,8 @@ const AREAS: Record<string, string[]> = {
     'ExerciseType',
     'Workout',
     'WeightEntry',
+    'MeasurementDevice',
+    'HealthForm',
     'WaterEntry',
     'LabReport',
     'LabResult',

@@ -241,6 +241,21 @@
       gap: 15px;
       padding: 20px;
 
+      &.wide{
+        width: 640px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+      }
+
+      .Today_Intakes{ min-height: auto; }
+
+      .Today_Modal_Body{
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        min-height: 142px;
+      }
+
       .Today_Modal_Title{
         font-size: 15px;
         font-weight: 800;
@@ -248,14 +263,17 @@
 
       .Today_Modal_Kinds{
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 6px;
 
         button{
           @include Mixin.Ghost_Button;
+          grid-column: span 2;
           min-height: 36px;
           padding: 4px 6px;
           font-size: 12px;
+
+          &:nth-child(n + 4){ grid-column: span 3; }
 
           &.active{
             color: var(--accent-bright);

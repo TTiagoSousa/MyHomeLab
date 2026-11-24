@@ -10,11 +10,16 @@ import Weight_Height_Card from './Weight_Height_Card';
 import Weight_Average_Tiles from './Weight_Average_Tiles';
 import Weight_Trend_Chart from './Weight_Trend_Chart';
 import Weight_Entries_Panel from './Weight_Entries_Panel';
+import Weight_Devices_Card from './Weight_Devices_Card';
+import Metric_Links from '../Metrics/Metric_Links';
+import { COMPOSITION_METRICS } from '../Metrics/metricCatalog';
+import { useMeasurementDevices } from '../../../../Hooks/Health/useMeasurementDevices';
 
 const Weight = () => {
   const { t } = useTranslation('health');
   const [days, setDays] = useState(30);
   const { averages, entries, loading, saving, error, addWeight, removeWeight } = useWeight(days);
+  const devices = useMeasurementDevices();
 
   const handleAdd = async (payload: WeightPayload) => {
     const failure = await addWeight(payload);
@@ -26,13 +31,28 @@ const Weight = () => {
     <div className='Health_Dashboard'>
       <Health_Dashboard_Header title={t('weight.title')} days={days} onDays={setDays} />
 
-      <Weight_Add_Card saving={saving} onAdd={handleAdd} />
+      <Weight_Add_Card
+        saving={saving}
+        devices={devices.devices}
+        defaultDeviceId={devices.defaultDevice?.id ?? null}
+        onAdd={handleAdd}
+      />
+
+      <Metric_Links title={t('bodyMetrics.compositionTitle')} metrics={COMPOSITION_METRICS} />
 
       <Weight_Height_Card refreshKey={entries.length} />
 
+      <Weight_Devices_Card
+        devices={devices.devices}
+        saving={devices.saving}
+        onAdd={devices.addDevice}
+        onMakeDefault={devices.makeDefault}
+        onRemove={devices.removeDevice}
+      />
+
       {error && <div className='Health_empty'>{error}</div>}
 
-      {!loading && !error && !averages && (
+      {!loading && !error && !entries.length && (
         <div className='Health_empty'>
           <span className='Health_empty_title'>{t('weight.emptyTitle')}</span>
           <span>{t('weight.emptyText')}</span>

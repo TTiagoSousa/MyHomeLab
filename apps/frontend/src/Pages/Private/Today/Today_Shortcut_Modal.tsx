@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Global_Input from '../../../Components/Inputs/Global_Input/Global_Input';
 import Global_Dropdown from '../../../Components/Inputs/Global_Dropdown/Global_Dropdown';
 import { useConnectedAccounts } from '../../../Hooks/ConnectedAccount/useConnectedAccounts';
+import { useHealthForms } from '../../../Hooks/Health/useHealthForms';
 import type { New_Today_Shortcut, Today_Shortcut_Kind } from '../../../Hooks/Today/useTodayShortcuts';
 import { APP_PAGES } from '../../../Constants/appPages';
 import { APP_KINDS } from '../Apps/appsCatalog';
@@ -12,13 +13,15 @@ interface Today_Shortcut_Modal_Props {
   onSave: (shortcut: New_Today_Shortcut) => Promise<string>;
 }
 
-const KINDS: Today_Shortcut_Kind[] = ['APP', 'EMAIL_RULES', 'LINK'];
+const KINDS: Today_Shortcut_Kind[] = ['APP', 'EMAIL_RULES', 'LINK', 'HEALTH_FORM', 'INTAKES'];
 
 const Today_Shortcut_Modal = ({ onClose, onSave }: Today_Shortcut_Modal_Props) => {
   const { t } = useTranslation('tasks');
   const { connectedAccounts } = useConnectedAccounts();
   const [kind, setKind] = useState<Today_Shortcut_Kind>('APP');
+  const { forms } = useHealthForms();
   const [accountId, setAccountId] = useState('');
+  const [formId, setFormId] = useState('');
   const [label, setLabel] = useState('');
   const [url, setUrl] = useState('');
   const [saving, setSaving] = useState(false);
@@ -28,22 +31,28 @@ const Today_Shortcut_Modal = ({ onClose, onSave }: Today_Shortcut_Modal_Props) =
     .filter((account) => APP_PAGES[account.provider])
     .map((account) => {
       const appName = t(`addons:${APP_KINDS[account.provider].titleKey}`);
-      return {
-        value: account.id,
-        label: account.displayName && account.displayName !== appName ? `${appName} · ${account.displayName}` : appName,
-      };
+      const own = [account.displayName, account.emailAddress].find((name) => name && name !== appName);
+      return { value: account.id, label: own ? `${appName} · ${own}` : appName };
     });
 
   const ready =
     (kind === 'APP' && accountId) ||
     kind === 'EMAIL_RULES' ||
+    kind === 'INTAKES' ||
+    (kind === 'HEALTH_FORM' && formId) ||
     (kind === 'LINK' && label.trim() && url.trim());
 
   const handleSave = async () => {
     if (!ready) return;
     setSaving(true);
     const problem = await onSave(
-      kind === 'APP' ? { kind, accountId } : kind === 'LINK' ? { kind, label: label.trim(), url: url.trim() } : { kind },
+      kind === 'APP'
+        ? { kind, accountId }
+        : kind === 'HEALTH_FORM'
+          ? { kind, formId }
+          : kind === 'LINK'
+            ? { kind, label: label.trim(), url: url.trim() }
+            : { kind },
     );
     setSaving(false);
     if (problem) setError(problem);
@@ -70,6 +79,7 @@ const Today_Shortcut_Modal = ({ onClose, onSave }: Today_Shortcut_Modal_Props) =
           ))}
         </div>
 
+        <div className='Today_Modal_Body'>
         {kind === 'APP' && (
           <div className='Today_Modal_Field'>
             <label htmlFor='today-shortcut-app'>{t('today.shortcuts.app')}</label>
@@ -90,6 +100,25 @@ const Today_Shortcut_Modal = ({ onClose, onSave }: Today_Shortcut_Modal_Props) =
 
         {kind === 'EMAIL_RULES' && <p className='Today_Modal_Hint'>{t('today.shortcuts.emailRulesHint')}</p>}
 
+        {kind === 'INTAKES' && <p className='Today_Modal_Hint'>{t('today.shortcuts.intakesHint')}</p>}
+
+        {kind === 'HEALTH_FORM' && (
+          <div className='Today_Modal_Field'>
+            <label htmlFor='today-shortcut-form'>{t('today.shortcuts.form')}</label>
+            {forms.length ? (
+              <Global_Dropdown
+                id='today-shortcut-form'
+                value={formId}
+                onChange={setFormId}
+                options={forms.map((form) => ({ value: form.id, label: form.name }))}
+                placeholder={t('today.shortcuts.formPlaceholder')}
+              />
+            ) : (
+              <p className='Today_Modal_Hint'>{t('today.shortcuts.noForms')}</p>
+            )}
+          </div>
+        )}
+
         {kind === 'LINK' && (
           <>
             <div className='Today_Modal_Field'>
@@ -102,6 +131,8 @@ const Today_Shortcut_Modal = ({ onClose, onSave }: Today_Shortcut_Modal_Props) =
             </div>
           </>
         )}
+
+        </div>
 
         {error && <p className='Today_Modal_Error' role='alert'>{error}</p>}
 

@@ -9,11 +9,11 @@ import type {
   VitalReading,
 } from '../../../../Hooks/Health/healthLogTypes';
 
-export type BodySection = 'measurements' | 'photos' | 'vitals';
+export type BodySection = 'measurements' | 'photos';
 export type MeasurementField = keyof BodyMeasurementFields;
 export type VitalLevel = 'low' | 'normal' | 'elevated' | 'altered' | 'high' | 'veryHigh' | 'lowGrade' | 'fever';
 
-export const BODY_SECTIONS: BodySection[] = ['measurements', 'photos', 'vitals'];
+export const BODY_SECTIONS: BodySection[] = ['measurements', 'photos'];
 export const PHOTO_POSES: PhotoPose[] = ['FRONT', 'SIDE', 'BACK'];
 export const VITAL_KINDS: VitalKind[] = ['BLOOD_PRESSURE', 'GLUCOSE', 'TEMPERATURE'];
 export const GLUCOSE_CONTEXTS: GlucoseContext[] = ['FASTING', 'BEFORE_MEAL', 'AFTER_MEAL', 'RANDOM'];
@@ -26,8 +26,6 @@ export const MEASUREMENT_FIELDS: { key: MeasurementField; unit: string; max: num
   { key: 'thighCm', unit: 'cm', max: 200 },
   { key: 'hipsCm', unit: 'cm', max: 300 },
   { key: 'neckCm', unit: 'cm', max: 100 },
-  { key: 'bodyFatPct', unit: '%', max: 80 },
-  { key: 'muscleKg', unit: 'kg', max: 200 },
 ];
 
 export const BODY_COLORS = {

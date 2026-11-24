@@ -16,21 +16,11 @@ import {
 import { localDayDate } from './helpers/localDayDate';
 import { dateOnly } from './helpers/dateOnly';
 import { dayOf } from './helpers/dayOf';
+import { BODY_FIELDS, type BodyField } from './helpers/healthMetrics';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const IMAGE_TYPES = /^image\/(jpeg|png|webp)$/;
-
-const MEASUREMENT_FIELDS = [
-  'waistCm',
-  'chestCm',
-  'armCm',
-  'thighCm',
-  'hipsCm',
-  'neckCm',
-  'bodyFatPct',
-  'muscleKg',
-] as const;
 
 const toMeasurementView = (measurement: BodyMeasurement) => ({
   id: measurement.id,
@@ -41,8 +31,6 @@ const toMeasurementView = (measurement: BodyMeasurement) => ({
   thighCm: measurement.thighCm,
   hipsCm: measurement.hipsCm,
   neckCm: measurement.neckCm,
-  bodyFatPct: measurement.bodyFatPct,
-  muscleKg: measurement.muscleKg,
   notes: measurement.notes,
 });
 
@@ -60,7 +48,7 @@ const toVitalView = (vital: VitalReading) => ({
 });
 
 /**
- * O corpo, registado à mão: medidas (cintura, braço… e composição corporal),
+ * O corpo, registado à mão: medidas (cintura, braço…; a composição corporal vai nas pesagens),
  * fotos de progresso e medições (tensão arterial, glicemia, temperatura).
  */
 @Injectable()
@@ -96,11 +84,27 @@ export class BodyService {
     };
   }
 
+  /**
+   * Junta medidas a um dia sem apagar as que lá estão (os formulários rápidos
+   * só mandam os campos que têm).
+   */
+  async mergeMeasurement(
+    userId: string,
+    day: Date,
+    values: Partial<Record<BodyField, number>>,
+  ) {
+    await this.prisma.bodyMeasurement.upsert({
+      where: { userId_day: { userId, day } },
+      create: { userId, day, ...values },
+      update: values,
+    });
+  }
+
   /** Uma linha por dia: voltar a guardar o mesmo dia substitui-a. */
   async saveMeasurement(userId: string, dto: SaveBodyMeasurementDto) {
     const day = dateOnly(dto.day)!;
     const values = Object.fromEntries(
-      MEASUREMENT_FIELDS.map((field) => [field, dto[field] ?? null]),
+      BODY_FIELDS.map((field) => [field, dto[field] ?? null]),
     );
     if (Object.values(values).every((value) => value == null)) {
       throw new BadRequestException({

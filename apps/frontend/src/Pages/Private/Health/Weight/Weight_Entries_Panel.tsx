@@ -4,11 +4,14 @@ import type { WeightEntry } from '../../../../Hooks/Health/healthTypes';
 import Health_Table_Head from '../Shared/Health_Table_Head';
 import { formatDay, localClock } from '../Shared/healthFormat';
 import { changeClass, formatKg, formatKgChange } from './weightFormat';
+import { COMPOSITION_METRICS } from '../Metrics/metricCatalog';
 
 interface Weight_Entries_Panel_Props {
   entries: WeightEntry[];
   onRemove: (id: string) => void;
 }
+
+const compositionCount = (entry: WeightEntry) => COMPOSITION_METRICS.filter((field) => entry[field] != null).length;
 
 const Weight_Entries_Panel = ({ entries, onRemove }: Weight_Entries_Panel_Props) => {
   const { t } = useTranslation('health');
@@ -38,6 +41,8 @@ const Weight_Entries_Panel = ({ entries, onRemove }: Weight_Entries_Panel_Props)
             { key: 'date', label: t('weight.columns.date') },
             { key: 'weight', label: t('weight.columns.weight') },
             { key: 'change', label: t('weight.columns.change') },
+            { key: 'device', label: t('bodyMetrics.columns.device'), optional: true },
+            { key: 'composition', label: t('weight.columns.composition'), optional: true },
             { key: 'actions', label: t('weight.columns.actions') },
           ]}
         />
@@ -49,6 +54,8 @@ const Weight_Entries_Panel = ({ entries, onRemove }: Weight_Entries_Panel_Props)
               </span>
               <span className='Health_Table_Strong'>{formatKg(entry.weightKg)}</span>
               <span className={`Health_Change ${changeClass(entry.changeKg)}`}>{formatKgChange(entry.changeKg)}</span>
+              <span className='Health_Table_Optional'>{entry.device ?? '—'}</span>
+              <span className='Health_Table_Optional'>{compositionCount(entry) ? t('weight.compositionCount', { count: compositionCount(entry) }) : '—'}</span>
               <span className='Health_Table_Actions'>
                 <button
                   type='button'

@@ -29,6 +29,10 @@ import { HealthRemindersService } from './health-reminders.service';
 import { AiCredentialModule } from 'src/ai-credential/ai-credential.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { HealthReminderScheduler } from './health-reminder.scheduler';
+import { HealthMetricsController } from './health-metrics.controller';
+import { HealthMetricsService } from './health-metrics.service';
+import { MeasurementDevicesService } from './measurement-devices.service';
+import { HealthFormsService } from './health-forms.service';
 
 @Module({
   imports: [AiCredentialModule, NotificationModule],
@@ -41,6 +45,7 @@ import { HealthReminderScheduler } from './health-reminder.scheduler';
     MedicalController,
     IntakesController,
     OpenGymController,
+    HealthMetricsController,
   ],
   providers: [
     HealthService,
@@ -63,6 +68,9 @@ import { HealthReminderScheduler } from './health-reminder.scheduler';
     OpenGymScheduler,
     HealthRemindersService,
     HealthReminderScheduler,
+    HealthMetricsService,
+    MeasurementDevicesService,
+    HealthFormsService,
   ],
   exports: [
     HealthService,
@@ -83,6 +91,8 @@ import { HealthReminderScheduler } from './health-reminder.scheduler';
     IntakesService,
     OpenGymService,
     HealthRemindersService,
+    HealthMetricsService,
+    HealthFormsService,
   ],
 })
 export class HealthModule {}

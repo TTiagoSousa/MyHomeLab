@@ -109,6 +109,7 @@ export interface HeartDayDetail extends HeartDay {
 }
 
 export interface HealthSummary {
+  metrics: Record<HealthMetric, MetricSummary | null>;
   sleep: {
     latestNight: SleepSessionDetail;
     last7: SleepAverages;
@@ -156,12 +157,14 @@ export interface HealthSummary {
     last7: WeightAverages;
     last30: WeightAverages;
     last90: WeightAverages;
+    recent: RecentValue[];
   } | null;
   water: {
     latestDay: string;
     last7: WaterAverages;
     last30: WaterAverages;
     last90: WaterAverages;
+    recent: RecentValue[];
   } | null;
 }
 
@@ -179,13 +182,81 @@ export interface WeightAverages {
   maxDay: string | null;
 }
 
-export interface WeightEntry {
+export type CompositionField =
+  | 'bodyFatPct'
+  | 'subcutaneousFatPct'
+  | 'visceralFat'
+  | 'muscleKg'
+  | 'skeletalMusclePct'
+  | 'boneKg'
+  | 'leanKg'
+  | 'bmrKcal'
+  | 'waterPct'
+  | 'proteinPct';
+
+export type TapeField = 'waistCm' | 'chestCm' | 'armCm' | 'thighCm' | 'hipsCm' | 'neckCm';
+
+export type HealthMetric = CompositionField | TapeField;
+
+export type HealthFormField = 'weightKg' | HealthMetric | 'waterMl';
+
+export interface WeightEntry extends Record<CompositionField, number | null> {
   id: string;
   day: string;
   measuredAt: string;
   timeZone: string | null;
-  weightKg: number;
+  device: string | null;
+  weightKg: number | null;
   changeKg: number | null;
+}
+
+export interface MetricAverages {
+  entries: number;
+  from: string | null;
+  to: string | null;
+  latest: number | null;
+  latestDay: string | null;
+  change: number | null;
+  avg: number | null;
+  min: number | null;
+  minDay: string | null;
+  max: number | null;
+  maxDay: string | null;
+}
+
+export interface MetricPoint {
+  id: string;
+  day: string;
+  at: string;
+  timeZone: string | null;
+  device: string | null;
+  value: number;
+  change: number | null;
+}
+
+export interface RecentValue {
+  day: string;
+  value: number;
+}
+
+export interface MetricSummary {
+  latestDay: string;
+  last7: MetricAverages;
+  last30: MetricAverages;
+  last90: MetricAverages;
+  recent: RecentValue[];
+}
+
+export interface MeasurementDevice {
+  id: string;
+  name: string;
+  isDefault: boolean;
+}
+
+export interface HealthForm {
+  id: string;
+  name: string;
+  fields: HealthFormField[];
 }
 
 export interface WaterAverages {
@@ -762,6 +833,7 @@ export interface HealthProfileFields {
   emergencyContact: string | null;
   notes: string | null;
   heightCm: number | null;
+  averageTabs: string[];
 }
 
 export interface HealthProfile extends HealthProfileFields {

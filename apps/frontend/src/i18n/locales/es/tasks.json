@@ -247,11 +247,15 @@
       "kinds": {
         "APP": "App conectada",
         "EMAIL_RULES": "Reglas de email",
-        "LINK": "Enlace"
+        "LINK": "Enlace",
+        "HEALTH_FORM": "Formulario de Salud",
+        "INTAKES": "Café y alcohol"
       },
       "hints": {
         "app": "App conectada",
-        "emailRules": "Gmail"
+        "emailRules": "Gmail",
+        "form": "Formulario rápido",
+        "intakes": "Registro rápido"
       },
       "app": "App",
       "appPlaceholder": "Elige la app",
@@ -259,7 +263,11 @@
       "emailRulesHint": "Abre la página de las reglas de Gmail.",
       "label": "Nombre",
       "labelPlaceholder": "Ej.: Router",
-      "url": "Dirección"
+      "url": "Dirección",
+      "intakesHint": "Abre el registro rápido de café y alcohol aquí en Hoy.",
+      "form": "Formulario",
+      "formPlaceholder": "Elige un formulario",
+      "noForms": "Aún no tienes formularios. Crea uno en Salud → Añadir datos → Manual."
     },
     "weather": {
       "title": "Tiempo",

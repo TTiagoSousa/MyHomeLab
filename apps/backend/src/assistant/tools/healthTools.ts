@@ -15,6 +15,7 @@ import { WellbeingService } from 'src/health/wellbeing.service';
 import { MedicalService } from 'src/health/medical.service';
 import { IntakesService } from 'src/health/intakes.service';
 import { localMinute } from 'src/health/helpers/timeZone';
+import { COMPOSITION_FIELDS } from 'src/health/helpers/healthMetrics';
 import { JOURNAL_METRICS, journalMetric } from './healthJournalTools';
 
 /** Os serviços de saúde que o agente de saúde usa, sempre com os dados do próprio utilizador. */
@@ -421,14 +422,14 @@ export async function healthMetric(
     }
     case 'weight': {
       const data = await services.weight.weight(userId, days);
-      if (!data.averages) return NO_DATA;
+      if (!data.entries.length) return NO_DATA;
       return [
-        `Peso em kg, registado à mão (${period}). Médias: ${json(data.averages)}`,
-        'Pesagens (data hora | id | kg | diferença para a anterior):',
+        `Peso em kg, registado à mão (${period}). Médias do peso: ${json(data.averages)}`,
+        'Pesagens (data hora | id | aparelho | kg | diferença para a anterior | composição: gordura %, gordura subcutânea %, gordura visceral, músculo kg, músculo esquelético %, osso kg, sem gordura kg, TMB kcal, água %, proteína %):',
         ...rows(
           data.entries.map(
             (e) =>
-              `${e.day} ${clock(e.measuredAt, e.timeZone)} | ${e.id} | ${e.weightKg} | ${e.changeKg == null ? '—' : (e.changeKg > 0 ? '+' : '') + e.changeKg}`,
+              `${e.day} ${clock(e.measuredAt, e.timeZone)} | ${e.id} | ${e.device ?? '—'} | ${e.weightKg ?? '—'} | ${e.changeKg == null ? '—' : (e.changeKg > 0 ? '+' : '') + e.changeKg} | ${COMPOSITION_FIELDS.map((field) => e[field] ?? '—').join(' / ')}`,
           ),
         ),
       ].join('\n');

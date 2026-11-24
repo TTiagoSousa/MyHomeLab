@@ -101,6 +101,9 @@ export const Intakes = lazy(() => import('../Pages/Private/Health/Intakes/Intake
 export const Wellbeing = lazy(() => import('../Pages/Private/Health/Wellbeing/Wellbeing'));
 export const Mood = lazy(() => import('../Pages/Private/Health/Mood/Mood'));
 export const Fasting = lazy(() => import('../Pages/Private/Health/Fasting/Fasting'));
+export const HealthMetric = lazy(() => import('../Pages/Private/Health/Metrics/Metric'));
+export const Conditions = lazy(() => import('../Pages/Private/Health/Conditions/Conditions'));
+export const Vitals = lazy(() => import('../Pages/Private/Health/Vitals/Vitals'));
 export const Docs = lazy(() => import('../Pages/Private/Docs/Docs'));
 export const Todos = lazy(() => import('../Pages/Private/Todos/Todos'));
 export { default as Tasks } from '../Pages/Private/Tasks/Tasks';

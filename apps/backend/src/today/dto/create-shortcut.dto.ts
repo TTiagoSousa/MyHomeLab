@@ -17,6 +17,12 @@ export class CreateShortcutDto {
   @IsUUID()
   accountId?: string;
 
+  @ValidateIf(
+    (dto: CreateShortcutDto) => dto.kind === TodayShortcutKind.HEALTH_FORM,
+  )
+  @IsUUID()
+  formId?: string;
+
   @ValidateIf((dto: CreateShortcutDto) => dto.kind === TodayShortcutKind.LINK)
   @IsString()
   @MinLength(1)

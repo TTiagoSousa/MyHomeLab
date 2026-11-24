@@ -1,0 +1,187 @@
+@use '../../Styles/Fonts.scss' as Font;
+@use '../../Styles/Mixins.scss' as Mixin;
+
+.Health_Forms_Overlay{
+  @include Mixin.Modal_Overlay;
+
+  .Health_Forms_Modal{
+    @include Mixin.Modal_Panel;
+    width: 620px;
+    max-width: 100%;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+}
+
+.Health_Forms{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+
+  .Health_Forms_Head{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .Health_Forms_Title{
+    @include Mixin.Hud_Title(14px);
+    color: var(--text-main);
+  }
+
+  .Health_Forms_Hint{
+    margin: 4px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  .Health_Forms_List{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .Health_Forms_Item{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .Health_Forms_Open{
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 10px 12px;
+    border: 1px solid var(--hud-line-strong);
+    border-radius: var(--ctrl-radius);
+    background: transparent;
+    color: var(--text-main);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .16s ease, background .16s ease;
+
+    strong{ font-size: 13.5px; }
+
+    span{
+      max-width: 100%;
+      overflow: hidden;
+      font-size: 11.5px;
+      color: var(--text-soft);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &:hover{
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    &:focus-visible{
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+  }
+
+  .Health_Forms_Grid{
+    display: grid;
+    grid-template-columns: repeat(var(--form-columns, 3), minmax(0, 1fr));
+    gap: 10px;
+
+    @media (max-width: 560px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  .Health_Forms_Field{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+
+    label{
+      font-size: 11.5px;
+      color: var(--text-soft);
+    }
+  }
+
+  .Health_Forms_Editor,
+  .Health_Forms_Fill{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .Health_Forms_Group{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px 12px;
+    margin: 0;
+    padding: 10px 12px 12px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+
+    @media (max-width: 560px){ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    legend{
+      @include Mixin.Hud_Label(9px);
+      padding: 0 6px;
+      color: var(--text-faint);
+    }
+  }
+
+  .Health_Forms_Check{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-main);
+    cursor: pointer;
+
+    input{ accent-color: var(--accent); }
+  }
+
+  .Health_Forms_Error{
+    margin: 0;
+    font-size: 12px;
+    color: var(--danger-color);
+  }
+
+  .Health_Forms_Actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .Health_Forms_Ghost{
+    @include Mixin.Ghost_Button;
+    flex-shrink: 0;
+    height: 34px;
+    padding: 0 14px;
+    font-size: 12.5px;
+
+    &.danger{
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    &.confirm{ background: var(--danger-color-soft); }
+  }
+
+  .Health_Forms_Solid{
+    @include Mixin.Solid_Button;
+    flex-shrink: 0;
+    height: 34px;
+    padding: 0 16px;
+    font-size: 12.5px;
+  }
+}

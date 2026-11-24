@@ -406,7 +406,7 @@ The update lifecycle itself is driven by the board and the agents' tools; see
 | Method | Path | Purpose |
 |---|---|---|
 | GET | `/today/shortcuts` | The Today shortcuts, in order |
-| POST | `/today/shortcuts` | Add one: `{ kind: APP, accountId }`, `{ kind: EMAIL_RULES }` or `{ kind: LINK, label, url }` (409 if that app or the email rules are already there) |
+| POST | `/today/shortcuts` | Add one: `{ kind: APP, accountId }`, `{ kind: EMAIL_RULES }`, `{ kind: LINK, label, url }`, `{ kind: HEALTH_FORM, formId }` or `{ kind: INTAKES }` (409 if that app, form, the email rules or the intakes are already there) |
 | DELETE | `/today/shortcuts/:id` | Remove a shortcut |
 | GET | `/today/weather` | `{ location, forecast }`: now and the next days from Open-Meteo (cached 15 min), or nulls without a city |
 | PUT | `/today/weather` | `{ city }`: geocode it with Open-Meteo and save it (404 if not found) |
@@ -419,13 +419,16 @@ send data to Anthropic using the user's own AI session and return 412 without on
 
 | Area | Routes | Purpose |
 |---|---|---|
-| Summary | `GET /health/summary` | Averages shown on the health page |
+| Summary | `GET /health/summary` | Averages shown on the health page (including one entry per body metric in `metrics`) |
 | Huawei import | `POST /health/import/huawei`, `…/heart`, `…/skin-temperature`, `…/blood-oxygen`, `…/stress`, `…/exercise`, `…/steps` | Import files from a Huawei Health export |
 | Wearable data | `GET /health/sleep`, `/heart`, `/skin-temperature`, `/blood-oxygen`, `/stress`, `/steps` (+ `/:id` for each) | Daily series and per-day detail |
 | Exercise | `GET /health/exercise`, `GET /health/exercise/types`, `POST /health/exercise/workouts`, `GET\|PUT\|DELETE /health/exercise/workouts/:id`, `GET …/:id/parts/candidates`, `PUT …/:id/parts`, `DELETE …/:id/parent`, `POST …/:id/sync`, `POST /health/exercise/sync` | Workouts, merging parts, openGym sync |
-| Weight and water | `GET\|POST /health/weight`, `DELETE /health/weight/:id`, `GET\|POST /health/water`, `DELETE /health/water/:id` | Quick logs |
+| Weight and water | `GET\|POST /health/weight`, `DELETE /health/weight/:id`, `GET\|POST /health/water`, `DELETE /health/water/:id` | Quick logs; a weigh-in can carry the body composition from the scale (body fat, subcutaneous and visceral fat, muscle, skeletal muscle, bone, fat-free weight, BMR, body water, protein) and a device |
+| Body metrics | `GET|POST /health/metrics/:metric`, `DELETE /health/metrics/:metric/:id` | One body composition or tape measurement: period averages and the values, newest first; log or remove a single value from its own page |
+| Devices | `GET\|POST /health/devices`, `PATCH\|DELETE /health/devices/:id` | The scales weigh-ins come from; one can be the default |
+| Quick forms | `GET\|POST /health/forms`, `PUT\|DELETE /health/forms/:id`, `POST /health/forms/:id/entries` | User-made forms with chosen fields (scale, tape measurements, water), filled in one go |
 | Labs | `POST /health/labs/extract`, `GET\|POST /health/labs`, `GET /health/labs/parameters`, `GET /health/labs/parameters/:key`, `GET /health/labs/analytes`, `GET\|PUT\|DELETE /health/labs/:id`, `POST\|GET /health/labs/:id/pdf` | Lab reports (PDF read by AI; personal data not stored) |
-| Profile and records | `GET\|PUT /health/profile`, `GET\|POST /health/conditions`, `PUT\|DELETE /health/conditions/:id`, `GET\|POST /health/medications`, `PUT\|DELETE /health/medications/:id`, `GET\|POST /health/diary`, `PUT\|DELETE /health/diary/:id` | Profile, allergies/conditions, medication, diary |
+| Profile and records | `GET\|PUT /health/profile`, `GET\|POST /health/conditions`, `PUT\|DELETE /health/conditions/:id`, `GET\|POST /health/medications`, `PUT\|DELETE /health/medications/:id`, `GET\|POST /health/diary`, `PUT\|DELETE /health/diary/:id` | Profile (including the chosen average tabs), allergies/conditions, medication, diary |
 | Nutrition | `GET /health/nutrition`, `POST /health/meals/estimate`, `POST /health/meals`, `PUT\|DELETE /health/meals/:id`, `POST\|GET /health/meals/:id/photo` | Meals, AI estimates, photos |
 | Body and vitals | `GET /health/body`, `PUT /health/body/measurements`, `DELETE /health/body/measurements/:id`, `POST /health/body/photos`, `GET\|DELETE /health/body/photos/:id`, `POST /health/vitals`, `DELETE /health/vitals/:id` | Measurements, progress photos, vital readings |
 | Intakes | `GET\|POST /health/intakes`, `PUT /health/intakes/settings`, `POST /health/intakes/items`, `PUT\|DELETE /health/intakes/items/:id`, `PUT\|DELETE /health/intakes/:id` | Coffee and alcohol |

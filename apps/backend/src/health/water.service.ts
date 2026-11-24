@@ -5,6 +5,8 @@ import { waterDays } from './helpers/waterDays';
 import { waterAverages } from './helpers/waterAverages';
 import { localDay } from './helpers/timeZone';
 
+const RECENT = 5;
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
@@ -55,6 +57,11 @@ export class WaterService {
       last7: waterAverages(within(7)),
       last30: waterAverages(within(30)),
       last90: waterAverages(last90),
+      // os últimos dias com registos, para o cartão não ficar vazio por baixo das médias
+      recent: [...last90]
+        .sort((a, b) => b.day.localeCompare(a.day))
+        .slice(0, RECENT)
+        .map((day) => ({ day: day.day, value: day.ml })),
     };
   }
 

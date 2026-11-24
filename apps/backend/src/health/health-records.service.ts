@@ -21,6 +21,7 @@ import {
 import { localDay } from './helpers/timeZone';
 import { roundTo } from './helpers/readings';
 import { ageOn } from './helpers/ageOn';
+import { AVERAGE_TABS } from './helpers/healthMetrics';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -158,6 +159,7 @@ export class HealthRecordsService {
       bloodType: profile?.bloodType ?? null,
       emergencyContact: profile?.emergencyContact ?? null,
       notes: profile?.notes ?? null,
+      averageTabs: profile?.averageTabs ?? [],
       heightCm,
       weightKg,
       bmi:
@@ -174,6 +176,11 @@ export class HealthRecordsService {
     if (dto.birthDate !== undefined) data.birthDate = dateOnly(dto.birthDate);
     if (dto.sex !== undefined) data.sex = dto.sex;
     if (dto.bloodType !== undefined) data.bloodType = dto.bloodType;
+    if (dto.averageTabs !== undefined) {
+      data.averageTabs = AVERAGE_TABS.filter((tab) =>
+        dto.averageTabs!.includes(tab),
+      );
+    }
     for (const field of PROFILE_TEXTS) {
       if (dto[field] !== undefined) data[field] = dto[field]?.trim() || null;
     }

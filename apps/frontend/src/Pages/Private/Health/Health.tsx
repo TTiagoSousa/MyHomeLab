@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './Health.scss';
 import { useHealthSummary } from '../../../Hooks/Health/useHealthSummary';
+import { useHealthProfile } from '../../../Hooks/Health/useHealthProfile';
 import Health_Averages_Card from './Health_Averages_Card';
 import Health_Records_Card from './Health_Records_Card';
 import Health_Import_Modal from '../../../Components/Modals/Health_Import_Modal/Health_Import_Modal';
@@ -10,6 +11,7 @@ import * as Icon from '../../../Imports/icons';
 const Health = () => {
   const { t } = useTranslation('health');
   const { summary, loading, error, fetchSummary } = useHealthSummary();
+  const { profile, saving: savingTabs, saveProfile } = useHealthProfile();
   const [importOpen, setImportOpen] = useState(false);
 
   return (
@@ -40,7 +42,14 @@ const Health = () => {
         </div>
       )}
 
-      {summary && <Health_Averages_Card summary={summary} />}
+      {summary && (
+        <Health_Averages_Card
+          summary={summary}
+          savedTabs={profile?.averageTabs ?? []}
+          savingTabs={savingTabs}
+          onSaveTabs={(averageTabs) => saveProfile({ averageTabs })}
+        />
+      )}
 
       <Health_Records_Card />
 

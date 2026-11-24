@@ -14,10 +14,10 @@ interface Weight_Trend_Chart_Props {
 const Weight_Trend_Chart = ({ entries, averageKg }: Weight_Trend_Chart_Props) => {
   const { t } = useTranslation('health');
   const colors = useChartColors();
-  const points = entries.slice().reverse();
+  const points = entries.filter((entry) => entry.weightKg != null).reverse();
   if (points.length < 2) return null;
 
-  const values = points.map((entry) => entry.weightKg);
+  const values = points.map((entry) => entry.weightKg ?? 0);
   const low = Math.floor(Math.min(...values) - 1);
   const high = Math.ceil(Math.max(...values) + 1);
 

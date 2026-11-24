@@ -247,11 +247,15 @@
       "kinds": {
         "APP": "Connected app",
         "EMAIL_RULES": "Email rules",
-        "LINK": "Link"
+        "LINK": "Link",
+        "HEALTH_FORM": "Health form",
+        "INTAKES": "Coffee and alcohol"
       },
       "hints": {
         "app": "Connected app",
-        "emailRules": "Gmail"
+        "emailRules": "Gmail",
+        "form": "Quick form",
+        "intakes": "Quick log"
       },
       "app": "App",
       "appPlaceholder": "Choose the app",
@@ -259,7 +263,11 @@
       "emailRulesHint": "Opens the Gmail rules page.",
       "label": "Name",
       "labelPlaceholder": "E.g. Router",
-      "url": "Address"
+      "url": "Address",
+      "intakesHint": "Opens the quick coffee and alcohol log right here in Today.",
+      "form": "Form",
+      "formPlaceholder": "Choose a form",
+      "noForms": "You have no forms yet. Create one in Health → Add data → Manual."
     },
     "weather": {
       "title": "Weather",

@@ -97,11 +97,11 @@ export async function journalMetric(
       if (!data.measurements.length && !data.photos.length)
         return 'Não há medidas do corpo registadas.';
       return [
-        'Medidas do corpo (todas; cm, gordura em %, músculo em kg). Dia | cintura | peito | braço | coxa | anca | pescoço | gordura % | músculo kg | notas:',
+        'Medidas do corpo (todas, em cm; a gordura e o músculo estão nas pesagens, no health_metric weight). Dia | cintura | peito | braço | coxa | anca | pescoço | notas:',
         ...rows(
           data.measurements.map(
             (m) =>
-              `${m.day} | ${dash(m.waistCm)} | ${dash(m.chestCm)} | ${dash(m.armCm)} | ${dash(m.thighCm)} | ${dash(m.hipsCm)} | ${dash(m.neckCm)} | ${dash(m.bodyFatPct)} | ${dash(m.muscleKg)} | ${dash(m.notes)}`,
+              `${m.day} | ${dash(m.waistCm)} | ${dash(m.chestCm)} | ${dash(m.armCm)} | ${dash(m.thighCm)} | ${dash(m.hipsCm)} | ${dash(m.neckCm)} | ${dash(m.notes)}`,
           ),
         ),
         `Fotos de progresso: ${data.photos.length} (só se veem na app).`,

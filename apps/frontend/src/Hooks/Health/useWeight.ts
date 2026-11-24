@@ -3,13 +3,13 @@ import { End_Points } from "../../Service/endPoints";
 import http from "../../Service/httpService";
 import { useAlert } from "../../Contexts/Alert_Context";
 import i18n from "../../i18n";
-import type { WeightAverages, WeightEntry } from "./healthTypes";
+import type { CompositionField, WeightAverages, WeightEntry } from "./healthTypes";
 
-export interface WeightPayload {
-  weightKg: number;
+export type WeightPayload = Partial<Record<'weightKg' | CompositionField, number>> & {
+  deviceId: string | null;
   measuredAt: string;
   timeZone: string;
-}
+};
 
 const errorMessage = (error: any): string => {
   const message = error?.response?.data?.message;

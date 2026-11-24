@@ -247,18 +247,6 @@ export class SaveBodyMeasurementDto {
   neckCm?: number | null;
 
   @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 1 })
-  @Min(1)
-  @Max(80)
-  bodyFatPct?: number | null;
-
-  @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 1 })
-  @Min(5)
-  @Max(200)
-  muscleKg?: number | null;
-
-  @IsOptional()
   @IsString()
   @MaxLength(1000)
   notes?: string | null;

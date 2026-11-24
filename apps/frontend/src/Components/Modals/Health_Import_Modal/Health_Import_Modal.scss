@@ -8,6 +8,7 @@
     @include Mixin.Modal_Panel;
     width: 600px;
     max-width: 100%;
+    min-height: min(500px, calc(100vh - 40px));
     max-height: calc(100vh - 40px);
     overflow-y: auto;
     display: flex;
@@ -31,6 +32,39 @@
     font-size: 12.5px;
     line-height: 1.5;
     color: var(--text-soft);
+  }
+
+  .Health_Import_Modal_Modes{
+    display: flex;
+    gap: 6px;
+    padding: 4px;
+    border: 1px solid var(--hud-line);
+    border-radius: var(--ctrl-radius);
+
+    button{
+      flex: 1;
+      height: 34px;
+      border: none;
+      border-radius: calc(var(--ctrl-radius) - 2px);
+      background: transparent;
+      color: var(--text-soft);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+
+      &.active{
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+      }
+
+      &:disabled{ cursor: default; }
+
+      &:focus-visible{
+        outline: none;
+        box-shadow: 0 0 0 2px var(--accent);
+      }
+    }
   }
 
   .Health_Import_Modal_Sources{
@@ -266,6 +300,7 @@
   }
 
   .Health_Import_Modal_Footer{
+    margin-top: auto;
     display: flex;
     justify-content: flex-end;
     flex-wrap: wrap;

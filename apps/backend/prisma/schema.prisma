@@ -127,6 +127,8 @@ model User {
   activityDays        ActivityDay[]
   workouts            Workout[]
   weightEntries       WeightEntry[]
+  measurementDevices  MeasurementDevice[]
+  healthForms         HealthForm[]
   waterEntries        WaterEntry[]
   healthProfile       HealthProfile?
   labReports          LabReport[]
@@ -1146,19 +1148,66 @@ model OpenGymExercise {
   createdAt DateTime @default(now())
 }
 
-/// Uma pesagem, registada à mão na página Saúde → Peso.
+/// Uma pesagem, registada à mão na página Saúde → Peso ou num formulário rápido:
+/// o peso e a composição corporal que a balança dá (tudo opcional, mas pelo menos
+/// um valor). O IMC não se guarda — calcula-se com a altura do perfil.
 model WeightEntry {
-  id         String   @id @default(uuid())
+  id         String             @id @default(uuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   measuredAt DateTime
-  day        DateTime @db.Date // o dia local da pesagem
+  day        DateTime           @db.Date // o dia local da pesagem
   timeZone   String? // fuso do browser no formato da Huawei ("+0100")
-  weightKg   Float
+  deviceId   String?
+  device     MeasurementDevice? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  weightKg           Float?
+  bodyFatPct         Float? // gordura corporal (%)
+  subcutaneousFatPct Float? // gordura subcutânea (%)
+  visceralFat        Float? // gordura visceral (índice da balança)
+  muscleKg           Float? // massa muscular (kg)
+  skeletalMusclePct  Float? // músculo esquelético (%)
+  boneKg             Float? // massa óssea (kg)
+  leanKg             Float? // peso sem gordura (kg)
+  bmrKcal            Float? // taxa metabólica basal (kcal)
+  waterPct           Float? // água corporal (%)
+  proteinPct         Float? // proteína (%)
 
   createdAt DateTime @default(now())
 
   @@index([userId, measuredAt])
+  @@index([deviceId])
+}
+
+/// Um aparelho de onde vêm as pesagens (ex: "Renpho"). O predefinido já vem
+/// escolhido ao registar.
+model MeasurementDevice {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  weightEntries WeightEntry[]
+
+  @@unique([userId, name])
+}
+
+/// Um formulário rápido da Saúde: um nome e os campos que se metem de uma vez
+/// (chaves de HEALTH_FORM_FIELDS no backend).
+model HealthForm {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  fields    String[]
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  todayShortcuts TodayShortcut[]
+
+  @@index([userId, position])
 }
 
 /// Água bebida, registada à mão na página Saúde → Água: um registo por copo
@@ -1189,6 +1238,7 @@ model HealthProfile {
   bloodType        String? // A+, O-…
   emergencyContact String?
   notes            String?
+  averageTabs      String[] @default([]) // os separadores das médias em Saúde; vazio = os que têm dados
 
   updatedAt DateTime @updatedAt
 }
@@ -1407,8 +1457,6 @@ model BodyMeasurement {
   thighCm    Float?
   hipsCm     Float?
   neckCm     Float?
-  bodyFatPct Float?
-  muscleKg   Float?
   notes      String?
 
   createdAt DateTime @default(now())
@@ -2648,6 +2696,8 @@ enum TodayShortcutKind {
   APP // a página de uma app ligada (accountId)
   EMAIL_RULES // as regras de email
   LINK // um endereço à escolha (label + url)
+  HEALTH_FORM // um formulário rápido da Saúde (formId)
+  INTAKES // o registo rápido de café e álcool
 }
 
 // Os atalhos da página Hoje, pela ordem de position.
@@ -2658,6 +2708,8 @@ model TodayShortcut {
   kind      TodayShortcutKind
   accountId String?
   account   ConnectedAccount? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  formId    String?
+  form      HealthForm?       @relation(fields: [formId], references: [id], onDelete: Cascade)
   label     String?
   url       String?
   position  Int               @default(0)
@@ -2665,6 +2717,7 @@ model TodayShortcut {
 
   @@index([userId, position])
   @@index([accountId])
+  @@index([formId])
 }
 
 // A cidade do tempo na página Hoje (Definições), já com as coordenadas do Open-Meteo.
