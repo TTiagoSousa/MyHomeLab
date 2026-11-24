@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.13.0] — 2026-11-24
+
+### Features
+- **health**: add a page per body composition and tape measurement with its own logging, scale devices with a default, quick forms, choosable average tabs with a carousel, a conditions page and a vitals page, and form and coffee shortcuts on Today
+
+
 ## [1.12.0] — 2026-11-23
 
 ### Features
@@ -166,3 +172,4 @@ First public release of MyHomeLab.
 [1.11.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.11.0
 [1.11.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.11.1
 [1.12.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.12.0
+[1.13.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.13.0
