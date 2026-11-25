@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.15.0] — 2026-11-25
+
+### Features
+- **agent**: keep long tool calls alive past five minutes, treat the user's task comments as their own words, and add personal API tokens with read or full scope
+
+
 ## [1.14.0] — 2026-11-24
 
 ### Features
@@ -180,3 +186,4 @@ First public release of MyHomeLab.
 [1.12.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.12.0
 [1.13.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.13.0
 [1.14.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.14.0
+[1.15.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.15.0
