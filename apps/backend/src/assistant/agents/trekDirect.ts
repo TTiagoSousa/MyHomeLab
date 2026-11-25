@@ -1,3 +1,4 @@
+import { userWroteThisTurn } from 'src/agent/helpers/userIsSpeaking';
 import { AppAccessLevel } from 'src/generated/prisma/client/client';
 import {
   isReadOnlyTool,
@@ -55,7 +56,8 @@ export async function trekDirect(
       trekAccessToken(credentials),
       trekMcpTools(credentials),
     ]);
-    const readOnly = level === AppAccessLevel.READ || context.source !== 'chat';
+    const readOnly =
+      level === AppAccessLevel.READ || !userWroteThisTurn(context.source);
     return {
       servers: {
         [TREK_SERVER]: {

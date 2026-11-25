@@ -2,6 +2,7 @@ import './Settings.scss';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES, currentLanguage, setLanguage } from '../../../i18n';
 import Settings_Weather from './Settings_Weather';
+import Settings_Api_Tokens from './Settings_Api_Tokens';
 
 const Settings = () => {
   const { t } = useTranslation('settings');
@@ -40,6 +41,8 @@ const Settings = () => {
       </div>
 
       <Settings_Weather />
+
+      <Settings_Api_Tokens />
     </div>
   );
 };

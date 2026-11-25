@@ -1,4 +1,4 @@
-import { handleBridge, openBridge } from './mcpBridge';
+import { handleBridge, openBridge, sendBridgeReply } from './mcpBridge';
 import { conversationPrompt } from 'src/ai-credential/ai-client';
 
 describe('a ponte MCP', () => {
@@ -78,5 +78,66 @@ describe('a conversa num pedido só', () => {
       prompt.indexOf('PEDIDO ATUAL'),
     );
     expect(prompt.trim().endsWith('novembro')).toBe(true);
+  });
+});
+
+describe('a resposta da ponte', () => {
+  const fakeResponse = () => {
+    const calls: string[] = [];
+    const res = {
+      status: (code: number) => {
+        calls.push(`status ${code}`);
+        return res;
+      },
+      json: (body: unknown) => calls.push(`json ${JSON.stringify(body)}`),
+      end: () => calls.push('end'),
+      writeHead: (code: number, headers: Record<string, string>) =>
+        calls.push(`head ${code} ${headers['Content-Type']}`),
+      write: (chunk: string) => calls.push(chunk),
+    };
+    return { res, calls };
+  };
+  const later = <T>(value: T, ms: number) =>
+    new Promise<T>((resolve) => setTimeout(() => resolve(value), ms));
+
+  it('uma resposta rápida vai em JSON', async () => {
+    const { res, calls } = fakeResponse();
+    await sendBridgeReply(
+      res,
+      later({ status: 200, body: { id: 1 } }, 1),
+      true,
+      50,
+      10,
+    );
+    expect(calls).toEqual(['status 200', 'json {"id":1}']);
+  });
+
+  it('uma ferramenta demorada passa a stream, com sinais de vida, e acaba com a resposta', async () => {
+    const { res, calls } = fakeResponse();
+    await sendBridgeReply(
+      res,
+      later({ status: 200, body: { id: 2 } }, 80),
+      true,
+      10,
+      20,
+    );
+    expect(calls[0]).toBe('head 200 text/event-stream');
+    expect(
+      calls.filter((call) => call === ': a trabalhar\n\n').length,
+    ).toBeGreaterThan(1);
+    expect(calls.at(-2)).toBe('event: message\ndata: {"id":2}\n\n');
+    expect(calls.at(-1)).toBe('end');
+  });
+
+  it('sem stream aceite, espera e responde em JSON', async () => {
+    const { res, calls } = fakeResponse();
+    await sendBridgeReply(
+      res,
+      later({ status: 202, body: null }, 30),
+      false,
+      5,
+      5,
+    );
+    expect(calls).toEqual(['status 202', 'end']);
   });
 });

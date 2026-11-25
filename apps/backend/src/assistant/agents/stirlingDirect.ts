@@ -1,3 +1,4 @@
+import { userWroteThisTurn } from 'src/agent/helpers/userIsSpeaking';
 import { AppAccessLevel } from 'src/generated/prisma/client/client';
 import { createStirlingClient } from 'src/stirling/stirling.client';
 import { stirlingTarget } from '../tools/stirlingTools';
@@ -36,7 +37,8 @@ export async function stirlingDirect(
   );
   const tools = await client.mcpTools();
   if (!tools?.length) return null;
-  const readOnly = level === AppAccessLevel.READ || context.source !== 'chat';
+  const readOnly =
+    level === AppAccessLevel.READ || !userWroteThisTurn(context.source);
   return {
     servers: {
       [STIRLING_SERVER]: {

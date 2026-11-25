@@ -101,6 +101,7 @@ model User {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  apiTokens           ApiToken[]
   categories          Category[]
   services            Service[]
   connectedAccounts   ConnectedAccount[]
@@ -2144,6 +2145,8 @@ model AgentSchedule {
   tags        String[]            @default([]) // etiquetas para filtrar (minúsculas)
   nextRunAt   DateTime?
   createdBy   String              @default("user") // "user" ou a chave do agente
+  /// O comentário dele que abriu este disparo, tal e qual: são palavras dele, como no chat.
+  userMessage String?             @db.Text
   // A que está ligado (para aparecer na página dessa app, servidor…).
   linkType    DocLinkType?
   targetId    String?
@@ -2760,4 +2763,26 @@ model WeatherLocation {
   longitude Float
   timezone  String
   updatedAt DateTime @updatedAt
+}
+
+enum ApiTokenScope {
+  READ
+  FULL
+}
+
+/// Um token pessoal para usar a API sem o browser (ex.: o Claude Code a ver a produção).
+/// Guarda-se só o hash: o token aparece uma vez, quando se cria.
+model ApiToken {
+  id         String        @id @default(uuid())
+  userId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  scope      ApiTokenScope @default(READ)
+  tokenHash  String        @unique
+  prefix     String
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime      @default(now())
+
+  @@index([userId])
 }

@@ -917,8 +917,14 @@ ${pending}`
         randomUUID(),
         await this.agentSettingRepository.findDeniedPermissions(userId),
         team,
-        schedule.updateId ? 'study' : 'schedule',
+        // Um comentário dele numa tarefa: são palavras dele, escritas agora, como no chat.
+        schedule.updateId
+          ? 'study'
+          : schedule.userMessage
+            ? 'comment'
+            : 'schedule',
       ),
+      userMessage: schedule.userMessage ?? undefined,
       onUsage: (used) => {
         usage.input += used.input;
         usage.output += used.output;

@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { handleBridge } from './mcpBridge';
+import { handleBridge, sendBridgeReply } from './mcpBridge';
 
 const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
 
@@ -24,13 +24,11 @@ export class McpBridgeController {
       res.status(403).json({ error: 'Só a partir desta máquina.' });
       return;
     }
-    const { status, body } = await handleBridge(
-      id,
-      req.headers.authorization,
-      req.body,
+    await sendBridgeReply(
+      res,
+      handleBridge(id, req.headers.authorization, req.body),
+      String(req.headers.accept ?? '').includes('text/event-stream'),
     );
-    if (body === null) res.status(status).end();
-    else res.status(status).json(body);
   }
 
   /** Sem notificações do servidor: nada de SSE. */

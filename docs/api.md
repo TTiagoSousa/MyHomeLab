@@ -14,6 +14,12 @@ under `/api/…` and strips the prefix before proxying.
   gone or the version changed. Logging out bumps `tokenVersion`, ending that user's sessions
   on every device. Other JWTs signed with the same secret (the Google OAuth `state`, with
   `aud: "google-oauth-state"`) are rejected as sessions.
+- **Personal API tokens**: instead of the cookie, a client can send
+  `Authorization: Bearer mhl_…` with a token created in Settings → API access. Only its
+  SHA-256 hash is stored; the token is shown once. A `READ` token only passes `GET`/`HEAD`;
+  a `FULL` token does what the user does on the site, except `/api-tokens` (always
+  refused) and writes under `/auth` and `/user`. Tokens may expire (1–365 days) and are
+  revoked from the same card. Routes marked **JWT** accept either.
 - **Login throttle**: 5 failed logins per client IP and username in 15 minutes, or 30 per
   username from any IP in 5 minutes, return **429**. Behind a reverse proxy set
   `TRUSTED_PROXIES` so the client IP is the real one (see [deployment](deployment.md)).
@@ -47,6 +53,16 @@ there too.
 | POST | `/auth/login` | public (credentials) | Log in; sets the session cookie |
 | POST | `/auth/logout` | JWT | End the session: bumps `tokenVersion` (all of the user's sessions) and clears the cookie |
 | GET | `/auth/me` | JWT | Current user `{ id, username, role }` |
+
+## API tokens · `/api-tokens`
+
+Session cookie only: a personal token cannot list, create or revoke tokens.
+
+| Method | Path | Auth | Purpose |
+|---|---|---|---|
+| GET | `/api-tokens` | session | The user's tokens `{ id, name, scope, prefix, lastUsedAt, expiresAt, createdAt }` |
+| POST | `/api-tokens` | session | Create `{ name, scope: READ\|FULL, expiresInDays? }`; the response carries `token`, shown only this once |
+| DELETE | `/api-tokens/:id` | session | Revoke (204) |
 
 ## Users · `/user`
 
@@ -228,7 +244,7 @@ through nginx (`X-Forwarded-For` present).
 
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
-| POST | `/internal/mcp/:id` | per-run token | MCP (JSON-RPC) bridge through which a running agent calls MyHomeLab tools |
+| POST | `/internal/mcp/:id` | per-run token | MCP (JSON-RPC) bridge through which a running agent calls MyHomeLab tools. A call still running after 20 s switches to an SSE response (a comment every 30 s, then the result as a `message` event) when the client accepts `text/event-stream` |
 | GET | `/internal/mcp/:id` | — | Always 405 (no server-sent notifications) |
 | POST | `/internal/terminal/session` | local terminal token | Session for the local read-only terminal (`npm run claude`) |
 

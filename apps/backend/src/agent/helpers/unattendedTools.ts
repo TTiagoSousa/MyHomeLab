@@ -1,4 +1,5 @@
 import { classifyCommand } from 'src/server-connection/helpers/commandSafety';
+import { userIsSpeaking } from './userIsSpeaking';
 
 /**
  * Sem ele a ver (um disparo, um estudo, uma instalação), o prompt não chega para travar
@@ -77,7 +78,7 @@ export function unattendedBlock(
   source: string | undefined,
   write: boolean,
 ): string | null {
-  if (!source || source === 'chat' || source === 'terminal') return null;
+  if (userIsSpeaking(source)) return null;
   const refuse =
     'Recusado: sem ele a ver, isto precisa do sim dele. Pergunta-lhe com board_ask_user (ou diz-lho no aviso) e deixa para quando ele responder.';
   if (NEVER.has(toolName)) return refuse;

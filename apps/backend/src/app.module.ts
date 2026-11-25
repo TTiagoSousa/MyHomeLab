@@ -11,6 +11,7 @@ import { ServiceModule } from './service/service.module';
 import { ConnectedAccountModule } from './connected-account/connected-account.module';
 import { EmailRuleModule } from './email-rule/email-rule.module';
 import { AgentActivityModule } from './agent-activity/agent-activity.module';
+import { ApiTokenModule } from './api-token/api-token.module';
 import { AgentModule } from './agent/agent.module';
 import { AssistantModule } from './assistant/assistant.module';
 import { SystemModule } from './system/system.module';
@@ -50,6 +51,7 @@ import { AgentScheduleRunnerModule } from './agent-schedule/agent-schedule-runne
     AssistantModule,
     SystemModule,
     AgentActivityModule,
+    ApiTokenModule,
     AgentModule,
     AiCredentialModule,
     ClaudeCodeModule,

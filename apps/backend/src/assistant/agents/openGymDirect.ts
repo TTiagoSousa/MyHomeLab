@@ -1,3 +1,4 @@
+import { userWroteThisTurn } from 'src/agent/helpers/userIsSpeaking';
 import { AppAccessLevel } from 'src/generated/prisma/client/client';
 import {
   isReadOnlyOpenGymTool,
@@ -39,7 +40,8 @@ export async function openGymDirect(
   if (level === AppAccessLevel.NONE) return null;
   try {
     const tools = await openGymMcpTools(mcp);
-    const readOnly = level === AppAccessLevel.READ || context.source !== 'chat';
+    const readOnly =
+      level === AppAccessLevel.READ || !userWroteThisTurn(context.source);
     return {
       servers: {
         [OPENGYM_SERVER]: {

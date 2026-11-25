@@ -1,0 +1,171 @@
+@use '../../../Styles/Fonts.scss' as Font;
+@use '../../../Styles/Mixins.scss' as Mixin;
+
+.Settings .Api_Tokens {
+  .Api_Tokens_Form{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .Global_Input{
+      flex: 1 1 220px;
+      height: 38px;
+    }
+  }
+
+  .Api_Tokens_Scopes{
+    display: flex;
+    gap: 6px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 38px;
+      padding: 0 14px;
+
+      &.active{
+        color: var(--accent-bright);
+        border-color: var(--accent);
+        background: var(--accent-soft);
+      }
+    }
+  }
+
+  .Api_Tokens_Expiry{
+    @include Mixin.Control_Surface;
+    height: 38px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .Api_Tokens_Create{
+    @include Mixin.Solid_Button;
+    height: 38px;
+    padding: 0 16px;
+  }
+
+  .Api_Tokens_Hint{
+    margin: 8px 0 0;
+    font-size: 12.5px;
+    color: var(--text-soft);
+  }
+
+  .Api_Tokens_Created{
+    margin-top: 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--accent);
+    border-radius: var(--ctrl-radius);
+    background: var(--accent-soft);
+
+    p{
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: var(--card-global-header-title-color);
+    }
+  }
+
+  .Api_Tokens_Secret{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+
+    code{
+      flex: 1 1 260px;
+      min-width: 0;
+      padding: 8px 10px;
+      border-radius: var(--ctrl-radius);
+      background: var(--input-global-background-color);
+      font-family: Font.$font_family_mono;
+      font-size: 12.5px;
+      word-break: break-all;
+    }
+
+    button{
+      @include Mixin.Solid_Button;
+      height: 34px;
+      padding: 0 14px;
+
+      &.ghost{ @include Mixin.Ghost_Button; height: 34px; padding: 0 14px; }
+    }
+  }
+
+  .Api_Tokens_List{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+
+    li{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid var(--hud-line-strong);
+      border-radius: var(--ctrl-radius);
+    }
+
+    .Api_Tokens_Empty{
+      display: block;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+  }
+
+  .Api_Tokens_Info{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--card-global-header-title-color);
+
+    code{
+      font-family: Font.$font_family_mono;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+  }
+
+  .Api_Tokens_Badge{
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--hud-line-strong);
+    font-size: 11.5px;
+    color: var(--text-soft);
+
+    &.full{
+      border-color: var(--danger-color);
+      color: var(--danger-color);
+    }
+  }
+
+  .Api_Tokens_Meta{
+    grid-column: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+
+  .Api_Tokens_Actions{
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: flex;
+    gap: 6px;
+
+    button{
+      @include Mixin.Ghost_Button;
+      height: 32px;
+      padding: 0 12px;
+
+      &.danger{
+        color: var(--danger-color);
+        border-color: var(--danger-color);
+      }
+    }
+  }
+}

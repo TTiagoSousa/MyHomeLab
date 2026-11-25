@@ -141,6 +141,7 @@
       "verify": "Verificação",
       "study": "Estudos",
       "schedule": "Disparos",
+      "comment": "Comentários nas tarefas",
       "check": "Conflitos de regras",
       "install": "Instalação"
     }
@@ -187,5 +188,35 @@
     "none": "Ainda não escolheste uma cidade.",
     "placeholder": "Ex: Lisboa",
     "clear": "Tirar"
+  },
+  "apiTokens": {
+    "title": "Acesso pela API",
+    "description": "Tokens pessoais para usar o MyHomeLab sem o browser (um script, o Claude Code no teu PC). Cada token vale por ti. Revoga quando já não precisares.",
+    "namePlaceholder": "Nome (ex.: Claude Code no PC)",
+    "scope": "Âmbito",
+    "scopes": {
+      "READ": "Só leitura",
+      "FULL": "Completo"
+    },
+    "scopeHints": {
+      "READ": "Só lê: vê conversas, tarefas, disparos, registos e documentos. Não muda nada.",
+      "FULL": "Faz o que tu fazes no site (falar com o Jarvis, mudar tarefas, aprovar). Não gere tokens, sessões nem contas."
+    },
+    "expiry": "Validade",
+    "expiresIn_one": "Expira em {{count}} dia",
+    "expiresIn_other": "Expira em {{count}} dias",
+    "never": "Não expira",
+    "create": "Criar token",
+    "createdOnce": "Copia o token agora: não volta a aparecer. Guarda-o num sítio seguro e fora do git.",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "empty": "Ainda não há tokens.",
+    "createdAt": "Criado a {{date}}",
+    "lastUsed": "Usado a {{date}}",
+    "neverUsed": "Nunca usado",
+    "expires": "Expira a {{date}}",
+    "noExpiry": "Sem validade",
+    "revoke": "Revogar",
+    "confirmRevoke": "Revogar já"
   }
 }

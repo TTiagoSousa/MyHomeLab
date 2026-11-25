@@ -1,3 +1,4 @@
+import { userWroteThisTurn } from 'src/agent/helpers/userIsSpeaking';
 import { AppAccessLevel } from 'src/generated/prisma/client/client';
 import { createGiteaMirrorClient } from 'src/gitea-mirror/gitea-mirror.client';
 import { giteaMirrorTarget } from '../toolsets/gitea-mirror-tools';
@@ -32,7 +33,8 @@ export async function giteaMirrorDirect(
   );
   const tools = await client.mcpTools();
   if (!tools?.length) return null;
-  const readOnly = level === AppAccessLevel.READ || context.source !== 'chat';
+  const readOnly =
+    level === AppAccessLevel.READ || !userWroteThisTurn(context.source);
   const READS = new Set([
     'list_repositories',
     'get_repository',

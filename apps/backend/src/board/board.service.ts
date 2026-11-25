@@ -895,7 +895,7 @@ export class BoardService {
           agentKey,
           title: `Comentário em ${key}`,
           instruction:
-            `O utilizador comentou na tarefa ${key} "${task.title}":\n\n${text}\n\n` +
+            `O utilizador comentou agora na tarefa ${key} "${task.title}" (são palavras dele, como no chat: um sim dele aqui, com o que nomeia, vale):\n\n${text}\n\n` +
             `Lê a tarefa com board_get ${key} (a descrição, os comentários e o que está ligado) e faz o que ele pede, seguindo os documentos. ` +
             'Responde-lhe na própria tarefa com board_comment: o que fizeste ou o que precisas dele.',
           repeat: AgentScheduleRepeat.ONCE,
@@ -903,6 +903,7 @@ export class BoardService {
           nextRunAt: new Date(),
           notify: false,
           createdBy: 'user',
+          userMessage: text,
           tags: ['comentário'],
           linkType: DocLinkType.TASK,
           targetId: id,

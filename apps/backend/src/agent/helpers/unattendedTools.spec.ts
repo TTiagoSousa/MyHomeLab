@@ -6,6 +6,20 @@ describe('o que um disparo pode alterar', () => {
     expect(unattendedBlock('create_agent', {}, 'chat', true)).toBeNull();
   });
 
+  it('um comentário dele numa tarefa conta como o chat', () => {
+    expect(
+      unattendedBlock(
+        'server_run_command',
+        { command: 'rm /var/lib/vz/dump/vzdump-lxc-123.tar.zst' },
+        'comment',
+        true,
+      ),
+    ).toBeNull();
+    expect(
+      unattendedBlock('pve_delete_snapshot', {}, 'comment', true),
+    ).toBeNull();
+  });
+
   it('as leituras passam sempre', () => {
     expect(unattendedBlock('list_servers', {}, 'schedule', false)).toBeNull();
   });

@@ -1,3 +1,4 @@
+import { userWroteThisTurn } from 'src/agent/helpers/userIsSpeaking';
 import type { MessageParam } from '@anthropic-ai/sdk/resources/messages';
 import { Agent } from 'src/generated/prisma/client/client';
 import { guardTools } from 'src/agent/helpers/assistantToolPermissions';
@@ -372,8 +373,8 @@ function delegatedRequest(
   context: AgentContext,
 ): string {
   const own =
-    context.source === 'chat' && context.userMessage
-      ? `[Mensagem do utilizador nesta volta — só isto são palavras dele]\n${context.userMessage.slice(0, 4000)}\n\n`
+    userWroteThisTurn(context.source) && context.userMessage
+      ? `[${context.source === 'comment' ? 'Comentário que ele escreveu agora na tarefa' : 'Mensagem do utilizador nesta volta'} — só isto são palavras dele]\n${context.userMessage.slice(0, 4000)}\n\n`
       : '[Não há mensagem dele nesta volta: estás num disparo, ninguém está a ver.]\n\n';
   return `(${today()})\n${own}[Pedido de ${boss.name}, o teu chefe — não é o sim dele]\n${request}`;
 }

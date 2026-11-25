@@ -140,3 +140,66 @@ export async function handleBridge(
   if (!answers.length) return { status: 202, body: null };
   return { status: 200, body: Array.isArray(body) ? answers : answers[0] };
 }
+
+/** Até aqui uma resposta vai em JSON; depois disto, em stream (SSE) com sinais de vida. */
+export const QUICK_REPLY_MS = 20_000;
+export const KEEPALIVE_MS = 30_000;
+
+/** O que a resposta HTTP precisa de saber fazer (o Response do Express serve). */
+export interface BridgeResponse {
+  status(code: number): BridgeResponse;
+  json(body: unknown): unknown;
+  end(): unknown;
+  writeHead(code: number, headers: Record<string, string>): unknown;
+  write(chunk: string): unknown;
+}
+
+/**
+ * Responde a um pedido da ponte. O cliente MCP do Claude Code (fetch) desiste ao fim
+ * de 5 minutos sem cabeçalhos: uma delegação, um vzdump ou um update_run passavam
+ * disso, a ferramenta "falhava" no modelo e o trabalho continuava às escondidas, sem
+ * relatório. Assim, o que demora mais de 20 s passa a stream: os cabeçalhos saem
+ * logo, vai um comentário SSE a cada 30 s e no fim a resposta, como evento.
+ */
+export async function sendBridgeReply(
+  res: BridgeResponse,
+  pending: Promise<{ status: number; body: unknown }>,
+  acceptsStream: boolean,
+  quickMs = QUICK_REPLY_MS,
+  keepaliveMs = KEEPALIVE_MS,
+): Promise<void> {
+  const reply = (result: { status: number; body: unknown }) => {
+    if (result.body === null) res.status(result.status).end();
+    else res.status(result.status).json(result.body);
+  };
+  if (!acceptsStream) return reply(await pending);
+  let timer: NodeJS.Timeout | undefined;
+  const quick = await Promise.race([
+    pending,
+    new Promise<null>((resolve) => {
+      timer = setTimeout(() => resolve(null), quickMs);
+    }),
+  ]);
+  clearTimeout(timer);
+  if (quick) return reply(quick);
+
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+  });
+  res.write(': a trabalhar\n\n');
+  const keepalive = setInterval(
+    () => res.write(': a trabalhar\n\n'),
+    keepaliveMs,
+  );
+  try {
+    const { body } = await pending;
+    for (const message of Array.isArray(body) ? body : [body]) {
+      res.write(`event: message\ndata: ${JSON.stringify(message)}\n\n`);
+    }
+  } finally {
+    clearInterval(keepalive);
+    res.end();
+  }
+}

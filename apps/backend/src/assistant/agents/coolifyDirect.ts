@@ -1,3 +1,4 @@
+import { userWroteThisTurn } from 'src/agent/helpers/userIsSpeaking';
 import { AppAccessLevel } from 'src/generated/prisma/client/client';
 import { createCoolifyClient } from 'src/coolify/coolify.client';
 import { coolifyTarget } from '../toolsets/coolify-tools';
@@ -37,7 +38,8 @@ export async function coolifyDirect(
   );
   const tools = await client.mcpTools();
   if (!tools?.length) return null;
-  const readOnly = level === AppAccessLevel.READ || context.source !== 'chat';
+  const readOnly =
+    level === AppAccessLevel.READ || !userWroteThisTurn(context.source);
   return {
     servers: {
       [COOLIFY_SERVER]: {

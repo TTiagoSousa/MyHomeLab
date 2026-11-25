@@ -113,8 +113,11 @@ function cleanEnv(token?: string | null): NodeJS.ProcessEnv {
   ];
   const env: NodeJS.ProcessEnv = {};
   for (const key of keep) if (process.env[key]) env[key] = process.env[key];
-  // As ferramentas do MyHomeLab podem demorar (um subagente, um backup).
+  // As ferramentas do MyHomeLab podem demorar (um subagente, um backup). Sem o limite de
+  // inatividade, o Claude Code cancelava ao fim de 5 minutos sem resposta: a delegação
+  // "falhava" no chefe e o subagente continuava sozinho, sem relatório.
   env.MCP_TOOL_TIMEOUT = String(DEFAULT_TIMEOUT_MS);
+  env.CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT = String(DEFAULT_TIMEOUT_MS);
   env.DISABLE_AUTOUPDATER = '1';
   env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = '1';
   if (token) env.CLAUDE_CODE_OAUTH_TOKEN = token;
