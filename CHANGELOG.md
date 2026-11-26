@@ -7,6 +7,15 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.16.0] — 2026-11-26
+
+### Features
+- **app-update**: add an updates cron job to every self-hosted app that puts new versions straight on the board, in Todo or Waiting for study
+
+### Fixes
+- **health**: rename the body composition metrics to the usual names
+
+
 ## [1.15.1] — 2026-11-26
 
 ### Fixes
@@ -194,3 +203,4 @@ First public release of MyHomeLab.
 [1.14.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.14.0
 [1.15.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.15.0
 [1.15.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.15.1
+[1.16.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.16.0
