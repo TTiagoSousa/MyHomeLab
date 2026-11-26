@@ -9,6 +9,7 @@ import App_Account from './App_Account';
 import App_Location from './App_Location';
 import App_Updates from './App_Updates';
 import App_Settings_Menu from './App_Settings_Menu';
+import App_Cron_Button from './App_Cron_Button';
 import { appSettingsItems } from './appSettingsItems';
 import Linked_Docs from '../../../Components/Linked_Docs/Linked_Docs';
 import Agent_Access from '../../../Components/Agent_Access/Agent_Access';
@@ -44,6 +45,7 @@ const Home_Assistant_Account = () => {
               <button type='button' className='Apps_header_button compact' onClick={() => navigate(`/MyHomeLab/Apps/HomeAssistant/${accountId}/Connections`)}>
                 {t('apps.homeAssistant.connections.title')}
               </button>
+              <App_Cron_Button />
               <App_Settings_Menu
                 items={appSettingsItems(['account', 'location', 'updates', 'agents', 'docs', 'schedules'], t, t('apps.homeAssistant.credentialsHint'))}
               />

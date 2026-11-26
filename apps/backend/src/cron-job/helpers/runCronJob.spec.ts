@@ -28,6 +28,7 @@ const context = {
   userId: 'user-1',
   accounts: {} as never,
   diskAlerts: {} as never,
+  connected: {} as never,
 };
 
 describe('runCronJob', () => {

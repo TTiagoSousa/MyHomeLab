@@ -2457,6 +2457,24 @@
         "description": "Checks the disk of each CT and VM; above the limit it alerts and, if you want, the agent handles it on the board.",
         "result_one": "{{count}} disk above the limit",
         "result_other": "{{count}} disks above the limit"
+      },
+      "updates_app": {
+        "title": "App updates",
+        "description": "Checks for a new version of the app and, if you want, puts it on the board right away, in the column you choose.",
+        "result_one": "{{count}} update put on the board",
+        "result_other": "{{count}} updates put on the board"
+      },
+      "updates_ha_components": {
+        "title": "Add-on, HACS and firmware updates",
+        "description": "Checks for new versions of the Home Assistant components and, if you want, puts each one on the board right away.",
+        "result_one": "{{count}} update put on the board",
+        "result_other": "{{count}} updates put on the board"
+      },
+      "updates_nextcloud_apps": {
+        "title": "Nextcloud app updates",
+        "description": "Checks for new versions of the apps installed in Nextcloud and, if you want, puts each one on the board right away.",
+        "result_one": "{{count}} update put on the board",
+        "result_other": "{{count}} updates put on the board"
       }
     },
     "offShort": "Off",
@@ -2477,6 +2495,21 @@
       "minStorageFreeGb": "Minimum free on the storage (GB)",
       "limitsNote": "On a VM the agent always asks before growing. The storage free minimum always applies, even when you approve.",
       "noAgent": "Without the QEMU guest agent, the disk inside is unknown for: {{guests}}. Install qemu-guest-agent in the VM and enable it in Options → QEMU Guest Agent."
+    },
+    "updates": {
+      "board": "Put in a project",
+      "boardHint": "Each new version becomes a board task right away. Without this it just stays available, waiting for an agent.",
+      "project": "Project",
+      "chooseProject": "Choose the project",
+      "column": "Column",
+      "columns": {
+        "new": "Todo",
+        "study": "Waiting for study"
+      },
+      "columnHint": {
+        "new": "It stays in Todo until you drag it to Waiting for study.",
+        "study": "The study starts on its own and follows the usual path: it only installs with your yes, as the app rules say."
+      }
     }
   },
   "stirlingModal": {

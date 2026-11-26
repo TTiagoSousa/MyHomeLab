@@ -11,6 +11,7 @@ import App_Location from './App_Location';
 import App_Summary from './App_Summary';
 import App_Updates from './App_Updates';
 import App_Settings_Menu from './App_Settings_Menu';
+import App_Cron_Button from './App_Cron_Button';
 import App_Modal from './App_Modal';
 import App_Linked_Cards, { type App_Linked_Panel } from './App_Linked_Cards';
 import { appSettingsItems } from './appSettingsItems';
@@ -73,6 +74,7 @@ const Paperless_Account = () => {
               <button type='button' className='Apps_header_button compact' onClick={() => navigate(`/MyHomeLab/Apps/Paperless/${accountId}/Connections`)}>
                 {t('apps.paperless.connections.title')}
               </button>
+              <App_Cron_Button />
               <App_Settings_Menu items={menuItems} />
             </>
           )

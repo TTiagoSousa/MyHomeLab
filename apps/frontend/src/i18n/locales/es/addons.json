@@ -2457,6 +2457,24 @@
         "description": "Mira el disco de cada CT y VM; por encima del límite avisa y, si quieres, el agente se encarga en el tablero.",
         "result_one": "{{count}} disco por encima del límite",
         "result_other": "{{count}} discos por encima del límite"
+      },
+      "updates_app": {
+        "title": "Actualizaciones de la app",
+        "description": "Comprueba si hay una versión nueva de la app y, si quieres, la pone enseguida en el tablero, en la columna que elijas.",
+        "result_one": "{{count}} actualización puesta en el tablero",
+        "result_other": "{{count}} actualizaciones puestas en el tablero"
+      },
+      "updates_ha_components": {
+        "title": "Actualizaciones de add-ons, HACS y firmware",
+        "description": "Comprueba si hay versiones nuevas de los componentes de Home Assistant y, si quieres, pone cada una enseguida en el tablero.",
+        "result_one": "{{count}} actualización puesta en el tablero",
+        "result_other": "{{count}} actualizaciones puestas en el tablero"
+      },
+      "updates_nextcloud_apps": {
+        "title": "Actualizaciones de las apps de Nextcloud",
+        "description": "Comprueba si hay versiones nuevas de las apps instaladas en Nextcloud y, si quieres, pone cada una enseguida en el tablero.",
+        "result_one": "{{count}} actualización puesta en el tablero",
+        "result_other": "{{count}} actualizaciones puestas en el tablero"
       }
     },
     "offShort": "Desactivado",
@@ -2477,6 +2495,21 @@
       "minStorageFreeGb": "Mínimo libre en el storage (GB)",
       "limitsNote": "En una VM el agente siempre pregunta antes de ampliar. El mínimo libre en el storage vale siempre, incluso cuando lo apruebas.",
       "noAgent": "Sin QEMU guest agent, no se sabe el disco por dentro de: {{guests}}. Instala qemu-guest-agent en la VM y actívalo en Options → QEMU Guest Agent."
+    },
+    "updates": {
+      "board": "Poner en un proyecto",
+      "boardHint": "Cada versión nueva se convierte enseguida en una tarea del tablero. Sin esto se queda solo disponible, esperando a un agente.",
+      "project": "Proyecto",
+      "chooseProject": "Elige el proyecto",
+      "column": "Columna",
+      "columns": {
+        "new": "Todo",
+        "study": "Esperando estudio"
+      },
+      "columnHint": {
+        "new": "Se queda en Todo hasta que la arrastres a Esperando estudio.",
+        "study": "El estudio empieza solo y sigue el camino de siempre: solo instala con tu sí, como dicen las reglas de la app."
+      }
     }
   },
   "stirlingModal": {

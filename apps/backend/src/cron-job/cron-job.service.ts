@@ -10,6 +10,7 @@ import { findConnectedAccount } from 'src/connected-account/helpers/findConnecte
 import { toHttpError } from 'src/integrations/app-integration.error';
 import { CronJob, Prisma } from 'src/generated/prisma/client/client';
 import { DiskAlertService } from 'src/disk-alert/disk-alert.service';
+import { ConnectedAccountService } from 'src/connected-account/connected-account.service';
 import {
   CronJobContext,
   CronJobDefinition,
@@ -65,6 +66,7 @@ export class CronJobService {
     private readonly prisma: PrismaService,
     private readonly accounts: PrismaConnectedAccountRepository,
     private readonly diskAlerts: DiskAlertService,
+    private readonly connected: ConnectedAccountService,
   ) {}
 
   private view(definition: CronJobDefinition, row?: CronJob): CronJobView {
@@ -138,6 +140,7 @@ export class CronJobService {
       serverConnectionId: row.serverConnectionId,
       accounts: this.accounts,
       diskAlerts: this.diskAlerts,
+      connected: this.connected,
     };
   }
 

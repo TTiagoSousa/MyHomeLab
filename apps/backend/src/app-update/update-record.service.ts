@@ -79,7 +79,7 @@ export class UpdateRecordService {
     update: AppUpdate,
     data: Prisma.AppUpdateUncheckedUpdateInput,
     event?: string,
-    options: { links?: boolean } = {},
+    options: { links?: boolean; toBoard?: boolean } = {},
   ) {
     const history = event
       ? [
@@ -106,7 +106,8 @@ export class UpdateRecordService {
       (
         [AppUpdateStatus.DONE, AppUpdateStatus.CANCELLED] as AppUpdateStatus[]
       ).includes(stored.status);
-    if (isAvailable(stored) || neverOpened) return stored;
+    // toBoard: o cron job das atualizações põe-na já no quadro, em Todo (fica NEW, com tarefa).
+    if ((isAvailable(stored) && !options.toBoard) || neverOpened) return stored;
     await this.followQuestion(update, stored);
     await this.followResult(update, stored);
     const saved = await this.syncLog(stored);

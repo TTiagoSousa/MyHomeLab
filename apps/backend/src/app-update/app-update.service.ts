@@ -14,6 +14,7 @@ import {
   DocKind,
   NotificationKind,
   Prisma,
+  ProjectKind,
   ServerConnection,
   UpdateAttemptKind,
   UpdateCheckPhase,
@@ -106,6 +107,12 @@ const STATUS_POLL_MS = 5_000;
 import { releaseNotes } from './helpers/releaseNotes';
 import { knownIssues } from './helpers/knownIssues';
 import { readSetting } from './helpers/readSetting';
+import { updateTarget } from './helpers/updateTarget';
+import {
+  UpdateCronOptions,
+  UpdatePart,
+  partOfUpdate,
+} from './helpers/updateCronOptions';
 
 /** O histórico de uma verificação reposta no arranque (só se repõe uma vez por instalação). */
 const VERIFY_RESUMED =
@@ -1071,6 +1078,71 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
       `▶ Aberta pelo agente: passa para Espera por estudo.${reason.trim() ? ` ${reason.trim()}` : ''}`,
     );
     return `Abri a ${updateLabel(update)} ${update.toVersion}${saved.boardTaskKey ? ` (tarefa ${saved.boardTaskKey})` : ''}: está em Espera por estudo e o estudo começa daqui a pouco.`;
+  }
+
+  /**
+   * O cron job das atualizações de uma app: as disponíveis dela (a própria app ou as
+   * peças) vão para o quadro, na coluna escolhida — em Espera por estudo seguem o estudo
+   * de sempre; em Todo ficam à espera de serem arrastadas. Uma cujo alvo já tem outra em
+   * aberto espera que essa feche (vai na volta seguinte). Devolve quantas foram.
+   */
+  async placeAvailable(
+    accountId: string,
+    part: UpdatePart,
+    options: UpdateCronOptions,
+  ): Promise<number> {
+    if (!options.board) return 0;
+    const available = (await this.available()).filter(
+      (update) =>
+        update.accountId === accountId && partOfUpdate(update) === part,
+    );
+    if (!available.length) return 0;
+    const project = await this.prisma.project.findFirst({
+      where: {
+        id: options.projectId ?? '',
+        userId: available[0].userId,
+        kind: ProjectKind.UPDATES,
+      },
+      select: { id: true },
+    });
+    if (!project) {
+      throw new Error(
+        'O projeto escolhido já não existe ou não é de atualizações: escolhe outro nas opções.',
+      );
+    }
+    const opened = await this.prisma.appUpdate.findMany({
+      where: {
+        accountId,
+        OR: [
+          {
+            status: {
+              in: OPEN.filter((status) => status !== AppUpdateStatus.NEW),
+            },
+          },
+          { status: AppUpdateStatus.NEW, boardTaskId: { not: null } },
+        ],
+      },
+      select: { accountId: true, hostServerId: true, component: true },
+    });
+    const busy = new Set(opened.map(updateTarget));
+    let placed = 0;
+    for (const update of available) {
+      const target = updateTarget(update);
+      if (busy.has(target)) continue;
+      busy.add(target);
+      if (options.column === 'study') {
+        await this.start(update, 'Pelo cron job das atualizações.');
+      } else {
+        await this.record.save(
+          update,
+          {},
+          '📋 Posta no quadro pelo cron job das atualizações: fica em Todo até a arrastares.',
+          { toBoard: true },
+        );
+      }
+      placed++;
+    }
+    return placed;
   }
 
   /** A app foi desligada: as atualizações dela em aberto (não as que estão a correr) ficam canceladas. */

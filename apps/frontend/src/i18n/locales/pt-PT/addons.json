@@ -2457,6 +2457,24 @@
         "description": "Vê o disco de cada CT e VM; acima do limite avisa e, se quiseres, o agente trata disso no quadro.",
         "result_one": "{{count}} disco acima do limite",
         "result_other": "{{count}} discos acima do limite"
+      },
+      "updates_app": {
+        "title": "Atualizações da app",
+        "description": "Vê se há versão nova da app e, se quiseres, põe-na logo no quadro, na coluna que escolheres.",
+        "result_one": "{{count}} atualização posta no quadro",
+        "result_other": "{{count}} atualizações postas no quadro"
+      },
+      "updates_ha_components": {
+        "title": "Atualizações dos add-ons, HACS e firmware",
+        "description": "Vê se há versão nova das peças do Home Assistant e, se quiseres, põe cada uma logo no quadro.",
+        "result_one": "{{count}} atualização posta no quadro",
+        "result_other": "{{count}} atualizações postas no quadro"
+      },
+      "updates_nextcloud_apps": {
+        "title": "Atualizações das apps do Nextcloud",
+        "description": "Vê se há versão nova das apps instaladas no Nextcloud e, se quiseres, põe cada uma logo no quadro.",
+        "result_one": "{{count}} atualização posta no quadro",
+        "result_other": "{{count}} atualizações postas no quadro"
       }
     },
     "offShort": "Desligado",
@@ -2477,6 +2495,21 @@
       "minStorageFreeGb": "Mínimo livre no storage (GB)",
       "limitsNote": "Numa VM o agente pergunta sempre antes de aumentar. O mínimo livre no storage vale sempre, mesmo quando aprovas.",
       "noAgent": "Sem QEMU guest agent, não se sabe o disco por dentro de: {{guests}}. Instala o qemu-guest-agent na VM e liga-o em Options → QEMU Guest Agent."
+    },
+    "updates": {
+      "board": "Pôr no projeto",
+      "boardHint": "Cada versão nova vira logo uma tarefa no quadro. Sem isto fica só disponível, à espera de um agente.",
+      "project": "Projeto",
+      "chooseProject": "Escolhe o projeto",
+      "column": "Coluna",
+      "columns": {
+        "new": "Todo",
+        "study": "Espera por estudo"
+      },
+      "columnHint": {
+        "new": "Fica em Todo até a arrastares para Espera por estudo.",
+        "study": "O estudo começa sozinho e segue o caminho de sempre: só instala com o teu sim, como dizem as regras da app."
+      }
     }
   },
   "stirlingModal": {

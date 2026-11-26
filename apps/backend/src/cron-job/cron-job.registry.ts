@@ -6,6 +6,13 @@ import {
   DiskAlertService,
 } from 'src/disk-alert/disk-alert.service';
 import { diskAlertOptions } from 'src/disk-alert/disk-alert.options';
+import { VERSION_SOURCES } from 'src/connected-account/helpers/checkAppVersion';
+import type { ConnectedAccountService } from 'src/connected-account/connected-account.service';
+import {
+  UPDATE_CRON_JOBS,
+  UpdatePart,
+  updateCronOptions,
+} from 'src/app-update/helpers/updateCronOptions';
 
 /** Os intervalos que se podem escolher, em minutos (0 = desligada). */
 export const CRON_INTERVALS = [0, 60, 360, 720, 1440, 10080] as const;
@@ -13,6 +20,11 @@ export const CRON_INTERVALS = [0, 60, 360, 720, 1440, 10080] as const;
 /** O alvo de uma tarefa: uma app ligada (pelo fornecedor) ou um servidor Proxmox. */
 export type CronJobTarget =
   { kind: 'account'; provider: ConnectionProvider } | { kind: 'server' };
+
+/** A quem serve uma tarefa do registo: às contas destes fornecedores, ou aos servidores. */
+export type CronJobAudience =
+  | { kind: 'account'; providers: readonly ConnectionProvider[] }
+  | { kind: 'server' };
 
 export interface CronJobContext {
   userId: string;
@@ -22,6 +34,7 @@ export interface CronJobContext {
   options: unknown;
   accounts: PrismaConnectedAccountRepository;
   diskAlerts: DiskAlertService;
+  connected: ConnectedAccountService;
 }
 
 export interface CronJobResult {
@@ -38,7 +51,7 @@ export interface CronJobResult {
  */
 export interface CronJobDefinition {
   key: string;
-  target: CronJobTarget;
+  target: CronJobAudience;
   /** Os intervalos desta tarefa (sem isto, os CRON_INTERVALS). */
   intervals?: readonly number[];
   /** Valida as opções; `enabling` = vai ficar ligada (pode exigir campos). */
@@ -76,10 +89,46 @@ function adguardRefresh(allowlist: boolean) {
 
 const ADGUARD = {
   kind: 'account',
-  provider: ConnectionProvider.ADGUARD,
+  providers: [ConnectionProvider.ADGUARD],
 } as const;
 
+/** As apps self-hosted de que o MyHomeLab sabe ver a versão. */
+const VERSIONED = Object.keys(VERSION_SOURCES) as ConnectionProvider[];
+
+/** Vê as versões novas (da app ou das peças) e põe-nas no quadro, se as opções o pedem. */
+function updatesJob(
+  key: string,
+  providers: readonly ConnectionProvider[],
+  part: UpdatePart,
+): CronJobDefinition {
+  return {
+    key,
+    target: { kind: 'account', providers },
+    intervals: [0, 60, 360, 720, 1440],
+    options: updateCronOptions,
+    run: async (context) => ({
+      count: await context.connected.runUpdatesCronJob(
+        context.accountId!,
+        context.userId,
+        part,
+        updateCronOptions(context.options, true),
+      ),
+    }),
+  };
+}
+
 export const CRON_JOBS: CronJobDefinition[] = [
+  updatesJob(UPDATE_CRON_JOBS.app, VERSIONED, 'app'),
+  updatesJob(
+    UPDATE_CRON_JOBS.haComponents,
+    [ConnectionProvider.HOME_ASSISTANT],
+    'components',
+  ),
+  updatesJob(
+    UPDATE_CRON_JOBS.nextcloudApps,
+    [ConnectionProvider.NEXTCLOUD],
+    'components',
+  ),
   {
     key: 'adguard.refresh_blocklists',
     target: ADGUARD,
@@ -112,7 +161,7 @@ export const cronJobsFor = (target: CronJobTarget) =>
     target.kind === 'server'
       ? job.target.kind === 'server'
       : job.target.kind === 'account' &&
-        job.target.provider === target.provider,
+        job.target.providers.includes(target.provider),
   );
 
 export const cronJob = (key: string) =>

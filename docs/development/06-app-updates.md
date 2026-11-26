@@ -49,7 +49,8 @@ Moving a task on the board changes the update's status (and vice versa). The tas
 
 ```
 new version detected ──► available (no task yet)
-                              │  agent: update_start  (e.g. an ON_NEW_UPDATE trigger)
+                              │  the app's updates cron job (code, Todo or Waiting for study)
+                              │  or an agent: update_start (e.g. an ON_NEW_UPDATE trigger)
                               ▼
                        Waiting for study ──► Study ──► update_save_study
                                                           │
@@ -68,7 +69,11 @@ new version detected ──► available (no task yet)
 
 1. **Detection.** Version checks create an *available* update with no task. An agent opens
    it with `update_list_new` + `update_start`, typically from an "on new update" trigger
-   guided by the general updates rules document.
+   guided by the general updates rules document. Or, without AI, the app's updates cron job
+   (`updates.app`, plus `updates.ha_components` / `updates.nextcloud_apps`) does it in code:
+   with "Put in a project" on, each available update goes to the chosen updates project, in
+   Todo or Waiting for study; one whose app or component already has an open update waits
+   for the next run. Those updates are not sent to the triggers.
 2. **Study.** A scheduler queues a "Study …" trigger for the agent that has
    `update_save_study`. The agent reads `update_release_notes` and
    `update_known_issues`, works through the study points with `update_check`, and saves a

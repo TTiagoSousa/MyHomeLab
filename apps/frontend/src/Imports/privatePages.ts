@@ -66,6 +66,7 @@ export const HomeAssistantConnections = lazy(() => import('../Pages/Private/Apps
 export const AdguardAccounts = lazy(() => import('../Pages/Private/Apps/Adguard_Accounts'));
 export const AdguardAccount = lazy(() => import('../Pages/Private/Apps/Adguard_Account'));
 export const AdguardCronJobs = lazy(() => import('../Pages/Private/Apps/Adguard_Cron_Jobs'));
+export const AppAccountCronJobs = lazy(() => import('../Pages/Private/Apps/App_Account_Cron_Jobs'));
 export const ProxmoxServers = lazy(() => import('../Pages/Private/Apps/Proxmox_Servers'));
 export const ProxmoxServer = lazy(() => import('../Pages/Private/Apps/Proxmox_Server'));
 export const ProxmoxCronJobs = lazy(() => import('../Pages/Private/Apps/Proxmox_Cron_Jobs'));

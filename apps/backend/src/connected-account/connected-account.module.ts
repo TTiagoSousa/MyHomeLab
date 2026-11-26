@@ -29,6 +29,6 @@ import { PrismaConnectedAccountRepository } from './repositories/prisma/prisma-c
       useClass: PrismaConnectedAccountRepository,
     },
   ],
-  exports: [PrismaConnectedAccountRepository],
+  exports: [PrismaConnectedAccountRepository, ConnectedAccountService],
 })
 export class ConnectedAccountModule {}

@@ -147,6 +147,11 @@ and tools.
   every 6 or 12 hours, daily, weekly). A scheduler checks every minute and runs the due ones one at
   a time, recording the result. AdGuard has two: refresh the blocklists and refresh the allowlists;
   turning one on sets AdGuard's own refresh interval to "never" so lists are not fetched twice.
+  Every self-hosted app with version detection has an **updates** cron job (Home Assistant and
+  Nextcloud have a second one for their add-ons/HACS/firmware or their Nextcloud apps): it checks
+  for a new version and, with "Put in a project", puts each available update on the board straight
+  away in the chosen column (Todo, or Waiting for study so the study starts on its own), one per
+  app or component at a time. Updates covered this way are not sent to `ON_NEW_UPDATE` triggers.
   Proxmox servers have the **disk almost full alert**: it reads each running CT's root disk and,
   through the QEMU guest agent, each VM's filesystems (VMs without the agent are listed as
   unknown). Everything is the user's choice: limit, interval (down to every minute), which

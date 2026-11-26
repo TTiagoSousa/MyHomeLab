@@ -6,6 +6,13 @@ import { cronJobLabelKey, useCronJobs, type CronScope } from '../../../Hooks/Con
 import { dateLocale } from '../../../i18n';
 import { Apps_Detail_Header } from './appsShared';
 import App_Cron_Job, { type Cron_Options_Panel_Props } from './App_Cron_Job';
+import App_Update_Cron_Options from './App_Update_Cron_Options';
+
+const UPDATE_PANELS: Record<string, ComponentType<Cron_Options_Panel_Props>> = {
+  'updates.app': App_Update_Cron_Options,
+  'updates.ha_components': App_Update_Cron_Options,
+  'updates.nextcloud_apps': App_Update_Cron_Options,
+};
 
 interface App_Cron_Jobs_Props {
   scope: CronScope;
@@ -45,7 +52,7 @@ const App_Cron_Jobs = ({ scope, optionPanels, backTo, backLabel, note }: App_Cro
               job={job}
               scopeId={scope.id ?? ''}
               busy={busy === job.key}
-              optionsPanel={optionPanels?.[job.key]}
+              optionsPanel={optionPanels?.[job.key] ?? UPDATE_PANELS[job.key]}
               onSave={(intervalMinutes, options) => saveInterval(job.key, intervalMinutes, options)}
               onRun={() => void runNow(job.key)}
             />

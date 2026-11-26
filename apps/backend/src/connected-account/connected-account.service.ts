@@ -100,6 +100,10 @@ import { CreateForgejoAccountDto } from './dto/create-forgejo-account.dto';
 import { getGmailStats } from './helpers/getGmailStats';
 import { listAccountUpdates } from './helpers/listAccountUpdates';
 import {
+  UpdateCronOptions,
+  UpdatePart,
+} from 'src/app-update/helpers/updateCronOptions';
+import {
   ConnectedAccount,
   ConnectionProvider,
 } from 'src/generated/prisma/client/client';
@@ -1044,6 +1048,37 @@ export class ConnectedAccountService {
   }
 
   /** De 6 em 6 horas: as versões de todas as apps ligadas que as dizem. */
+  /**
+   * O cron job das atualizações de uma app: vê já se há versão nova (da própria app ou
+   * das peças dela) e, se as opções o pedem, põe as disponíveis no quadro. Devolve
+   * quantas foram para o quadro.
+   */
+  async runUpdatesCronJob(
+    accountId: string,
+    userId: string,
+    part: UpdatePart,
+    options: UpdateCronOptions,
+  ): Promise<number> {
+    const account = await findConnectedAccount(
+      accountId,
+      userId,
+      this.connectedAccountRepository,
+    );
+    if (part === 'app') {
+      await checkAppVersion(
+        account,
+        this.connectedAccountRepository,
+        this.notifications,
+        this.updates,
+        Infinity,
+      );
+    } else {
+      await this.updates.checkHomeAssistantComponents(account);
+      await this.updates.checkNextcloudApps(account);
+    }
+    return this.updates.placeAvailable(account.id, part, options);
+  }
+
   async checkAllVersions() {
     const accounts = await this.connectedAccountRepository.findAllByProviders(
       Object.keys(VERSION_SOURCES) as ConnectionProvider[],

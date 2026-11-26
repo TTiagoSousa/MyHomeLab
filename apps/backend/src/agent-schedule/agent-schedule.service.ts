@@ -7,6 +7,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { AppUpdateService } from 'src/app-update/app-update.service';
 import { UpdateWithAccount } from 'src/app-update/app-update.types';
 import {
+  UPDATE_CRON_JOBS,
+  partOfJob,
+  partOfUpdate,
+  updateCronOptions,
+} from 'src/app-update/helpers/updateCronOptions';
+import {
   AgentSchedule,
   AgentScheduleRepeat,
   AgentScheduleRunStatus,
@@ -490,8 +496,11 @@ export class AgentScheduleService {
   async takeNewUpdates(): Promise<
     { schedule: ScheduleWithRuns; updates: UpdateWithAccount[] }[]
   > {
-    const fresh = await this.updates.unannounced();
-    if (!fresh.length) return [];
+    const all = await this.updates.unannounced();
+    if (!all.length) return [];
+    // As que um cron job das atualizações já põe no quadro não vão para os agentes.
+    const covered = await this.coveredByCronJobs();
+    const fresh = all.filter((update) => !covered(update));
     const schedules = await this.prisma.agentSchedule.findMany({
       where: {
         enabled: true,
@@ -502,12 +511,38 @@ export class AgentScheduleService {
     });
     const owners = new Set(schedules.map((schedule) => schedule.userId));
     await this.updates.markAnnounced(
-      fresh.filter((update) => owners.has(update.userId)).map(({ id }) => id),
+      all
+        .filter((update) => covered(update) || owners.has(update.userId))
+        .map(({ id }) => id),
     );
-    return schedules.map((schedule) => ({
-      schedule,
-      updates: fresh.filter((update) => update.userId === schedule.userId),
-    }));
+    return schedules
+      .map((schedule) => ({
+        schedule,
+        updates: fresh.filter((update) => update.userId === schedule.userId),
+      }))
+      .filter(({ updates }) => updates.length);
+  }
+
+  /** Se uma atualização é tratada por um cron job das atualizações ligado e com quadro. */
+  private async coveredByCronJobs(): Promise<
+    (update: UpdateWithAccount) => boolean
+  > {
+    const jobs = await this.prisma.cronJob.findMany({
+      where: {
+        intervalMinutes: { gt: 0 },
+        accountId: { not: null },
+        key: { in: Object.values(UPDATE_CRON_JOBS) },
+      },
+      select: { accountId: true, key: true, options: true },
+    });
+    const covered = new Set(
+      jobs
+        .filter((job) => updateCronOptions(job.options, false).board)
+        .map((job) => `${job.accountId}:${partOfJob(job.key)}`),
+    );
+    return (update) =>
+      Boolean(update.accountId) &&
+      covered.has(`${update.accountId}:${partOfUpdate(update)}`);
   }
 
   /**
@@ -515,7 +550,10 @@ export class AgentScheduleService {
    * trate delas (um "quando aparece", ou um que se repete com a etiqueta atualizações).
    */
   async unhandledUpdates(): Promise<{ userId: string; count: number }[]> {
-    const available = await this.updates.available();
+    const covered = await this.coveredByCronJobs();
+    const available = (await this.updates.available()).filter(
+      (update) => !covered(update),
+    );
     // Também quem tem o aviso aberto, para ele se fechar quando já não há nada.
     const warned = await this.prisma.notification.findMany({
       where: { subject: UNHANDLED_SUBJECT, resolvedAt: null },
