@@ -26,6 +26,7 @@ describe('o que um disparo pode alterar', () => {
 
   it('um disparo comenta e pergunta, mas não reinicia máquinas', () => {
     expect(unattendedBlock('board_comment', {}, 'schedule', true)).toBeNull();
+    expect(unattendedBlock('update_start', {}, 'schedule', true)).toBeNull();
     expect(unattendedBlock('pve_guest_power', {}, 'schedule', true)).toMatch(
       /Recusado/,
     );

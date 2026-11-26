@@ -233,7 +233,7 @@ cannot stop a model that read an injected email or page:
 - **Unattended runs** (`source` other than `chat`/`terminal`, see
   `agent/helpers/unattendedTools.ts`, applied by `guardTools`): a schedule may only comment,
   ask, log, propose, update board tasks (never to Ready to update), create todos and email
-  drafts, and run read-only server commands or `systemctl restart <unit>`; a study adds
+  drafts, open new updates (`update_start`, which only moves them to Waiting for study), and run read-only server commands or `systemctl restart <unit>`; a study adds
   `update_save_study`; an approved install or verify runs what it needs. Sending email,
   changing the team or prompts, editing or deleting schedules, deciding proposals and deletions
   never run unattended.

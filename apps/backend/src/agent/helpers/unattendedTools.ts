@@ -34,7 +34,7 @@ const NEVER = new Set([
   'opengym_delete_routine',
 ]);
 
-/** Um disparo: comentar, perguntar, registar, propor, preparar um rascunho. */
+/** Um disparo: comentar, perguntar, registar, propor, abrir uma atualização (só fica em Espera por estudo), preparar um rascunho. */
 const SCHEDULE = new Set([
   'board_comment',
   'board_ask_user',
@@ -45,6 +45,7 @@ const SCHEDULE = new Set([
   'docs_write',
   'update_add_note',
   'update_set_status',
+  'update_start',
   'draft_email',
   'todo_create',
   'todo_update',
