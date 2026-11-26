@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.15.1] — 2026-11-26
+
+### Fixes
+- **agent**: let unattended schedules open new updates so they reach the board again
+
+
 ## [1.15.0] — 2026-11-25
 
 ### Features
@@ -187,3 +193,4 @@ First public release of MyHomeLab.
 [1.13.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.13.0
 [1.14.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.14.0
 [1.15.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.15.0
+[1.15.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.15.1
