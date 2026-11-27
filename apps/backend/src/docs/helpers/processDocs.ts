@@ -44,7 +44,7 @@ const UPDATES: StarterDoc = {
   kind: DocKind.RULES,
   tags: ['atualizacao', 'processo'],
   summary:
-    'O caminho de uma atualização no quadro (estudar, decidir, instalar, verificar) e quando se instala sozinho ou se pergunta.',
+    'O caminho de uma atualização no quadro (estudar, decidir, instalar, verificar): nunca se instala sem o meu sim.',
   links: [],
   content: `# Atualizações das apps e do Proxmox – como funcionam
 
@@ -55,8 +55,7 @@ Este documento manda no caminho e nas decisões. O que é próprio de cada app (
 ## O caminho (as colunas do quadro)
 
 \`\`\`
-Todo ──👤──→ Espera por estudo → Study ─┬→ Ready to update → In progress → Verifying → Done
-                                        ├→ Waiting for reply ──👤──→ Ready to update
+Todo ──👤──→ Espera por estudo → Study ─┬→ Waiting for reply ──👤──→ Ready to update → In progress → Verifying → Done
                                         └→ Recheck later (só com uma razão concreta)
 \`\`\`
 
@@ -65,8 +64,8 @@ Todo ──👤──→ Espera por estudo → Study ─┬→ Ready to update �
 3. **Instalar.** 🤖 update_prepare → update_check em cada ponto, com prova → update_prepare com checklist [] → update_run. Acompanha com update_status até acabar.
 4. **Verificar.** 🤖 Em Verifying, os pontos de "Depois de instalar" (update_verify). Tudo bem → Done. Um problema → Waiting for reply com o que se viu.
 
-### Abrir cada update novo
-Uma versão nova fica primeiro só disponível, sem tarefa: abro-a eu, ou um disparo "quando aparece uma atualização nova", se eu o criei. Nesse disparo, abre-se cada uma com update_start (passa a Espera por estudo) ou diz-se porque não.
+### Como entra no quadro
+Uma versão nova fica primeiro só disponível, sem tarefa: abro-a eu, ou o cron job das atualizações da app, se eu o liguei com "Pôr no projeto".
 
 ## Instalar ou não
 
@@ -77,15 +76,15 @@ O estudo responde a três perguntas, com prova:
 
 | Situação | Fica em |
 |---|---|
-| Nada parte para nós e volta-se atrás | Ready to update: instala-se já, e no fim diz-se o que se fez |
+| Nada parte para nós e volta-se atrás | Waiting for reply, com a recomendação de instalar |
 | Uma issue grave aberta que nos afeta, com correção a caminho | Recheck later |
-| Salto major, risco alto, passos à mão, ou o host | Waiting for reply, com a recomendação |
+| Salto major, risco alto, passos à mão, ou o host | Waiting for reply, com a recomendação e o porquê do cuidado |
 | Uma escolha que só eu faço | Waiting for reply, com a pergunta |
 
 ## O resumo do estudo
 
 \`\`\`
-<app> X → Y · risco baixo|médio|alto · <instalo já | recomendo instalar | espero por … | preciso de ti>
+<app> X → Y · risco baixo|médio|alto · <recomendo instalar | espero por … | preciso de ti>
 ✅ Porque instalar: 1–3 pontos concretos
 ⚠️ Porque não: 1–3 pontos concretos que nos tocam
 ↩️ Se correr mal: snapshot + backup (ou o que houver)

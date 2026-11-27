@@ -348,7 +348,7 @@ The update lifecycle itself is driven by the board and the agents' tools; see
 | GET | `/schedules` | List agent triggers with their last runs |
 | GET | `/schedules/summary` | "What the agents did" between two days |
 | GET | `/schedules/:id` | One trigger with its runs |
-| POST | `/schedules` | Create a trigger (once, daily, weekly, monthly, on new update) |
+| POST | `/schedules` | Create a trigger (once, daily, weekly, monthly) |
 | PUT | `/schedules/:id` | Update a trigger |
 | DELETE | `/schedules/:id` | Delete a trigger and its history |
 | POST | `/schedules/:id/run` | Run now, in the background |

@@ -882,11 +882,7 @@ ${pending}`
    * de uma atualização volta a estudá-la; os outros mandam a instrução ao agente.
    * Espera pelo fim e devolve a resposta e os tokens gastos.
    */
-  /** `extra`: o que o disparo traz (ex.: as atualizações novas, nos "quando aparece"). */
-  async runScheduled(
-    schedule: AgentSchedule,
-    extra?: string,
-  ): Promise<{
+  async runScheduled(schedule: AgentSchedule): Promise<{
     reply: string;
     tokensIn: number;
     tokensOut: number;
@@ -974,11 +970,7 @@ ${pending}`
           `O agente "${schedule.agentKey}" ${agent ? 'está desligado' : 'já não existe'} (Assistente → Workflow).`,
         );
       }
-      request = extra
-        ? `${scheduledRequest(schedule)}
-
-${extra}`
-        : scheduledRequest(schedule);
+      request = scheduledRequest(schedule);
     }
 
     try {

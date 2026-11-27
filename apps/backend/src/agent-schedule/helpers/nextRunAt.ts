@@ -109,8 +109,6 @@ const matches = (when: ScheduleWhen, day: LocalDay) => {
  * Repetidos: o primeiro dia que bate certo, à hora marcada de Lisboa.
  */
 export function nextRunAt(when: ScheduleWhen, after: Date): Date | null {
-  // Os que correm quando aparece uma atualização nova não têm hora.
-  if (when.repeat === AgentScheduleRepeat.ON_NEW_UPDATE) return null;
   if (when.repeat === AgentScheduleRepeat.ONCE) {
     return when.runAt && when.runAt > after ? when.runAt : null;
   }
@@ -166,7 +164,5 @@ export function describeWhen(when: ScheduleWhen): string {
       return `todas as semanas, ${WEEKDAY_NAMES[(when.weekday ?? 1) - 1]} às ${when.time}`;
     case AgentScheduleRepeat.MONTHLY:
       return `todos os meses, dia ${when.monthDay} às ${when.time}`;
-    case AgentScheduleRepeat.ON_NEW_UPDATE:
-      return 'quando aparece uma atualização nova (apps e servidor)';
   }
 }

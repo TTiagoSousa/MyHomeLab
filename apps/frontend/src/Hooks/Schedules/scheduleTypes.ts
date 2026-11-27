@@ -1,9 +1,9 @@
 import type { DocLinkType } from '../Docs/docTypes';
 
-export type ScheduleRepeat = 'ONCE' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'ON_NEW_UPDATE';
+export type ScheduleRepeat = 'ONCE' | 'DAILY' | 'WEEKLY' | 'MONTHLY';
 export type ScheduleRunStatus = 'RUNNING' | 'DONE' | 'FAILED';
 
-export const SCHEDULE_REPEATS: ScheduleRepeat[] = ['ONCE', 'DAILY', 'WEEKLY', 'MONTHLY', 'ON_NEW_UPDATE'];
+export const SCHEDULE_REPEATS: ScheduleRepeat[] = ['ONCE', 'DAILY', 'WEEKLY', 'MONTHLY'];
 
 export interface ScheduleRun {
   id: string;

@@ -10,15 +10,13 @@
     "ONCE": "Once",
     "DAILY": "Every day",
     "WEEKLY": "Every week",
-    "MONTHLY": "Every month",
-    "ON_NEW_UPDATE": "When an update appears"
+    "MONTHLY": "Every month"
   },
   "when": {
     "once": "Once, on {{date}}",
     "daily": "Every day at {{time}}",
     "weekly": "{{day}} at {{time}}",
-    "monthly": "Day {{day}} of each month at {{time}}",
-    "onNewUpdate": "When a new update appears (apps and server)"
+    "monthly": "Day {{day}} of each month at {{time}}"
   },
   "weekdays": {
     "1": "Monday",
@@ -96,8 +94,7 @@
     "tags": "Tags",
     "tagsHint": "Enter or comma to add (e.g. updates, backups).",
     "toChat": "Put the answer in a Jarvis conversation",
-    "toChatHint": "Each time it runs, the answer goes to a new Assistant conversation and you get a notice (e.g. a daily summary).",
-    "onNewUpdateHint": "No time: it runs whenever MyHomeLab sees a new version of an app or the server, once per version, with the updates in the request."
+    "toChatHint": "Each time it runs, the answer goes to a new Assistant conversation and you get a notice (e.g. a daily summary)."
   },
   "linked": {
     "title": "Triggers",

@@ -207,9 +207,9 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
           },
           next: {
             type: 'string',
-            enum: ['install', 'recommend', 'waiting', 'later'],
+            enum: ['recommend', 'waiting', 'later'],
             description:
-              'install = instalas tu, já (fica em Ready to update e o MyHomeLab pede a instalação): só quando as regras da app o deixam — risco baixo, não é major, sem passos à mão e não é o host; senão o MyHomeLab deixa-a em Waiting com a recomendação · recommend = recomendas instalar mas achas importante que a decisão seja dele (Waiting for reply com a recomendação) · waiting = precisa de uma resposta dele antes · later = voltar a estudar daqui a recheckInDays.',
+              'recommend = recomendas instalar (Waiting for reply com a recomendação: nunca se instala sem o sim dele) · waiting = precisa de uma resposta dele antes · later = voltar a estudar daqui a recheckInDays.',
           },
           question: {
             type: 'string',

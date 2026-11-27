@@ -10,15 +10,13 @@
     "ONCE": "Una vez",
     "DAILY": "Todos los días",
     "WEEKLY": "Todas las semanas",
-    "MONTHLY": "Todos los meses",
-    "ON_NEW_UPDATE": "Cuando aparece una actualización"
+    "MONTHLY": "Todos los meses"
   },
   "when": {
     "once": "Una vez, el {{date}}",
     "daily": "Todos los días a las {{time}}",
     "weekly": "{{day}} a las {{time}}",
-    "monthly": "Día {{day}} de cada mes a las {{time}}",
-    "onNewUpdate": "Cuando aparece una actualización nueva (apps y servidor)"
+    "monthly": "Día {{day}} de cada mes a las {{time}}"
   },
   "weekdays": {
     "1": "Lunes",
@@ -96,8 +94,7 @@
     "tags": "Etiquetas",
     "tagsHint": "Enter o coma para añadir (p. ej.: actualizaciones, copias).",
     "toChat": "Poner la respuesta en una conversación de Jarvis",
-    "toChatHint": "Cada vez que se ejecuta, la respuesta queda en una conversación nueva del Asistente y recibes un aviso (p. ej., un resumen diario).",
-    "onNewUpdateHint": "Sin hora: se ejecuta cada vez que MyHomeLab ve una versión nueva de una app o del servidor, una vez por versión, con las actualizaciones en la petición."
+    "toChatHint": "Cada vez que se ejecuta, la respuesta queda en una conversación nueva del Asistente y recibes un aviso (p. ej., un resumen diario)."
   },
   "linked": {
     "title": "Disparos",

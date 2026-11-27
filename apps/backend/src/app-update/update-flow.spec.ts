@@ -21,12 +21,12 @@ describe('disponíveis (vistas, ainda ninguém as abriu)', () => {
     ).toBe(false);
   });
 
-  it('uma versão mais nova de uma disponível fica disponível e volta a ser anunciada', () => {
+  it('uma versão mais nova de uma disponível fica disponível', () => {
     const newer = newerVersion(
       { ...update(AppUpdateStatus.NEW), boardTaskId: null },
       '2.0.0',
     );
-    expect(newer.data).toEqual({ announcedAt: null });
+    expect(newer.data).toEqual({});
   });
 
   it('uma versão mais nova de uma já aberta volta ao estudo', () => {

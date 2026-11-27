@@ -11,7 +11,6 @@ export const scheduleWhen = (schedule: Schedule, t: TFunction) => {
   if (schedule.repeat === 'ONCE') {
     return schedule.runAt ? t('schedules:when.once', { date: formatDateTime(schedule.runAt) }) : t('schedules:repeat.ONCE');
   }
-  if (schedule.repeat === 'ON_NEW_UPDATE') return t('schedules:when.onNewUpdate');
   if (schedule.repeat === 'DAILY') return t('schedules:when.daily', { time: schedule.time });
   if (schedule.repeat === 'WEEKLY') {
     return t('schedules:when.weekly', { day: t(`schedules:weekdays.${schedule.weekday ?? 1}`), time: schedule.time });

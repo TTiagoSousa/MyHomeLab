@@ -301,7 +301,6 @@ command that changes it. The list of forbidden commands is in the server rules d
 
 ## Triggers
 
-`agent-schedule/` runs agent jobs: once, daily, weekly, monthly, or on a new update
-(`ON_NEW_UPDATE`). A trigger names an agent and an instruction; the result can notify the
+`agent-schedule/` runs agent jobs: once, daily, weekly or monthly. A trigger names an agent and an instruction; the result can notify the
 user or open a new conversation (`toChat`). Agents can create and edit triggers with the
 `schedules` toolset.

@@ -151,7 +151,8 @@ and tools.
   Nextcloud have a second one for their add-ons/HACS/firmware or their Nextcloud apps): it checks
   for a new version and, with "Put in a project", puts each available update on the board straight
   away in the chosen column (Todo, or Waiting for study so the study starts on its own), one per
-  app or component at a time. Updates covered this way are not sent to `ON_NEW_UPDATE` triggers.
+  app or component at a time. This is how new versions reach the board on their own; otherwise
+  an agent or the user opens them with `update_start`.
   Proxmox servers have the **disk almost full alert**: it reads each running CT's root disk and,
   through the QEMU guest agent, each VM's filesystems (VMs without the agent are listed as
   unknown). Everything is the user's choice: limit, interval (down to every minute), which
@@ -210,8 +211,7 @@ Proxmox VE hosts. A new version becomes an **available** update; an agent opens 
 moves through the update project on the board:
 
 ```
-available → Waiting for study → Study ─(safe: agent installs)─────────────────► Ready to update
-                                   ├──► Waiting for reply ──(user approves)──────────►
+available → Waiting for study → Study ──► Waiting for reply ──(user approves)──► Ready to update
                                    │                                                │
                                    └── Recheck later                                ▼
                                                               In progress → Verifying → Done
@@ -220,10 +220,9 @@ available → Waiting for study → Study ─(safe: agent installs)────�
 
 1. **Study** — an agent reads the release notes and known issues, checks the rules for that
    app and records a study with a risk and a recommendation.
-2. **Decision** — a safe update (not a major jump, not high risk, no manual steps, the host
-   only when low risk) goes straight to *Ready to update*. The rest, and anything the agent
-   judges important, waits in *Waiting for reply* until the user moves it to *Ready to
-   update* (drag on the board, "Yes, install" on the task, or the chat card).
+2. **Decision** — the study never installs on its own: a recommendation or a question waits
+   in *Waiting for reply* until the user moves it to *Ready to update* (drag on the board,
+   "Yes, install" on the task, or the chat card).
 3. **Install** — the installer picks up ready updates, **one at a time** per user, and asks
    an agent to prepare (validate the "before" points of the rules), snapshot and run it, with
    rollback if it fails.

@@ -53,17 +53,15 @@ const Schedule_Modal = ({ existing, agents, link, saving, onSave, onClose }: Sch
 
   const day = Number(monthDay);
   const dayValid = Number.isInteger(day) && day >= 1 && day <= 31;
-  const onNewUpdate = repeat === 'ON_NEW_UPDATE' && !forUpdate;
-  const whenValid = onNewUpdate || (repeat === 'ONCE' ? Boolean(runAt) : /^\d{2}:\d{2}$/.test(time) && (repeat !== 'MONTHLY' || dayValid));
+  const whenValid = repeat === 'ONCE' ? Boolean(runAt) : /^\d{2}:\d{2}$/.test(time) && (repeat !== 'MONTHLY' || dayValid);
   const canSave = !saving && whenValid && (forUpdate || (title.trim() && instruction.trim() && agentKey));
   const shownLink = existing?.targetLabel ?? link?.targetLabel;
 
   const handleSave = async () => {
     if (!canSave) return;
     setError('');
-    const when: SchedulePayload = onNewUpdate
-      ? { repeat, time: null, weekday: null, monthDay: null }
-      : repeat === 'ONCE'
+    const when: SchedulePayload =
+      repeat === 'ONCE'
         ? { repeat, runAt: new Date(runAt).toISOString() }
         : {
             repeat,
@@ -162,9 +160,7 @@ const Schedule_Modal = ({ existing, agents, link, saving, onSave, onClose }: Sch
           </>
         )}
 
-        {onNewUpdate ? (
-          <p className='Server_Modal_Hint'>{t('modal.onNewUpdateHint')}</p>
-        ) : repeat === 'ONCE' || forUpdate ? (
+        {repeat === 'ONCE' || forUpdate ? (
           <div className='Server_Modal_Field'>
             <label htmlFor='schedule-run-at'>{t('modal.runAt')}</label>
             <Global_Input id='schedule-run-at' type='datetime-local' value={runAt} onChange={(e) => setRunAt(e.target.value)} />
@@ -195,7 +191,7 @@ const Schedule_Modal = ({ existing, agents, link, saving, onSave, onClose }: Sch
             </div>
           </div>
         )}
-        {!onNewUpdate && <span className='Server_Modal_Hint'>{t('modal.timeZone')}</span>}
+        <span className='Server_Modal_Hint'>{t('modal.timeZone')}</span>
 
         <label className='Server_Modal_Check'>
           <span>

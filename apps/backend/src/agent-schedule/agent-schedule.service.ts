@@ -5,13 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AppUpdateService } from 'src/app-update/app-update.service';
-import { UpdateWithAccount } from 'src/app-update/app-update.types';
-import {
-  UPDATE_CRON_JOBS,
-  partOfJob,
-  partOfUpdate,
-  updateCronOptions,
-} from 'src/app-update/helpers/updateCronOptions';
 import {
   AgentSchedule,
   AgentScheduleRepeat,
@@ -37,8 +30,6 @@ const TAGS_MAX = 8;
 const TAG_MAX = 30;
 /** A etiqueta dos "rever mais tarde" das atualizações. */
 const UPDATE_TAG = 'atualizações';
-/** O aviso de quem tem atualizações disponíveis e nenhum agendamento que trate delas. */
-export const UNHANDLED_SUBJECT = 'updates-unhandled';
 
 /** Minúsculas, sem repetidas, no máximo 8. */
 export const cleanScheduleTags = (tags: string[]) =>
@@ -486,113 +477,6 @@ export class AgentScheduleService {
     });
   }
 
-  // ── Quando aparece uma atualização nova ─────────────────────────────────
-
-  /**
-   * As atualizações disponíveis ainda por anunciar, com os agendamentos "quando
-   * aparece" ligados do dono. Ficam logo anunciadas (corre uma vez por versão); as de
-   * quem não tem nenhum agendamento destes ficam por anunciar.
-   */
-  async takeNewUpdates(): Promise<
-    { schedule: ScheduleWithRuns; updates: UpdateWithAccount[] }[]
-  > {
-    const all = await this.updates.unannounced();
-    if (!all.length) return [];
-    // As que um cron job das atualizações já põe no quadro não vão para os agentes.
-    const covered = await this.coveredByCronJobs();
-    const fresh = all.filter((update) => !covered(update));
-    const schedules = await this.prisma.agentSchedule.findMany({
-      where: {
-        enabled: true,
-        repeat: AgentScheduleRepeat.ON_NEW_UPDATE,
-        userId: { in: [...new Set(fresh.map((update) => update.userId))] },
-      },
-      include: withRuns,
-    });
-    const owners = new Set(schedules.map((schedule) => schedule.userId));
-    await this.updates.markAnnounced(
-      all
-        .filter((update) => covered(update) || owners.has(update.userId))
-        .map(({ id }) => id),
-    );
-    return schedules
-      .map((schedule) => ({
-        schedule,
-        updates: fresh.filter((update) => update.userId === schedule.userId),
-      }))
-      .filter(({ updates }) => updates.length);
-  }
-
-  /** Se uma atualização é tratada por um cron job das atualizações ligado e com quadro. */
-  private async coveredByCronJobs(): Promise<
-    (update: UpdateWithAccount) => boolean
-  > {
-    const jobs = await this.prisma.cronJob.findMany({
-      where: {
-        intervalMinutes: { gt: 0 },
-        accountId: { not: null },
-        key: { in: Object.values(UPDATE_CRON_JOBS) },
-      },
-      select: { accountId: true, key: true, options: true },
-    });
-    const covered = new Set(
-      jobs
-        .filter((job) => updateCronOptions(job.options, false).board)
-        .map((job) => `${job.accountId}:${partOfJob(job.key)}`),
-    );
-    return (update) =>
-      Boolean(update.accountId) &&
-      covered.has(`${update.accountId}:${partOfUpdate(update)}`);
-  }
-
-  /**
-   * Quem tem atualizações disponíveis há mais de uma hora e nenhum agendamento que
-   * trate delas (um "quando aparece", ou um que se repete com a etiqueta atualizações).
-   */
-  async unhandledUpdates(): Promise<{ userId: string; count: number }[]> {
-    const covered = await this.coveredByCronJobs();
-    const available = (await this.updates.available()).filter(
-      (update) => !covered(update),
-    );
-    // Também quem tem o aviso aberto, para ele se fechar quando já não há nada.
-    const warned = await this.prisma.notification.findMany({
-      where: { subject: UNHANDLED_SUBJECT, resolvedAt: null },
-      select: { userId: true },
-    });
-    const users = [
-      ...new Set([
-        ...available.map((update) => update.userId),
-        ...warned.map((notice) => notice.userId),
-      ]),
-    ];
-    const handling = await this.prisma.agentSchedule.findMany({
-      where: {
-        userId: { in: users },
-        enabled: true,
-        updateId: null,
-        OR: [
-          { repeat: AgentScheduleRepeat.ON_NEW_UPDATE },
-          {
-            repeat: { not: AgentScheduleRepeat.ONCE },
-            tags: { has: UPDATE_TAG },
-          },
-        ],
-      },
-      select: { userId: true },
-    });
-    const handled = new Set(handling.map((schedule) => schedule.userId));
-    const hourAgo = Date.now() - 60 * 60 * 1000;
-    return users.map((userId) => ({
-      userId,
-      count: handled.has(userId)
-        ? 0
-        : available.filter(
-            (update) =>
-              update.userId === userId && update.createdAt.getTime() < hourAgo,
-          ).length,
-    }));
-  }
-
   // ── Interno ─────────────────────────────────────────────────────────────
 
   private async validate(
@@ -638,12 +522,8 @@ export class AgentScheduleService {
       );
 
     const once = repeat === AgentScheduleRepeat.ONCE;
-    const onNewUpdate = repeat === AgentScheduleRepeat.ON_NEW_UPDATE;
     const runAt = once ? (pick('runAt', current?.runAt ?? null) ?? null) : null;
-    const time =
-      once || onNewUpdate
-        ? null
-        : (pick('time', current?.time ?? null) ?? null);
+    const time = once ? null : (pick('time', current?.time ?? null) ?? null);
     const weekday =
       repeat === AgentScheduleRepeat.WEEKLY
         ? (pick('weekday', current?.weekday ?? null) ?? null)
@@ -663,7 +543,7 @@ export class AgentScheduleService {
           `Essa hora já passou (${lisbonLabel(runAt)}).`,
         );
       }
-    } else if (!onNewUpdate && !parseTime(time)) {
+    } else if (!parseTime(time)) {
       throw new BadRequestException('A hora tem de ser HH:mm (ex.: 05:00).');
     }
     if (

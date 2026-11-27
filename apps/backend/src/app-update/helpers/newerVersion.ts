@@ -3,13 +3,13 @@ import { isAvailable } from './updateFields';
 
 /**
  * Saiu uma versão ainda mais nova de uma em aberto. Se ainda está só disponível,
- * fica disponível para a nova (e os agendamentos "quando aparece" voltam a correr);
+ * fica disponível para a nova;
  * se já foi aberta, volta ao estudo.
  */
 export function newerVersion(open: AppUpdate, latest: string) {
   if (isAvailable(open)) {
     return {
-      data: { announcedAt: null },
+      data: {},
       text: `Saiu a versão ${latest}: fica disponível para ela.`,
     };
   }

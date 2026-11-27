@@ -11,12 +11,9 @@ agents. The code lives in `apps/backend/src/app-update/` and the agent tools in
 
 ## Principles
 
-- **The agent decides; the user decides what matters.** When nothing breaks for us and it can
-  be rolled back, the study moves the update to *Ready to update* (`next: install`) and it
-  installs right away; the agent reports afterwards. The code never lets an agent install a
-  major jump, a high-risk update, one with manual steps or a host update that is not low risk:
-  those, and anything the agent judges important, end in *Waiting for reply*
-  (`next: recommend` or `waiting`) for the user.
+- **The agent studies; the user decides.** The study never installs on its own: a
+  recommendation (`next: recommend`) or a question (`next: waiting`) ends in *Waiting for
+  reply*, and only the user moves the update to *Ready to update*.
 - **The rules are documents.** What to check before and after, and how to install a given
   app, are rules in the user's documents (for example "<app> – rules", with
   `## Before updating`, `## After updating` and `## Never` sections). The code measures,
@@ -50,16 +47,16 @@ Moving a task on the board changes the update's status (and vice versa). The tas
 ```
 new version detected ──► available (no task yet)
                               │  the app's updates cron job (code, Todo or Waiting for study)
-                              │  or an agent: update_start (e.g. an ON_NEW_UPDATE trigger)
+                              │  or an agent / the user: update_start
                               ▼
                        Waiting for study ──► Study ──► update_save_study
                                                           │
-          ┌──────────┬────────────────────┬───────────────┴──────────┐
-          │ install  ▼                    ▼                          ▼
-          │   Waiting for reply     Recheck later               Cancelled
-          │   (recommendation)      (back to study on date)
-          │          │ user moves it / "Yes, install" / chat card
-          ▼          ▼
+                     ┌────────────────────┬───────────────┴──────────┐
+                     ▼                    ▼                          ▼
+              Waiting for reply     Recheck later               Cancelled
+              (recommendation)      (back to study on date)
+                     │ user moves it / "Yes, install" / chat card
+                     ▼
          Ready to update ──► installer picks it up (one per user)
                                      │ agent: update_prepare → update_check… → update_run
                                      ▼
@@ -67,22 +64,22 @@ new version detected ──► available (no task yet)
                                      └──► Failed (snapshot restored)
 ```
 
-1. **Detection.** Version checks create an *available* update with no task. An agent opens
-   it with `update_list_new` + `update_start`, typically from an "on new update" trigger
-   guided by the general updates rules document. Or, without AI, the app's updates cron job
-   (`updates.app`, plus `updates.ha_components` / `updates.nextcloud_apps`) does it in code:
-   with "Put in a project" on, each available update goes to the chosen updates project, in
-   Todo or Waiting for study; one whose app or component already has an open update waits
-   for the next run. Those updates are not sent to the triggers.
+1. **Detection.** Version checks create an *available* update with no task. The app's
+   updates cron job (`updates.app`, plus `updates.ha_components` / `updates.nextcloud_apps`)
+   puts it on the board in code: with "Put in a project" on, each available update goes to
+   the chosen updates project, in Todo or Waiting for study; one whose app or component
+   already has an open update waits for the next run. Otherwise an agent (guided by the
+   general updates rules document) or the user opens it with `update_list_new` +
+   `update_start`. From Waiting for study, the study runs through the normal study queue.
 2. **Study.** A scheduler queues a "Study …" trigger for the agent that has
    `update_save_study`. The agent reads `update_release_notes` and
    `update_known_issues`, works through the study points with `update_check`, and saves a
    study (summary, risk, recommendation, reasons, sources, manual steps). A failed study is
    retried once after a delay; a second failure notifies the user.
-3. **Decision.** A safe update (`next: install`, allowed by the code checks above) goes
-   straight to *Ready to update*. A recommendation (`next: recommend`) or a question lands
+3. **Decision.** The study never installs on its own (`next: install` is accepted only as an
+   old name of `recommend`). A recommendation (`next: recommend`) or a question lands
    in *Waiting for reply* and shows under "Needs you" in Notifications; the user approves by
-   moving it to *Ready to update*. Outside the study, agents can only set `READY` through a
+   moving it to *Ready to update*. Agents can only set `READY` through a
    chat card the user approves (`update_set_status install`); a board move by an agent is reverted.
 4. **Install.** A scheduler picks ready updates (one per user, nothing else in progress) and
    asks the first active agent with `update_run` to install it. The agent calls

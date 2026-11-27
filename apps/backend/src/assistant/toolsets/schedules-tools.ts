@@ -39,7 +39,7 @@ const FIELDS = {
     type: 'string' as const,
     enum: Object.values(AgentScheduleRepeat),
     description:
-      'ONCE (uma vez, em run_at), DAILY, WEEKLY (weekday) ou MONTHLY (month_day), à hora time; ou ON_NEW_UPDATE (sem hora): corre sempre que aparece uma atualização nova de uma app ou do servidor, com elas no pedido (para "sempre que surgir um update, trata dele").',
+      'ONCE (uma vez, em run_at), DAILY, WEEKLY (weekday) ou MONTHLY (month_day), à hora time.',
   },
   run_at: {
     type: 'string' as const,

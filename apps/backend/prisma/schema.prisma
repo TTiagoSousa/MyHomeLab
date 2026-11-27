@@ -2049,9 +2049,6 @@ model AppUpdate {
   manualSteps      String[]          @default([]) // passos à mão (viram sub-tarefas)
   updateAfter      DateTime? // a partir de quando o agente aconselha atualizar
   recheckAt        DateTime? // LATER: quando volta a ver
-  /// Os agendamentos "quando aparece uma atualização nova" já correram para ela
-  /// (uma vez por versão; null = ainda não).
-  announcedAt      DateTime?
   history          Json? // [{ at, text }] o que foi acontecendo (vai para o registo)
   logDocId         String? // o documento LOG desta atualização
   spec             String?           @db.Text // a especificação aprovada (objetivo, comandos, feito quando, volta atrás)
@@ -2113,7 +2110,6 @@ enum AgentScheduleRepeat {
   DAILY // todos os dias à hora `time`
   WEEKLY // no dia `weekday` da semana, à hora `time`
   MONTHLY // no dia `monthDay` do mês, à hora `time`
-  ON_NEW_UPDATE // quando aparece uma atualização nova (apps e servidor), sem hora
 }
 
 enum AgentScheduleRunStatus {
