@@ -12,5 +12,6 @@ import { CronJobService } from './cron-job.service';
   imports: [ConnectedAccountModule, DiskAlertModule],
   controllers: [CronJobController, ServerCronJobController],
   providers: [CronJobService, CronJobScheduler],
+  exports: [CronJobService],
 })
 export class CronJobModule {}

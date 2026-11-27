@@ -49,6 +49,7 @@ import {
 } from 'src/agent/helpers/composeSystemPrompt';
 import { guardTools } from 'src/agent/helpers/assistantToolPermissions';
 import { ChatApprovalService } from 'src/chat-approval/chat-approval.service';
+import { CronJobService } from 'src/cron-job/cron-job.service';
 import {
   BRIDGE_PREFIX,
   BRIDGE_SERVER,
@@ -227,6 +228,7 @@ export class AssistantService {
     private readonly chatFiles: ChatFileService,
     private readonly drive: DriveService,
     private readonly approvals: ChatApprovalService,
+    private readonly cronJobs: CronJobService,
   ) {}
 
   private buildContext(
@@ -273,6 +275,7 @@ export class AssistantService {
       chatFiles: this.chatFiles,
       drive: this.drive,
       approvals: this.approvals,
+      cronJobs: this.cronJobs,
       health: {
         sleep: this.sleep,
         heart: this.heartRate,

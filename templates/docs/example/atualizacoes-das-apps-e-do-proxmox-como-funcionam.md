@@ -33,21 +33,23 @@ Este documento manda no caminho e nas decisões. Os pormenores de cada app (onde
 ## O caminho (as colunas do quadro)
 
 ```
-Todo ──👤──→ Espera por estudo → Study ─┬→ Ready to update → In progress → Verifying → Done
-                                        ├→ Waiting for reply ──👤──→ Ready to update
-                                        └→ Recheck later (só com uma razão concreta)
+Espera por estudo → Study ─┬→ Ready to update → In progress → Verifying → Done
+                           ├→ Waiting for reply ──👤──→ Ready to update
+                           └→ Recheck later (só com uma razão concreta)
 ```
 
 1. **Estudar.** 🤖 Uma de cada vez, com o "estudar" da app. Só lê e mede.
    - Começa pelos 2 últimos registos da mesma app ("Estudo da atualização · <app> …"): o que mudou desde então e o que correu mal da última vez.
-2. **Decidir.** 🤖 Com a tabela de "Instalar ou não", abaixo.
+2. **Validar e decidir.** 🤖 Mede também os pontos de "Antes de instalar" da app (espaço, backup, a app a responder), sem mudar nada. Depois decide com a tabela de "Instalar ou não", abaixo: tudo certo → `install`, e instala-se logo. O que falta e tem uma solução segura (ver "O que o agente faz sozinho") não impede o `install`: resolve-se no início da instalação.
 3. **Instalar.** 🤖 Com o "instalar" da app: update_prepare → update_check em cada ponto, com prova → update_prepare com checklist [] → update_run. Depois, update_status até acabar (espera sozinho até um minuto por chamada); não se acaba a tarefa com os comandos a correr.
 4. **Verificar.** 🤖 Em Verifying, os pontos de "Depois de instalar" (update_verify). Se tudo estiver bem, passa a Done e chega-me "Instalado". Se houver um problema (ou a verificação não acabar), passa a Waiting for reply com o que se viu e chega-me a pergunta: não fica em Verifying, que pára a fila das outras.
 5. **Se falhar:** ver "Quando falha".
 
-### Abrir cada update novo
+### Como entra no quadro
 
-Uma versão nova fica primeiro só disponível (sem tarefa nem registo): abro-a eu, ou um disparo "quando aparece uma atualização nova", se eu o criei. Nesse disparo, o agente recebe a lista (update_list_new mostra-a também) e, para cada uma, abre-a com update_start (passa a Espera por estudo e o estudo corre sozinho) ou diz porque não a abre (ex.: já há outra aberta da mesma app, ou é uma versão que eu disse para ignorar).
+Uma versão nova fica primeiro só disponível (sem tarefa nem registo). Entra no quadro, sempre em **Espera por estudo**, pelo cron job das atualizações da app (na página da app → Cron jobs, ligado com "Pôr no projeto"). Ligo-o eu, ou peço ao assistente (update_cron_set). Também a posso abrir eu à mão.
+
+Logo a seguir, o MyHomeLab cria sozinho o disparo "Estudar <app> <versão>" nos Disparos do projeto, e o agente estuda-a. Não é preciso criar disparos à mão.
 
 ## Instalar ou não
 

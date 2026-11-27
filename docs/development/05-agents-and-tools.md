@@ -243,7 +243,11 @@ cannot stop a model that read an injected email or page:
   decides a card with `approval_decide` only when the user says so in a later message of the
   same conversation (`chatDecisionBlock`: chat, top-level agent, same conversation, earlier
   turn). `docs_decide` follows the same rule.
-- **Ready to update** is set only by the user: a board move by an agent is reverted.
+- **Ready to update** is set by the user, or by a study whose `next: install` passes the code
+  checks (no major jump, no high risk, no manual steps, the host only when low risk); a board
+  move by an agent is reverted.
+- **Updates cron jobs** are turned on by an agent (`update_cron_set`) only from chat; in a
+  trigger the tool refuses.
 - **Reserved agent keys** (`user`, `myhomelab`, `system`, `ceo`, `terminal`): a new agent named
   "User" gets `agente-user`, so no agent can act as the user.
 - **Schedules**: an agent schedules work only for itself and its reports; schedules the user

@@ -23,6 +23,7 @@ import { BoardModule } from 'src/board/board.module';
 import { ChatFileModule } from 'src/chat-file/chat-file.module';
 import { GoogleDriveModule } from 'src/google-drive/google-drive.module';
 import { ChatApprovalModule } from 'src/chat-approval/chat-approval.module';
+import { CronJobModule } from 'src/cron-job/cron-job.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ChatApprovalModule } from 'src/chat-approval/chat-approval.module';
     ChatFileModule,
     GoogleDriveModule,
     ChatApprovalModule,
+    CronJobModule,
   ],
   controllers: [AssistantController, TerminalController],
   providers: [AssistantService, UpdateStudyScheduler],

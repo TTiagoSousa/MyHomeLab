@@ -40,6 +40,7 @@ import {
   beforePoints,
   studyPoints,
   describeChecks,
+  isMajorJump,
 } from './helpers/updateChecks';
 import { UpdateRecordService } from './update-record.service';
 import { HaComponentsService } from './ha-components.service';
@@ -902,17 +903,34 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
         url: source.url.trim(),
       }))
       .slice(0, 25);
-    // Nunca instala sozinho: "instalar" fica em Waiting com a recomendação, à espera do sim dele.
+    // "install" com tudo validado passa a Ready to update e instala-se já. Esperam pela
+    // decisão dele: salto major, risco alto, passos à mão e, no host (sem snapshot), o que
+    // não é risco baixo.
     const manualAsked = isHostUpdate(update)
       ? []
       : cleanList(input.manualSteps);
-    // "todo" e "install" são nomes antigos de "recommend".
-    const recommended = ['recommend', 'todo', 'install'].includes(input.next);
+    const blocked =
+      input.next !== 'install'
+        ? null
+        : isMajorJump(update.fromVersion, update.toVersion)
+          ? 'é um salto de versão major'
+          : input.risk === 'high'
+            ? 'o risco é alto'
+            : isHostUpdate(update) && input.risk !== 'low'
+              ? `é o host Proxmox (sem snapshot) e o risco é ${RISK[input.risk]}`
+              : manualAsked.length
+                ? 'tem passos à mão'
+                : null;
+    const autonomous = input.next === 'install' && !blocked;
+    // "todo" é o nome antigo de "recommend".
+    const recommended =
+      input.next === 'recommend' || input.next === 'todo' || Boolean(blocked);
     const question = recommended
-      ? `Recomendo instalar ${updateLabel(update)} ${update.toVersion} (risco ${RISK[input.risk]}): ${input.recommendation.trim()} ${updateAfter && updateAfter > now() ? `Se concordas, carrega em "Sim, instalar" a partir de ${day(updateAfter)}: se carregares antes, instala-se logo, antes dessa data.` : `Se concordas, carrega em "Sim, instalar" e instala-se logo.`} Senão, Mais tarde ou Cancelar.`
+      ? `Recomendo instalar ${updateLabel(update)} ${update.toVersion} (risco ${RISK[input.risk]}${blocked ? `; não instalo sozinho porque ${blocked}` : ''}): ${input.recommendation.trim()} ${updateAfter && updateAfter > now() ? `Se concordas, carrega em "Sim, instalar" a partir de ${day(updateAfter)}: se carregares antes, instala-se logo, antes dessa data.` : `Se concordas, carrega em "Sim, instalar" e instala-se logo.`} Senão, Mais tarde ou Cancelar.`
       : input.question?.trim();
-    const status =
-      input.next === 'waiting' || recommended
+    const status = autonomous
+      ? AppUpdateStatus.READY
+      : input.next === 'waiting' || recommended
         ? AppUpdateStatus.WAITING
         : AppUpdateStatus.LATER;
     const recheckAt =
@@ -951,6 +969,9 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
       },
       [
         `${HEADLINE_ICON[status]} **Estudo feito — risco ${RISK[input.risk]}.** ${input.recommendation}`,
+        autonomous
+          ? '▶ Está tudo validado: instalo-a já, segundo as regras (backup e snapshot antes), e aviso-te no fim.'
+          : null,
         status === AppUpdateStatus.WAITING
           ? `❓ **Preciso de uma resposta:** ${question}`
           : null,
@@ -970,8 +991,10 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
     const where =
       status === AppUpdateStatus.WAITING
         ? 'Waiting for reply (à espera da resposta do utilizador)'
-        : `Recheck later (volto a estudar a ${lisbonTime(recheckAt!)})`;
-    return `Estudo gravado; a atualização ficou em ${where}. O relatório está no registo (Documentos)${saved.boardTaskKey ? ` e na tarefa ${saved.boardTaskKey}` : ''}.`;
+        : status === AppUpdateStatus.LATER
+          ? `Recheck later (volto a estudar a ${lisbonTime(recheckAt!)})`
+          : 'Ready to update (instala-se já, pelo MyHomeLab)';
+    return `Estudo gravado; a atualização ficou em ${where}.${blocked ? ` Não a instalas sozinho porque ${blocked}: fica a recomendação para ele decidir.` : ''} O relatório está no registo (Documentos)${saved.boardTaskKey ? ` e na tarefa ${saved.boardTaskKey}` : ''}.`;
   }
 
   async setStatus(
@@ -1095,16 +1118,7 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
       const target = updateTarget(update);
       if (busy.has(target)) continue;
       busy.add(target);
-      if (options.column === 'study') {
-        await this.start(update, 'Pelo cron job das atualizações.');
-      } else {
-        await this.record.save(
-          update,
-          {},
-          '📋 Posta no quadro pelo cron job das atualizações: fica em Todo até a arrastares.',
-          { toBoard: true },
-        );
-      }
+      await this.start(update, 'Pelo cron job das atualizações.');
       placed++;
     }
     return placed;

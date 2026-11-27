@@ -25,6 +25,7 @@ import { TodoService } from 'src/todo/todo.service';
 import { ChatFileService } from 'src/chat-file/chat-file.service';
 import { DriveService } from 'src/google-drive/drive.service';
 import { ChatApprovalService } from 'src/chat-approval/chat-approval.service';
+import { CronJobService } from 'src/cron-job/cron-job.service';
 
 /**
  * O que qualquer agente precisa de ter à mão. Passa-se um objeto só em vez de uma lista
@@ -89,6 +90,8 @@ export interface AgentContext {
   drive: DriveService;
   /** O que só acontece com o sim dele: enviar um email, mudar a equipa, instalar (os cartões do chat). */
   approvals: ChatApprovalService;
+  /** Os cron jobs das apps (o das atualizações liga-se quando ele pede). */
+  cronJobs: CronJobService;
   /** A conversa desta volta (as ferramentas chat_file_* veem os ficheiros dela). */
   conversationId?: string;
   /** Ele mandou ficheiros nesta mensagem: o Jarvis pensa mais para os analisar. */

@@ -22,18 +22,13 @@ export const partOfJob = (key: string): UpdatePart | null =>
 export const partOfUpdate = (update: Pick<AppUpdate, 'component'>) =>
   update.component ? 'components' : 'app';
 
-/** As colunas onde uma atualização nova pode entrar: Todo ou Espera por estudo. */
-export const UPDATE_COLUMNS = ['new', 'study'] as const;
-export type UpdateColumn = (typeof UPDATE_COLUMNS)[number];
-
 /**
- * As opções escolhidas pelo utilizador: se a versão nova vai logo para o quadro, para que
- * projeto e para que coluna. Sem quadro fica só disponível, como antes.
+ * As opções escolhidas pelo utilizador: se a versão nova vai logo para o quadro e para que
+ * projeto (entra sempre em Espera por estudo). Sem quadro fica só disponível.
  */
 export interface UpdateCronOptions {
   board: boolean;
   projectId: string | null;
-  column: UpdateColumn;
 }
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
@@ -53,8 +48,5 @@ export function updateCronOptions(
   if (board && enabling && !projectId) {
     throw new BadRequestException('Escolhe o projeto.');
   }
-  const column = UPDATE_COLUMNS.includes(input.column as UpdateColumn)
-    ? (input.column as UpdateColumn)
-    : 'study';
-  return { board, projectId, column };
+  return { board, projectId };
 }

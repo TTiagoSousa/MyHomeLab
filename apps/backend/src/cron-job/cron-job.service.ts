@@ -8,7 +8,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaConnectedAccountRepository } from 'src/connected-account/repositories/prisma/prisma-connected-account-repository';
 import { findConnectedAccount } from 'src/connected-account/helpers/findConnectedAccount';
 import { toHttpError } from 'src/integrations/app-integration.error';
-import { CronJob, Prisma } from 'src/generated/prisma/client/client';
+import {
+  CronJob,
+  Prisma,
+  ProjectKind,
+} from 'src/generated/prisma/client/client';
+import {
+  partOfJob,
+  updateCronOptions,
+} from 'src/app-update/helpers/updateCronOptions';
 import { DiskAlertService } from 'src/disk-alert/disk-alert.service';
 import { ConnectedAccountService } from 'src/connected-account/connected-account.service';
 import {
@@ -176,6 +184,47 @@ export class CronJobService {
       },
     });
     return this.view(definition, saved);
+  }
+
+  /**
+   * Os cron jobs das atualizações de todas as apps dele e os projetos de atualizações
+   * que se podem escolher (o assistente liga-os quando ele pede).
+   */
+  async updateJobs(userId: string) {
+    const [accounts, projects, rows] = await Promise.all([
+      this.prisma.connectedAccount.findMany({
+        where: { userId, disconnectedAt: null },
+        select: { id: true, provider: true, displayName: true },
+        orderBy: { createdAt: 'asc' },
+      }),
+      this.prisma.project.findMany({
+        where: { userId, kind: ProjectKind.UPDATES },
+        select: { id: true, name: true },
+        orderBy: { position: 'asc' },
+      }),
+      this.prisma.cronJob.findMany({
+        where: { userId, key: { startsWith: 'updates.' } },
+      }),
+    ]);
+    const jobs = accounts.flatMap((account) =>
+      cronJobsFor({ kind: 'account', provider: account.provider })
+        .filter((job) => partOfJob(job.key))
+        .map((job) => {
+          const row = rows.find(
+            (item) => item.accountId === account.id && item.key === job.key,
+          );
+          return {
+            accountId: account.id,
+            app: account.displayName || account.provider,
+            key: job.key,
+            part: partOfJob(job.key)!,
+            intervalMinutes: row?.intervalMinutes ?? 0,
+            intervals: intervalsOf(job),
+            options: updateCronOptions(row?.options, false),
+          };
+        }),
+    );
+    return { jobs, projects };
   }
 
   /** Corre já (fora do intervalo); a próxima vez passa a contar a partir de agora. */

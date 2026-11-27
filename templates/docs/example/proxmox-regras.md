@@ -41,7 +41,7 @@ No estudo só se lê e mede. **No host não há snapshot:** se algo correr mal n
 Segue a tabela de "Instalar ou não" em "Atualizações das apps e do Proxmox – como funcionam": por omissão instala-se, sem esperar dias. O que é desta app:
 
 - **Instala-se sozinho** só com risco baixo (o MyHomeLab obriga): pacotes de correção e de segurança, nada a remover, sem reinício.
-- **Fica para mim** (`todo`): kernel novo ou outro reinício, versão principal nova, ou risco médio ou alto.
+- **Fica para mim** (`recommend`, a dizer porquê): kernel novo ou outro reinício, versão principal nova, ou risco médio ou alto.
 - **Pergunta-se:** pacotes a remover.
 
 Sem passos à mão (manualSteps vazio): o reinício, se for preciso, fica escrito no estudo.

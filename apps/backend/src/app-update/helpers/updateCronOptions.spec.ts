@@ -7,11 +7,10 @@ import {
 } from './updateCronOptions';
 
 describe('opções do cron job das atualizações', () => {
-  it('sem nada fica só disponível, com Espera por estudo como coluna', () => {
+  it('sem nada fica só disponível', () => {
     expect(updateCronOptions(undefined, true)).toEqual({
       board: false,
       projectId: null,
-      column: 'study',
     });
   });
 
@@ -20,17 +19,6 @@ describe('opções do cron job das atualizações', () => {
       BadRequestException,
     );
     expect(updateCronOptions({ board: true }, false).board).toBe(true);
-  });
-
-  it('só aceita Todo ou Espera por estudo', () => {
-    expect(
-      updateCronOptions({ board: true, projectId: 'p', column: 'new' }, true)
-        .column,
-    ).toBe('new');
-    expect(
-      updateCronOptions({ board: true, projectId: 'p', column: 'ready' }, true)
-        .column,
-    ).toBe('study');
   });
 
   it('a app e as peças são cron jobs à parte', () => {

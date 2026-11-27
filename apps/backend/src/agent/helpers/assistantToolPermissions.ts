@@ -81,6 +81,8 @@ const FIXED: Record<string, Requirement> = {
   update_release_notes: read('updates'),
   update_list_new: read('updates'),
   update_start: write('updates'),
+  update_cron_list: read('updates'),
+  update_cron_set: write('updates'),
   update_known_issues: read('updates'),
   update_save_study: write('updates'),
   update_set_status: write('updates'),

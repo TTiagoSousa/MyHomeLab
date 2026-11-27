@@ -44,7 +44,7 @@ const UPDATES: StarterDoc = {
   kind: DocKind.RULES,
   tags: ['atualizacao', 'processo'],
   summary:
-    'O caminho de uma atualização no quadro (estudar, decidir, instalar, verificar): nunca se instala sem o meu sim.',
+    'O caminho de uma atualização no quadro (estudar, validar, instalar, verificar): o que está tudo certo instala-se sozinho; o resto espera pelo meu sim.',
   links: [],
   content: `# Atualizações das apps e do Proxmox – como funcionam
 
@@ -55,17 +55,18 @@ Este documento manda no caminho e nas decisões. O que é próprio de cada app (
 ## O caminho (as colunas do quadro)
 
 \`\`\`
-Todo ──👤──→ Espera por estudo → Study ─┬→ Waiting for reply ──👤──→ Ready to update → In progress → Verifying → Done
-                                        └→ Recheck later (só com uma razão concreta)
+Espera por estudo → Study ─┬→ Ready to update → In progress → Verifying → Done
+                           ├→ Waiting for reply ──👤──→ Ready to update
+                           └→ Recheck later (só com uma razão concreta)
 \`\`\`
 
 1. **Estudar.** 🤖 Uma de cada vez. Só lê e mede: as notas da versão (update_release_notes), as issues abertas (update_known_issues) e o histórico das atualizações anteriores da mesma app.
-2. **Decidir.** 🤖 Com a tabela abaixo.
+2. **Validar e decidir.** 🤖 Mede se a máquina está pronta (espaço, backup, a app a responder), sem mudar nada. Depois decide com a tabela abaixo. O que falta e tem uma solução segura não impede o install: resolve-se no início da instalação.
 3. **Instalar.** 🤖 update_prepare → update_check em cada ponto, com prova → update_prepare com checklist [] → update_run. Acompanha com update_status até acabar.
 4. **Verificar.** 🤖 Em Verifying, os pontos de "Depois de instalar" (update_verify). Tudo bem → Done. Um problema → Waiting for reply com o que se viu.
 
 ### Como entra no quadro
-Uma versão nova fica primeiro só disponível, sem tarefa: abro-a eu, ou o cron job das atualizações da app, se eu o liguei com "Pôr no projeto".
+Uma versão nova fica primeiro só disponível, sem tarefa. Entra no quadro, sempre em Espera por estudo, quando o cron job das atualizações da app está ligado com "Pôr no projeto" (ligo-o eu, ou o assistente quando lho peço), ou quando a abro eu. Logo a seguir, o MyHomeLab cria o disparo "Estudar <app> <versão>" nos Disparos do projeto e o agente estuda-a.
 
 ## Instalar ou não
 
@@ -76,7 +77,7 @@ O estudo responde a três perguntas, com prova:
 
 | Situação | Fica em |
 |---|---|
-| Nada parte para nós e volta-se atrás | Waiting for reply, com a recomendação de instalar |
+| Tudo validado: nada parte para nós e volta-se atrás | Ready to update: instala-se já, e no fim diz-se o que se fez |
 | Uma issue grave aberta que nos afeta, com correção a caminho | Recheck later |
 | Salto major, risco alto, passos à mão, ou o host | Waiting for reply, com a recomendação e o porquê do cuidado |
 | Uma escolha que só eu faço | Waiting for reply, com a pergunta |
@@ -84,7 +85,7 @@ O estudo responde a três perguntas, com prova:
 ## O resumo do estudo
 
 \`\`\`
-<app> X → Y · risco baixo|médio|alto · <recomendo instalar | espero por … | preciso de ti>
+<app> X → Y · risco baixo|médio|alto · <instalo já | recomendo instalar | espero por … | preciso de ti>
 ✅ Porque instalar: 1–3 pontos concretos
 ⚠️ Porque não: 1–3 pontos concretos que nos tocam
 ↩️ Se correr mal: snapshot + backup (ou o que houver)

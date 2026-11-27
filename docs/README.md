@@ -25,7 +25,7 @@ guide you need.
 | 03 | [Frontend](./development/03-frontend.md) | React structure, hooks, styling, i18n rules |
 | 04 | [Database](./development/04-database.md) | Prisma schema, migrations, `migrate diff` |
 | 05 | [Agents and tools](./development/05-agents-and-tools.md) | How agents run, toolsets, permissions, adding a tool |
-| 06 | [App updates](./development/06-app-updates.md) | The update workflow: available → study → approval → install → verify |
+| 06 | [App updates](./development/06-app-updates.md) | The update workflow: available → study → install (or approval) → verify |
 | 07 | [Mobile](./development/07-mobile.md) | The Android app (React Native + Expo) and its APK |
 | 08 | [Testing](./development/08-testing.md) | Jest in the backend, lint, CI jobs |
 | 09 | [Releases](./development/09-releases.md) | Versioning, release notes, branch flow, tagging |

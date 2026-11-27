@@ -137,6 +137,128 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
       ),
     },
     {
+      name: 'update_cron_list',
+      description:
+        'Os cron jobs das atualizações de cada app ligada (a própria app e, no Home Assistant e no Nextcloud, as peças): se está ligado, de quantas em quantas horas, e se põe as versões novas no quadro (em que projeto). Mostra também os projetos de atualizações que se podem escolher.',
+      inputSchema: { type: 'object', properties: {} },
+      handler: async () => {
+        const { jobs, projects } = await context.cronJobs.updateJobs(
+          context.userId,
+        );
+        if (!jobs.length) return 'Não há apps ligadas com versões para ver.';
+        const projectName = (id: string | null) =>
+          projects.find((project) => project.id === id)?.name ?? id ?? '?';
+        const lines = jobs.map(
+          (job) =>
+            `- ${job.app} · ${job.part === 'app' ? 'a app' : 'as peças'} · ${job.intervalMinutes ? `de ${job.intervalMinutes / 60} em ${job.intervalMinutes / 60} h` : 'desligado'} · ${job.options.board ? `põe no quadro (${projectName(job.options.projectId)}, em Espera por estudo)` : 'só fica disponível'} [app ${job.accountId}, part ${job.part}]`,
+        );
+        return `${lines.join('\n')}\n\nProjetos de atualizações: ${projects.map((project) => `${project.name} (${project.id})`).join(', ') || 'nenhum'}.`;
+      },
+    },
+    {
+      name: 'update_cron_set',
+      description:
+        'Liga, muda ou desliga o cron job das atualizações de uma app, só quando ele o pede. Ligado com board, cada versão nova entra no projeto em Espera por estudo e o MyHomeLab cria sozinho o disparo "Estudar …" nos Disparos do projeto. Vê antes o update_cron_list.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          app: {
+            type: 'string',
+            description: 'A app: o id (de update_cron_list) ou o nome.',
+          },
+          part: {
+            type: 'string',
+            enum: ['app', 'components'],
+            description:
+              'app = a própria app (por omissão) · components = as peças (Home Assistant) ou as apps do Nextcloud.',
+          },
+          every_hours: {
+            type: 'integer',
+            enum: [0, 1, 6, 12, 24],
+            description: 'De quantas em quantas horas vê; 0 desliga.',
+          },
+          board: {
+            type: 'boolean',
+            description:
+              'Pôr as versões novas no quadro (por omissão sim). Não = só ficam disponíveis.',
+          },
+          project: {
+            type: 'string',
+            description:
+              'O projeto de atualizações (id ou nome). Se só houver um, é esse.',
+          },
+        },
+        required: ['app', 'every_hours'],
+      },
+      handler: async (input: {
+        app: string;
+        part?: 'app' | 'components';
+        every_hours: number;
+        board?: boolean;
+        project?: string;
+      }) => {
+        if (context.source !== 'chat') {
+          return 'Recusado: os cron jobs só se ligam quando ele o pede no chat.';
+        }
+        const { jobs, projects } = await context.cronJobs.updateJobs(
+          context.userId,
+        );
+        const wanted = input.app.trim().toLowerCase();
+        const part = input.part ?? 'app';
+        const matches = jobs.filter(
+          (job) =>
+            job.part === part &&
+            (job.accountId === input.app.trim() ||
+              job.app.toLowerCase() === wanted),
+        );
+        const loose = matches.length
+          ? matches
+          : jobs.filter(
+              (job) =>
+                job.part === part && job.app.toLowerCase().includes(wanted),
+            );
+        if (loose.length !== 1) {
+          return loose.length
+            ? `Há mais de uma app com esse nome: ${loose.map((job) => `${job.app} (${job.accountId})`).join(', ')}. Diz qual com o id.`
+            : `Não encontrei essa app (${part === 'app' ? 'a própria app' : 'as peças'}). Vê o update_cron_list.`;
+        }
+        const job = loose[0];
+        const minutes = Math.round(input.every_hours * 60);
+        if (!job.intervals.includes(minutes)) {
+          return `Esse intervalo não existe: escolhe ${job.intervals.map((value) => value / 60).join(', ')} horas.`;
+        }
+        const board = input.board ?? true;
+        const project = input.project?.trim()
+          ? projects.find(
+              (item) =>
+                item.id === input.project!.trim() ||
+                item.name.toLowerCase() === input.project!.trim().toLowerCase(),
+            )
+          : projects.length === 1
+            ? projects[0]
+            : projects.find((item) => item.id === job.options.projectId);
+        if (board && minutes && !project) {
+          return `Diz em que projeto de atualizações: ${projects.map((item) => item.name).join(', ') || 'não há nenhum (cria-o em Projetos)'}.`;
+        }
+        try {
+          await context.cronJobs.save(
+            context.userId,
+            { kind: 'account', id: job.accountId },
+            job.key,
+            {
+              intervalMinutes: minutes,
+              options: { board, projectId: project?.id ?? null },
+            },
+          );
+        } catch (error) {
+          return `Não deu: ${error instanceof Error ? error.message : String(error)}`;
+        }
+        return minutes
+          ? `Ligado: ${job.app} (${part === 'app' ? 'a app' : 'as peças'}) vê de ${input.every_hours} em ${input.every_hours} h${board ? ` e põe cada versão nova em ${project!.name}, em Espera por estudo` : ', e as versões novas só ficam disponíveis'}. A primeira vez é já no próximo minuto.`
+          : `Desligado: ${job.app} (${part === 'app' ? 'a app' : 'as peças'}).`;
+      },
+    },
+    {
       name: 'update_status',
       description:
         'O estado de uma atualização: o resumo, o risco, a pergunta em aberto, quando volta a ver, a checklist verificada, o snapshot, o resultado e o histórico (as respostas e decisões até agora).',
@@ -207,9 +329,9 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
           },
           next: {
             type: 'string',
-            enum: ['recommend', 'waiting', 'later'],
+            enum: ['install', 'recommend', 'waiting', 'later'],
             description:
-              'recommend = recomendas instalar (Waiting for reply com a recomendação: nunca se instala sem o sim dele) · waiting = precisa de uma resposta dele antes · later = voltar a estudar daqui a recheckInDays.',
+              'install = está tudo validado e instala-se já (passa a Ready to update e o MyHomeLab pede a instalação): os pontos do estudo e de "Antes de instalar" passam ou já os resolveste, nada parte para nós e volta-se atrás. O MyHomeLab deixa-a em Waiting com a recomendação se for um salto major, risco alto, tiver passos à mão ou for o host sem risco baixo · recommend = recomendas instalar mas a decisão tem de ser dele (Waiting for reply com a recomendação) · waiting = precisa de uma resposta dele antes · later = voltar a estudar daqui a recheckInDays.',
           },
           question: {
             type: 'string',

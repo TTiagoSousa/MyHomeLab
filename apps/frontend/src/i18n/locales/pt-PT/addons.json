@@ -2501,15 +2501,7 @@
       "boardHint": "Cada versão nova vira logo uma tarefa no quadro. Sem isto fica só disponível, à espera de um agente.",
       "project": "Projeto",
       "chooseProject": "Escolhe o projeto",
-      "column": "Coluna",
-      "columns": {
-        "new": "Todo",
-        "study": "Espera por estudo"
-      },
-      "columnHint": {
-        "new": "Fica em Todo até a arrastares para Espera por estudo.",
-        "study": "O estudo começa sozinho e segue o caminho de sempre: só instala com o teu sim, como dizem as regras da app."
-      }
+      "studyHint": "Entra em Espera por estudo: o disparo \"Estudar …\" aparece sozinho nos Disparos do projeto e segue o caminho de sempre. Se o estudo validar tudo, instala-se sozinho; senão, espera pelo teu sim."
     }
   },
   "stirlingModal": {

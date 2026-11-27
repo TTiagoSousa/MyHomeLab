@@ -1779,6 +1779,20 @@ export const TOOL_CATALOG: ToolDescriptor[] = [
     'a abrir uma atualização',
   ),
   tool(
+    'update_cron_list',
+    'updates',
+    'updates',
+    'read',
+    'a ver os cron jobs das atualizações',
+  ),
+  tool(
+    'update_cron_set',
+    'updates',
+    'updates',
+    'write',
+    'a ligar o cron job das atualizações',
+  ),
+  tool(
     'update_release_notes',
     'updates',
     'updates',

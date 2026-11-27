@@ -2501,15 +2501,7 @@
       "boardHint": "Each new version becomes a board task right away. Without this it just stays available, waiting for an agent.",
       "project": "Project",
       "chooseProject": "Choose the project",
-      "column": "Column",
-      "columns": {
-        "new": "Todo",
-        "study": "Waiting for study"
-      },
-      "columnHint": {
-        "new": "It stays in Todo until you drag it to Waiting for study.",
-        "study": "The study starts on its own and follows the usual path: it only installs with your yes, as the app rules say."
-      }
+      "studyHint": "It goes into Waiting for study: the \"Study …\" trigger shows up by itself in the project's Triggers and follows the usual path. If the study validates everything, it installs by itself; otherwise it waits for your yes."
     }
   },
   "stirlingModal": {

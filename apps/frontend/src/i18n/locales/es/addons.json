@@ -2501,15 +2501,7 @@
       "boardHint": "Cada versión nueva se convierte enseguida en una tarea del tablero. Sin esto se queda solo disponible, esperando a un agente.",
       "project": "Proyecto",
       "chooseProject": "Elige el proyecto",
-      "column": "Columna",
-      "columns": {
-        "new": "Todo",
-        "study": "Esperando estudio"
-      },
-      "columnHint": {
-        "new": "Se queda en Todo hasta que la arrastres a Esperando estudio.",
-        "study": "El estudio empieza solo y sigue el camino de siempre: solo instala con tu sí, como dicen las reglas de la app."
-      }
+      "studyHint": "Entra en Espera de estudio: el disparador \"Estudiar …\" aparece solo en los Disparadores del proyecto y sigue el camino de siempre. Si el estudio lo valida todo, se instala solo; si no, espera tu sí."
     }
   },
   "stirlingModal": {
