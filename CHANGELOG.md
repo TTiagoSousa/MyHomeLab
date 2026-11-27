@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.19.0] — 2026-11-27
+
+### Features
+- **cron-job**: let daily cron jobs run at a chosen Lisbon time
+
+
 ## [1.18.0] — 2026-11-27
 
 ### Features
@@ -218,3 +224,4 @@ First public release of MyHomeLab.
 [1.16.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.16.0
 [1.17.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.17.0
 [1.18.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.18.0
+[1.19.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.19.0
