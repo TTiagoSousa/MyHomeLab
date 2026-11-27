@@ -56,6 +56,7 @@ import {
   PENDING_EVIDENCE,
   OPEN,
   PREPARED,
+  PURGEABLE,
   RECHECK_MAX_DAYS,
   RISK,
   STATUS_NAMES,
@@ -1122,6 +1123,71 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
       placed++;
     }
     return placed;
+  }
+
+  /**
+   * Para recomeçar: as atualizações acabadas (Done, Failed, Cancelled) e o que é só
+   * delas — as tentativas e os disparos (em cascata), a tarefa do quadro (com os
+   * comentários) e o registo LOG, se nenhuma outra atualização o usa. Com `apply`
+   * false só diz o que se apagava. Uma versão que não se instalou volta a aparecer
+   * como disponível da próxima vez que se vê a versão.
+   */
+  async purgeFinished(userId: string, apply: boolean) {
+    const finished = await this.prisma.appUpdate.findMany({
+      where: { userId, status: { in: PURGEABLE } },
+      include: UPDATE_INCLUDE,
+      orderBy: { createdAt: 'asc' },
+    });
+    const ids = finished.map((update) => update.id);
+    const logIds = [
+      ...new Set(
+        finished.map((update) => update.logDocId).filter(Boolean) as string[],
+      ),
+    ];
+    const shared = await this.prisma.appUpdate.findMany({
+      where: { logDocId: { in: logIds }, id: { notIn: ids } },
+      select: { logDocId: true },
+    });
+    const docIds = logIds.filter(
+      (id) => !shared.some((update) => update.logDocId === id),
+    );
+    const docs = await this.prisma.doc.findMany({
+      where: { id: { in: docIds }, userId },
+      select: { id: true, title: true },
+    });
+    const taskIds = finished
+      .map((update) => update.boardTaskId)
+      .filter(Boolean) as string[];
+    const summary = {
+      updates: finished.map((update) => ({
+        id: update.id,
+        label: updateLabel(update),
+        fromVersion: update.fromVersion,
+        toVersion: update.toVersion,
+        status: update.status,
+        task: update.boardTaskKey,
+      })),
+      tasks: taskIds.length,
+      docs: docs.map((doc) => doc.title),
+      applied: apply,
+    };
+    if (!apply || !finished.length) return summary;
+    await this.prisma.appUpdate.deleteMany({ where: { id: { in: ids } } });
+    for (const taskId of taskIds) {
+      await this.board
+        .removeTask(userId, taskId)
+        .catch((error: unknown) =>
+          this.logger.warn(`Apagar a tarefa ${taskId}: ${String(error)}`),
+        );
+    }
+    for (const doc of docs) {
+      await this.docs
+        .remove(userId, doc.id)
+        .catch((error: unknown) =>
+          this.logger.warn(`Apagar o registo ${doc.id}: ${String(error)}`),
+        );
+    }
+    return summary;
   }
 
   /** A app foi desligada: as atualizações dela em aberto (não as que estão a correr) ficam canceladas. */

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Put,
@@ -44,6 +45,18 @@ export class AppUpdateController {
   @Get('attempts/:id')
   attempt(@Param('id') id: string, @Req() req: AuthedRequest) {
     return this.attempts.get(req.user.id, id);
+  }
+
+  /** Para recomeçar: o que a limpeza das acabadas (Done, Failed, Cancelled) apagava. */
+  @Get('finished')
+  finished(@Req() req: AuthedRequest) {
+    return this.updates.purgeFinished(req.user.id, false);
+  }
+
+  /** Apaga as acabadas, as tarefas delas e os registos que são só delas. */
+  @Delete('finished')
+  purgeFinished(@Req() req: AuthedRequest) {
+    return this.updates.purgeFinished(req.user.id, true);
   }
 
   @Get('setting')

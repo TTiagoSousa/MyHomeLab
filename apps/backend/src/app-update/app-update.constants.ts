@@ -60,6 +60,13 @@ export const FINISHED_OR_RUNNING: AppUpdateStatus[] = [
 ];
 
 /** As preparadas e ainda por correr (regras novas: aviso no histórico). */
+/** As acabadas, que a limpeza (purgeFinished) apaga para recomeçar. */
+export const PURGEABLE: AppUpdateStatus[] = [
+  AppUpdateStatus.DONE,
+  AppUpdateStatus.FAILED,
+  AppUpdateStatus.CANCELLED,
+];
+
 export const PREPARED: AppUpdateStatus[] = [
   AppUpdateStatus.READY,
   AppUpdateStatus.WAITING,

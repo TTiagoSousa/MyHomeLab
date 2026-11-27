@@ -335,6 +335,8 @@ SSH uses trust on first use: the first connection stores the server's host key f
 |---|---|---|
 | GET | `/app-updates/attempts` | Update attempts (study, preparation, verification) for an app or host |
 | GET | `/app-updates/attempts/:id` | One attempt with every checked point and its evidence |
+| GET | `/app-updates/finished` | What the clean-up would delete: finished updates (Done, Failed, Cancelled), their tasks and the logs only they use |
+| DELETE | `/app-updates/finished` | Delete them, to start over (a version that was not installed shows up as available again) |
 | GET | `/app-updates/setting` | Update workflow settings (board modules) |
 | PUT | `/app-updates/setting` | Save update workflow settings |
 
