@@ -49,7 +49,7 @@ export async function runCronJob(
           ? Prisma.DbNull
           : (outcome.detail as Prisma.InputJsonValue),
       lastError: outcome.error,
-      nextRunAt: nextRunAt(row.intervalMinutes, startedAt),
+      nextRunAt: nextRunAt(row.intervalMinutes, startedAt, row.time),
     },
   });
 }

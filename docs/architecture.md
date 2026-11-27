@@ -144,7 +144,7 @@ and tools.
   API the backend is the MCP client.
 - **Cron jobs**: fixed tasks written in code (`cron-job/cron-job.registry.ts`) that MyHomeLab runs
   on its own, without AI, at the interval each user picks on the app's Cron jobs page (off, hourly,
-  every 6 or 12 hours, daily, weekly). A scheduler checks every minute and runs the due ones one at
+  every 6 or 12 hours, daily, weekly; daily can also take a Lisbon time to run at). A scheduler checks every minute and runs the due ones one at
   a time, recording the result. AdGuard has two: refresh the blocklists and refresh the allowlists;
   turning one on sets AdGuard's own refresh interval to "never" so lists are not fetched twice.
   Every self-hosted app with version detection has an **updates** cron job (Home Assistant and

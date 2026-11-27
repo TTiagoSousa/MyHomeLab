@@ -2434,6 +2434,8 @@
     "lastOk": "Última vez: {{date}} · {{result}}",
     "lastFailed": "Última vez: {{date}} · falhou: {{error}}",
     "next": "Próxima: {{date}}",
+    "time": "Hora",
+    "timeHint": "A hora de Lisboa a que corre. Vazio: 24 h depois da última vez.",
     "runNow": "Correr agora",
     "running": "A correr…",
     "save": "Guardar",

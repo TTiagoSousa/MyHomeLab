@@ -77,6 +77,8 @@
 
     .Dropdown_Field{ width: 170px; height: 32px; }
 
+    .App_Cron_Job_time{ width: 104px; height: 32px; }
+
     button{
       @include Mixin.Ghost_Button;
       height: 32px;

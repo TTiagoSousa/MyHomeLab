@@ -150,7 +150,7 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
           projects.find((project) => project.id === id)?.name ?? id ?? '?';
         const lines = jobs.map(
           (job) =>
-            `- ${job.app} · ${job.part === 'app' ? 'a app' : 'as peças'} · ${job.intervalMinutes ? `de ${job.intervalMinutes / 60} em ${job.intervalMinutes / 60} h` : 'desligado'} · ${job.options.board ? `põe no quadro (${projectName(job.options.projectId)}, em Espera por estudo)` : 'só fica disponível'} [app ${job.accountId}, part ${job.part}]`,
+            `- ${job.app} · ${job.part === 'app' ? 'a app' : 'as peças'} · ${job.intervalMinutes ? (job.time ? `todos os dias às ${job.time}` : `de ${job.intervalMinutes / 60} em ${job.intervalMinutes / 60} h`) : 'desligado'} · ${job.options.board ? `põe no quadro (${projectName(job.options.projectId)}, em Espera por estudo)` : 'só fica disponível'} [app ${job.accountId}, part ${job.part}]`,
         );
         return `${lines.join('\n')}\n\nProjetos de atualizações: ${projects.map((project) => `${project.name} (${project.id})`).join(', ') || 'nenhum'}.`;
       },
@@ -177,6 +177,11 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
             enum: [0, 1, 6, 12, 24],
             description: 'De quantas em quantas horas vê; 0 desliga.',
           },
+          time: {
+            type: 'string',
+            description:
+              'Com every_hours 24: a hora de Lisboa a que corre, "HH:mm" (ex.: "05:00"). Sem hora, corre 24 h depois da última vez.',
+          },
           board: {
             type: 'boolean',
             description:
@@ -194,6 +199,7 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
         app: string;
         part?: 'app' | 'components';
         every_hours: number;
+        time?: string;
         board?: boolean;
         project?: string;
       }) => {
@@ -247,6 +253,7 @@ export function buildUpdatesTools(context: AgentContext): AgentTool[] {
             job.key,
             {
               intervalMinutes: minutes,
+              ...(input.time !== undefined ? { time: input.time || null } : {}),
               options: { board, projectId: project?.id ?? null },
             },
           );

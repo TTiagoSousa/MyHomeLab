@@ -7,6 +7,7 @@ import { useAlert } from '../../Contexts/Alert_Context';
 export interface CronJob {
   key: string;
   intervalMinutes: number;
+  time: string | null;
   intervals: number[];
   options: Record<string, unknown> | null;
   lastDetail: Record<string, unknown> | null;
@@ -61,11 +62,11 @@ export const useCronJobs = (scope: CronScope) => {
     }
   };
 
-  const saveInterval = async (key: string, intervalMinutes: number, options?: Record<string, unknown>) => {
+  const saveInterval = async (key: string, intervalMinutes: number, options: Record<string, unknown> | undefined, time: string | null) => {
     if (!accountId) return false;
     setBusy(key);
     try {
-      const response = await http.put<CronJob>(endpoints(scope, accountId).job(key), options ? { intervalMinutes, options } : { intervalMinutes }, { withCredentials: true });
+      const response = await http.put<CronJob>(endpoints(scope, accountId).job(key), { intervalMinutes, time, ...(options ? { options } : {}) }, { withCredentials: true });
       replace(response.data);
       setAlert({ open: true, message: i18n.t('addons:cronJobs.saved'), type: 'success' });
       return true;

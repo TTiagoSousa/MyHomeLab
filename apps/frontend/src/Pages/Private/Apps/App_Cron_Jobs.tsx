@@ -53,7 +53,7 @@ const App_Cron_Jobs = ({ scope, optionPanels, backTo, backLabel, note }: App_Cro
               scopeId={scope.id ?? ''}
               busy={busy === job.key}
               optionsPanel={optionPanels?.[job.key] ?? UPDATE_PANELS[job.key]}
-              onSave={(intervalMinutes, options) => saveInterval(job.key, intervalMinutes, options)}
+              onSave={(intervalMinutes, options, time) => saveInterval(job.key, intervalMinutes, options, time)}
               onRun={() => void runNow(job.key)}
             />
           ))}

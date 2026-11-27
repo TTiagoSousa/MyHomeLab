@@ -1,6 +1,7 @@
 import { useState, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 import Global_Dropdown from '../../../Components/Inputs/Global_Dropdown/Global_Dropdown';
+import Global_Input from '../../../Components/Inputs/Global_Input/Global_Input';
 import { cronJobLabelKey, type CronJob } from '../../../Hooks/ConnectedAccount/useCronJobs';
 import * as Icon from '../../../Imports/icons';
 import { dateLocale } from '../../../i18n';
@@ -18,20 +19,25 @@ interface App_Cron_Job_Props {
   scopeId: string;
   busy: boolean;
   optionsPanel?: ComponentType<Cron_Options_Panel_Props>;
-  onSave: (intervalMinutes: number, options?: Record<string, unknown>) => Promise<boolean>;
+  onSave: (intervalMinutes: number, options: Record<string, unknown> | undefined, time: string | null) => Promise<boolean>;
   onRun: () => void;
 }
+
+const DAILY = '1440';
 
 const when = (date: string) => new Date(date).toLocaleString(dateLocale(), { dateStyle: 'short', timeStyle: 'short' });
 
 const App_Cron_Job = ({ job, scopeId, busy, optionsPanel: Options_Panel, onSave, onRun }: App_Cron_Job_Props) => {
   const { t } = useTranslation('addons');
   const [interval, setInterval] = useState(String(job.intervalMinutes));
+  const [time, setTime] = useState(job.time ?? '');
   const [options, setOptions] = useState<Record<string, unknown>>(job.options ?? {});
   const [showOptions, setShowOptions] = useState(false);
   const labels = `cronJobs.jobs.${cronJobLabelKey(job.key)}`;
   const optionsChanged = JSON.stringify(options) !== JSON.stringify(job.options ?? {});
-  const changed = interval !== String(job.intervalMinutes) || optionsChanged;
+  const daily = interval === DAILY;
+  const timeChanged = daily && time !== (job.time ?? '');
+  const changed = interval !== String(job.intervalMinutes) || optionsChanged || timeChanged;
   const failed = Boolean(job.lastRunAt) && !job.lastOk;
 
   const lastRun = !job.lastRunAt
@@ -47,10 +53,11 @@ const App_Cron_Job = ({ job, scopeId, busy, optionsPanel: Options_Panel, onSave,
 
   const cancel = () => {
     setInterval(String(job.intervalMinutes));
+    setTime(job.time ?? '');
     setOptions(job.options ?? {});
   };
 
-  const save = () => void onSave(Number(interval), Options_Panel ? options : undefined);
+  const save = () => void onSave(Number(interval), Options_Panel ? options : undefined, daily && time ? time : null);
 
   return (
     <article className={`App_Cron_Job${job.intervalMinutes ? ' on' : ''}`}>
@@ -74,6 +81,11 @@ const App_Cron_Job = ({ job, scopeId, busy, optionsPanel: Options_Panel, onSave,
           onChange={chooseInterval}
           disabled={busy}
         />
+        {daily && (
+          <div className='App_Cron_Job_time' title={`${t('cronJobs.time')}: ${t('cronJobs.timeHint')}`}>
+            <Global_Input type='time' value={time} onChange={(e) => setTime(e.target.value)} disabled={busy} />
+          </div>
+        )}
         {Options_Panel && (
           <button type='button' className={showOptions ? 'selected' : ''} onClick={() => setShowOptions(!showOptions)} aria-expanded={showOptions}>
             {t('cronJobs.options')}

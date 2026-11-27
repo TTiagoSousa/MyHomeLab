@@ -2434,6 +2434,8 @@
     "lastOk": "Last run: {{date}} · {{result}}",
     "lastFailed": "Last run: {{date}} · failed: {{error}}",
     "next": "Next: {{date}}",
+    "time": "Time",
+    "timeHint": "The Lisbon time it runs at. Empty: 24 h after the last run.",
     "runNow": "Run now",
     "running": "Running…",
     "save": "Save",

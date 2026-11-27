@@ -28,10 +28,13 @@ import {
   intervalsOf,
 } from './cron-job.registry';
 import { runCronJob } from './helpers/runCronJob';
+import { cronTime, nextRunAt } from './helpers/nextRunAt';
 
 export interface CronJobView {
   key: string;
   intervalMinutes: number;
+  /** Todos os dias: a hora de Lisboa ("HH:mm"), ou null. */
+  time: string | null;
   intervals: readonly number[];
   options: unknown;
   nextRunAt: Date | null;
@@ -81,6 +84,7 @@ export class CronJobService {
     return {
       key: definition.key,
       intervalMinutes: row?.intervalMinutes ?? 0,
+      time: row?.time ?? null,
       intervals: intervalsOf(definition),
       options: definition.options
         ? definition.options(row?.options, false)
@@ -152,18 +156,29 @@ export class CronJobService {
     };
   }
 
-  /** Muda o intervalo (e as opções); ao ligar, a primeira vez é já no próximo minuto. */
+  /**
+   * Muda o intervalo, a hora e as opções. Ao ligar, a primeira vez é já no próximo
+   * minuto; todos os dias com hora, é a próxima vez a essa hora.
+   */
   async save(
     userId: string,
     scope: CronScope,
     key: string,
-    input: { intervalMinutes: number; options?: Record<string, unknown> },
+    input: {
+      intervalMinutes: number;
+      time?: string | null;
+      options?: Record<string, unknown>;
+    },
   ): Promise<CronJobView> {
     const { definition, row } = await this.rowFor(userId, scope, key);
     if (!intervalsOf(definition).includes(input.intervalMinutes)) {
       throw new BadRequestException('Esse intervalo não existe nesta tarefa.');
     }
     const enabling = input.intervalMinutes > 0;
+    const time = cronTime(
+      input.intervalMinutes,
+      input.time === undefined ? row.time : input.time,
+    );
     const options = definition.options
       ? definition.options(input.options ?? row.options, enabling)
       : null;
@@ -178,9 +193,14 @@ export class CronJobService {
       where: { id: row.id },
       data: {
         intervalMinutes: input.intervalMinutes,
+        time,
         options:
           options === null ? Prisma.DbNull : (options as Prisma.InputJsonValue),
-        nextRunAt: enabling ? new Date() : null,
+        nextRunAt: !enabling
+          ? null
+          : time
+            ? nextRunAt(input.intervalMinutes, new Date(), time)
+            : new Date(),
       },
     });
     return this.view(definition, saved);
@@ -219,6 +239,7 @@ export class CronJobService {
             key: job.key,
             part: partOfJob(job.key)!,
             intervalMinutes: row?.intervalMinutes ?? 0,
+            time: row?.time ?? null,
             intervals: intervalsOf(job),
             options: updateCronOptions(row?.options, false),
           };

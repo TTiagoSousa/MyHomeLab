@@ -564,6 +564,8 @@ model CronJob {
   key                String
   /// De quantos em quantos minutos corre (0 = desligada).
   intervalMinutes    Int               @default(0)
+  /// Todos os dias (1440): a hora de Lisboa a que corre ("HH:mm"); sem hora, 24 h depois da última.
+  time               String?
   nextRunAt          DateTime?
   lastRunAt          DateTime?
   lastOk             Boolean?
