@@ -7,6 +7,12 @@ Portuguese and Spanish, in [`releases/`](./releases).
 
 <!-- The release script (npm run release -- --prepare) adds new versions below this line. -->
 
+## [1.18.0] — 2026-11-27
+
+### Features
+- **app-update**: install studied updates on their own when everything checks out, keep the updates cron job column fixed on Waiting for study, and let the assistant turn the updates cron jobs on
+
+
 ## [1.17.0] — 2026-11-27
 
 ### Features
@@ -211,3 +217,4 @@ First public release of MyHomeLab.
 [1.15.1]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.15.1
 [1.16.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.16.0
 [1.17.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.17.0
+[1.18.0]: https://github.com/TTiagoSousa/MyHomeLab/releases/tag/v1.18.0
