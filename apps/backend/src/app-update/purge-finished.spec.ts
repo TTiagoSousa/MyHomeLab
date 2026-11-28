@@ -49,12 +49,15 @@ const build = () => {
   };
   const docs = { remove: jest.fn().mockResolvedValue(undefined) };
   const board = { removeTask: jest.fn().mockResolvedValue(undefined) };
+  const notifications = {
+    resolveUserSubjectPrefixes: jest.fn().mockResolvedValue(undefined),
+  };
   const updates = new AppUpdateService(
     prisma as never,
     docs as never,
     {} as never,
     {} as never,
-    {} as never,
+    notifications as never,
     {} as never,
     board as never,
     {} as never,
@@ -62,7 +65,7 @@ const build = () => {
     {} as never,
     {} as never,
   );
-  return { updates, prisma, docs, board };
+  return { updates, prisma, docs, board, notifications };
 };
 
 describe('purgeFinished', () => {
@@ -78,7 +81,7 @@ describe('purgeFinished', () => {
   });
 
   it('apaga as atualizações, as tarefas e só os registos que não são partilhados', async () => {
-    const { updates, prisma, docs, board } = build();
+    const { updates, prisma, docs, board, notifications } = build();
     await updates.purgeFinished('user', true);
     expect(prisma.appUpdate.deleteMany).toHaveBeenCalledWith({
       where: { id: { in: ['u1', 'u2'] } },
@@ -89,5 +92,14 @@ describe('purgeFinished', () => {
       select: { id: true, title: true },
     });
     expect(docs.remove).toHaveBeenCalledWith('user', 'd1');
+    expect(notifications.resolveUserSubjectPrefixes).toHaveBeenCalledWith(
+      'user',
+      [
+        'update-result:u1:',
+        'update-waiting:u1:',
+        'update-result:u2:',
+        'update-waiting:u2:',
+      ],
+    );
   });
 });

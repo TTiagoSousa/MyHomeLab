@@ -1173,6 +1173,15 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
     };
     if (!apply || !finished.length) return summary;
     await this.prisma.appUpdate.deleteMany({ where: { id: { in: ids } } });
+    // Os avisos delas (o "Falhou", o "Instalado", a pergunta) já não têm a que se referir: fecham.
+    await this.notifications
+      .resolveUserSubjectPrefixes(
+        userId,
+        ids.flatMap((id) => [`update-result:${id}:`, `update-waiting:${id}:`]),
+      )
+      .catch((error: unknown) =>
+        this.logger.warn(`Fechar os avisos: ${String(error)}`),
+      );
     for (const taskId of taskIds) {
       await this.board
         .removeTask(userId, taskId)

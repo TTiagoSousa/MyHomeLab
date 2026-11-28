@@ -128,6 +128,19 @@ export class NotificationService {
     await this.resolveWhere({ userId, subject, kind, resolvedAt: null });
   }
 
+  /** Fecha os avisos ativos de um utilizador (de qualquer tipo) cujo assunto começa por um dos prefixos. */
+  async resolveUserSubjectPrefixes(
+    userId: string,
+    prefixes: string[],
+  ): Promise<void> {
+    if (!prefixes.length) return;
+    await this.resolveWhere({
+      userId,
+      resolvedAt: null,
+      OR: prefixes.map((prefix) => ({ subject: { startsWith: prefix } })),
+    });
+  }
+
   /** Fecha os avisos de um utilizador cujo assunto começa por `prefix`, menos o `keep` (ex: os resumos dos dias antes). */
   async resolveUserSubjectsExcept(
     userId: string,
